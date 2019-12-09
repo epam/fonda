@@ -1,0 +1,20 @@
+logFile=[(${fields.logFile})]
+str=""
+while [[('[')]][ $str = "" ]]
+do
+if [[('[')]][ -f $logFile  ]];
+then
+	str=$(grep -E "(Successful|Error) Step: [(${fields.toolName})]" $logFile;)
+fi
+	echo Waiting for step: [(${fields.toolName})]
+	sleep [(${fields.period})]
+done
+
+if [[('[')]][ $str == "*Error Step: [(${fields.toolName})]*" ]];
+then
+	echo $(date) [(${fields.errorMessage})]:
+	echo $str
+else
+	echo $(date) [(${fields.successMessage})]
+fi
+

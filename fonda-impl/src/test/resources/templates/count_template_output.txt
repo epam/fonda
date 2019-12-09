@@ -1,0 +1,45 @@
+echo `date` Begin Step: Cellranger count...
+cd output/count
+cellRanger count --id=sampleName --transcriptome=transcriptome --chemistry=chemistry --r1-length=r1Length --r2-length=r2Length --lanes=lanes --indices=indices --fastqs=[(${fastqDirs})] --sample=sampleName --force-cells=forcedCells
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Cellranger count.
+	sleep 8
+else
+	echo `date` Error Step: Cellranger count.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Generate gene-barcode matrix...
+cellRanger mat2csv output/count/sampleName/outs/filtered_feature_bc_matrix sampleName_te_umi_count_matrix.csv
+tr '\,' '\t' < sampleName_te_umi_count_matrix.csv > sampleName_te_umi_count_matrix.tsv
+rm sampleName_te_umi_count_matrix.csv
+cellRanger mat2csv output/count/sampleName/outs/filtered_feature_bc_matrix sampleName_t1_umi_count_matrix.csv
+tr '\,' '\t' < sampleName_t1_umi_count_matrix.csv > sampleName_t1_umi_count_matrix.tsv
+rm sampleName_t1_umi_count_matrix.csv
+
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Generate gene-barcode matrix.
+	sleep 8
+else
+	echo `date` Error Step: Generate gene-barcode matrix.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Merge gene-barcode matrix...
+rScript [(${jarPath})]/src/R/merge_data_matrix.R -a sampleName_te_umi_count_matrix.tsv -b sampleName_t1_umi_count_matrix.tsv -o sampleName_te_and_t1_umi_count_matrix.tsv
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Merge gene-barcode matrix.
+	sleep 8
+else
+	echo `date` Error Step: Merge gene-barcode matrix.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi

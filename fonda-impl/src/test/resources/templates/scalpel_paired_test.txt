@@ -1,0 +1,13 @@
+echo `date` Begin Step: Scalpel detection...
+scalpel/scalpel-discovery --somatic --ref GENOME --bed BED --normal control.bam --tumor file.bam --dir [(${output})]/scalpel --format vcf --mapscore 10 --numprocs 8
+scalpel/scalpel-export --somatic --db [(${output})]/scalpel/main/somatic.db --ref GENOME --bed BED --output-format vcf --variant-type indel --min-alt-count-tumor 5 --max-alt-count-normal 3 --min-vaf-tumor 0.05 --max-vaf-normal 0.02 --min-coverage-tumor 10 > [(${output})]/scalpel/sample_name.scalpel.somatic.variants.vcf
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Scalpel detection.
+	sleep 8
+else
+	echo `date` Error Step: Scalpel detection.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi

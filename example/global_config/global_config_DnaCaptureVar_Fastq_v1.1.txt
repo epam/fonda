@@ -1,0 +1,39 @@
+[Queue_Parameters]
+NUMTHREADS = 4
+MAXMEM = 24g
+QUEUE = all.q
+PE = -pe threaded
+
+[Databases]
+SPECIES = human
+GENOME_BUILD = hg19
+GENOME = /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa
+NOVOINDEX = /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.nix
+BED = /ngs/data/S03723314_Padded.bed
+BED_WITH_HEADER = /ngs/data/S03723314_Padded_decoy.txt
+BED_FOR_COVERAGE = /ngs/data/S03723314_Padded_decoy.txt
+SNPSIFTDB = /ngs/data/tools/SnpEff/snpEff_v4.3p/snpEff/db
+CANONICAL_TRANSCRIPT = /ngs/data/reference_genome/GRCh37/Annotation/prefer_ensembl_transcript.txt
+ADAPTER_FWD = AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC
+ADAPTER_REV = AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT
+
+[all_tools]
+bedtools = /ngs/data/tools/bedtools2/v2.2.1/bin/bedtools
+seqpurge = /ngs/data/app/ngs-bits/v1.0/bin/SeqPurge
+novoalign = /ngs/data/tools/novoalign/v3.09.00/novoalign
+java = /ngs/data/app/java/v1.8.0u121/bin/java
+samtools = /ngs/data/tools/samtools/v0.1.19/samtools
+picard = /ngs/data/tools/picard/v2.10.3/picard.jar
+snpsift = /ngs/data/tools/SnpEff/snpEff_v4.3p/snpEff/SnpSift.jar
+transvar = /ngs/data/app/python/v2.7.2/bin/transvar
+vardict = /ngs/data/tools/VarDictJava/v1.5.0
+abra2 = /ngs/data/tools/abra2/v2.07/abra2-2.07.jar
+python = /ngs/data/app/python/v2.7.2/bin/python
+Rscript = /ngs/data/app/R/v3.5.0/bin/Rscript
+doubletdetection_python = /ngs/data/py/versions/3.5.2/bin/python
+
+[Pipeline_Info]
+workflow = DnaCaptureVar_Fastq
+toolset = seqpurge+novoalign+abra_realign+picard+qc+vardict
+flag_xenome = no
+read_type = paired

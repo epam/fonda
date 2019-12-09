@@ -1,0 +1,12 @@
+echo `date` Begin Step: Scrublet doublet detection...
+python [(${jarPath})]/src/python/singlecell_scrublet.py --sample_id sampleName --work_dir output --genome_build genomeBuild
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Scrublet doublet detection.
+	sleep 8
+else
+	echo `date` Error Step: Scrublet doublet detection.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi

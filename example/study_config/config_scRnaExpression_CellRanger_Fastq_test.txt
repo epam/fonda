@@ -1,0 +1,10 @@
+[Series_Info]
+job_name = pe_job
+dir_out = /ngs/data/demo/test/scRNAexpression_CellRanger_Fastq_test
+fastq_list = /ngs/data/demo/test/example/scRnaExpression_CellRanger_RNASeq_SampleFastqPaths.txt
+LibraryType = RNASeq_Paired
+DataGenerationSource = Internal
+Date = 20140318
+Project = Example_project
+Run = run1234
+Cufflinks.library_type = fr-unstranded

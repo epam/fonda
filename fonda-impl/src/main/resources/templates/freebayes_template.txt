@@ -1,0 +1,12 @@
+echo `date` Begin Step: Freebayes detection...
+[(${toolFields.freebayes})] -f [(${toolFields.genome})] -F 0.05 -C 3 -m 20 -t [(${toolFields.bed})] [(${toolFields.bam})] > [(${toolFields.vcf})]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Freebayes detection.
+	sleep 8
+else
+	echo `date` Error Step: Freebayes detection.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi

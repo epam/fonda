@@ -1,0 +1,13 @@
+echo `date` Begin Step: FusionCatcher...
+[(${fusionCatcherFields.fusionCatcher})] --input [(${fusionCatcherFields.mergedFastq1})],[# th:text = "${fusionCatcherFields.mergedFastq2 != null} ? ${fusionCatcherFields.mergedFastq2} : ''"][/] --output [(${fusionCatcherFields.fusionCatcherOutdir})] --tmp [(${fusionCatcherFields.tmpFusionCatcherOutdir})] --threads [(${fusionCatcherFields.numThreads})]
+mv [(${fusionCatcherFields.fusionCatcherOutdir})]/fusionCatcher.fusion_candidates.final.abridged [(${fusionCatcherFields.fusionCatcherOutdir})]
+if [ $? -eq 0 ]
+then
+    echo `date` Successful Step: FusionCatcher.
+ 	sleep 8
+else
+ 	echo `date` Error Step: FusionCatcher.
+
+ 	echo `date` The job was aborted due to ERRORS found.
+ 	exit 1;
+fi

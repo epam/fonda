@@ -1,0 +1,26 @@
+echo `date` Begin Step: Featurecounts...
+featureCount -F SAF -M -s 2 -a annotgeneSaf -o output/feature_count/sampleName_featureCount_gene.txt -Q 20 -T 5 sampleName.toolName.sorted.bam
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Run featureCount.
+	sleep 8
+else
+	echo `date` Error Step: Run featureCount.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Remove temporary directories...
+[# th:each = "field: ${fields}"]rm -rf [# th:text = "${field}"] [/]
+[/]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Remove temporary directories.
+	sleep 8
+else
+	echo `date` Error Step: Remove temporary directories.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi

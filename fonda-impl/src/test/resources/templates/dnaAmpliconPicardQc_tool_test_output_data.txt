@@ -1,0 +1,32 @@
+echo `date` Begin Step: DNA QC metrics...
+java -Xmx16g -jar picard CollectAlignmentSummaryMetrics REFERENCE_SEQUENCE=genome INPUT=sbamOutdir/sampleName.toolName.sorted.file.bam OUTPUT=sqcOutdir/sampleName.toolName.sorted.file.align.metrics VALIDATION_STRINGENCY=SILENT TMP_DIR=stmpOutdir
+java -Xmx16g -jar picard CollectHsMetrics REFERENCE_SEQUENCE=genome INPUT=sbamOutdir/sampleName.toolName.sorted.file.bam OUTPUT=sqcOutdir/sampleName.toolName.sorted.file.hs.metrics MQ=0 Q=0 TARGET_INTERVALS=bedWithHeader BAIT_INTERVALS=bedWithHeader VALIDATION_STRINGENCY=SILENT TMP_DIR=stmpOutdir
+java -Xmx16g -jar picard CollectGcBiasMetrics REFERENCE_SEQUENCE=genome INPUT=sbamOutdir/sampleName.toolName.sorted.file.bam OUTPUT=sqcOutdir/sampleName.toolName.sorted.file.gcbias.metrics SUMMARY_OUTPUT=sqcOutdir/sampleName.toolName.sorted.file.gc.summary.metrics CHART=sqcOutdir/sampleName.toolName.sorted.file.gcbias.pdf VALIDATION_STRINGENCY=SILENT TMP_DIR=stmpOutdir
+java -Xmx16g -jar picard CollectInsertSizeMetrics REFERENCE_SEQUENCE=genome INPUT=sbamOutdir/sampleName.toolName.sorted.file.bam OUTPUT=sqcOutdir/sampleName.toolName.sorted.file.insertsize.metrics HISTOGRAM_FILE=sqcOutdir/sampleName.toolName.sorted.file.insertsize.pdf VALIDATION_STRINGENCY=SILENT TMP_DIR=stmpOutdir
+java -Xmx16g -jar picard CollectQualityYieldMetrics REFERENCE_SEQUENCE=genome INPUT=sbamOutdir/sampleName.toolName.sorted.file.bam OUTPUT=sqcOutdir/sampleName.toolName.sorted.file.quality.metrics VALIDATION_STRINGENCY=SILENT TMP_DIR=stmpOutdir
+samtools mpileup -q 0 -Q 0 -B -d 100000 -f genome -l bed sbamOutdir/sampleName.toolName.sorted.file.bam > sqcOutdir/sampleName.toolName.sorted.file.pileup
+bedtools coverage -abam sbamOutdir/sampleName.toolName.sorted.file.bam -b bedForCoverage -d > sqcOutdir/sampleName.toolName.sorted.file.coverage.per.base.txt
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: DNA QC metrics.
+	sleep 8
+else
+	echo `date` Error Step: DNA QC metrics.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Merge DNA QC...
+python [(${jarPath})]/src/python/dna_rna_variant_qc_metrics.py --sample sampleName --align sqcOutdir/sampleName.toolName.sorted.file.align.metrics --mkdup_hybrid sqcOutdir/sampleName.toolName.sorted.file.hs.metrics[# th:if = "${readType == 'paired'}"] --insert sqcOutdir/sampleName.toolName.sorted.file.insertsize.metrics[/] --gcbias sqcOutdir/sampleName.toolName.sorted.file.gc.summary.metrics --duplicate sbamOutdir/sampleName.toolName.sorted.mkdup.metrics --pileup sqcOutdir/sampleName.toolName.sorted.file.pileup --read_type [(${readType})] --bedcov sqcOutdir/sampleName.toolName.sorted.file.coverage.per.base.txt --type capture --project project --run run --date date --output sqcOutdir/sampleName.alignment.merged.QC.metric.txt
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Merge DNA QC.
+	sleep 8
+else
+	echo `date` Error Step: Merge DNA QC.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+

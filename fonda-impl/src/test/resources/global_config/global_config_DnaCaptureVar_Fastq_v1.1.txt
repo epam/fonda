@@ -1,0 +1,39 @@
+[Queue_Parameters]
+NUMTHREADS = 4
+MAXMEM = 24g
+QUEUE = all.q
+PE = -pe threaded
+
+[Databases]
+SPECIES = human
+GENOME_BUILD = hg19
+GENOME = /output/hg19.decoy.fa
+NOVOINDEX = /output/hg19.decoy.nix
+BED = /output/S03723314_Padded.bed
+BED_WITH_HEADER = /output/S03723314_Padded_decoy.txt
+BED_FOR_COVERAGE = /output/S03723314_Padded_decoy.txt
+SNPSIFTDB = /output/db
+CANONICAL_TRANSCRIPT = /output/prefer_ensembl_transcript.txt
+ADAPTER_FWD = AGATCGGAAGAGCACACGTCTGAFJFKJFNVJAKACTCCAGTCAC
+ADAPTER_REV = AGATCGGAAGAGAGAGAGAGGGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT
+
+[all_tools]
+bedtools = /output/bedtools
+seqpurge = /output/SeqPurge
+novoalign = /output/novoalign
+java = /output/java
+samtools = /output/samtools
+picard = /output/picard.jar
+snpsift = /output/SnpSift.jar
+transvar = /output/transvar
+vardict = /output/v1.5.0
+abra2 = /output/abra2-2.07.jar
+python = /output/python
+Rscript = /output/Rscript
+doubletdetection_python = /output/python
+
+[Pipeline_Info]
+workflow = DnaCaptureVar_Fastq
+toolset = seqpurge+novoalign+abra_realign+picard+qc+vardict
+flag_xenome = no
+read_type = paired

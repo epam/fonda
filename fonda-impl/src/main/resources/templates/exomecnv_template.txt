@@ -1,0 +1,14 @@
+echo `date` Begin Step: ExomeCNV detection...
+[(${toolFields.java})] -Xmx10g -jar [(${toolFields.gatk})] -T DepthOfCoverage -R [(${toolFields.genome})] -I [(${toolFields.controlBam})] -L [(${toolFields.bed})] -o [(${toolFields.outDir})]/[(${toolFields.controlSampleName})]
+[(${toolFields.java})] -Xmx10g -jar [(${toolFields.gatk})] -T DepthOfCoverage -R [(${toolFields.genome})] -I [(${toolFields.bam})] -L [(${toolFields.bed})] -o [(${toolFields.outDir})]/[(${toolFields.sampleName})]
+[(${toolFields.rScript})] [(${toolFields.exomecnv})]/exome_cnv.R -t [(${toolFields.readDepthSummary})] -n [(${toolFields.controlReadDepthSummary})] -o [(${toolFields.outDir})] -s [(${toolFields.sampleName})]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: ExomeCNV detection.
+	sleep 8
+else
+	echo `date` Error Step: ExomeCNV detection.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi

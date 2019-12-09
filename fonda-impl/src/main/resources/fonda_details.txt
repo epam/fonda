@@ -1,0 +1,23 @@
+Fonda (Framework Of NGS Data Analysis)
+
+Fonda is a framework which offers scalable and automatic analysis of multiple NGS sequencing data types
+fonda offers the following NGS workflows at current version:
+
+	DnaCaptureVar_Fastq               (DNA Captured sequencing data for genomic variant detection using fastq data)
+	DnaCaptureVar_Bam                 (DNA Captured sequencing data for genomic variant detection using bam data)
+	DnaAmpliconVar_Fastq              (DNA Amplicon sequencing data for genomic variant detection using fastq data)
+	DnaAmpliconVar_Bam                (DNA Amplicon sequencing data for genomic variant detection using bam data)
+	DnaWgsVar_Fastq                   (DNA whole genome sequencing data for genomic variant detection using fastq data)
+	DnaWgsVar_Bam                     (DNA whole genome sequencing data for genomic variant detection using bam data)
+	HlaTyping_Fastq                   (DNA sequencing data for genomic Hla type prediction using fastq data)
+	Bam2Fastq                         (Convert bam file to fastq files)
+	RnaExpression_Fastq               (RNA sequencing data for gene expression analysis using fastq data)
+	RnaExpression_Bam                 (RNA sequencing data for gene expression analysis using bam data)
+	RnaCaptureVar_Fastq               (RNA Captured sequencing data for genomic variant detection using fastq data)
+	scRnaExpression_Fastq             (single cell RNA sequencing data for gene expression analysis using fastq data)
+	scRnaExpression_CellRanger_Fastq  (10X single cell RNA sequencing data for gene expression analysis using fastq data)
+	scImmuneProfile_CellRanger_Fastq  (10X single cell RNA sequencing data for B/T cell profiling analysis using fastq data)
+	scRnaExpression_Bam               (single cell RNA sequencing data for gene expression analysis using bam data)
+	RnaFusion_Fastq                   (RNA sequencing data for gene fusion detection using fastq data)
+	TcrRepertoire_Fastq               (DNA or RNA sequencing data for TCR or BCR repertoire detection using fastq data)
+	RnaAnalysis                       (Perform analysis on cohort RNA expression data, It is run together with (sc)RnaExpression)

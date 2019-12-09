@@ -1,0 +1,49 @@
+echo `date` Begin Step: STAR4FUSION alignment...
+[(${toolFields.star})] --genomeDir [(${starFusionFields.starIndex})] --twopassMode Basic --genomeLoad NoSharedMemory --readFilesIn [(${starFusionFields.mergedFastq1})] [# th:text = "${starFusionFields.mergedFastq2 != null} ? ${starFusionFields.mergedFastq2} : ''"][/] --outFileNamePrefix [(${starFusionFields.bamOutdir})]/[(${starFusionFields.sampleName})]. --outReadsUnmapped None --chimSegmentMin 12 --chimJunctionOverhangMin 12 --alignSJDBoverhangMin 10 --alignMatesGapMax 200000 --alignIntronMax 200000 --chimSegmentReadGapMax parameter 3 --alignSJstitchMismatchNmax 5 -1 5 5 --runThreadN [(${starFusionFields.numThreads})] --outSAMtype BAM Unsorted --outSAMattrRGline ID:[(${starFusionFields.sampleName})] SM:[(${starFusionFields.sampleName})] LB:RNA PL:Illumina CN:cr --readFilesCommand zcat
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: STAR4FUSION alignment.
+	sleep 8
+else
+	echo `date` Error Step: STAR4FUSION alignment.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+echo `date` Begin Step: Sort bam...
+[(${toolFields.java})] -jar [(${toolFields.picard})] SortSam INPUT=[(${starFusionFields.unSortedBam})] OUTPUT=[(${bam})] SORT_ORDER=coordinate VALIDATION_STRINGENCY=SILENT
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Sort bam.
+	sleep 8
+else
+	echo `date` Error Step: Sort bam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+echo `date` Begin Step: Index bam...
+[(${toolFields.samtools})] index [(${bam})]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Index bam.
+	sleep 8
+else
+	echo `date` Error Step: Index bam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+echo `date` Begin Step: STAR-Fusion detection...
+[(${starFusionFields.starFusion})] --genome_lib_dir [(${starFusionFields.starFusionLib})] -J [(${starFusionFields.juncFile})] --output_dir [(${starFusionFields.starFusionOutdir})]
+mv [(${starFusionFields.starFusionOutdir})]/star-fusion.fusion_candidates.final.abridged [(${starFusionResult})]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: STAR-Fusion detection.
+	sleep 8
+else
+	echo `date` Error Step: STAR-Fusion detection.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi

@@ -1,0 +1,13 @@
+echo `date` Begin Step: Run task...
+[# th:if = "${local.equals(false)}"]qsub output/sh_files/workflow_task_for_sampleName_analysis.sh[/][# th:unless = "${local.equals(false)}"]sh output/sh_files/workflow_task_for_sampleName_analysis.sh[/]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Run task.
+	sleep 8
+else
+	echo `date` Error Step: Run task.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+

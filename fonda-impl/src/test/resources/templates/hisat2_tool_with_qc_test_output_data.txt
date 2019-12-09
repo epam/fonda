@@ -1,0 +1,79 @@
+echo `date` Begin Step: HISAT2 alignment...
+hisat2 -x HISAT2INDEX -p 5 --rg "SM:sampleName\tLB:sampleName\tPL:Illumina" --rg-id sampleName --seed 12345 --dta -1 mergedFastq1 -2 mergedFastq2 | samtools view -bS -|samtools sort - sbamOutdir/sampleName.hisat2.sorted
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: HISAT2 alignment.
+	sleep 8
+else
+	echo `date` Error Step: HISAT2 alignment.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Index bam...
+samtools index sbamOutdir/sampleName.hisat2.sorted.bam
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Index bam.
+	sleep 8
+else
+	echo `date` Error Step: Index bam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Mark duplicates...
+java -Xmx16g -jar picard MarkDuplicates INPUT=sbamOutdir/sampleName.hisat2.sorted.bam OUTPUT=sbamOutdir/sampleName.hisat2.sorted.mkdup.bam METRICS_FILE=sqcOutdir/sampleName.hisat2.sorted.mkdup.metrics ASSUME_SORTED=true REMOVE_DUPLICATES=false VALIDATION_STRINGENCY=SILENT TMP_DIR=stmpOutdir
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Mark duplicates.
+	sleep 8
+else
+	echo `date` Error Step: Mark duplicates.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Index mkdup bam...
+samtools index sbamOutdir/sampleName.hisat2.sorted.mkdup.bam
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Index mkdup bam.
+	sleep 8
+else
+	echo `date` Error Step: Index mkdup bam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: RNA QC metrics...
+rnaSeqcJava -Xmx16g -jar rnaSeqc -r genome -t annotgene -n 1000 -s 'sampleName|sbamOutdir/sampleName.hisat2.sorted.mkdup.bam|RNASEQC analysis' -o sqcOutdir -rRNA rRnaBed VALIDATION_STRINGENCY=SILENT TMP_DIR=stmpOutdir
+java -Xmx16g -jar picard CollectGcBiasMetrics REFERENCE_SEQUENCE=genome INPUT=sbamOutdir/sampleName.hisat2.sorted.mkdup.bam OUTPUT=sqcOutdir/sampleName.hisat2.sorted.mkdup.gcbias.metrics SUMMARY_OUTPUT=sqcOutdir/sampleName.hisat2.sorted.mkdup.gc.summary.metrics CHART=sqcOutdir/sampleName.hisat2.sorted.mkdup.gcbias.pdf VALIDATION_STRINGENCY=SILENT TMP_DIR=stmpOutdir
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: RNA QC metrics.
+	sleep 8
+else
+	echo `date` Error Step: RNA QC metrics.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Merge RNA QC...
+python [(${jarPath})]/src/python/rna_qc_metrics.py --sample sampleName --rnaseq sqcOutdir/metrics.tsv --duplicate sqcOutdir/sampleName.hisat2.sorted.mkdup.metrics --gcbias sqcOutdir/sampleName.hisat2.sorted.mkdup.gc.summary.metrics --project project --run run --date date --output sqcOutdir/sampleName.alignment.merged.QC.metric.txt
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Merge RNA QC.
+	sleep 8
+else
+	echo `date` Error Step: Merge RNA QC.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+

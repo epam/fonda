@@ -1,0 +1,13 @@
+echo `date` Begin Step: FusionCatcher...
+fusionCatcher --input mergedFastq1,mergedFastq2 --output output/fusionCatcher --tmp output/fusionCatcher/tmp --threads 4
+mv output/fusionCatcher/fusionCatcher.fusion_candidates.final.abridged output/fusionCatcher
+if [ $? -eq 0 ]
+then
+    echo `date` Successful Step: FusionCatcher.
+ 	sleep 8
+else
+ 	echo `date` Error Step: FusionCatcher.
+
+ 	echo `date` The job was aborted due to ERRORS found.
+ 	exit 1;
+fi

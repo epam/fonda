@@ -1,0 +1,13 @@
+echo `date` Begin Step: Scalpel detection...
+[(${toolFields.scalpel})]/scalpel-discovery [# th:if = "${toolFields.isPaired}"]--somatic[/][# th:unless = "${toolFields.isPaired}"]--single[/] --ref [(${toolFields.genome})] [# th:unless = "${toolFields.isPaired}"]--bam [(${toolFields.bam})] [/]--bed [(${toolFields.bed})] [# th:if = "${toolFields.isPaired}"]--normal [(${toolFields.controlBam})] --tumor [(${toolFields.bam})] [/]--dir [(${toolFields.outDir})] --format vcf --mapscore 10 --numprocs 8[# th:unless = "${toolFields.isPaired}"] --covthr 5 --mincov 5 --outratio 0.05[/]
+[# th:if = "${toolFields.isPaired}"][(${toolFields.scalpel})]/scalpel-export --somatic --db [(${toolFields.outDir})]/main/somatic.db --ref [(${toolFields.genome})] --bed [(${toolFields.bed})] --output-format vcf --variant-type indel --min-alt-count-tumor 5 --max-alt-count-normal 3 --min-vaf-tumor 0.05 --max-vaf-normal 0.02 --min-coverage-tumor 10 > [(${toolFields.vcf})][/][# th:unless = "${toolFields.isPaired}"]mv [(${toolFields.outDir})]/variants.indel.vcf [(${toolFields.vcf})][/]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Scalpel detection.
+	sleep 8
+else
+	echo `date` Error Step: Scalpel detection.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi

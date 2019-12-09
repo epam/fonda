@@ -1,0 +1,39 @@
+echo `date` Begin Step: STAR alignment...
+[(${toolFields.star})] --genomeDir [(${additionalStarFields.index})][# th:if = "${flag.rsem == true}"] --sjdbGTFfile [(${additionalStarFields.annotgene})] --sjdbOverhang 100[/] --genomeLoad NoSharedMemory --readFilesIn [(${additionalStarFields.fastq1})] [# th:if = "${additionalStarFields.fastq2 != null}"][(${additionalStarFields.fastq2})][/] --outFileNamePrefix [(${additionalStarFields.sbamOutdir})]/[(${additionalStarFields.sampleName})]. --outFilterMatchNmin 0 --outStd Log --outFilterMultimapNmax 5 --outFilterMatchNminOverLread 0.66 --outFilterScoreMinOverLread 0.66 --outSAMunmapped Within --outFilterMultimapScoreRange 1 --outSAMstrandField intronMotif --outFilterScoreMin 0 --alignSJoverhangMin 8 --alignSJDBoverhangMin 1 --runThreadN [(${additionalStarFields.numThreads})] --outSAMtype [# th:if = "${flag.rsem == false}"]BAM Unsorted[/][# th:unless = "${flag.rsem == false}"]None --quantMode TranscriptomeSAM[/] --outSAMattrRGline [(${additionalStarFields.rg})] --readFilesCommand zcat
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: STAR alignment.
+	sleep 8
+else
+	echo `date` Error Step: STAR alignment.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+[# th:if = "${flag.rsem == false}"]echo `date` Begin Step: Sort bam...
+[(${toolFields.java})] -jar [(${toolFields.picard})] SortSam INPUT=[(${additionalStarFields.unsortedBam})] OUTPUT=[(${bam})] SORT_ORDER=coordinate VALIDATION_STRINGENCY=SILENT
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Sort bam.
+	sleep 8
+else
+	echo `date` Error Step: Sort bam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Index bam...
+[(${toolFields.samtools})] index [(${bam})]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Index bam.
+	sleep 8
+else
+	echo `date` Error Step: Index bam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+[/]

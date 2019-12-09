@@ -1,0 +1,9 @@
+parameterType	shortName	Parameter1
+fastqFile	UM-UC-3	/ngs/data/demo/test/fastq/UM-UC-3_ACACGACC_L001_R1_001.fastq.gz
+fastqFile	UM-UC-3	/ngs/data/demo/test/fastq/UM-UC-3_ACACGACC_L002_R1_001.fastq.gz
+fastqFile	SW1271	/ngs/data/demo/test/fastq/SW1271_CCGTGAGA_L001_R1_001.fastq.gz
+fastqFile	SW1271	/ngs/data/demo/test/fastq/SW1271_CCGTGAGA_L002_R1_001.fastq.gz
+fastqFile	SW1573	/ngs/data/demo/test/fastq/SW1573_GCCACATA_L001_R1_001.fastq.gz
+fastqFile	SW1573	/ngs/data/demo/test/fastq/SW1573_GCCACATA_L002_R1_001.fastq.gz
+fastqFile	SW684	/ngs/data/demo/test/fastq/SW684_CGAACTTA_L003_R1_001.fastq.gz
+fastqFile	SW780	/ngs/data/demo/test/fastq/SW780_AGTGGTCA_L003_R1_001.fastq.gz

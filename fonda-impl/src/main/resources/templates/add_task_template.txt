@@ -1,0 +1,13 @@
+echo `date` Begin Step: Run [(${variablesMap.get('task')})]...
+[# th:if = "${variablesMap.get('local').equals('false')}"]qsub [(${variablesMap.get('shellToSubmit')})][/][# th:unless = "${variablesMap.get('local').equals('false')}"]sh [(${variablesMap.get('shellToSubmit')})][/]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Run [(${variablesMap.get('task')})].
+	sleep 8
+else
+	echo `date` Error Step: Run [(${variablesMap.get('task')})].
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+

@@ -1,0 +1,42 @@
+echo `date` Begin Step: Cellranger count...
+cd [(${countFields.countOutdir})]
+[(${countFields.cellRanger})] count --id=[(${countFields.sampleName})] --transcriptome=[(${countFields.transcriptome})] --chemistry=[(${countFields.chemistry})][# th:if = "${not#strings.equalsIgnoreCase(countFields.r1Length, 'NA')}"] --r1-length=[(${countFields.r1Length})][/][# th:if = "${not#strings.equalsIgnoreCase(countFields.r2Length, 'NA')}"] --r2-length=[(${countFields.r2Length})][/][# th:if = "${not#strings.equalsIgnoreCase(countFields.lanes, 'NA')}"] --lanes=[(${countFields.lanes})][/][# th:if = "${not#strings.equalsIgnoreCase(countFields.indices, 'NA')}"] --indices=[(${countFields.indices})][/][# th:if = "${#strings.equalsIgnoreCase(countFields.nosecondary, 'true')}"] --nosecondary[/] --fastqs=[(${countFields.fastqDir})] --sample=[(${countFields.sampleName})][# th:if = "${countFields.forcedCells != 'NA'}"] --force-cells=[(${countFields.forcedCells})][/][# th:if = "${countFields.forcedCells == 'NA'}"] --expect-cells=[(${countFields.expectedCells})][/]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Cellranger count.
+	sleep 8
+else
+	echo `date` Error Step: Cellranger count.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Generate gene-barcode matrix...
+[# th:each="genomeBuild : ${#strings.arraySplit(countFields.genomeBuild, '\\s*,\\s*')}"][(${countFields.cellRanger})] mat2csv [(${countFields.matrixInfo})] [(${countFields.sampleName})]_[(${genomeBuild})]_umi_count_matrix.csv
+tr '\,' '\t' < [(${countFields.sampleName})]_[(${genomeBuild})]_umi_count_matrix.csv > [(${countFields.sampleName})]_[(${genomeBuild})]_umi_count_matrix.tsv
+rm [(${countFields.sampleName})]_[(${genomeBuild})]_umi_count_matrix.csv
+[/]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Generate gene-barcode matrix.
+	sleep 8
+else
+	echo `date` Error Step: Generate gene-barcode matrix.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Merge gene-barcode matrix...
+[# th:with="array = ${#strings.arraySplit(countFields.genomeBuild, '\\s*,\\s*')}"][# th:with="amount = ${#arrays.length(array)}"][# th:if = "${amount == 2}"][(${countFields.rScript})] [(${countFields.jarPath})]/src/R/merge_data_matrix.R -a [(${countFields.sampleName})]_[# th:text="${array[0]}"][/]_umi_count_matrix.tsv -b [(${countFields.sampleName})]_[# th:text="${array[1]}"][/]_umi_count_matrix.tsv -o [(${countFields.sampleName})]_[# th:text="${array[0]}"][/]_and_[# th:text="${array[1]}"][/]_umi_count_matrix.tsv
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Merge gene-barcode matrix.
+	sleep 8
+else
+	echo `date` Error Step: Merge gene-barcode matrix.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi[/][/][/]

@@ -1,0 +1,41 @@
+logFile=[# th:if = "${index != null}"][(${logFileWithSampleNameIndex})][/][# th:unless = "${index != null}"][(${logFileWithSampleName})][/]
+str=""
+[(${whileScript})]
+do
+[(${ifScript2})]
+then
+ str=$(grep -E "(Successful|Error) Step: [(${tag})]" $logFile;)
+fi
+ echo Waiting for step: [(${tag})]
+ sleep [(${period})]
+done
+
+[(${ifScript1})][(${tag})]*" ]];
+then
+ echo $(date) [(${errorMsgWithSampleName})]:
+ echo $str
+else
+echo $(date) [(${confirmMsgWithSampleName})]:
+fi
+[# th:if = "${logFileWithControlSampleName != null}"]
+logFile=[(${logFileWithControlSampleName})]
+str=""
+[(${whileScript})]
+do
+[(${ifScript2})]
+then
+ str=$(grep -E "(Successful|Error) Step: [(${tag})]" $logFile;)
+fi
+ echo Waiting for step: [(${tag})]
+ sleep [(${period})]
+done
+
+[(${ifScript1})][(${tag})]*" ]];
+then
+ echo $(date) [(${errorMsgWithControlSampleName})]:
+ echo $str
+else
+echo $(date) [(${confirmMsgWithControlSampleName})]:
+fi
+
+[/]

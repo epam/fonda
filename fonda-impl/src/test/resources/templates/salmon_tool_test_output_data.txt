@@ -1,0 +1,23 @@
+echo `date` Begin the job execution...
+
+
+echo `date` Begin Step: SALMON...
+gunzip -c merged_fastq1.gz > merged_fastq1
+gunzip -c merged_fastq2.gz > merged_fastq2
+salmon quant -i SALMONINDEX -l IU -p 5 -1 merged_fastq1 -2 merged_fastq2 -g annotgene -o output/salmon
+mv output/salmon/quant.genes.sf output/salmon/sampleName.salmon.gene.results
+mv output/salmon/quant.sf output/salmon/sampleName.salmon.transcript.results
+rm -rf merged_fastq1
+rm -rf merged_fastq2
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: SALMON.
+	sleep 8
+else
+	echo `date` Error Step: SALMON.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+

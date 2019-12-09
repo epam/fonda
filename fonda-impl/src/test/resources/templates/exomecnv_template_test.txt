@@ -1,0 +1,14 @@
+echo `date` Begin Step: ExomeCNV detection...
+java -Xmx10g -jar gatk -T DepthOfCoverage -R GENOME -I control.bam -L BED -o [(${output})]/exomecnv/control_sample_name
+java -Xmx10g -jar gatk -T DepthOfCoverage -R GENOME -I file.bam -L BED -o [(${output})]/exomecnv/sample_name
+Rscript exomecnv/exome_cnv.R -t [(${output})]/exomecnv/sample_name.sample_interval_summary -n [(${output})]/exomecnv/control_sample_name.sample_interval_summary -o [(${output})]/exomecnv -s sample_name
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: ExomeCNV detection.
+	sleep 8
+else
+	echo `date` Error Step: ExomeCNV detection.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi

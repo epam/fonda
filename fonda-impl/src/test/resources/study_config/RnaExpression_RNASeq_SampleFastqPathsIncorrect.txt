@@ -1,0 +1,5 @@
+parameterType	shortName	Parameter1	Parameter2	sample_type	match_control
+fastqFile	UM-UC-3	/ngs/data/demo/test/fastq/UM-UC-3_ACACGACC_L001_R1_001.fastq.gz	/ngs/data/demo/test/fastq/UM-UC-3_ACACGACC_L001_R2_001.fastq.gz	case	ONE
+fastqFile	UM-UC-3	/ngs/data/demo/test/fastq/UM-UC-3_ACACGACC_L002_R1_001.fastq.gz	/ngs/data/demo/test/fastq/UM-UC-3_ACACGACC_L002_R2_001.fastq.gz	case	ANOTHER
+fastqFile	SW1271	/ngs/data/demo/test/fastq/SW1271_CCGTGAGA_L001_R1_001.fastq.gz	/ngs/data/demo/test/fastq/SW1271_CCGTGAGA_L001_R2_001.fastq.gz	case	ONE
+fastqFile	SW1271	/ngs/data/demo/test/fastq/SW1271_CCGTGAGA_L002_R1_001.fastq.gz	/ngs/data/demo/test/fastq/SW1271_CCGTGAGA_L002_R2_001.fastq.gz	control	ONE

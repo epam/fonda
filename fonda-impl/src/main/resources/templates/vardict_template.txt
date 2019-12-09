@@ -1,0 +1,12 @@
+echo `date` Begin Step: Vardict detection...
+[(${toolFields.vardict})]/build/install/VarDict/bin/VarDict -G [(${toolFields.genome})] -f 0.05 -r 3 -Q 20 -N [(${toolFields.sampleName})] -b [# th:if = "${toolFields.isPaired}"]"[(${toolFields.bam})]|[(${toolFields.controlBam})]"[/][# th:unless = "${toolFields.isPaired}"][(${toolFields.bam})][/] -z 1 -c 1 -S 2 -E 3 [(${toolFields.bed})] | [(${toolFields.vardict})][# th:if = "${toolFields.isPaired}"]/VarDict/testsomatic.R |[(${toolFields.vardict})]/VarDict/var2vcf_paired.pl -M -N "[(${toolFields.sampleName})]|[(${toolFields.controlSampleName})]"[/][# th:unless = "${toolFields.isPaired}"]/VarDict/teststrandbias.R | [(${toolFields.vardict})]/VarDict/var2vcf_valid.pl -N [(${toolFields.sampleName})] -E[/] -f 0.05 > [(${toolFields.vcf})]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Vardict detection.
+	sleep 8
+else
+	echo `date` Error Step: Vardict detection.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi

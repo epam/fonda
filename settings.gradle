@@ -1,0 +1,3 @@
+rootProject.name = 'fonda'
+include 'fonda-impl'
+

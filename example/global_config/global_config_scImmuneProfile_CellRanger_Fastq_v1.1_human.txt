@@ -1,0 +1,29 @@
+[Queue_Parameters]
+NUMTHREADS = 8
+MAXMEM = 50g
+QUEUE = all.q
+PE = -pe threaded
+
+[Databases]
+SPECIES = human
+GENOME_BUILD = GRCh38
+GENOME = /ngs/data/tools/cellranger/references/GRCh38-alts-ensembl-2.0.0-vdj_2018_08_07
+
+[all_tools]
+cellranger = /ngs/data/tools/cellranger/v2.1.1/cellranger
+java = /ngs/data/app/java/v1.8.0u121/bin/java
+python = /ngs/data/app/python/v2.7.2/bin/python
+Rscript = /ngs/data/app/R/v3.5.0/bin/Rscript
+doubletdetection_python = /ngs/data/py/versions/3.5.2/bin/python
+
+[cellranger]
+cellranger_FORCED_CELLS = 5000
+cellranger_DENOVO = FALSE
+cellranger_CHAIN = auto
+cellranger_LANES = NA
+cellranger_INDICES = NA
+
+[Pipeline_Info]
+workflow = scImmuneProfile_CellRanger_Fastq
+toolset = vdj+qc
+read_type = paired

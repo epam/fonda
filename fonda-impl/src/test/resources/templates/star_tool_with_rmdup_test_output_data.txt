@@ -1,0 +1,91 @@
+echo `date` Begin Step: STAR alignment...
+star --genomeDir STARINDEX --genomeLoad NoSharedMemory --readFilesIn mergedFastq1 mergedFastq2 --outFileNamePrefix sbamOutdir/sampleName. --outFilterMatchNmin 0 --outStd Log --outFilterMultimapNmax 5 --outFilterMatchNminOverLread 0.66 --outFilterScoreMinOverLread 0.66 --outSAMunmapped Within --outFilterMultimapScoreRange 1 --outSAMstrandField intronMotif --outFilterScoreMin 0 --alignSJoverhangMin 8 --alignSJDBoverhangMin 1 --runThreadN 5 --outSAMtype BAM Unsorted --outSAMattrRGline ID:sampleName SM:sampleName LB:RNA PL:Illumina CN:cr --readFilesCommand zcat
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: STAR alignment.
+	sleep 8
+else
+	echo `date` Error Step: STAR alignment.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Sort bam...
+java -jar picard SortSam INPUT=sbamOutdir/sampleName.Aligned.out.bam OUTPUT=sbamOutdir/sampleName.star.sorted.bam SORT_ORDER=coordinate VALIDATION_STRINGENCY=SILENT
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Sort bam.
+	sleep 8
+else
+	echo `date` Error Step: Sort bam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Index bam...
+samtools index sbamOutdir/sampleName.star.sorted.bam
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Index bam.
+	sleep 8
+else
+	echo `date` Error Step: Index bam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Mark duplicates...
+java -Xmx16g -jar picard MarkDuplicates INPUT=sbamOutdir/sampleName.star.sorted.bam OUTPUT=sbamOutdir/sampleName.star.sorted.mkdup.bam METRICS_FILE=sqcOutdir/sampleName.star.sorted.mkdup.metrics ASSUME_SORTED=true REMOVE_DUPLICATES=false VALIDATION_STRINGENCY=SILENT TMP_DIR=stmpOutdir
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Mark duplicates.
+	sleep 8
+else
+	echo `date` Error Step: Mark duplicates.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Index mkdup bam...
+samtools index sbamOutdir/sampleName.star.sorted.mkdup.bam
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Index mkdup bam.
+	sleep 8
+else
+	echo `date` Error Step: Index mkdup bam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Remove Duplicates...
+samtools view -bF 1024 sbamOutdir/sampleName.star.sorted.mkdup.bam > sbamOutdir/sampleName.star.sorted.rmdup.bam
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Remove duplicates.
+	sleep 8
+else
+	echo `date` Error Step: Remove duplicates.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Index rmdup bam...
+samtools index sbamOutdir/sampleName.star.sorted.rmdup.bam
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Index rmdup bam.
+	sleep 8
+else
+	echo `date` Error Step: Index rmdup bam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+

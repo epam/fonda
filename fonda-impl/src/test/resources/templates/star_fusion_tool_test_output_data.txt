@@ -1,0 +1,49 @@
+echo `date` Begin Step: STAR4FUSION alignment...
+star --genomeDir STARINDEX --twopassMode Basic --genomeLoad NoSharedMemory --readFilesIn mergedFastq1 mergedFastq2 --outFileNamePrefix output/bamOutdir/sampleName. --outReadsUnmapped None --chimSegmentMin 12 --chimJunctionOverhangMin 12 --alignSJDBoverhangMin 10 --alignMatesGapMax 200000 --alignIntronMax 200000 --chimSegmentReadGapMax parameter 3 --alignSJstitchMismatchNmax 5 -1 5 5 --runThreadN 4 --outSAMtype BAM Unsorted --outSAMattrRGline ID:sampleName SM:sampleName LB:RNA PL:Illumina CN:cr --readFilesCommand zcat
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: STAR4FUSION alignment.
+	sleep 8
+else
+	echo `date` Error Step: STAR4FUSION alignment.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+echo `date` Begin Step: Sort bam...
+java -jar picard SortSam INPUT=output/bamOutdir/sampleName.Aligned.out.bam OUTPUT=output/bamOutdir/sampleName.star.sorted.bam SORT_ORDER=coordinate VALIDATION_STRINGENCY=SILENT
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Sort bam.
+	sleep 8
+else
+	echo `date` Error Step: Sort bam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+echo `date` Begin Step: Index bam...
+samtools index output/bamOutdir/sampleName.star.sorted.bam
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Index bam.
+	sleep 8
+else
+	echo `date` Error Step: Index bam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+echo `date` Begin Step: STAR-Fusion detection...
+starFusion --genome_lib_dir starFusionLib -J output/bamOutdir/sampleName.Chimeric.out.junction --output_dir output/sampleOutputDir/starFusion
+mv output/sampleOutputDir/starFusion/star-fusion.fusion_candidates.final.abridged output/sampleOutputDir/starFusion/sampleName.starFusion.fusion.final.abridged
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: STAR-Fusion detection.
+	sleep 8
+else
+	echo `date` Error Step: STAR-Fusion detection.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi

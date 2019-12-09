@@ -1,0 +1,15 @@
+echo `date` Begin Step: Lofreq detection...
+[(${toolFields.lofreq})] [# th:if = "${toolFields.isPaired}"]somatic -f [(${toolFields.genome})] --min-cov 3 --call-indels -n [(${toolFields.controlBam})] -t [(${toolFields.bam})] -l [(${toolFields.bed})] --threads [(${toolFields.numThreads})] -o [(${toolFields.prefix})]
+gunzip -c [(${toolFields.prefix})]somatic_final.snvs.vcf.gz > [(${toolFields.prefix})]somatic_final.snvs.vcf
+gunzip -c [(${toolFields.prefix})]somatic_final.indels.vcf.gz > [(${toolFields.prefix})]somatic_final.indels.vcf
+grep -v "^#" [(${toolFields.prefix})]somatic_final.indels.vcf | cat [(${toolFields.prefix})]somatic_final.snvs.vcf - > [(${toolFields.vcf})][/][# th:unless = "${toolFields.isPaired}"]call -f [(${toolFields.genome})] --min-cov 3 -m 20 -q 20 -Q 20 --sig 0.05 --call-indels -o [(${toolFields.vcf})] -l [(${toolFields.bed})] [(${toolFields.bam})][/]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Lofreq detection.
+	sleep 8
+else
+	echo `date` Error Step: Lofreq detection.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi

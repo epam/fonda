@@ -1,0 +1,2 @@
+parameterType	shortName	Parameter1	Parameter2
+fastqFile	UM-UC-3	/Sample_UM-UC-3/UM-UC-3_ACACGACC_L001_R1_001.fastq.gz	/Sample_UM-UC-3/UM-UC-3_ACACGACC_L001_R2_001.fastq.gz

@@ -1,0 +1,26 @@
+echo `date` Begin Step: Mark duplicates...
+java -Xmx16g -jar picard MarkDuplicates INPUT=sbamOutdir/sampleName.toolName.sorted.bam OUTPUT=sbamOutdir/sampleName.toolName.sorted.mkdup.bam METRICS_FILE=sqcOutdir/sampleName.toolName.sorted.mkdup.metrics ASSUME_SORTED=true REMOVE_DUPLICATES=false VALIDATION_STRINGENCY=SILENT TMP_DIR=stmpOutdir
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Mark duplicates.
+	sleep 8
+else
+	echo `date` Error Step: Mark duplicates.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Index mkdup bam...
+samtools index sbamOutdir/sampleName.toolName.sorted.mkdup.bam
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Index mkdup bam.
+	sleep 8
+else
+	echo `date` Error Step: Index mkdup bam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+

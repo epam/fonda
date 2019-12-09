@@ -1,0 +1,20 @@
+logFile=[(${QcSummaryFields.logFile})]
+str=""
+while [# th:inline="none"][[[/] $str = "" ]]
+do
+if [# th:inline="none"][[[/] -f $logFile  ]];
+then
+    str=$(grep -E "(Successful|Error) Step: [(${QcSummaryFields.tag})]" $logFile;)
+fi
+    echo Waiting for step: [(${QcSummaryFields.tag})]
+    sleep [(${QcSummaryFields.statusCheckPeriod})]
+done
+
+if [# th:inline="none"][[[/] $str == "*Error Step: [(${QcSummaryFields.tag})]*" ]];
+then
+    echo $(date) [(${QcSummaryFields.errorMessage})]:
+    echo $str
+else
+    echo $(date) [(${QcSummaryFields.successMessage})]
+fi
+

@@ -1,0 +1,13 @@
+echo `date` Begin Step: Cellranger vdj analysis...
+cd [(${sampleFields.vdjOutdir})]
+[(${vdjFields.cellranger})] vdj --id=[(${sampleFields.sampleName})] --reference=[(${vdjFields.genome})] --chain=[(${vdjFields.chain})] [# th:if = "${vdjFields.lanes != 'NA'}"] --lanes=[(${vdjFields.lanes})][/][# th:if = "${vdjFields.indices != 'NA'}"] --indices=[(${vdjFields.indices})][/][# th:if = "${vdjFields.denovo == 'TRUE'}"] --denovo=[(${vdjFields.denovo})][/] --fastqs=[(${sampleFields.fastqOutdir})] --sample=[(${sampleFields.sampleName})] --force-cells=[(${vdjFields.forcedCells})]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Cellranger vdj analysis.
+	sleep 8
+else
+	echo `date` Error Step: Cellranger vdj analysis.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi

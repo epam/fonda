@@ -1,0 +1,25 @@
+echo `date` Begin Step: Novoalign alignment...
+[(${novoalignSortFields.novoalign})] -c [(${novoalignSortFields.numThreads})] -d [(${novoalignSortFields.novoindex})] -o SAM $[(${novoalignSortFields.rg})] -f [# th:if = "${fastq2 != null}"][(${fastq1})] [(${fastq2})][/][# th:unless = "${fastq2 != null}"][(${fastq1})][/] [# th:if = "${novoalignSortFields.bedPrimer != null}"]--amplicons [(${novoalignSortFields.bedPrimer})] [/]--hlimit 9 -t 0,2 -x 3 -H 22 --softclip 35 --trim3hp --matchreward 3 -k| [(${novoalignSortFields.samtools})] view -bS -|[(${novoalignSortFields.samtools})] sort - [(${novoalignSortFields.tmpBam})]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Novoalign alignment.
+	sleep 8
+else
+	echo `date` Error Step: Novoalign alignment.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Index bam...
+[(${novoalignSortFields.samtools})] index [(${novoalignSortFields.sortedBam})]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Index bam.
+	sleep 8
+else
+	echo `date` Error Step: Index bam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi

@@ -1,0 +1,13 @@
+echo `date` Begin Step: Merge mutation annotation...
+[(${rnaAnalysisFields.rScript})] [(${rnaAnalysisFields.jarPath})]/src/R/dna_rna_mutation_data_analysis.R -i [(${rnaAnalysisFields.sampleList})] -d [(${rnaAnalysisFields.outdir})] -t [(${rnaAnalysisFields.toolName})]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Merge mutation annotation.
+	sleep 8
+else
+	echo `date` Error Step: Merge mutation annotation.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+

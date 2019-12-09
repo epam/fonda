@@ -1,0 +1,16 @@
+echo `date` Begin the job execution...
+echo `date` Begin Step: Merge fastqs...
+zcat fastqs_1 fastqs_1 | gzip -c > sfqOutdir/sampleName.merged_R1.fastq.gz
+zcat fastqs_2 | gzip -c > sfqOutdir/sampleName.merged_R2.fastq.gz
+
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Merge fastqs.
+	sleep 8
+else
+	echo `date` Error Step: Merge fastqs.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+

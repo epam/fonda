@@ -1,0 +1,14 @@
+echo `date` Begin Step: Sequenza detection...
+[(${toolFields.python})] [(${toolFields.sequenza})]/sequenza-utils.py pileup2seqz -gc [(${toolFields.sequenzaGc50})] -n [(${toolFields.controlPileup})] -t [(${toolFields.pileup})] | gzip > [(${toolFields.sequenzaSeqz})]
+[(${toolFields.python})] [(${toolFields.sequenza})]/sequenza-utils.py seqz-binning -w 50 -s [(${toolFields.sequenzaSeqz})] | gzip > [(${toolFields.sequenzaSeqzReduce})]
+[(${toolFields.rScript})] [(${toolFields.sequenza})]/sequenza.R -i [(${toolFields.sequenzaSeqzReduce})] -o [(${toolFields.sequenzaSeg})] -t [(${toolFields.sequenzaInfor})]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Sequenza detection.
+	sleep 8
+else
+	echo `date` Error Step: Sequenza detection.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi

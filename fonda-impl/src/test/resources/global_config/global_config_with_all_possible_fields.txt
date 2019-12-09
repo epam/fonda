@@ -1,0 +1,77 @@
+[Queue_Parameters]
+NUMTHREADS = 4
+MAXMEM = 24g
+QUEUE = all.q
+PE = -pe threaded
+
+[Databases]
+SPECIES = human
+GENOME_BUILD = hg38
+GENOME = /output/file.fa
+STARINDEX = /output/file.fa
+NOVOINDEX = /output/file2.fa
+BED = /output/file.fa
+BED_WITH_HEADER = /output/file.fa
+BED_FOR_COVERAGE = /output/file.fa
+KNOWN_INDELS_MILLS = /output/hg19_decoy.vcf
+KNOWN_INDELS_PHASE1 = /output/hg29_decoy.vcf
+DBSNP = /dbsnp_138.vcf
+ADAPTER_FWD = AAAGAGATCGGAAGAG
+ADAPTER_REV = AGATCGGAATGAGGAGCGTCGTGTAGGGAAAGAGT
+SNPSIFTDB = /outputsnpEff/db
+CANONICAL_TRANSCRIPT = /output/prefer_ensembl_transcript.txt
+ANNOTGENE = /gencode.trxlevel1-3.gtf
+ANNOTGENESAF = /output.trxlevel1-3.saf
+TRANSCRIPTOME = /output.pc_transcripts.fa
+COSMIC = /290514_decoy.vcf
+MUTECT_NORMAL_PANEL = /mutect_normal_panel/vcf
+BED_PRIMER = /output/primer.bed
+rRNABED = /output/gencode.v26.rRNA.list
+STARFUSIONLIB = /output/STAR-Fusion-Lib
+BOWTIEINDEX = /GRCh38/Index/Bowtie
+
+[all_tools]
+bedtools = /bedtools2/bedtools
+star = /output/bin/Linux_x86_64/STAR
+seqpurge = /output/SeqPurge
+novoalign = /output/novoalign
+java = /output/bin/java
+samtools = /output/v0.1.19/samtools
+picard = /output/v2.10.3/picard.jar
+snpsift = /output/SnpSift.jar
+transvar = /output/transvar
+gatk = /output/GenomeAnalysisTK.jar
+python = /output/v2.7.2/bin/python
+Rscript = /output/Rscript
+vardict = /output/VarDictJava/v1.5.0
+abra2 = /output/abra2-2.07.jar
+doubletdetection_python = /output/3.5.2/bin/python
+bwa = /output/bwa
+rnaseqc_java = /output/jre1.7.0_60/bin/java
+mutect_java = /output/bin/java
+rnaseqc = /output/RNA-SeQC_v1.1.8.jar
+mutect = /output/mutect-1.1.7.jar
+scalpel = /output/scalpel/v0.5.3
+optitype = /output/OptiType/v1.2.1
+cufflinks = /output/cufflinks
+feature_count = /output/featureCounts
+starFusion = /output/STAR-Fusion
+cellranger = /output/cellranger
+bowtie2 = /output/v2.2.9/bowtie2
+mixcr = /output/MiXCR/v2.1.3/mixcr
+
+[cellranger]
+cellranger_EXPECTED_CELLS = 5000
+cellranger_FORCED_CELLS = NA
+cellranger_NOSECONDARY = FALSE
+cellranger_CHEMISTRY = auto
+cellranger_R1-LENGTH = NA
+cellranger_R2-LENGTH = NA
+cellranger_LANES = NA
+cellranger_INDICES = NA
+
+[Pipeline_Info]
+workflow = DnaCaptureVar_Fastq
+toolset = bwa+picard+qc
+flag_xenome = yes
+read_type = paired

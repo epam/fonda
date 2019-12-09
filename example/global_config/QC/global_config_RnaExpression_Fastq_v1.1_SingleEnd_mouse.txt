@@ -1,0 +1,31 @@
+[Queue_Parameters]
+NUMTHREADS = 4
+MAXMEM = 24g
+QUEUE = all.q
+PE = -pe threaded
+
+[Databases]
+SPECIES = mouse
+GENOME_BUILD = GRCm38
+ANNOTGENE = /ngs/data/gencode/mouse/release-M14/Annotation/gencode.vM14.annotation.knowntrx.exon.level1-2.trxlevel1-3.appris1-2.gtf
+GENOME = /ngs/data/gencode/mouse/release-M14/Sequence/WholeGenomeFasta/GRCm38.p5.genome.fa
+TRANSCRIPTOME = /ngs/data/gencode/mouse/release-M14/Sequence/WholeGenomeFasta/GRCm38.cdna.all.fa
+STARINDEX = /ngs/data/gencode/mouse/release-M14/Sequence/STAR_gcM14
+ANNOTGENESAF = /ngs/data/gencode/mouse/release-M14/Annotation/gencode.vM14.annotation.knowntrx.exon.level1-2.trxlevel1-3.appris1-2.saf
+
+[all_tools]
+star = /ngs/data/tools/STAR/v2.4.0h1/bin/Linux_x86_64/STAR
+java = /ngs/data/app/java/v1.8.0u121/bin/java
+rnaseqc_java = /ngs/data/tools/java/jre1.7.0_60/bin/java
+samtools = /ngs/data/tools/samtools/v0.1.19/samtools
+picard = /ngs/data/tools/picard/v2.10.3/picard.jar
+rnaseqc = /ngs/data/tools/RNA-SeQC/v1.1.8/RNA-SeQC_v1.1.8.jar
+python = /ngs/data/app/python/v2.7.2/bin/python
+Rscript = /ngs/data/app/R/v3.5.0/bin/Rscript
+doubletdetection_python = /ngs/data/py/versions/3.5.2/bin/python
+
+[Pipeline_Info]
+workflow = RnaExpression_Fastq
+toolset = star+qc
+flag_xenome = no
+read_type = single

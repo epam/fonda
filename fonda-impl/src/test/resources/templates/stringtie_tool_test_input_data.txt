@@ -1,0 +1,16 @@
+echo `date` Begin the job execution...
+
+echo `date` Begin Step: Stringtie...
+stringtie -p 1 -G annotgene -A output/stringtie/sampleName.stringtie.gene.expression.results -o output/stringtie/sampleName.stringtie.assembly.transcripts.gtf build/resources/integrationTest/output/smv1/bam/smv1.hisat2.sorted.rmdup.bam
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Stringtie.
+	sleep 8
+else
+	echo `date` Error Step: Stringtie.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Finish the job execution!

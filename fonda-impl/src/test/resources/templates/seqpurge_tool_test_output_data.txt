@@ -1,0 +1,13 @@
+echo `date` Begin Step: Seqpurge trimming...
+seqPurge -threads 5 -in1 mergedFastq1 -in2 mergedFastq2 -out1 sfqOutdir/sampleName.trimmed.R1.fastq.gz -out2 sfqOutdir/sampleName.trimmed.R2.fastq.gz -qcut 20 -a1 adapterFWD -a2 adapterREV
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Seqpurge trimming.
+	sleep 8
+else
+	echo `date` Error Step: Seqpurge trimming.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+

@@ -1,0 +1,26 @@
+echo `date` Begin Step: Merge DNA bams...
+java -Xmx10g -jar picard MergeSamFiles O=rootOutdir/sampleName/bam/sampleName.merged.sorted.bam I=bamFile1.bam I=bamFile2.bam VALIDATION_STRINGENCY=SILENT
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Merge DNA bams.
+	sleep 8
+else
+	echo `date` Error Step: Merge DNA bams.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Index bam...
+samtools index rootOutdir/sampleName/bam/sampleName.merged.sorted.bam
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Index bam.
+	sleep 8
+else
+	echo `date` Error Step: Index bam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+

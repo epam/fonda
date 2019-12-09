@@ -1,0 +1,25 @@
+echo `date` Begin Step: BWA alignment...
+bwa mem -t 4 genome -M -R "@RG\tID:sampleName\tSM:sampleName\tLB:DNA\tPL:Illumina" fastq1 fastq2| samTools view -bS -|samTools sort - sbamOutdir/sampleName_4.bwa.sorted
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: BWA alignment.
+	sleep 8
+else
+	echo `date` Error Step: BWA alignment.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Index bam...
+samTools index sbamOutdir/sampleName_4.bwa.sorted.bam
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Index bam.
+	sleep 8
+else
+	echo `date` Error Step: Index bam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi

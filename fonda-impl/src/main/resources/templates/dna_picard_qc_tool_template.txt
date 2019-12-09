@@ -1,0 +1,32 @@
+echo `date` Begin Step: DNA QC metrics...
+[(${toolFields.java})] -Xmx16g -jar [(${toolFields.picard})] CollectAlignmentSummaryMetrics REFERENCE_SEQUENCE=[(${databaseFields.genome})] INPUT=[(${additionalFields.mkdupBam})] OUTPUT=[(${metricsFields.alignMetrics})] VALIDATION_STRINGENCY=SILENT TMP_DIR=[(${outputDirFields.tmpOutdir})]
+[(${toolFields.java})] -Xmx16g -jar [(${toolFields.picard})] CollectHsMetrics REFERENCE_SEQUENCE=[(${databaseFields.genome})] INPUT=[(${additionalFields.mkdupBam})] OUTPUT=[(${metricsFields.mkdupHsMetrics})] MQ=0 Q=0 TARGET_INTERVALS=[(${databaseFields.bedWithHeader})] BAIT_INTERVALS=[(${databaseFields.bedWithHeader})] VALIDATION_STRINGENCY=SILENT TMP_DIR=[(${outputDirFields.tmpOutdir})]
+[(${toolFields.java})] -Xmx16g -jar [(${toolFields.picard})] CollectHsMetrics REFERENCE_SEQUENCE=[(${databaseFields.genome})] INPUT=[(${additionalFields.bam})] OUTPUT=[(${metricsFields.rmdupHsMetrics})] MQ=0 Q=0 TARGET_INTERVALS=[(${databaseFields.bedWithHeader})] BAIT_INTERVALS=[(${databaseFields.bedWithHeader})] VALIDATION_STRINGENCY=SILENT TMP_DIR=[(${outputDirFields.tmpOutdir})]
+[(${toolFields.java})] -Xmx16g -jar [(${toolFields.picard})] CollectGcBiasMetrics REFERENCE_SEQUENCE=[(${databaseFields.genome})] INPUT=[(${additionalFields.mkdupBam})] OUTPUT=[(${metricsFields.gcbiasMetrics})] SUMMARY_OUTPUT=[(${metricsFields.gcsumMetrics})] CHART=[(${metricsFields.gcbiasChart})] VALIDATION_STRINGENCY=SILENT TMP_DIR=[(${outputDirFields.tmpOutdir})]
+[(${toolFields.java})] -Xmx16g -jar [(${toolFields.picard})] CollectInsertSizeMetrics REFERENCE_SEQUENCE=[(${databaseFields.genome})] INPUT=[(${additionalFields.mkdupBam})] OUTPUT=[(${metricsFields.insertMetrics})] HISTOGRAM_FILE=[(${metricsFields.insertChart})] VALIDATION_STRINGENCY=SILENT TMP_DIR=[(${outputDirFields.tmpOutdir})]
+[(${toolFields.java})] -Xmx16g -jar [(${toolFields.picard})] CollectQualityYieldMetrics REFERENCE_SEQUENCE=[(${databaseFields.genome})] INPUT=[(${additionalFields.mkdupBam})] OUTPUT=[(${metricsFields.qualityMetrics})] VALIDATION_STRINGENCY=SILENT TMP_DIR=[(${outputDirFields.tmpOutdir})]
+[(${toolFields.samtools})] mpileup -q 0 -Q 0 -B -d 100000 -f [(${databaseFields.genome})] -l [(${databaseFields.bed})] [(${additionalFields.bam})] > [(${metricsFields.pileup})]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: DNA QC metrics.
+	sleep 8
+else
+	echo `date` Error Step: DNA QC metrics.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Merge DNA QC...
+[(${toolFields.python})] [(${additionalFields.jarPath})]/src/python/dna_rna_variant_qc_metrics.py --sample [(${additionalFields.sampleName})] --align [(${metricsFields.alignMetrics})] --mkdup_hybrid [(${metricsFields.mkdupHsMetrics})] --rmdup_hybrid [(${metricsFields.rmdupHsMetrics})][# th:if = "${additionalFields.readType == 'paired'}"] --insert [(${metricsFields.insertMetrics})][/] --gcbias [(${metricsFields.gcsumMetrics})] --duplicate [(${metricsFields.mkdupMetric})] --pileup [(${metricsFields.pileup})] --read_type [(${additionalFields.readType})] --type wes --project [(${additionalFields.project})] --run [(${additionalFields.run})] --date [(${additionalFields.date})] --output [(${metricsFields.mergedQcMetrics})]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Merge DNA QC.
+	sleep 8
+else
+	echo `date` Error Step: Merge DNA QC.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+

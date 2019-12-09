@@ -1,0 +1,29 @@
+[Queue_Parameters]
+NUMTHREADS = 2
+MAXMEM = 24g
+QUEUE = all.q
+PE = -pe threaded
+
+[Databases]
+SPECIES = human
+GENOME_BUILD = hg19
+BED = /ngs/data/S03723314_Padded.bed
+SNPSIFTDB = /ngs/data/tools/SnpEff/snpEff_v4.3p/snpEff/db
+CANONICAL_TRANSCRIPT = /ngs/data/reference_genome/GRCh37/Annotation/prefer_ensembl_transcript.txt
+
+[all_tools]
+bedtools = /ngs/data/tools/bedtools2/v2.2.1/bin/bedtools
+java = /ngs/data/app/java/v1.8.0u121/bin/java
+snpsift = /ngs/data/tools/SnpEff/snpEff_v4.3p/snpEff/SnpSift.jar
+transvar = /ngs/data/app/python/v2.7.2/bin/transvar
+mutect = /ngs/data/tools/MuTect/v1.1.7/mutect-1.1.7.jar
+scalpel = /ngs/data/tools/scalpel/v0.5.3
+python = /ngs/data/app/python/v2.7.2/bin/python
+Rscript = /ngs/data/app/R/v3.5.0/bin/Rscript
+doubletdetection_python = /ngs/data/py/versions/3.5.2/bin/python
+
+[Pipeline_Info]
+workflow = DnaAmpliconVar_Bam
+toolset = mutect1+scalpel
+flag_xenome = no
+read_type = single

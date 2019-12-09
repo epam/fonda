@@ -1,0 +1,26 @@
+echo `date` Begin Step: Mark duplicates...
+[(${toolFields.java})] -Xmx16g -jar [(${toolFields.picard})] MarkDuplicates INPUT=[(${bam})] OUTPUT=[(${additionalPicardMarkDuplicateFields.mkdupBam})] METRICS_FILE=[(${additionalPicardMarkDuplicateFields.mkdupMetric})] ASSUME_SORTED=true REMOVE_DUPLICATES=false VALIDATION_STRINGENCY=SILENT TMP_DIR=[(${additionalPicardMarkDuplicateFields.stmpOutdir})]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Mark duplicates.
+	sleep 8
+else
+	echo `date` Error Step: Mark duplicates.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Index mkdup bam...
+[(${toolFields.samtools})] index [(${additionalPicardMarkDuplicateFields.mkdupBam})]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Index mkdup bam.
+	sleep 8
+else
+	echo `date` Error Step: Index mkdup bam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+

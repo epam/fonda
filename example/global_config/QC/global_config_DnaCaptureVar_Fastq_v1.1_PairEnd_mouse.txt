@@ -1,0 +1,30 @@
+[Queue_Parameters]
+NUMTHREADS = 4
+MAXMEM = 24g
+QUEUE = all.q
+PE = -pe threaded
+
+[Databases]
+SPECIES = mouse
+GENOME_BUILD = mm10
+GENOME = /ngs/data/reference_genome/mm10/mm10_ucsc_2011_12.fa
+NOVOINDEX = /ngs/data/reference_genome/mm10/mm10_ucsc_2011_12.nix
+BED = /ngs/data/mm10_target_intervals.bed
+BED_WITH_HEADER = /ngs/data/mm10_target_intervals.txt
+BED_FOR_COVERAGE = /ngs/data/mm10_target_intervals.txt
+
+[all_tools]
+bedtools = /ngs/data/tools/bedtools2/v2.2.1/bin/bedtools
+bwa = /ngs/data/tools/bwa/bwa-0.7.12/bwa
+java = /ngs/data/app/java/v1.8.0u121/bin/java
+samtools = /ngs/data/tools/samtools/v0.1.19/samtools
+picard = /ngs/data/tools/picard/v2.10.3/picard.jar
+python = /ngs/data/app/python/v2.7.2/bin/python
+Rscript = /ngs/data/app/R/v3.5.0/bin/Rscript
+doubletdetection_python = /ngs/data/py/versions/3.5.2/bin/python
+
+[Pipeline_Info]
+workflow = DnaCaptureVar_Fastq
+toolset = bwa+picard+qc
+flag_xenome = no
+read_type = paired

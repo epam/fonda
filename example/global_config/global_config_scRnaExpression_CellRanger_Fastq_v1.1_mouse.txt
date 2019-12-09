@@ -1,0 +1,35 @@
+[Queue_Parameters]
+NUMTHREADS = 8
+MAXMEM = 50g
+QUEUE = all.q
+PE = -pe threaded
+
+[Databases]
+SPECIES = mouse
+GENOME_BUILD = mm10
+GENOME = /ngs/data/tools/cellranger/references/mm10_2016_11_16
+TRANSCRIPTOME = /ngs/data/tools/cellranger/references/mm10_2016_11_16
+
+[all_tools]
+cellranger = /ngs/data/tools/cellranger/v2.0.2/cellranger
+java = /ngs/data/app/java/v1.8.0u121/bin/java
+samtools = /ngs/data/tools/samtools/v0.1.19/samtools
+picard = /ngs/data/tools/picard/v2.10.3/picard.jar
+python = /ngs/data/app/python/v2.7.2/bin/python
+Rscript = /ngs/data/app/R/v3.5.0/bin/Rscript
+doubletdetection_python = /ngs/data/py/versions/3.5.2/bin/python
+
+[cellranger]
+cellranger_EXPECTED_CELLS = 5000
+cellranger_FORCED_CELLS = NA
+cellranger_NOSECONDARY = FALSE
+cellranger_CHEMISTRY = auto
+cellranger_R1-LENGTH = NA
+cellranger_R2-LENGTH = NA
+cellranger_LANES = NA
+cellranger_INDICES = NA
+
+[Pipeline_Info]
+workflow = scRnaExpression_CellRanger_Fastq
+toolset = count+qc
+read_type = paired

@@ -1,0 +1,16 @@
+echo `date` Begin the job execution...
+
+echo `date` Begin Step: Stringtie...
+[(${stringtieFields.stringtie})] -p [(${stringtieFields.numThreads})] -G [(${stringtieFields.annotgene})] -A [(${stringtieFields.stringtieGeneResult})] -o [(${stringtieFields.stringtieAssemblyTranscript})] [(${stringtieFields.bam})]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Stringtie.
+	sleep 8
+else
+	echo `date` Error Step: Stringtie.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Finish the job execution!

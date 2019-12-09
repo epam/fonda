@@ -1,0 +1,5 @@
+[Queue_Parameters]
+NUMTHREADS = 5
+MAXMEM = 24g
+QUEUE = all.q
+PE = -pe threaded

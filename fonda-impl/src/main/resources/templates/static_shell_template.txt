@@ -1,0 +1,24 @@
+#!/bin/bash -x
+
+[# th:if = "${variablesMap.get('local').equals('false')}"]# --- SGE options --- #
+
+#$ -wd [(${variablesMap.get('outdir')})]
+#$ -N [(${variablesMap.get('fileName')})]
+#$ -o [(${variablesMap.get('outdir')})]/log_files/[(${variablesMap.get('fileName')})].log
+#$ -e [(${variablesMap.get('outdir')})]/err_files/[(${variablesMap.get('fileName')})].err
+#$ -q [(${variablesMap.get('queue')})]
+#$ -R y
+#$ [(${variablesMap.get('pe')})] [(${variablesMap.get('numThreads')})]
+#$ -m a
+
+[/][# th:unless = "${variablesMap.get('local').equals('false')}"]# --- Local machine options --- #
+
+exec 1> [(${variablesMap.get('outdir')})]/log_files/[(${variablesMap.get('fileName')})].log
+exec 2> [(${variablesMap.get('outdir')})]/err_files/[(${variablesMap.get('fileName')})].err
+
+[/]# --- The commands to be executed --- #
+
+cd [(${variablesMap.get('outdir')})]
+
+echo `date` Begin the job execution...
+

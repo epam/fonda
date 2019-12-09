@@ -1,0 +1,23 @@
+echo `date` Begin the job execution...
+
+
+echo `date` Begin Step: SALMON...
+gunzip -c [(${salmonFields.fastq1})] > [(${salmonFields.decopMergedFastq1})]
+gunzip -c [(${salmonFields.fastq2})] > [(${salmonFields.decopMergedFastq2})]
+[(${salmonFields.salmon})] quant -i [(${salmonFields.index})] -l IU -p [(${salmonFields.numThreads})] -1 [(${salmonFields.decopMergedFastq1})][# th:if = "${salmonFields.fastq2 != null}"] -2 [(${salmonFields.decopMergedFastq2})][/] -g [(${salmonFields.annotgene})] -o [(${salmonFields.salmonOutdir})]
+mv [(${salmonFields.salmonOutdir})]/quant.genes.sf [(${salmonFields.salmonGeneResult})]
+mv [(${salmonFields.salmonOutdir})]/quant.sf [(${salmonFields.salmonTranscriptResult})]
+rm -rf [(${salmonFields.decopMergedFastq1})][# th:if = "${salmonFields.fastq2 != null}"]
+rm -rf [(${salmonFields.decopMergedFastq2})][/]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: SALMON.
+	sleep 8
+else
+	echo `date` Error Step: SALMON.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+

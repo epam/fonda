@@ -1,0 +1,18 @@
+echo `date` Begin the job execution...
+
+
+[# th:if = "${trimmomaticFields.fastq1 != null}"][# th:if = "${trimmomaticFields.adapterSEQ != null}"]echo `date` Begin Step: Trimmomatic trimming...
+[(${trimmomaticFields.java})] -jar [(${trimmomaticFields.trimmomatic})] [# th:text = "${trimmomaticFields.fastq2 != null} ? PE : SE"][/] -threads [(${trimmomaticFields.numThreads})] -phred33 [(${trimmomaticFields.fastq1})] [# th:if = "${trimmomaticFields.fastq2 != null}"][(${trimmomaticFields.fastq2})][/] [(${trimmomaticFields.trimmedFastq1})] [# th:if = "${trimmomaticFields.fastq2 != null}"][(${trimmomaticFields.trimmedUnpairedFastq1})] [(${trimmomaticFields.trimmedFastq2})] [(${trimmomaticFields.trimmedUnpairedFastq2})][/] ILLUMINACLIP:[(${trimmomaticFields.adapterSEQ})]:2:30:10 LEADING:20 TRAILING:20 SLIDINGWINDOW:4:15 MINLEN:36
+[# th:if = "${trimmomaticFields.fastq2 != null}"]rm -rf [(${trimmomaticFields.trimmedUnpairedFastq1})]
+rm -rf [(${trimmomaticFields.trimmedUnpairedFastq2})][/]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Trimmomatic trimming.
+	sleep 8
+else
+	echo `date` Error Step: Trimmomatic trimming.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+[/][# th:unless = "${trimmomaticFields.adapterSEQ != null}"]echo `date` the adapter sequence trimming step was skipped since no adapter sequences were provided in the config files.[/][/]

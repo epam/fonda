@@ -1,0 +1,19 @@
+echo `date` Begin Step: Strelka2 detection...
+[(${toolFields.python})] [(${toolFields.strelka2})][# th:if = "${toolFields.isPaired}"]/configureStrelkaSomaticWorkflow.py[/][# th:unless = "${toolFields.isPaired}"]/configureStrelkaGermlineWorkflow.py[/] --referenceFasta=[(${toolFields.genome})] [# th:if = "${toolFields.isPaired}"]--tumorBam=[(${toolFields.bam})] --normalBam=[(${toolFields.controlBam})][/][# th:unless = "${toolFields.isPaired}"]--bam=[(${toolFields.bam})][/] --callRegions=[(${toolFields.bed})] --runDir=[(${toolFields.outDir})] --callMemMb=2048 --exome
+[(${toolFields.python})] [(${toolFields.outDir})]/runWorkflow.py -m local -j 8
+[# th:if = "${toolFields.isPaired}"]gunzip -c [(${toolFields.outDir})]/results/variants/somatic.snvs.vcf.gz > [(${toolFields.outDir})]/results/variants/somatic.snvs.vcf
+gunzip -c [(${toolFields.outDir})]/results/variants/somatic.indels.vcf.gz > [(${toolFields.outDir})]/results/variants/somatic.indels.vcf
+grep -v ^# [(${toolFields.outDir})]/results/variants/somatic.indels.vcf | cat [(${toolFields.outDir})]/results/variants/somatic.snvs.vcf - > [(${toolFields.vcf})]
+
+rm [(${toolFields.outDir})]/results/variants/somatic.snvs.vcf
+rm [(${toolFields.outDir})]/results/variants/somatic.indels.vcf[/][# th:unless = "${toolFields.isPaired}"]zcat [(${toolFields.outDir})]/results/variants/variants.vcf.gz > [(${toolFields.vcf})][/]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Stelka2 detection.
+	sleep 8
+else
+	echo `date` Error Step: Stelka2 detection.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi

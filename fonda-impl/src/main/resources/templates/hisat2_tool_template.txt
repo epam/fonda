@@ -1,0 +1,26 @@
+echo `date` Begin Step: HISAT2 alignment...
+[(${toolFields.hisat2})] -x [(${additionalHisat2Fields.index})] -p [(${additionalHisat2Fields.numThreads})] --rg [(${additionalHisat2Fields.rg})] --rg-id [(${additionalHisat2Fields.sampleName})] --seed 12345 --dta[# th:if = "${additionalHisat2Fields.fastq2 != null}"] -1 [(${additionalHisat2Fields.fastq1})] -2 [(${additionalHisat2Fields.fastq2})][/][# th:unless = "${additionalHisat2Fields.fastq2 != null}"] -U [(${additionalHisat2Fields.fastq1})][/] | [(${toolFields.samtools})] view -bS -|[(${toolFields.samtools})] sort - [(${additionalHisat2Fields.tmpBam})]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: HISAT2 alignment.
+	sleep 8
+else
+	echo `date` Error Step: HISAT2 alignment.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Index bam...
+[(${toolFields.samtools})] index [(${bam})]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Index bam.
+	sleep 8
+else
+	echo `date` Error Step: Index bam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+

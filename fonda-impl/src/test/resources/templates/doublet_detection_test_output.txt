@@ -1,0 +1,12 @@
+echo `date` Begin Step: Doubletdetection doublet detection...
+doubleDetectionPythonPath [(${jarPath})]/src/python/singlecell_doubletdetection.py --sample_id sampleName --work_dir output --genome_build genomeBuild
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Doubletdetection doublet detection.
+	sleep 8
+else
+	echo `date` Error Step: Doubletdetection doublet detection.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi

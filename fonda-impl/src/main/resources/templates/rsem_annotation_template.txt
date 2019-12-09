@@ -1,0 +1,13 @@
+echo `date` Begin Step: RSEM annotation...
+[(${rsemAnnotationFields.python})] [(${rsemAnnotationFields.jarPath})]/src/python/rna_gene_annotation.py -t rsem -i [(${rsemAnnotationFields.rsemGeneResult})] -o [(${rsemAnnotationFields.rsemAnnoGeneResult})] -a [(${rsemAnnotationFields.annotGeneSaf})]
+mv [(${rsemAnnotationFields.rsemAnnoGeneResult})] [(${rsemAnnotationFields.rsemGeneResult})]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: RSEM annotation.
+	sleep 8
+else
+	echo `date` Error Step: RSEM annotation.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi

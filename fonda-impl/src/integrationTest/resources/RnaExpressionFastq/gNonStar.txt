@@ -1,0 +1,37 @@
+[Queue_Parameters]
+NUMTHREADS = 4
+MAXMEM = 8g
+QUEUE = main.q
+PE = PE
+
+[Databases]
+SPECIES = human
+GENOME_BUILD = GRCh38
+ANNOTGENE = /common/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.annotation.gtf
+GENOME = /common/reference_genome/GRCh38/Sequence/GRCh38.genome.fa
+TRANSCRIPTOME = /common/reference_genome/GRCh38/Sequence/GRCh38.gencode.v26.pc_transcripts.fa
+STARINDEX = /common/reference_genome/GRCh38/Index/STAR_g26
+ANNOTGENESAF = /common/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.annotation.saf
+ADAPTER_FWD = AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC
+ADAPTER_REV = AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT
+
+[all_tools]
+star = /opt/STAR/STAR-STAR_2.4.0h1/bin/Linux_x86_64/STAR
+seqpurge = /opt/ngs_bits/ngs-bits/bin/SeqPurge
+cufflinks = /opt/cufflinks/cufflinks-2.2.1.Linux_x86_64/cufflinks
+feature_count = /opt/subread/subread-1.4.5-p1-Linux-x86_64/bin/featureCounts
+java = /usr/lib/jvm/java-8-openjdk-amd64/bin/java
+rnaseqc_java = /usr/lib/jvm/java-7-openjdk-amd64/bin/java
+samtools = /opt/samtools/samtools-0.1.19/samtools
+picard = /opt/picard/picard.jar
+rnaseqc = /opt/rnaseqc/RNA-SeQC_v1.1.8.jar
+python = /usr/bin/python
+Rscript = /usr/bin/Rscript
+
+[Pipeline_Info]
+workflow = RnaExpression_Fastq
+toolset = trimmomatic
+flag_xenome = no
+read_type = paired
+ADAPTER_SEQ = adapter_seq
+trimmomatic = trimmomatic

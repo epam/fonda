@@ -1,0 +1,7 @@
+parameterType	shortName	Parameter	sample_type	match_control
+bamFile	smv3	/ngs/data/demo/test/smv3/bam/smv3.merged.sorted.realign.rmdup.bam	case	smv5
+bamFile	smv6	/ngs/data/demo/test/smv6/bam/smv6.merged.sorted.realign.rmdup.bam	case	smv4
+bamFile	smv5	/ngs/data/demo/test/smv5/bam/smv5.merged.sorted.realign.rmdup.bam	control	NA
+bamFile	smv4	/ngs/data/demo/test/smv4/bam/smv4.merged.sorted.realign.rmdup.bam	control	NA
+bamFile	smv1	/ngs/data/demo/test/smv1/bam/smv1.merged.sorted.realign.rmdup.bam	case	NA
+bamFile	smv2	/ngs/data/demo/test/smv2/bam/smv2.merged.sorted.realign.rmdup.bam	case	NA

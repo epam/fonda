@@ -1,0 +1,13 @@
+echo `date` Begin Step: Featurecounts...
+[(${additionalFeatureCountFields.featureCount})] -F SAF -M -s [(${additionalFeatureCountFields.featureCountByCufflinksLibraryType})] -a [(${additionalFeatureCountFields.annotgeneSaf})] -o [(${additionalFeatureCountFields.featureCountGeneCount})] -Q 20 -T [(${queueParametersFields.numThreads})] [(${additionalFeatureCountFields.bam})]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Run featureCount.
+	sleep 8
+else
+	echo `date` Error Step: Run featureCount.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+

@@ -1,0 +1,13 @@
+echo `date` Begin Step: Cellranger vdj analysis...
+cd output/vdj
+cellranger vdj --id=sampleName --reference=genome --chain=chain  --lanes=lanes --indices=indices --denovo=TRUE --fastqs=[(${fastqDirs})] --sample=sampleName --force-cells=forcedCells
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Cellranger vdj analysis.
+	sleep 8
+else
+	echo `date` Error Step: Cellranger vdj analysis.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi

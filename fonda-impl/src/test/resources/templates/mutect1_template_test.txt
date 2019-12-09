@@ -1,0 +1,12 @@
+echo `date` Begin Step: Mutect1 detection...
+mutect_java -Xmx10g -jar mutect1 --analysis_type MuTect --reference_sequence GENOME --read_filter NotPrimaryAlignment --allow_potentially_misencoded_quality_scores --intervals BED --input_file:tumor file.bam --dbsnp mutect.dbsnp --cosmic cosmic --normal_panel normal_panel --vcf [(${output})]/mutect1/sample_name.mutect1.variants.vcf
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Mutect1 detection.
+	sleep 8
+else
+	echo `date` Error Step: Mutect1 detection.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi

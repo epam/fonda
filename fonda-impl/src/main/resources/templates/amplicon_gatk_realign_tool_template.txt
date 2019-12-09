@@ -1,0 +1,14 @@
+echo `date` Begin Step: GATK realignment...
+[(${toolFields.java})] -Xmx10g -Djava.io.tmpdir=[(${additionalFields.tmpOutdir})] -jar [(${toolFields.gatk})] -T RealignerTargetCreator -R [(${databaseFields.genome})] -I [(${additionalFields.bam})] -o [(${additionalFields.realignInterval})] -known [(${databaseFields.knownIndelsMills})] -known [(${databaseFields.knownIndelsPhase1})]
+[(${toolFields.java})] -Xmx10g -Djava.io.tmpdir=[(${additionalFields.tmpOutdir})] -jar [(${toolFields.gatk})] -T IndelRealigner -R [(${databaseFields.genome})] -I [(${additionalFields.bam})] -targetIntervals [(${additionalFields.realignInterval})] -o [(${additionalFields.realignBam})] --maxReadsForRealignment 100000 -known [(${databaseFields.knownIndelsMills})] -known [(${databaseFields.knownIndelsPhase1})]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: GATK realignment.
+	sleep 8
+else
+	echo `date` Error Step: GATK realignment.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+

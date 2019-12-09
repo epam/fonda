@@ -1,0 +1,38 @@
+[Queue_Parameters]
+NUMTHREADS = 4
+MAXMEM = 24g
+QUEUE = all.q
+PE = -pe threaded
+
+[Databases]
+SPECIES = human
+GENOME_BUILD = hg19
+GENOME = /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa
+STARINDEX = /ngs/data/reference_genome/hg19/hg19_decoy/STAR_Index
+BED = /ngs/data/S03723314_Padded.bed
+BED_WITH_HEADER = /ngs/data/S03723314_Padded_decoy.txt
+BED_FOR_COVERAGE = /ngs/data/S03723314_Padded_decoy.txt
+KNOWN_INDELS_MILLS = /ngs/data/public_data/gatk_known_indels/Mills_and_1000G_gold_standard.indels.hg19_decoy.vcf
+KNOWN_INDELS_PHASE1 = /ngs/data/public_data/gatk_known_indels/1000G_phase1.indels.hg19_decoy.vcf
+DBSNP = /ngs/data/public_data/dbSNP/dbsnp_138.hg19_decoy.vcf
+SNPSIFTDB = /ngs/data/tools/SnpEff/snpEff_v4.3p/snpEff/db
+CANONICAL_TRANSCRIPT = /ngs/data/reference_genome/GRCh37/Annotation/prefer_ensembl_transcript.txt
+
+[all_tools]
+bedtools = /ngs/data/tools/bedtools2/v2.2.1/bin/bedtools
+star = /ngs/data/tools/STAR/v2.4.0h1/bin/Linux_x86_64/STAR
+java = /ngs/data/app/java/v1.8.0u121/bin/java
+samtools = /ngs/data/tools/samtools/v0.1.19/samtools
+picard = /ngs/data/tools/picard/v2.10.3/picard.jar
+snpsift = /ngs/data/tools/SnpEff/snpEff_v4.3p/snpEff/SnpSift.jar
+transvar = /ngs/data/app/python/v2.7.2/bin/transvar
+gatk = /ngs/data/tools/GATK/v3.7/GenomeAnalysisTK.jar
+python = /ngs/data/app/python/v2.7.2/bin/python
+Rscript = /ngs/data/app/R/v3.5.0/bin/Rscript
+doubletdetection_python = /ngs/data/py/versions/3.5.2/bin/python
+
+[Pipeline_Info]
+workflow = DnaCaptureVar_Fastq
+toolset = star+gatk_realign+picard+qc+gatkHaplotypeCaller
+flag_xenome = no
+read_type = paired

@@ -1,0 +1,26 @@
+echo `date` Begin Step: Remove Duplicates...
+[(${samtools})] view -bF 1024 [(${mkdupBam})] > [(${rmdupBam})]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Remove duplicates.
+	sleep 8
+else
+	echo `date` Error Step: Remove duplicates.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Index rmdup bam...
+[(${samtools})] index [(${rmdupBam})]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Index rmdup bam.
+	sleep 8
+else
+	echo `date` Error Step: Index rmdup bam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+

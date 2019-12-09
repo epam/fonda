@@ -1,0 +1,13 @@
+echo `date` Begin Step: Merge gene expression...
+[(${rnaAnalysisFields.rScript})] [(${rnaAnalysisFields.jarPath})]/src/R/rna_expression_data_analysis.R -i [(${rnaAnalysisFields.sampleList})] -d [(${rnaAnalysisFields.outdir})] -t [(${rnaAnalysisFields.toolName})]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Merge gene expression.
+	sleep 8
+else
+	echo `date` Error Step: Merge gene expression.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+

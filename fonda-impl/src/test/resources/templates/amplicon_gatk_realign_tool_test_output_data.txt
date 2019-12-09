@@ -1,0 +1,14 @@
+echo `date` Begin Step: GATK realignment...
+java -Xmx10g -Djava.io.tmpdir=stmpOutdir -jar gatk -T RealignerTargetCreator -R genome -I sbamOutdir/sampleName.toolName.sorted.file.bam -o sbamOutdir/sampleName.toolName.sorted.file.realign_interval.list -known knownIndelsMills -known knownIndelsPhase1
+java -Xmx10g -Djava.io.tmpdir=stmpOutdir -jar gatk -T IndelRealigner -R genome -I sbamOutdir/sampleName.toolName.sorted.file.bam -targetIntervals sbamOutdir/sampleName.toolName.sorted.file.realign_interval.list -o sbamOutdir/sampleName.toolName.sorted.file.realign.bam --maxReadsForRealignment 100000 -known knownIndelsMills -known knownIndelsPhase1
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: GATK realignment.
+	sleep 8
+else
+	echo `date` Error Step: GATK realignment.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+

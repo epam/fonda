@@ -1,0 +1,12 @@
+echo `date` Begin Step: Mutect2 detection...
+java -Xmx10g -Djava.io.tmpdir=[(${output})]/mutect2/tmp -jar gatk -T MuTect2 -R GENOME --intervals BED --input_file:normal control.bam --input_file:tumor file.bam --out [(${output})]/mutect2/sample_name.mutect2.somatic.variants.vcf --validation_strictness SILENT
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Mutect2 detection.
+	sleep 8
+else
+	echo `date` Error Step: Mutect2 detection.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi

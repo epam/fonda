@@ -1,0 +1,41 @@
+[Queue_Parameters]
+NUMTHREADS = 2
+MAXMEM = 24g
+QUEUE = all.q
+PE = -pe threaded
+
+[Databases]
+SPECIES = human
+GENOME_BUILD = hg19
+GENOME = /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa
+NOVOINDEX = /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.nix
+DBSNP = /ngs/data/public_data/dbSNP/dbsnp_138.hg19_decoy.vcf
+COSMIC = /ngs/data/public_data/cosmic/hg19_cosmic_v69_290514_decoy.vcf
+MUTECT_NORMAL_PANEL = /ngs/data/public_data/mutect_normal_panel/refseq_exome_hg19_1kg_normal_panel_decoy.vcf
+BED_PRIMER = /ngs/data/amplicon/CHP2/CHP2_amplicon_regions_including_primer.bed
+BED = /ngs/data/amplicon/CHP2/CHP2_target_regions.bed
+BED_WITH_HEADER = /ngs/data/amplicon/CHP2/CHP2_target_regions_hg19_20171214.interval_list
+BED_FOR_COVERAGE = /ngs/data/amplicon/CHP2/CHP2_target_regions_hg19_20120806_interval_for_coverage.txt
+SNPSIFTDB = /ngs/data/tools/SnpEff/snpEff_v4.3p/snpEff/db
+CANONICAL_TRANSCRIPT = /ngs/data/reference_genome/GRCh37/Annotation/prefer_ensembl_transcript.txt
+
+[all_tools]
+bedtools = /ngs/data/tools/bedtools2/v2.2.1/bin/bedtools
+novoalign = /ngs/data/tools/novoalign/v3.09.00/novoalign
+java = /ngs/data/app/java/v1.8.0u121/bin/java
+mutect_java = /ngs/data/tools/java/jre1.7.0_60/bin/java
+samtools = /ngs/data/tools/samtools/v0.1.19/samtools
+picard = /ngs/data/tools/picard/v2.10.3/picard.jar
+snpsift = /ngs/data/tools/SnpEff/snpEff_v4.3p/snpEff/SnpSift.jar
+transvar = /ngs/data/app/python/v2.7.2/bin/transvar
+mutect = /ngs/data/tools/MuTect/v1.1.7/mutect-1.1.7.jar
+scalpel = /ngs/data/tools/scalpel/v0.5.3
+python = /ngs/data/app/python/v2.7.2/bin/python
+Rscript = /ngs/data/app/R/v3.5.0/bin/Rscript
+doubletdetection_python = /ngs/data/py/versions/3.5.2/bin/python
+
+[Pipeline_Info]
+workflow = DnaAmpliconVar_Fastq
+toolset = novoalign+abra_realign+picard+qc+scalpel+mutect1
+flag_xenome = no
+read_type = single

@@ -1,0 +1,12 @@
+echo `date` Begin Step: Vardict detection...
+vardict/build/install/VarDict/bin/VarDict -G GENOME -f 0.05 -r 3 -Q 20 -N sample_name -b "file.bam|control.bam" -z 1 -c 1 -S 2 -E 3 BED | vardict/VarDict/testsomatic.R |vardict/VarDict/var2vcf_paired.pl -M -N "sample_name|control_sample_name" -f 0.05 > [(${output})]/vardict/sample_name.vardict.somatic.variants.vcf
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Vardict detection.
+	sleep 8
+else
+	echo `date` Error Step: Vardict detection.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi

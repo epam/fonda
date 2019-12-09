@@ -1,0 +1,14 @@
+echo `date` Begin Step: Cufflinks...
+[(${cufflinksFields.cufflinks})] --library-type [(${cufflinksFields.sCufflinksLibraryType})] --num-threads [(${cufflinksFields.nThreads})] -b [(${cufflinksFields.genome})] --GTF [(${cufflinksFields.annotgene})] --output-dir [(${cufflinksFields.sCufflinksOutDir})] [(${cufflinksFields.bam})]
+mv [(${cufflinksFields.sCufflinksOutDir})]/genes.fpkm_tracking [(${cufflinksFields.cufflinksGeneResult})]
+mv [(${cufflinksFields.sCufflinksOutDir})]/isoforms.fpkm_tracking [(${cufflinksFields.cufflinksIsoformResult})]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Run cufflinks.
+	sleep 8
+else
+	echo `date` Error Step: Run cufflinks.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi

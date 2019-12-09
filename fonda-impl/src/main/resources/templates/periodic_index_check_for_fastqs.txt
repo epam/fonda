@@ -1,0 +1,4 @@
+echo `date` Begin check the existence of the individual sorted bam file...
+[(${cmd})]
+echo `date` Finish check the existence of the individual sorted bam file.
+

@@ -1,0 +1,18 @@
+echo `date` Begin the job execution...
+
+
+echo `date` Begin Step: Trimmomatic trimming...
+java -jar trimmomatic PE -threads 5 -phred33 mergedFastq1 mergedFastq2 sfqOutdir/sampleName.trimmed.R1.fastq.gz sfqOutdir/sampleName.trimmed_unpaired.R1.fq.gz sfqOutdir/sampleName.trimmed.R2.fastq.gz sfqOutdir/sampleName.trimmed_unpaired.R2.fq.gz ILLUMINACLIP:adapterSEQ:2:30:10 LEADING:20 TRAILING:20 SLIDINGWINDOW:4:15 MINLEN:36
+rm -rf sfqOutdir/sampleName.trimmed_unpaired.R1.fq.gz
+rm -rf sfqOutdir/sampleName.trimmed_unpaired.R2.fq.gz
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Trimmomatic trimming.
+	sleep 8
+else
+	echo `date` Error Step: Trimmomatic trimming.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+

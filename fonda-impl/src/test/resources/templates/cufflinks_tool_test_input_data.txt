@@ -1,0 +1,14 @@
+echo `date` Begin Step: Cufflinks...
+/opt/cufflinks/cufflinks-2.2.1.Linux_x86_64/cufflinks --library-type fr-unstranded --num-threads 4 -b /common/reference_genome/GRCh38/Sequence/GRCh38.genome.fa --GTF /common/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.annotation.gtf --output-dir output/cufflinks build/resources/integrationTest/output/smv1/bam/smv1.hisat2.sorted.rmdup.bam
+mv output/cufflinks/genes.fpkm_tracking output/cufflinks/smv1.cufflinks.gene.expression.results
+mv output/cufflinks/isoforms.fpkm_tracking output/cufflinks/smv1.cufflinks.isoform.expression.results
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Run cufflinks.
+	sleep 8
+else
+	echo `date` Error Step: Run cufflinks.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi

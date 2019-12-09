@@ -1,0 +1,19 @@
+echo `date` Begin Step: Strelka2 detection...
+python strelka2/configureStrelkaSomaticWorkflow.py --referenceFasta=GENOME --tumorBam=file.bam --normalBam=control.bam --callRegions=BED --runDir=[(${output})]/strelka2 --callMemMb=2048 --exome
+python [(${output})]/strelka2/runWorkflow.py -m local -j 8
+gunzip -c [(${output})]/strelka2/results/variants/somatic.snvs.vcf.gz > [(${output})]/strelka2/results/variants/somatic.snvs.vcf
+gunzip -c [(${output})]/strelka2/results/variants/somatic.indels.vcf.gz > [(${output})]/strelka2/results/variants/somatic.indels.vcf
+grep -v ^# [(${output})]/strelka2/results/variants/somatic.indels.vcf | cat [(${output})]/strelka2/results/variants/somatic.snvs.vcf - > [(${output})]/strelka2/sample_name.strelka2.somatic.variants.vcf
+
+rm [(${output})]/strelka2/results/variants/somatic.snvs.vcf
+rm [(${output})]/strelka2/results/variants/somatic.indels.vcf
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Stelka2 detection.
+	sleep 8
+else
+	echo `date` Error Step: Stelka2 detection.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi

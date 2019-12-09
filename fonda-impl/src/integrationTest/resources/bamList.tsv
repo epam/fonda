@@ -1,0 +1,4 @@
+parameterType	shortName	Parameter1	sample_type	match_control
+bamFile	GA51	/ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_001.bam	sample	GA52
+bamFile	GA52	/ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_002.bam	tumor	GA51
+bamFile	GA5	/ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_003.bam

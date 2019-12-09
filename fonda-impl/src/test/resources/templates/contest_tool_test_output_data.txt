@@ -1,0 +1,12 @@
+echo `date` Begin Step: Contamination estimation...
+java -Xmx10g -Djava.io.tmpdir=output/contEst/tmp -jar gatk -T ContEst -R genome -L bed -I:eval bam -I:genotype controlBam -pf popAF -pc 0.01 -o output/contEst/sampleName.contEst.result -isr INTERSECTION --min_mapq 20 -U ALLOW_SEQ_DICT_INCOMPATIBILITY --validation_strictness SILENT
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Contamination estimation.
+	sleep 8
+else
+	echo `date` Error Step: Contamination estimation.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi

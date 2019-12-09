@@ -1,0 +1,25 @@
+echo `date` Begin Step: BWA alignment...
+[(${bwaSortFields.bwa})] mem -t [(${bwaSortFields.numThreads})] [(${bwaSortFields.genome})] -M -R [(${bwaSortFields.rg})] [# th:if = "${fastq2 != null}"][(${fastq1})] [(${fastq2})][/][# th:unless = "${fastq2 != null}"][(${fastq1})][/]| [(${bwaSortFields.samtools})] view -bS -|[(${bwaSortFields.samtools})] sort - [(${bwaSortFields.tmpBam})]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: BWA alignment.
+	sleep 8
+else
+	echo `date` Error Step: BWA alignment.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Index bam...
+[(${bwaSortFields.samtools})] index [(${bwaSortFields.sortedBam})]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Index bam.
+	sleep 8
+else
+	echo `date` Error Step: Index bam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi

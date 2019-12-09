@@ -1,0 +1,53 @@
+#!/bin/bash -x
+
+# --- SGE options --- #
+
+#$ -wd [(${output})]
+#$ -N DnaAmpliconVar_Fastq_mergeMutation_for_cohort_analysis
+#$ -o [(${output})]/log_files/DnaAmpliconVar_Fastq_mergeMutation_for_cohort_analysis.log
+#$ -e [(${output})]/err_files/DnaAmpliconVar_Fastq_mergeMutation_for_cohort_analysis.err
+#$ -q queue
+#$ -R y
+#$  0
+#$ -m a
+
+# --- The commands to be executed --- #
+
+cd [(${output})]
+
+echo `date` Begin the job execution...
+
+logFile=[(${output})]/log_files/DnaAmpliconVar_Fastq_vardict_for_sample_name_analysis.log
+str=""
+while [[('[')]][ $str = "" ]]
+do
+if [[('[')]][ -f $logFile  ]];
+then
+	str=$(grep -E "(Successful|Error) Step: SnpEff annotation" $logFile;)
+fi
+	echo Waiting for step: SnpEff annotation
+	sleep 60
+done
+
+if [[('[')]][ $str == "*Error Step: SnpEff annotation*" ]];
+then
+	echo $(date) Error DNA mutation results from sample_name:
+	echo $str
+else
+	echo $(date) Confirm DNA mutation results from sample_name
+fi
+
+echo `date` Begin Step: Merge mutation annotation...
+rScript [(${jarPath})]/src/R/dna_rna_mutation_data_analysis.R -i fastq_list -d [(${output})] -t vardict
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Merge mutation annotation.
+	sleep 8
+else
+	echo `date` Error Step: Merge mutation annotation.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Finish the job execution!

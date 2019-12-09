@@ -1,0 +1,12 @@
+echo `date` Begin Step: Merge gene expression...
+[# th:each="genomeBuild : ${#strings.arraySplit(scRnaAnalysisFields.genomeBuild, '\\s*,\\s*')}"][(${scRnaAnalysisFields.rScript})] [(${scRnaAnalysisFields.jarPath})]/src/R/scRna_CellRanger_expression_data_analysis.R -i [(${scRnaAnalysisFields.sampleList})] -d [(${scRnaAnalysisFields.outDir})] -g [(${genomeBuild})]
+[/]if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Merge gene expression.
+	sleep 8
+else
+	echo `date` Error Step: Merge gene expression.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi

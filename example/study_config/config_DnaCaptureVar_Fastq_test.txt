@@ -1,0 +1,10 @@
+[Series_Info]
+job_name = pe_job
+dir_out = /ngs/data/demo/test/DnaCaptureVar_Fastq_test
+fastq_list = /ngs/data/demo/test/example/DnaCaptureVar_WES_SampleFastqPaths.txt
+LibraryType = DNAWholeExomeSeq_Paired
+DataGenerationSource = Internal
+Date = 20140318
+Project = Example_project
+Run = run1234
+Cufflinks.library_type = fr-unstranded

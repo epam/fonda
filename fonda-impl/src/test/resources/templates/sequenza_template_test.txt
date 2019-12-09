@@ -1,0 +1,14 @@
+echo `date` Begin Step: Sequenza detection...
+python sequenza/sequenza-utils.py pileup2seqz -gc gc.file -n control_pileup.gz -t pileup.gz | gzip > [(${output})]/sequenza/sample_name.seqz.gz
+python sequenza/sequenza-utils.py seqz-binning -w 50 -s [(${output})]/sequenza/sample_name.seqz.gz | gzip > [(${output})]/sequenza/sample_name_small.seqz.gz
+Rscript sequenza/sequenza.R -i [(${output})]/sequenza/sample_name_small.seqz.gz -o [(${output})]/sequenza/sample_name_sequenza_segment.txt -t [(${output})]/sequenza/sample_name_tumor_infor.txt
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Sequenza detection.
+	sleep 8
+else
+	echo `date` Error Step: Sequenza detection.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
