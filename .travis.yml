@@ -21,7 +21,7 @@ before_install:
   - pip install --user awscli
 
 script:
-  - ./gradlew build zip --no-daemon
+  - ./gradlew -PbuildNumber=${TRAVIS_BUILD_NUMBER}.${TRAVIS_COMMIT} build zip --no-daemon
   - ./gradlew jacocoTestReport
 
 after_success:

@@ -138,6 +138,7 @@ class SequenzaTest extends AbstractTest {
         databaseConfig.setSequenzaGc50("gc.file");
         globalConfig.setDatabaseConfig(databaseConfig);
         configuration.setGlobalConfig(globalConfig);
+        configuration.setTestMode(true);
         return configuration;
     }
 }

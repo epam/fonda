@@ -9,7 +9,18 @@ plugins {
 }
 
 group 'com.epam'
-version 'v1.8.6'
+
+def buildNumber = hasProperty("buildNumber") ? buildNumber : ""
+version = new Version(major: 1, minor: 8, patch: 6, build: buildNumber)
+
+class Version {
+    int major, minor, patch
+    String build
+    
+    String toString() {
+        "$major.$minor.$patch${build ? ".$build" : ''}"
+    }
+}
 
 sourceCompatibility = 1.8
 
@@ -41,7 +52,9 @@ task copySrc(type: Copy, dependsOn: 'build') {
 }
 
 task zip(type: Zip, dependsOn: ['build', 'copySrc']) {
+    version = project.version
     group = 'build'
+    archiveName "fonda-${version}.zip"
     from "$project.buildDir/libs"
 }
 
