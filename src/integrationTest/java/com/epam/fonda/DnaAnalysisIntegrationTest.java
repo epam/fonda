@@ -34,8 +34,19 @@ import static org.junit.Assert.assertTrue;
 public class DnaAnalysisIntegrationTest extends AbstractIntegrationTest {
     private static final String OUTPUT_DIR = "output";
     private static final String AMPLICON = "Amplicon";
+    private static final String CAPTURE = "Capture";
     private static final String LOG_FILE_AMPLICON_FORMAT =
             "logFile=build/resources/integrationTest/output/log_files/DnaAmpliconVar_Fastq_%s_for_GA5_analysis.log";
+    private static final String LOG_FILE_CAPTURE_FORMAT =
+            "logFile=build/resources/integrationTest/output/log_files/DnaCaptureVar_Fastq_%s_for_GA5_analysis.log";
+    private static final String ERROR_MESSAGE = "An error occurred with task %s. Expected: %s";
+    private static final String VARDICT = "vardict";
+    private static final String MUTECT1 = "mutect1";
+    private static final String MUTECT2 = "mutect2";
+    private static final String LOFREQ = "lofreq";
+    private static final String STRELKA2 = "strelka2";
+    private static final String GATK_HAPLOTYPE_CALLER = "gatkHaplotypeCaller";
+    private static final String SCALPEL = "scalpel";
 
     @Test
     @UseDataProvider("periodicDnaMutationStatusAllTasks")
@@ -55,8 +66,10 @@ public class DnaAnalysisIntegrationTest extends AbstractIntegrationTest {
                     .anyMatch(line -> line.contains("echo $(date) Confirm DNA mutation results from GA5")));
 
             for (String expectedString : expectedStrings) {
-                assertTrue(lines.stream().anyMatch(line -> line.contains(expectedString)));
-                assertTrue(lines.stream().anyMatch(line -> line.contains(task)));
+                assertTrue(String.format(ERROR_MESSAGE, task, expectedString),
+                        lines.stream().anyMatch(line -> line.contains(expectedString)));
+                assertTrue(String.format(ERROR_MESSAGE, task, expectedString),
+                        lines.stream().anyMatch(line -> line.contains(task)));
             }
             assertTrue(lines.stream().noneMatch(line -> line.contains("null")));
         }
@@ -66,52 +79,22 @@ public class DnaAnalysisIntegrationTest extends AbstractIntegrationTest {
     @DataProvider
     public static Object[][] periodicDnaMutationStatusAllTasks() {
         return new Object[][]{
-                {AMPLICON, "vardict", new String[]{ String.format(LOG_FILE_AMPLICON_FORMAT, "vardict"),
-                }},
-                {AMPLICON, "mutect1", new String[]{ String.format(LOG_FILE_AMPLICON_FORMAT, "mutect1"),
-                }},
-                {AMPLICON, "mutect2", new String[]{ String.format(LOG_FILE_AMPLICON_FORMAT, "mutect2"),
-                }},
-                {AMPLICON, "lofreq", new String[]{ String.format(LOG_FILE_AMPLICON_FORMAT, "lofreq"),
-                }},
-                {AMPLICON, "strelka2", new String[]{ String.format(LOG_FILE_AMPLICON_FORMAT, "strelka2"),
-                }},
-                {AMPLICON, "gatkHaplotypeCaller", new String[]{ String.format(LOG_FILE_AMPLICON_FORMAT,
-                        "gatkHaplotypeCaller"),
-                }},
-                {AMPLICON, "scalpel", new String[]{ String.format(LOG_FILE_AMPLICON_FORMAT, "scalpel"),
-                }},
-
-                //These tests will work after solving issue #1. Do not delete.
-//                {"Capture", "vardict", new String [] { "until grep -q \"Successful Step: Vardict detection\" " +
-//                                "build/resources/integrationTest/output/log_files/" +
-//                                "DnaCaptureVar_Fastq_vardict_for_GA5_analysis.log;",
-//                }},
-//                {"Capture", "mutect1", new String [] { "until grep -q \"Successful Step: Mutect1 detection\" " +
-//                                "build/resources/integrationTest/output/log_files/" +
-//                                "DnaCaptureVar_Fastq_mutect1_for_GA5_analysis.log;",
-//                }},
-//                {"Capture", "mutect2", new String [] { "until grep -q \"Successful Step: Mutect2 detection\" " +
-//                                "build/resources/integrationTest/output/log_files/" +
-//                                "DnaCaptureVar_Fastq_mutect2_for_GA5_analysis.log;",
-//                }},
-//                {"Capture", "lofreq", new String [] { "until grep -q \"Successful Step: Lofreq detection\" " +
-//                                "build/resources/integrationTest/output/log_files/" +
-//                                "DnaCaptureVar_Fastq_lofreq_for_GA5_analysis.log;",
-//                }},
-//                {"Capture", "strelka2", new String [] { "until grep -q \"Successful Step: Strelka2 detection\" " +
-//                                "build/resources/integrationTest/output/log_files/" +
-//                                "DnaCaptureVar_Fastq_strelka2_for_GA5_analysis.log;",
-//                }},
-//                {"Capture", "gatkHaplotypeCaller", new String [] { "until grep -q \"Successful Step: " +
-//                        "GATK haplotypecaller detection\" " +
-//                                "build/resources/integrationTest/output/log_files/" +
-//                                "DnaCaptureVar_Fastq_gatkHaplotypeCaller_for_GA5_analysis.log;",
-//                }},
-//                {"Capture", "scalpel", new String [] { "until grep -q \"Successful Step: Scalpel detection\" " +
-//                                "build/resources/integrationTest/output/log_files/" +
-//                                "DnaCaptureVar_Fastq_scalpel_for_GA5_analysis.log;",
-//                }},
+            {AMPLICON, VARDICT, new String[]{ String.format(LOG_FILE_AMPLICON_FORMAT, VARDICT)}},
+            {AMPLICON, MUTECT1, new String[]{ String.format(LOG_FILE_AMPLICON_FORMAT, MUTECT1)}},
+            {AMPLICON, MUTECT2, new String[]{ String.format(LOG_FILE_AMPLICON_FORMAT, MUTECT2)}},
+            {AMPLICON, LOFREQ, new String[]{ String.format(LOG_FILE_AMPLICON_FORMAT, LOFREQ)}},
+            {AMPLICON, STRELKA2, new String[]{ String.format(LOG_FILE_AMPLICON_FORMAT, STRELKA2)}},
+            {AMPLICON, GATK_HAPLOTYPE_CALLER, new String[]{ String.format(LOG_FILE_AMPLICON_FORMAT,
+                    GATK_HAPLOTYPE_CALLER)}},
+            {AMPLICON, SCALPEL, new String[]{ String.format(LOG_FILE_AMPLICON_FORMAT, SCALPEL)}},
+            {CAPTURE, VARDICT, new String [] { String.format(LOG_FILE_CAPTURE_FORMAT, VARDICT)}},
+            {CAPTURE, MUTECT1, new String [] { String.format(LOG_FILE_CAPTURE_FORMAT, MUTECT1)}},
+            {CAPTURE, MUTECT2, new String [] { String.format(LOG_FILE_CAPTURE_FORMAT, MUTECT2)}},
+            {CAPTURE, LOFREQ, new String [] { String.format(LOG_FILE_CAPTURE_FORMAT, LOFREQ)}},
+            {CAPTURE, STRELKA2, new String [] { String.format(LOG_FILE_CAPTURE_FORMAT, STRELKA2)}},
+            {CAPTURE, GATK_HAPLOTYPE_CALLER, new String [] { String.format(LOG_FILE_CAPTURE_FORMAT,
+                    GATK_HAPLOTYPE_CALLER)}},
+            {CAPTURE, SCALPEL, new String [] { String.format(LOG_FILE_CAPTURE_FORMAT, SCALPEL)}},
         };
     }
 
@@ -144,8 +127,7 @@ public class DnaAnalysisIntegrationTest extends AbstractIntegrationTest {
     public static Object[][] workflows() {
         return new Object[][]{
                 {AMPLICON},
-                //Will work after solve issue #1. Do not delete.
-                //{"Capture"}
+                {CAPTURE}
         };
     }
 }
