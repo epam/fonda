@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.com/epam/fonda.svg?token=AmpT6giGMGEgYrC2MDsL&branch=develop)](https://travis-ci.com/epam/fonda)
+[![codecov](https://codecov.io/gh/epam/fonda/branch/develop/graph/badge.svg?token=XJCQIlChRJ)](https://codecov.io/gh/epam/fonda)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/2d4993e3a192484cbb3e95c6839e64ae)](https://www.codacy.com?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=epam/fonda&amp;utm_campaign=Badge_Grade)
+
 # Fonda
 
 Fonda is a framework which offers scalable and automatic analysis of multiple **NGS** sequencing data types.

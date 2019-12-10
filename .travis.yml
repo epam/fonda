@@ -1,0 +1,35 @@
+language: java
+jdk: openjdk8
+os: linux
+dist: xenial
+
+env:
+  global:
+    - secure: buqhVDPJcFfKHZwPVXvNYMdfuts+hTh0dmllcjzvz4VeokR6V/Ml1EQeAwDs7IkG0xZWoMyfru9mNvjFoXWGXi+Slxp4ZhOIH7OkzAg09S+25y2UrTfxNUjDxlv1J+PeDfCV53QANm/TKag0/xHEYQDlpm+XX/AXeSllw/W0KB7cNTZsmJFSJJQHAiWY//7CJudh86gVKotjTSPww5Vf21gP0tQJY+uQ3saOUrQXb/HFmq5qU0DfwwDVUBzIOs5zL/b9XKHnglWqTUEQ6kIJgEpHZsmHWeUaWCI+WRa7Hynf5i8CWVOlGsZ0N4KajVeBk8ZeqmA1ABFAjpe6PWVHJpyGKXWV6Y7y/3OtfpdSdasOLaFr5xngCSQAqla3uedXzad/+Dw9QD+dpbyPMAtMQWwSpQTjLT2d8kirkc6LmUJR/PzflMX8T3Awo/YbnL2MyvHBiYa3WIIC5IO0WvvffFRCbQ/jRLnIENKJXl6dGftnMXPklnpxTu4RdKgQhdk/4/sHJ7jub55sELOS0LQWNoUx4QvK9Jb8WTIEGFSJgxuIYspkNd1bGifmuKdk7Bm7l+8ZXr5ezW8IVFymL4IMuxPgcHSubsy7h05+CjvzD+rhlFCoOlk1AZrqfvUCCmoX6lTTMQy1OyimD8/rQk2ZzMny3H/v8GRY4f8NOLsk2OQ=
+    - secure: lqUIoK2OloVjf9ooV2JWq+6KlJzz+sXM+g6zlw2c+t6TgNwvPQs1YwQIGlqq5fzFGX32dyPNzeRDRJuZYjqC7AyNL6HDy1KC6qEf/Tj3WhbsCjLV/HdhE1k7xnsV9JtcCJQCDn+stsSk8aKwytrIyZFyoQZIhR7bgADCSUrENMa7Vvnxj7vp4I1J0lgLQXOcba28GXMFaFhKLA+fg5yGIVjQcGsMpkIrptvkyGjqU9R/z1MNvAv68ZK2PdKsuBh0bDi6nHj5Z9n+F8cvlecxNCvWaXaa/Wdkz+m7rCPi8lTsFCBfrIS11nOy67mbLayYBA7NAPzMHouMvKgKF2dqzkiY8Ouq0vapKNzJols3N1EyxNFvc4eaX35qP9m8BWk7xQEA5jV1Ljw2e94uDIczhFk3exsWcDCqSnlWgY7Pbx7x+SI9pq7Hr1OuGbtXxNhlPcIBgMjc4VLEx4SjbxPMyFH6bi2BelZmQY3DiLmaE/aAZIcBidblPnu9A6KHvunX1DAe9xHRpMuUKm1Efy7YwW4RROAQTrW8eTPAA76UEp+70sTx+pyhubz51foPhJg1gnvqkpg/v/K9KptdWEtt89XmfqjHjtTpyf8+DSdBNXJBGwpzDhjec/bBaleShY6qwPK9rFote2S2lJ39AYkbbdekDq9zdNBurXPYCcVCbg4=
+    - secure: UGnSTqhMAteeyrubG7PJR9dNuavHyAD3wFqQcY8MLeXKQ1/L3fqaRSU+B7n/teRviX8rziKIsLtL/7fjhvDKn4iNDALYEsU8MK272scqLi0s/mnEFvfhYML2/41RZdriLVcUSgenj248BX8hSKCWZRMCyIFAiNz3+DM00zqOOBdacMp2fJ6Ps/0aIRv7RvWGrS3rP9XgmTKoQBG3LR0DB1htplk/CnvmV6ZD6UtxI8EpzhUXn2QQZ43/Kjqkw13agyO995+ZoRGmmAyUAdrZioIKSEavJwtSMo61gBDKm3lpD7f5O7Q8rcpS/ExDqXi1xTf0+xcD56EqK5Jw7oc4T4o560KciLDWv8aUa5XYZDucI5migAMIZ0nGgDUhelzS9kLe0GsQTZDsoBnq1fnidP+CJbNWhgKMMacMPyO0mSmLT904g7kQKF/U+IZrJPBgIYMMgBLxBMrZrsAqWz8WVde1BTmvoQpQSj3qRR5K4/NclllR7zXzKqPtsepdc1nNQSkp3D2gT6qXdMAcrDHJs6gH2GtZ5nihHGsIXc3G9GzbNd/OKF8ukLSnGpmY+HLZJwNzvtlLBX4liB30J6sI8JlVVelHYdwM9kx3c4E1rtRkNLcllkGXnPPrtb2KTTpBGrqOc+ilidr1BFiroPOAP6qCdq8DmHHrLrxl0CvNRvs=
+
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+
+before_install:
+  - pip install --user awscli
+
+script:
+  - ./gradlew build zip --no-daemon
+  - ./gradlew jacocoTestReport
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+
+deploy:
+  provider: script
+  script: aws s3 mv build/distributions/fonda*.zip s3://fonda-oss-builds/builds/${TRAVIS_BRANCH}/
+  on:
+    all_branches: true
+    condition: $TRAVIS_BRANCH =~ ^(develop|release\/.+)$
