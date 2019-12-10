@@ -1,0 +1,61 @@
+[Queue_Parameters]
+NUMTHREADS = 4
+MAXMEM = 8g
+QUEUE = main.q
+PE = -pe threaded
+
+[all_tools]
+star = /opt/STAR/STAR-STAR_2.4.0h1/bin/Linux_x86_64/STAR
+seqpurge = /opt/ngs_bits/ngs-bits/bin/SeqPurge
+cufflinks = /opt/cufflinks/cufflinks-2.2.1.Linux_x86_64/cufflinks
+feature_count = /opt/subread/subread-1.4.5-p1-Linux-x86_64/bin/featureCounts
+java = /usr/lib/jvm/java-8-openjdk-amd64/bin/java
+rnaseqc_java = /usr/lib/jvm/java-7-openjdk-amd64/bin/java
+samtools = /opt/samtools/samtools-0.1.19/samtools
+picard = /opt/picard/picard.jar
+rnaseqc = /opt/rnaseqc/RNA-SeQC_v1.1.8.jar
+python = /usr/bin/python
+vardict = /usr/bin/vardict
+Rscript = /usr/bin/Rscript
+bwa = /usr/bin/bwa
+trimmomatic = /usr/bin/trimmomatic
+novoalign = /usr/bin/novoalign
+xenome = /usr/bin/xenome
+transvar = /usr/bin/transvar
+snpsift = /usr/bin/snpsift
+gatk = /usr/bin/gatk
+freebayes = /usr/bin/freebayes
+lofreq = /usr/bin/lofreq
+mutect = /usr/bin/mutect
+mutect_java = /usr/lib/jvm/java-8-openjdk-amd64/bin/java
+scalpel = /usr/bin/scalpel
+strelka2 = /usr/bin/strelka2
+abra2 = /usr/bin/abra2
+bedtools = /usr/bin/bedtools
+
+[Databases]
+SPECIES = human
+GENOME_BUILD = hg19
+GENOME = /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa
+NOVOINDEX = /ngs/data/novoindexDB/novoindex.nix
+BED = /ngs/data/test.bed
+BED_WITH_HEADER = /ngs/data/test_decoy.txt
+BED_FOR_COVERAGE = /ngs/data/test_decoy.txt
+BED_PRIMER = /ngs/data/test_decoy.txt
+SNPSIFTDB = /ngs/data/bfx_tools/SnpEff/snpEff_v4.3p/snpEff/db
+CANONICAL_TRANSCRIPT = /ngs/data/reference_genome/GRCh37/Annotation/prefer_ensembl_transcript.txt
+ADAPTER_FWD = AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC
+ADAPTER_REV = AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT
+ADAPTER_SEQ = AGATCGGAAGAT
+MOUSEXENOMEINDEX = /ngs/data/xenomeIdx/xenome.idx
+DBSNP = /ngs/data/db/mutect.dbsnp
+COSMIC = /ngs/data/db/cosmic
+MUTECT_NORMAL_PANEL = /ngs/data/db/mormal_panel
+KNOWN_INDELS_MILLS = 10
+KNOWN_INDELS_PHASE1 = 100
+
+[Pipeline_Info]
+workflow = DnaCaptureVar_Fastq
+toolset = bwa+abra_realign+gatk_realign+picard
+read_type = single
+flag_xenome = no
