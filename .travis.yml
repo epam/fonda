@@ -29,6 +29,7 @@ after_success:
 
 deploy:
   provider: script
+  skip_cleanup: true
   script: aws s3 mv build/distributions/fonda*.zip s3://fonda-oss-builds/builds/${TRAVIS_BRANCH}/
   on:
     all_branches: true
