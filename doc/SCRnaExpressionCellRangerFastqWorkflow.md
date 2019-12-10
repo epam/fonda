@@ -127,7 +127,7 @@ Fonda package contains two major components:
 The following command will generate a build folder in the current directory. In the build folder, the user can find a `libs` folder, which contains the Fonda `.jar` file and the `src` directory:
 
 ``` bash
-./gradlew fonda-impl:build zip
+./gradlew build zip
 ```
 
 Please make sure `src` folder and `.jar` file are put in the same parental directory for proper usages. Fonda needs to call some external scripts from the `src` folder (`python` and `R` subfolders) in some pipeline usages.

@@ -19,19 +19,19 @@ Fonda is a framework which offers scalable and automatic analysis of multiple **
 To launch all unit and integration tests run the command:
 
 ``` bash
-./gradlew fonda-impl:test
+./gradlew test
 ```
 
 To launch all unit and integration tests, to perform the source code analysis (via `PMD`), to check the code adherement to a coding standard (via `checkstyle`) and to count the code coverage (via `JaCoCo`) run the command:
 
 ``` bash
-./gradlew fonda-impl:check
+./gradlew check
 ```
 
 To build Fonda run the command:
 
 ``` bash
-./gradlew fonda-impl:build zip
+./gradlew build zip
 ```
 
 - **`build`** - creates Fonda `.jar` file and `src` folder in `build/libs`
@@ -103,7 +103,7 @@ Possible options:
 
 If the user likes to change a parameter, a new version should be generated and recorded. However, different studies can share an identical pipeline.
 
-Available parameter options for the **global_config** files you can see [here](fonda-impl/doc/User_guide.md#available-parameter-options-in-globalconfig-for-major-workflows).  
+Available parameter options for the **global_config** files you can see [here](doc/User_guide.md#available-parameter-options-in-globalconfig-for-major-workflows).  
 Examples of the **global_config** files you can see [here](example/global_config/).
 
 > Please keep in mind that in each **global_config** file the only tools and databases are included that are required for executing this specific pipeline version.  
@@ -124,7 +124,7 @@ Required parameters for each workflow:
 | **Project** | Sets the project ID |
 | **Run** | Sets the run ID |
 
-The format of input manifest files see [here](fonda-impl/doc/User_guide.md#the-format-of-the-input-manifest-file-for-batch-processing).  
+The format of input manifest files see [here](doc/User_guide.md#the-format-of-the-input-manifest-file-for-batch-processing).  
 Examples of the **study_config** files you can see [here](example/study_config/).
 
 ### Elaboration of additional arguments
