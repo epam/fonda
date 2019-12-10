@@ -61,7 +61,7 @@ public class SCRnaExpressionCellRangerFastqIntegrationTest extends AbstractInteg
             "scRnaExpressionCellRangerFastq/sscRnaExpressionCellRangerFastq.txt";
     private static final String TEST_SHELL_SCRIPT_TEMPLATE_PATH =
             "output/sh_files/scRnaExpression_CellRanger_Fastq_alignment_for_smv1_analysis.sh";
-    private static final String APP_NAME = "fonda-impl";
+    private static final String APP_NAME = "fonda";
 
     private static Map<String, String> argMapForCreateAndExtractTestWithFastqs1Fastqs2;
     private static Map<String, String> argMapForGetRunLibTest;
