@@ -61,10 +61,4 @@ class WorkflowFactoryTest {
         assertThrows(NullPointerException.class, () ->
                 new WorkflowFactory().getWorkflow("RnaExpression_F", expectedConfiguration));
     }
-
-    @Test
-    void buildUnimplementedWorkflow() {
-        assertThrows(IllegalArgumentException.class, () ->
-                new WorkflowFactory().getWorkflow("DnaCaptureVar_Fastq", expectedConfiguration));
-    }
 }
