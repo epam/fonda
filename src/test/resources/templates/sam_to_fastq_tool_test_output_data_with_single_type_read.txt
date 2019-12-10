@@ -1,0 +1,13 @@
+echo `date` Begin Step: Convert bam to fastq...
+java -jar picard SamToFastq INPUT=bam FASTQ=outDir/samToFastq/sampleName.fastq INCLUDE_NON_PRIMARY_ALIGNMENTS=false
+gzip outDir/samToFastq/sampleName.fastq
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Convert bam to fastq.
+	sleep 8
+else
+	echo `date` Error Step: Convert bam to fastq.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
