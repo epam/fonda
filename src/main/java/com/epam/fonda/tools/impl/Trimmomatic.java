@@ -26,6 +26,7 @@ import com.epam.fonda.tools.results.FastqResult;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -75,8 +76,10 @@ public class Trimmomatic implements Tool<FastqResult> {
         context.setVariable("trimmomaticFields", trimmomaticFields);
         final String cmd = templateEngine.process(TRIMMOMATIC_TOOL_TEMPLATE_NAME, context);
         final FastqOutput fastqOutput = result.getOut();
-        fastqOutput.setMergedFastq1(trimmomaticFields.trimmedFastq1);
-        fastqOutput.setMergedFastq2(trimmomaticFields.trimmedFastq2);
+        if (StringUtils.isNoneBlank(trimmomaticFields.adapterSEQ)) {
+            fastqOutput.setMergedFastq1(trimmomaticFields.trimmedFastq1);
+            fastqOutput.setMergedFastq2(trimmomaticFields.trimmedFastq2);
+        }
         AbstractCommand command = result.getCommand();
         command.setToolCommand(command.getToolCommand() + cmd);
         return FastqResult.builder()
