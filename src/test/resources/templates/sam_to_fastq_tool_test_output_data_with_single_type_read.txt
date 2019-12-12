@@ -1,6 +1,6 @@
 echo `date` Begin Step: Convert bam to fastq...
-java -jar picard SamToFastq INPUT=bam FASTQ=outDir/samToFastq/sampleName.fastq INCLUDE_NON_PRIMARY_ALIGNMENTS=false
-gzip outDir/samToFastq/sampleName.fastq
+java -jar picard SamToFastq INPUT=bam FASTQ=outDir/sampleName.fastq INCLUDE_NON_PRIMARY_ALIGNMENTS=false
+gzip outDir/sampleName.fastq
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Convert bam to fastq.

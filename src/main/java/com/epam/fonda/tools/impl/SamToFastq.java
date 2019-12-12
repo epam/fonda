@@ -22,7 +22,6 @@ public class SamToFastq implements Tool<FastqResult> {
     private static class ToolFields {
         private String java;
         private String picard;
-        private String outDir;
         private String readType;
         private String bam;
     }
@@ -30,7 +29,7 @@ public class SamToFastq implements Tool<FastqResult> {
     @NonNull
     private String sampleName;
     @NonNull
-    private String sampleOutDir;
+    private String fastqSampleOutputDir;
     @NonNull
     private BamResult bamResult;
 
@@ -40,20 +39,16 @@ public class SamToFastq implements Tool<FastqResult> {
         String fastq1 = null;
         String fastq2 = null;
         String unpairFastq = null;
-        if (configuration.getGlobalConfig().getPipelineInfo().getReadType()
-                .equals(FastqReadType.PAIRED.name())) {
-            fastq1 = String.format("%s/%s.R1.fastq", toolFields.getOutDir(), sampleName);
-            fastq2 = String.format("%s/%s.R2.fastq", toolFields.getOutDir(), sampleName);
-            unpairFastq = String.format("%s/%s.unpaired.fastq", toolFields.getOutDir(), sampleName);
-        } else if (configuration.getGlobalConfig().getPipelineInfo().getReadType()
-                .equals(FastqReadType.SINGLE.name())) {
-            fastq1 = String.format("%s/%s.fastq", toolFields.getOutDir(), sampleName);
+        if (FastqReadType.PAIRED.name()
+                .equals(configuration.getGlobalConfig().getPipelineInfo().getReadType())) {
+            fastq1 = String.format("%s/%s.R1.fastq", fastqSampleOutputDir, sampleName);
+            fastq2 = String.format("%s/%s.R2.fastq", fastqSampleOutputDir, sampleName);
+            unpairFastq = String.format("%s/%s.unpaired.fastq", fastqSampleOutputDir, sampleName);
+        } else if (FastqReadType.SINGLE.name()
+                .equals(configuration.getGlobalConfig().getPipelineInfo().getReadType())) {
+            fastq1 = String.format("%s/%s.fastq", fastqSampleOutputDir, sampleName);
         }
-        Context context = new Context();
-        context.setVariable("toolFields", toolFields);
-        context.setVariable("fastq1", fastq1);
-        context.setVariable("fastq2", fastq2);
-        context.setVariable("unpairFastq", unpairFastq);
+        Context context = buildContext(toolFields, fastq1, fastq2, unpairFastq);
         final String cmd = templateEngine.process(SAM_TO_FASTQ_TOOL_TEMPLATE_NAME, context);
         return FastqResult.builder()
                 .command(BashCommand.withTool(cmd))
@@ -61,8 +56,17 @@ public class SamToFastq implements Tool<FastqResult> {
                 .build();
     }
 
+    private Context buildContext(ToolFields toolFields, String fastq1, String fastq2, String unpairFastq) {
+        Context context = new Context();
+        context.setVariable("toolFields", toolFields);
+        context.setVariable("fastq1", fastq1);
+        context.setVariable("fastq2", fastq2);
+        context.setVariable("unpairFastq", unpairFastq);
+        return context;
+    }
+
     private FastqOutput buildFastqOutput(String fastq1, String fastq2, Configuration configuration) {
-        return configuration.getGlobalConfig().getPipelineInfo().getReadType().equals(FastqReadType.PAIRED.name())
+        return FastqReadType.PAIRED.name().equals(configuration.getGlobalConfig().getPipelineInfo().getReadType())
                 ? FastqOutput.builder()
                 .mergedFastq1(String.format("%s.gz", fastq1))
                 .mergedFastq1(String.format("%s.gz", fastq2))
@@ -77,7 +81,6 @@ public class SamToFastq implements Tool<FastqResult> {
                 .java(configuration.getGlobalConfig().getToolConfig().getJava())
                 .picard(configuration.getGlobalConfig().getToolConfig().getPicard())
                 .readType(configuration.getGlobalConfig().getPipelineInfo().getReadType())
-                .outDir(String.format("%s/samToFastq", sampleOutDir))
                 .bam(bamResult.getBamOutput().getBam())
                 .build();
     }

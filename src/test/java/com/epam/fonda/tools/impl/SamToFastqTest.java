@@ -12,7 +12,6 @@ import org.thymeleaf.TemplateEngine;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -38,10 +37,14 @@ class SamToFastqTest extends AbstractTest {
     }
 
     @Test
-    void testGenerate() throws IOException, URISyntaxException {
+    void testGenerateSamToFastqWithSingleTypeRead() throws IOException, URISyntaxException {
         assertEquals(buildCmd(SAM_TO_FASTQ_TEST_OUTPUT_DATA_PATH_WITH_SINGLE_TYPE_READ),
                 samToFastq.generate(buildConfigurationWithSingleReadType(), templateEngine).getCommand()
                         .getToolCommand());
+    }
+
+    @Test
+    void testGenerateSamToFastqWithPairedTypeRead() throws IOException, URISyntaxException {
         assertEquals(buildCmd(SAM_TO_FASTQ_TEST_OUTPUT_DATA_PATH_WITH_PAIRED_TYPE_READ),
                 samToFastq.generate(buildConfigurationWithPairedReadType(), templateEngine).getCommand()
                         .getToolCommand());
@@ -50,8 +53,7 @@ class SamToFastqTest extends AbstractTest {
     private String buildCmd(String pathToTemplate) throws URISyntaxException, IOException {
         Path path = Paths.get(this.getClass().getClassLoader()
                 .getResource(pathToTemplate).toURI());
-        byte[] fileBytes = Files.readAllBytes(path);
-        return new String(fileBytes);
+        return readFile(path);
     }
 
     private Configuration buildConfiguration() {
