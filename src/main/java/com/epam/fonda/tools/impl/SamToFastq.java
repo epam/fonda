@@ -33,6 +33,14 @@ public class SamToFastq implements Tool<FastqResult> {
     @NonNull
     private BamResult bamResult;
 
+    /**
+     * This method generates bash script {@link BashCommand} for SamToFastq tool.
+     *
+     * @param configuration  is the type of {@link Configuration} which contains
+     *                       its fields: java, picard, readType.
+     * @param templateEngine is the type of {@link TemplateEngine}.
+     * @return {@link BashCommand} with bash script.
+     **/
     @Override
     public FastqResult generate(Configuration configuration, TemplateEngine templateEngine) {
         ToolFields toolFields = initializeToolFields(configuration);
@@ -76,6 +84,13 @@ public class SamToFastq implements Tool<FastqResult> {
                 .build();
     }
 
+    /**
+     * This method initializes fields of the SamToFastq {@link SamToFastq} class.
+     *
+     * @param configuration is the type of {@link Configuration} which contains
+     *                      its fields: java, picard, readType.
+     * @return {@link SamToFastq} with fields.
+     **/
     private ToolFields initializeToolFields(Configuration configuration) {
         return ToolFields.builder()
                 .java(configuration.getGlobalConfig().getToolConfig().getJava())
