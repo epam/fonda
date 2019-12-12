@@ -2,8 +2,7 @@ package com.epam.fonda.tools.impl;
 
 import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.entity.configuration.GlobalConfig;
-import com.epam.fonda.tools.results.BamOutput;
-import com.epam.fonda.tools.results.BamResult;
+import com.epam.fonda.samples.bam.BamFileSample;
 import com.epam.fonda.utils.TemplateEngineUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,7 +10,6 @@ import org.thymeleaf.TemplateEngine;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -28,15 +26,13 @@ class SortBamByReadNameTest extends AbstractTest {
     @BeforeEach
     void setUp() throws IOException, URISyntaxException {
         buildConfiguration();
-        sortBamByReadname = new SortBamByReadName("sampleName", "outDir", BamResult.builder()
-                .bamOutput(BamOutput.builder()
+        sortBamByReadname = new SortBamByReadName("sampleName", "outDir",
+                BamFileSample.builder()
                         .bam("bam")
-                        .build())
-                .build());
+                        .build());
         Path path = Paths.get(this.getClass().getClassLoader()
                 .getResource(SORT_BAM_BY_READ_NAME_TEST_OUTPUT_DATA_PATH).toURI());
-        byte[] fileBytes = Files.readAllBytes(path);
-        expectedCmd = new String(fileBytes);
+        expectedCmd = readFile(path);
     }
 
     @Test

@@ -1,5 +1,5 @@
 echo `date` Begin Step: Sort bam...
-java -jar picard SortSam INPUT=bam OUTPUT=outDir/sortBamByReadname/sampleName.sortByReadname.bam SORT_ORDER=queryname VALIDATION_STRINGENCY=SILENT
+java -jar picard SortSam INPUT=bam OUTPUT=outDir/sampleName.sortByReadname.bam SORT_ORDER=queryname VALIDATION_STRINGENCY=SILENT
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Sort bam.
@@ -11,7 +11,7 @@ else
 	exit 1;
 fi
 echo `date` Begin Step: Index bam...
-samtools index outDir/sortBamByReadname/sampleName.sortByReadname.bam
+samtools index outDir/sampleName.sortByReadname.bam
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Index bam.
