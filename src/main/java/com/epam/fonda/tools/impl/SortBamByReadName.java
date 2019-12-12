@@ -25,7 +25,6 @@ public class SortBamByReadName implements Tool<BamResult> {
         private String java;
         private String picard;
         private String samtools;
-        private String outDir;
     }
 
     @NonNull
@@ -35,6 +34,14 @@ public class SortBamByReadName implements Tool<BamResult> {
     @NonNull
     private BamFileSample sample;
 
+    /**
+     * This method generates {@link BamResult} for SortBamByReadName tool.
+     *
+     * @param configuration  is the type of {@link Configuration} which contains
+     *                       its fields: samtools, java, picard.
+     * @param templateEngine is the type of {@link TemplateEngine}.
+     * @return {@link BamResult} with bash script.
+     **/
     @Override
     public BamResult generate(Configuration configuration, TemplateEngine templateEngine) {
         ToolFields toolFields = initializeToolFields(configuration);
@@ -62,6 +69,13 @@ public class SortBamByReadName implements Tool<BamResult> {
         return context;
     }
 
+    /**
+     * This method initializes fields of the ToolFields {@link SortBamByReadName} class.
+     *
+     * @param configuration is the type of {@link Configuration} which contains its fields: java,
+     *                      picard, samtools.
+     * @return {@link SortBamByReadName} with its fields.
+     **/
     private ToolFields initializeToolFields(Configuration configuration) {
         return ToolFields.builder()
                 .java(configuration.getGlobalConfig().getToolConfig().getJava())
