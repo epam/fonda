@@ -3,6 +3,7 @@ package com.epam.fonda.tools.impl;
 import com.epam.fonda.entity.command.AbstractCommand;
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.GlobalConfigFormat;
 import com.epam.fonda.samples.bam.BamFileSample;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamOutput;
@@ -14,6 +15,8 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.util.Arrays;
+
+import static com.epam.fonda.utils.ToolUtils.validate;
 
 @Data
 public class SortBamByReadName implements Tool<BamResult> {
@@ -78,9 +81,12 @@ public class SortBamByReadName implements Tool<BamResult> {
      **/
     private ToolFields initializeToolFields(Configuration configuration) {
         return ToolFields.builder()
-                .java(configuration.getGlobalConfig().getToolConfig().getJava())
-                .picard(configuration.getGlobalConfig().getToolConfig().getPicard())
-                .samtools(configuration.getGlobalConfig().getToolConfig().getSamTools())
+                .java(validate(configuration.getGlobalConfig().getToolConfig().getJava(),
+                        GlobalConfigFormat.JAVA))
+                .picard(validate(configuration.getGlobalConfig().getToolConfig().getPicard(),
+                        GlobalConfigFormat.PICARD))
+                .samtools(validate(configuration.getGlobalConfig().getToolConfig().getSamTools(),
+                        GlobalConfigFormat.SAMTOOLS))
                 .build();
     }
 }
