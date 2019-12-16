@@ -2,16 +2,20 @@ package com.epam.fonda.tools.impl;
 
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.GlobalConfigFormat;
 import com.epam.fonda.samples.fastq.FastqReadType;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.tools.results.FastqOutput;
 import com.epam.fonda.tools.results.FastqResult;
+import com.epam.fonda.utils.ToolUtils;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+
+import static com.epam.fonda.utils.ToolUtils.validate;
 
 @Data
 public class SamToFastq implements Tool<FastqResult> {
@@ -93,10 +97,12 @@ public class SamToFastq implements Tool<FastqResult> {
      **/
     private ToolFields initializeToolFields(Configuration configuration) {
         return ToolFields.builder()
-                .java(configuration.getGlobalConfig().getToolConfig().getJava())
-                .picard(configuration.getGlobalConfig().getToolConfig().getPicard())
-                .readType(configuration.getGlobalConfig().getPipelineInfo().getReadType())
-                .bam(bamResult.getBamOutput().getBam())
+                .java(validate(configuration.getGlobalConfig().getToolConfig().getJava(), GlobalConfigFormat.JAVA))
+                .picard(validate(configuration.getGlobalConfig().getToolConfig().getPicard(),
+                        GlobalConfigFormat.PICARD))
+                .readType(validate(configuration.getGlobalConfig().getPipelineInfo().getReadType(),
+                        GlobalConfigFormat.READ_TYPE))
+                .bam(validate(bamResult.getBamOutput().getBam(), ToolUtils.BAM))
                 .build();
     }
 }
