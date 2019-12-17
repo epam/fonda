@@ -24,7 +24,6 @@ import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.tools.results.FastqOutput;
-import com.epam.fonda.tools.results.MetricsOutput;
 import com.epam.fonda.tools.results.MetricsResult;
 import com.epam.fonda.utils.TemplateEngineUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,7 +57,7 @@ class Hisat2Test extends AbstractTest {
     private TemplateEngine expectedTemplateEngine = TemplateEngineUtils.init();
     private String jarPath;
     private BamResult bamResult;
-
+    private FastqOutput fastqOutput;
 
     @BeforeEach
     void setup() {
@@ -88,7 +87,7 @@ class Hisat2Test extends AbstractTest {
         expectedStudyConfig = new StudyConfig();
         expectedConfiguration.setStudyConfig(expectedStudyConfig);
         jarPath = getExecutionPath();
-        FastqOutput fastqOutput = FastqOutput.builder()
+        fastqOutput = FastqOutput.builder()
                 .mergedFastq1("mergedFastq1")
                 .mergedFastq2("mergedFastq2")
                 .build();
@@ -101,7 +100,7 @@ class Hisat2Test extends AbstractTest {
 
     @Test
     void shouldGenerateScriptWithRmdupFlag() throws URISyntaxException, IOException {
-        Hisat2 hisat2 = new Hisat2(expectedSample, bamResult);
+        Hisat2 hisat2 = new Hisat2(expectedSample, fastqOutput);
         Path path = Paths.get(Objects.requireNonNull(this.getClass().getClassLoader()
                 .getResource(HISAT2_TOOL_WITH_RMDUP_TEST_OUTPUT_DATA_PATH)).toURI());
         byte[] fileBytes = Files.readAllBytes(path);
@@ -116,7 +115,7 @@ class Hisat2Test extends AbstractTest {
 
     @Test
     void shouldGenerateScriptWithQcFlag() {
-        Hisat2 hisat2 = new Hisat2(expectedSample, bamResult);
+        Hisat2 hisat2 = new Hisat2(expectedSample, fastqOutput);
         expectedPipelineInfo.setReadType("not single");
         expectedToolConfig.setRnaseqc("rnaSeqc");
         expectedToolConfig.setRnaseqcJava("rnaSeqcJava");
@@ -136,13 +135,9 @@ class Hisat2Test extends AbstractTest {
         bamResult = hisat2.generate(expectedConfiguration, expectedTemplateEngine);
         bamResult = new PicardMarkDuplicate(expectedSample, bamResult)
                 .generate(expectedConfiguration, expectedTemplateEngine);
-        MetricsResult metricsResult = MetricsResult.builder()
-                .bamOutput(bamResult.getBamOutput())
-                .metricsOutput(MetricsOutput.builder().build())
-                .command(BashCommand.withTool(bamResult.getCommand().getToolCommand()))
-                .build();
-        metricsResult = new RNASeQC(expectedSample, metricsResult)
+        MetricsResult metricsResult = new RNASeQC(expectedSample, bamResult.getBamOutput())
                 .generate(expectedConfiguration, expectedTemplateEngine);
-        assertEquals(expectedCmd, metricsResult.getCommand().getToolCommand());
+        assertEquals(expectedCmd, bamResult.getCommand().getToolCommand() +
+                metricsResult.getCommand().getToolCommand());
     }
 }

@@ -20,7 +20,7 @@ import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.Tool;
-import com.epam.fonda.tools.results.BamResult;
+import com.epam.fonda.tools.results.FastqOutput;
 import com.epam.fonda.tools.results.StarFusionOutput;
 import com.epam.fonda.tools.results.StarFusionResult;
 import lombok.Data;
@@ -60,7 +60,7 @@ public class StarFusion implements Tool<StarFusionResult> {
     @NonNull
     private FastqFileSample sample;
     @NonNull
-    private BamResult bamResult;
+    private FastqOutput fastqOutput;
 
     /**
      * This method generates bash script {@link BashCommand} for StarFusion tool.
@@ -72,7 +72,7 @@ public class StarFusion implements Tool<StarFusionResult> {
      **/
     @Override
     public StarFusionResult generate(Configuration configuration, TemplateEngine templateEngine) {
-        if(bamResult.getFastqOutput().getMergedFastq1() == null) {
+        if (fastqOutput.getMergedFastq1() == null) {
             throw new IllegalArgumentException(
                     "Error Step: In star: no fastq files are properly provided, please check!");
         }
@@ -93,7 +93,6 @@ public class StarFusion implements Tool<StarFusionResult> {
                 .build();
         starFusionOutput.createDirectory();
         return StarFusionResult.builder()
-                .bamResult(bamResult)
                 .command(BashCommand.withTool(cmd))
                 .starFusionOutput(starFusionOutput)
                 .build();
@@ -111,8 +110,8 @@ public class StarFusion implements Tool<StarFusionResult> {
         starFusionFields.starIndex = configuration.getGlobalConfig().getDatabaseConfig().getStarIndex();
         starFusionFields.sampleName = sample.getName();
         starFusionFields.numThreads = configuration.getGlobalConfig().getQueueParameters().getNumThreads();
-        starFusionFields.mergedFastq1 = bamResult.getFastqOutput().getMergedFastq1();
-        starFusionFields.mergedFastq2 = bamResult.getFastqOutput().getMergedFastq2();
+        starFusionFields.mergedFastq1 = fastqOutput.getMergedFastq1();
+        starFusionFields.mergedFastq2 = fastqOutput.getMergedFastq2();
         starFusionFields.bamOutdir = sample.getBamOutdir();
         starFusionFields.unSortedBam = String.format("%s/%s.Aligned.out.bam", starFusionFields.bamOutdir,
                 starFusionFields.sampleName);

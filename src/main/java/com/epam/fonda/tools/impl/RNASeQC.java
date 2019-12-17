@@ -21,6 +21,7 @@ import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.Tool;
+import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.MetricsOutput;
 import com.epam.fonda.tools.results.MetricsResult;
 import lombok.Data;
@@ -43,7 +44,7 @@ public class RNASeQC implements Tool<MetricsResult> {
     @NonNull
     private FastqFileSample sample;
     @NonNull
-    private MetricsResult metricsResult;
+    private BamOutput bamOutput;
 
     @Data
     private class ToolFields {
@@ -102,20 +103,18 @@ public class RNASeQC implements Tool<MetricsResult> {
         context.setVariable("toolFields", initializeToolFields(configuration));
         context.setVariable("databaseFields", initializeDatabaseFields(configuration));
         context.setVariable("metricFields", metricFields);
-        context.setVariable("mkdupBam", metricsResult.getBamOutput().getMkdupBam());
+        context.setVariable("mkdupBam", bamOutput.getMkdupBam());
         final String cmd = templateEngine.process(RNASEQC_TOOL_TEMPLATE_NAME, context);
-        final MetricsOutput metricsOutput = metricsResult.getMetricsOutput();
+        final MetricsOutput metricsOutput = MetricsOutput.builder().build();
         metricsOutput.setRnaMetrics(metricFields.rnaMetrics);
         metricsOutput.setMergedQcMetrics(metricFields.mergedQcMetrics);
         metricsOutput.setGcbiasMetrics(metricFields.gcbiasMetrics);
         metricsOutput.setGcsumMetrics(metricFields.gcsumMetrics);
         metricsOutput.setGcbiasChart(metricFields.gcbiasChart);
-        AbstractCommand resultCommand = metricsResult.getCommand();
-        resultCommand.setToolCommand(resultCommand.getToolCommand() + cmd);
-        resultCommand.setTempDirs(Arrays.asList(metricsResult.getMetricsOutput().getGcbiasMetrics(),
-                metricsResult.getMetricsOutput().getGcsumMetrics()));
+        AbstractCommand resultCommand = BashCommand.withTool(cmd);
+        resultCommand.setTempDirs(Arrays.asList(metricsOutput.getGcbiasMetrics(), metricsOutput.getGcsumMetrics()));
         return MetricsResult.builder()
-                .bamOutput(metricsResult.getBamOutput())
+                .bamOutput(bamOutput)
                 .metricsOutput(metricsOutput)
                 .command(resultCommand)
                 .build();
@@ -182,9 +181,9 @@ public class RNASeQC implements Tool<MetricsResult> {
      * @return {@link MetricFields} with its fields.
      **/
     private MetricFields initializeMetricsFields(AdditionalQcFields additionalQcFields) {
-        final String mkdupBam = metricsResult.getBamOutput().getMkdupBam();
+        final String mkdupBam = bamOutput.getMkdupBam();
         MetricFields metricFields = new MetricFields();
-        metricFields.mkdupMetrics = metricsResult.getBamOutput().getMkdupMetric()
+        metricFields.mkdupMetrics = bamOutput.getMkdupMetric()
                 .replace(additionalQcFields.sbamOutdir, additionalQcFields.sqcOutdir);
         metricFields.gcbiasMetrics = mkdupBam.replace(BAM_EXTENSION, ".gcbias.metrics")
                 .replace(additionalQcFields.sbamOutdir, additionalQcFields.sqcOutdir);

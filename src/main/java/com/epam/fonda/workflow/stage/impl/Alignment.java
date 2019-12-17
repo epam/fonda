@@ -70,9 +70,8 @@ public class Alignment implements Stage {
         this.fastqResult = fastqResult;
         this.index = index;
         this.bamResult = BamResult.builder()
-                .fastqOutput(fastqResult.getOut())
                 .bamOutput(BamOutput.builder().build())
-                .command(fastqResult.getCommand())
+                .command(BashCommand.withTool(""))
                 .build();
         this.metricsResult = MetricsResult.builder()
                 .bamOutput(bamResult.getBamOutput())
@@ -93,27 +92,23 @@ public class Alignment implements Stage {
     public BamResult mapping(final Flag flag, final FastqFileSample sample, final Configuration configuration,
                              final TemplateEngine templateEngine) {
         if (flag.isStar()) {
-            if (flag.isRsem()) {
-                bamResult = new Star(flag, sample, bamResult).generate(configuration, templateEngine);
-            } else {
-                bamResult = new Star(flag, sample, bamResult).generate(configuration, templateEngine);
+            bamResult = new Star(flag, sample, fastqResult.getOut()).generate(configuration, templateEngine);
+            if (!flag.isRsem()) {
                 bamResult = markDuplicate(flag, sample, configuration, templateEngine);
                 qcCheck(flag, sample, configuration, templateEngine);
             }
         } else if (flag.isHisat2()) {
-            bamResult = new Hisat2(sample, bamResult).generate(configuration, templateEngine);
+            bamResult = new Hisat2(sample, fastqResult.getOut()).generate(configuration, templateEngine);
             bamResult = markDuplicate(flag, sample, configuration, templateEngine);
             qcCheck(flag, sample, configuration, templateEngine);
         } else if (flag.isSalmon()) {
             SalmonResult salmonResult = new Salmon(sample, fastqResult).generate(configuration, templateEngine);
-            bamResult.getCommand().setToolCommand(bamResult.getCommand().getToolCommand() +
-                    salmonResult.getCommand().getToolCommand());
+            bamResult.setCommand(mergeCommands(salmonResult.getCommand()));
             return bamResult;
-        } else if(flag.isStarFusion()) {
-            StarFusionResult starFusionResult = new StarFusion(sample, bamResult)
+        } else if (flag.isStarFusion()) {
+            StarFusionResult starFusionResult = new StarFusion(sample, fastqResult.getOut())
                     .generate(configuration, templateEngine);
-            bamResult.getCommand().setToolCommand(bamResult.getCommand().getToolCommand() +
-                    starFusionResult.getCommand().getToolCommand());
+            bamResult.setCommand(mergeCommands(starFusionResult.getCommand()));
             return bamResult;
         } else if (flag.isBwa()) {
             bamResult = new BwaSort(sample, fastqResult.getOut().getMergedFastq1(),
@@ -123,10 +118,7 @@ public class Alignment implements Stage {
                     fastqResult.getOut().getMergedFastq2(), index).generate(configuration, templateEngine);
         }
 
-        final AbstractCommand command = bamResult.getCommand();
-        command.setToolCommand(fastqResult.getCommand().getToolCommand() + command.getToolCommand()
-                + metricsResult.getCommand().getToolCommand());
-        bamResult.setCommand(command);
+        mergeCommands(bamResult.getCommand());
         return bamResult;
     }
 
@@ -157,6 +149,16 @@ public class Alignment implements Stage {
         return bamResult;
     }
 
+    private AbstractCommand mergeCommands(final AbstractCommand toolCommand) {
+        final AbstractCommand fastqCommand = fastqResult.getCommand();
+        final AbstractCommand metricsCommand = metricsResult.getCommand();
+        toolCommand.setToolCommand(fastqCommand.getToolCommand() + toolCommand.getToolCommand()
+                + metricsCommand.getToolCommand());
+        toolCommand.getTempDirs().addAll(fastqCommand.getTempDirs());
+        toolCommand.getTempDirs().addAll(metricsCommand.getTempDirs());
+        return toolCommand;
+    }
+
     private BamResult markDuplicate(final Flag flag, final FastqFileSample sample, final Configuration configuration,
                                     final TemplateEngine templateEngine) {
         bamResult = new PicardMarkDuplicate(sample, bamResult).generate(configuration, templateEngine);
@@ -169,7 +171,7 @@ public class Alignment implements Stage {
     private void qcCheck(final Flag flag, final FastqFileSample sample, final Configuration configuration,
                          final TemplateEngine templateEngine) {
         if (flag.isRnaSeQC()) {
-            metricsResult = new RNASeQC(sample, metricsResult).generate(configuration, templateEngine);
+            metricsResult = new RNASeQC(sample, bamResult.getBamOutput()).generate(configuration, templateEngine);
         }
     }
 }

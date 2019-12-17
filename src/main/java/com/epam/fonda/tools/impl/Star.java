@@ -23,6 +23,7 @@ import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
+import com.epam.fonda.tools.results.FastqOutput;
 import com.epam.fonda.workflow.impl.Flag;
 import lombok.Data;
 import lombok.NonNull;
@@ -68,7 +69,7 @@ public class Star implements Tool<BamResult> {
     @NonNull
     private FastqFileSample sample;
     @NonNull
-    private BamResult bamResult;
+    private FastqOutput fastqOutput;
 
     /**
      * This method generates bash script {@link BashCommand} for Star tool.
@@ -94,7 +95,7 @@ public class Star implements Tool<BamResult> {
         context.setVariable("flag", flag);
         context.setVariable("bam", genomeBam);
         String cmd = templateEngine.process(STAR_TOOL_TEMPLATE_NAME, context);
-        BamOutput bamOutput = bamResult.getBamOutput();
+        BamOutput bamOutput = BamOutput.builder().build();
         if (flag.isRsem()) {
             bamOutput.setBam(transcriptomeBam);
         } else {
@@ -105,8 +106,7 @@ public class Star implements Tool<BamResult> {
             bamOutput.setUnsortedBam(additionalStarFields.unsortedBam);
             bamOutput.setUnsortedBamIndex(additionalStarFields.unsortedBamIndex);
         }
-        AbstractCommand resultCommand = bamResult.getCommand();
-        resultCommand.setToolCommand(resultCommand.getToolCommand() + cmd);
+        AbstractCommand resultCommand = BashCommand.withTool(cmd);
         resultCommand.setTempDirs(Arrays.asList(bamOutput.getSortedBam(), bamOutput.getSortedBamIndex(),
                 bamOutput.getUnsortedBam(), bamOutput.getUnsortedBamIndex()));
         return BamResult.builder()
@@ -133,8 +133,8 @@ public class Star implements Tool<BamResult> {
                 sample.getName());
         additionalStarFields.bamIndex = format("%s/%s.star.sorted.bam.bai", sample.getBamOutdir(),
                 sample.getName());
-        additionalStarFields.fastq1 = bamResult.getFastqOutput().getMergedFastq1();
-        additionalStarFields.fastq2 = bamResult.getFastqOutput().getMergedFastq2();
+        additionalStarFields.fastq1 = fastqOutput.getMergedFastq1();
+        additionalStarFields.fastq2 = fastqOutput.getMergedFastq2();
         additionalStarFields.rg = format("ID:%s SM:%s LB:RNA PL:Illumina CN:cr", sample.getName(), sample
                 .getName());
         additionalStarFields.index = configuration.getGlobalConfig().getDatabaseConfig().getStarIndex();

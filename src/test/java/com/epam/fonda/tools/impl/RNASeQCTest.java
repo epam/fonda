@@ -16,14 +16,11 @@
 
 package com.epam.fonda.tools.impl;
 
-import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.entity.configuration.GlobalConfig;
 import com.epam.fonda.entity.configuration.StudyConfig;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.results.BamOutput;
-import com.epam.fonda.tools.results.MetricsOutput;
-import com.epam.fonda.tools.results.MetricsResult;
 import com.epam.fonda.utils.TemplateEngineUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,7 +36,7 @@ class RNASeQCTest extends AbstractTest {
     private FastqFileSample expectedSample;
     private TemplateEngine expectedTemplateEngine = TemplateEngineUtils.init();
     private String jarPath;
-    private MetricsResult metricsResult;
+    private BamOutput bamOutput;
 
     @BeforeEach
     void setup() {
@@ -75,20 +72,15 @@ class RNASeQCTest extends AbstractTest {
         expectedSample.setName("sampleName");
         jarPath = getExecutionPath();
 
-        BamOutput bamOutput = BamOutput.builder()
+        bamOutput = BamOutput.builder()
                 .mkdupBam("sbamOutdir/sampleName.toolName.sorted.mkdup.bam")
                 .mkdupMetric("sbamOutdir/sampleName.toolName.sorted.mkdup.metrics")
-                .build();
-        metricsResult = MetricsResult.builder()
-                .bamOutput(bamOutput)
-                .metricsOutput(MetricsOutput.builder().build())
-                .command(BashCommand.withTool(""))
                 .build();
     }
 
     @Test
     void shouldGenerate() {
-        RNASeQC rnaSeQC = new RNASeQC(expectedSample, metricsResult);
+        RNASeQC rnaSeQC = new RNASeQC(expectedSample, bamOutput);
         Context context = new Context();
         context.setVariable("jarPath", jarPath);
         final String expectedCmd = expectedTemplateEngine.process(RNASEQC_TOOL_TEST_TEMPLATE_NAME, context);

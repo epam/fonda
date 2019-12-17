@@ -23,6 +23,7 @@ import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
+import com.epam.fonda.tools.results.FastqOutput;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -60,7 +61,7 @@ public class Hisat2 implements Tool<BamResult> {
     @NonNull
     private FastqFileSample sample;
     @NonNull
-    private BamResult bamResult;
+    private FastqOutput fastqOutput;
 
     /**
      * This method generates bash script {@link BashCommand} for Hisat2 tool.
@@ -83,17 +84,17 @@ public class Hisat2 implements Tool<BamResult> {
         context.setVariable("toolFields", initializeToolFields(configuration));
         context.setVariable("bam", bam);
         String cmd = templateEngine.process(HISAT2_TOOL_TEMPLATE_NAME, context);
-        BamOutput bamOutput = bamResult.getBamOutput();
+        BamOutput bamOutput = BamOutput.builder().build();
         bamOutput.setBam(bam);
         bamOutput.setBamIndex(additionalHisat2Fields.bamIndex);
         bamOutput.setSortedBam(bam);
         bamOutput.setSortedBamIndex(additionalHisat2Fields.bamIndex);
-        bamResult.setBamOutput(bamOutput);
-        AbstractCommand resultCommand = bamResult.getCommand();
-        resultCommand.setToolCommand(resultCommand.getToolCommand() + cmd);
-        resultCommand.setTempDirs(Arrays.asList(bamResult.getBamOutput().getSortedBam(),
-                bamResult.getBamOutput().getSortedBamIndex()));
-        return bamResult;
+        AbstractCommand resultCommand = BashCommand.withTool(cmd);
+        resultCommand.setTempDirs(Arrays.asList(bamOutput.getSortedBam(), bamOutput.getSortedBamIndex()));
+        return BamResult.builder()
+                .bamOutput(bamOutput)
+                .command(resultCommand)
+                .build();
     }
 
     /**
@@ -109,8 +110,8 @@ public class Hisat2 implements Tool<BamResult> {
         additionalHisat2Fields.sampleName = sample.getName();
         additionalHisat2Fields.tmpBam = String.format("%s/%s.hisat2.sorted", sample.getBamOutdir(),
                 sample.getName());
-        additionalHisat2Fields.fastq1 = bamResult.getFastqOutput().getMergedFastq1();
-        additionalHisat2Fields.fastq2 = bamResult.getFastqOutput().getMergedFastq2();
+        additionalHisat2Fields.fastq1 = fastqOutput.getMergedFastq1();
+        additionalHisat2Fields.fastq2 = fastqOutput.getMergedFastq2();
         additionalHisat2Fields.rg = String.format("\"SM:%s\\tLB:%s\\tPL:Illumina\"", sample.getName(), sample
                 .getName());
         additionalHisat2Fields.index = configuration.getGlobalConfig().getDatabaseConfig().getHisat2Index();
