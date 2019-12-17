@@ -58,7 +58,7 @@ public class SortBamByReadName implements Tool<BamResult> {
         return BamResult.builder()
                 .command(command)
                 .bamOutput(BamOutput.builder()
-                        .sortedBam(sortedBam)
+                        .bam(sortedBam)
                         .build())
                 .build();
     }
