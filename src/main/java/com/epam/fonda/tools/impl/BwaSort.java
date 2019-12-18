@@ -89,7 +89,7 @@ public class BwaSort implements Tool<BamResult> {
         bwaSortFields.fastq2 = fastq2;
         bwaSortFields.sampleName = sample.getName();
         bwaSortFields.tmpBam = String.format("%s/%s_%d.bwa.sorted",
-                bwaSortFields.sbamOutDir, bwaSortFields.sampleName, bwaSortFields.numThreads);
+                bwaSortFields.sbamOutDir, bwaSortFields.sampleName, index);
         bwaSortFields.sortedBam = String.format("%s.bam", bwaSortFields.tmpBam);
         bwaSortFields.sortedBamIndex = String.format("%s.bai", bwaSortFields.sortedBam);
         bwaSortFields.rg = constructFieldRG(configuration, sample.getName());

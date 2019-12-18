@@ -25,6 +25,7 @@ import com.epam.fonda.tools.impl.AmpliconGatkRealign;
 import com.epam.fonda.tools.impl.AmpliconGatkRecalibrate;
 import com.epam.fonda.tools.impl.DnaPicardQc;
 import com.epam.fonda.tools.impl.PicardMarkDuplicate;
+import com.epam.fonda.tools.impl.PicardRemoveDuplicate;
 import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.tools.results.MetricsOutput;
 import com.epam.fonda.tools.results.MetricsResult;
@@ -54,6 +55,9 @@ public class PostAlignment implements Stage {
                              final TemplateEngine templateEngine) {
         if (flag.isPicard()) {
             bamResult = new PicardMarkDuplicate(sample, bamResult).generate(configuration, templateEngine);
+            if (isCapture(configuration)) {
+                bamResult = new PicardRemoveDuplicate(bamResult).generate(configuration, templateEngine);
+            }
             if (flag.isQc()) {
                 MetricsResult metricsResult = MetricsResult.builder()
                         .bamOutput(bamResult.getBamOutput())
@@ -78,5 +82,9 @@ public class PostAlignment implements Stage {
                     .generate(configuration, templateEngine);
         }
         return bamResult;
+    }
+
+    private boolean isCapture(final Configuration configuration) {
+        return configuration.getGlobalConfig().getPipelineInfo().getWorkflow().toLowerCase().contains("capture");
     }
 }

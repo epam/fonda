@@ -21,7 +21,6 @@ import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.entity.configuration.GlobalConfig;
 import com.epam.fonda.entity.configuration.GlobalConfigFormat;
 import com.epam.fonda.samples.fastq.FastqFileSample;
-import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.tools.results.FastqOutput;
 import com.epam.fonda.utils.TemplateEngineUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,10 +56,7 @@ public class StarFusionTest extends AbstractTest {
                 .mergedFastq1("mergedFastq1")
                 .mergedFastq2("mergedFastq2")
                 .build();
-        BamResult expectedBamResult = BamResult.builder()
-                .fastqOutput(fastqOutput)
-                .build();
-        starFusion = new StarFusion(expectedSample, expectedBamResult);
+        starFusion = new StarFusion(expectedSample, fastqOutput);
         Path path = Paths.get(this.getClass().getClassLoader()
                 .getResource(STAR_FUSION_TEST_OUTPUT_DATA_PATH).toURI());
         byte[] fileBytes = Files.readAllBytes(path);

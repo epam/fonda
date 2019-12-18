@@ -17,7 +17,7 @@
 package com.epam.fonda.workflow;
 
 import com.epam.fonda.entity.configuration.Configuration;
-import com.epam.fonda.workflow.impl.DnaAmpliconVarFastqWorkflow;
+import com.epam.fonda.workflow.impl.DnaVarFastqWorkflow;
 import com.epam.fonda.workflow.impl.Flag;
 import com.epam.fonda.workflow.impl.RnaExpressionBamWorkflow;
 import com.epam.fonda.workflow.impl.RnaExpressionFastqWorkflow;
@@ -44,7 +44,8 @@ public class WorkflowFactory {
             case RNA_EXPRESSION_BAM: return new RnaExpressionBamWorkflow(flag);
             case SC_IMMUNE_PROFILE_CELL_RANGER_FASTQ: return new SCImmuneProfileCellRangerFastqWorkflow(flag);
             case RNA_FUSION_FASTQ: return new RnaFusionFastqWorkflow(flag);
-            case DNA_AMPLICON_VAR_FASTQ: return new DnaAmpliconVarFastqWorkflow(flag);
+            case DNA_AMPLICON_VAR_FASTQ: return new DnaVarFastqWorkflow(flag, "Index mkdup bam");
+            case DNA_CAPTURE_VAR_FASTQ: return new DnaVarFastqWorkflow(flag, "Index rmdup bam");
             default: throw new IllegalArgumentException(String.format("Requested workflow %s is not supported yet",
                     workflowName));
         }

@@ -34,10 +34,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.thymeleaf.TemplateEngine;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.epam.fonda.utils.PipelineUtils.cleanUpTmpDir;
 import static com.epam.fonda.utils.PipelineUtils.printShell;
@@ -64,13 +62,16 @@ public class RnaFusionFastqWorkflow implements FastqWorkflow {
         FastqResult fastqResult = PipelineUtils.mergeFastq(sample);
         fastqResult = new PreAlignment(fastqResult).process(flag, sample, configuration, TEMPLATE_ENGINE);
         BamResult bamResult = new Alignment(fastqResult).mapping(flag, sample, configuration, TEMPLATE_ENGINE);
-        FusionCatcherResult fusionCatcherResult = new FusionCatcher(sample, fastqResult)
-                .generate(configuration, TEMPLATE_ENGINE);
-        List<String> tmpDir = Stream.of(bamResult.getCommand().getTempDirs(), fusionCatcherResult.getCommand()
-                .getTempDirs()).flatMap(Collection::stream).collect(Collectors.toList());
-        final String cmd = bamResult.getCommand().getToolCommand() + fusionCatcherResult.getCommand().getToolCommand() +
-                cleanUpTmpDir(tmpDir);
-        printShell(configuration, cmd, sample.getName(), null);
+        List<String> tmpDir = bamResult.getCommand().getTempDirs();
+        StringBuilder cmd = new StringBuilder(bamResult.getCommand().getToolCommand());
+        if (flag.isFusionCatcher()) {
+            FusionCatcherResult fusionCatcherResult = new FusionCatcher(sample, fastqResult)
+                    .generate(configuration, TEMPLATE_ENGINE);
+            tmpDir.addAll(fusionCatcherResult.getCommand().getTempDirs());
+            cmd.append(fusionCatcherResult.getCommand().getToolCommand());
+        }
+        cmd.append(cleanUpTmpDir(tmpDir));
+        printShell(configuration, cmd.toString(), sample.getName(), null);
         log.debug(String.format("Successful step: the %s sample was processed.", sample.getName()));
     }
 

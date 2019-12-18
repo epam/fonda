@@ -1,0 +1,17 @@
+[Series_Info]
+
+job_name = dnaCaptureVarFastq
+
+dir_out = build/resources/integrationTest/output
+
+fastq_list = build/resources/integrationTest/fastqSingle.tsv
+
+LibraryType = DNAWholeTargetSeq_Single
+
+DataGenerationSource = Internal
+
+Date = 031814
+
+Project = Example_project
+
+Run = run1234

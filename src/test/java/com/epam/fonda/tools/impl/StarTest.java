@@ -24,7 +24,6 @@ import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.tools.results.FastqOutput;
-import com.epam.fonda.tools.results.MetricsOutput;
 import com.epam.fonda.tools.results.MetricsResult;
 import com.epam.fonda.utils.TemplateEngineUtils;
 import com.epam.fonda.workflow.impl.Flag;
@@ -61,6 +60,7 @@ class StarTest extends AbstractTest {
     private TemplateEngine expectedTemplateEngine = TemplateEngineUtils.init();
     private String jarPath;
     private BamResult bamResult;
+    private FastqOutput fastqOutput;
 
     @BeforeEach
     void setup() {
@@ -94,7 +94,7 @@ class StarTest extends AbstractTest {
         expectedSample.setQcOutdir("sqcOutdir");
         jarPath = getExecutionPath();
 
-        FastqOutput fastqOutput = FastqOutput.builder()
+        fastqOutput = FastqOutput.builder()
                 .mergedFastq1("mergedFastq1")
                 .mergedFastq2("mergedFastq2")
                 .build();
@@ -114,7 +114,7 @@ class StarTest extends AbstractTest {
         expectedPipelineInfo.setToolset(new LinkedHashSet<>(Collections.singletonList("rmdup")));
         expectedGlobalConfig.setPipelineInfo(expectedPipelineInfo);
         Flag flag = Flag.buildFlags(expectedConfiguration);
-        Star star = new Star(flag, expectedSample, bamResult);
+        Star star = new Star(flag, expectedSample, fastqOutput);
         Path path = Paths.get(Objects.requireNonNull(this.getClass().getClassLoader()
                 .getResource(STAR_TOOL_WITH_RMDUP_TEST_OUTPUT_DATA_PATH)).toURI());
         byte[] fileBytes = Files.readAllBytes(path);
@@ -131,7 +131,7 @@ class StarTest extends AbstractTest {
         expectedPipelineInfo.setToolset(new LinkedHashSet<>(Collections.singletonList("qc")));
         expectedGlobalConfig.setPipelineInfo(expectedPipelineInfo);
         Flag flag = Flag.buildFlags(expectedConfiguration);
-        Star star = new Star(flag, expectedSample, bamResult);
+        Star star = new Star(flag, expectedSample, fastqOutput);
         expectedPipelineInfo.setReadType("not single");
         expectedToolConfig.setRnaseqc("rnaSeqc");
         expectedToolConfig.setRnaseqcJava("rnaSeqcJava");
@@ -147,13 +147,9 @@ class StarTest extends AbstractTest {
         bamResult = star.generate(expectedConfiguration, expectedTemplateEngine);
         bamResult = new PicardMarkDuplicate(expectedSample, bamResult)
                 .generate(expectedConfiguration, expectedTemplateEngine);
-        MetricsResult metricsResult = MetricsResult.builder()
-                .bamOutput(bamResult.getBamOutput())
-                .metricsOutput(MetricsOutput.builder().build())
-                .command(bamResult.getCommand())
-                .build();
-        metricsResult = new RNASeQC(expectedSample, metricsResult)
+        MetricsResult metricsResult = new RNASeQC(expectedSample, bamResult.getBamOutput())
                 .generate(expectedConfiguration, expectedTemplateEngine);
-        assertEquals(expectedCmd, metricsResult.getCommand().getToolCommand());
+        assertEquals(expectedCmd, bamResult.getCommand().getToolCommand() +
+                metricsResult.getCommand().getToolCommand());
     }
 }

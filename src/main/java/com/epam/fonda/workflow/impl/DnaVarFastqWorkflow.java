@@ -50,11 +50,13 @@ import static com.epam.fonda.utils.PipelineUtils.printShell;
 
 @Slf4j
 @RequiredArgsConstructor
-public class DnaAmpliconVarFastqWorkflow implements FastqWorkflow {
+public class DnaVarFastqWorkflow implements FastqWorkflow {
     private static final TemplateEngine TEMPLATE_ENGINE = TemplateEngineUtils.init();
 
     @NonNull
     final Flag flag;
+    @NonNull
+    private final String stringTag;
 
     @Override
     public void run(final Configuration configuration, final FastqFileSample sample) throws IOException {
@@ -129,7 +131,7 @@ public class DnaAmpliconVarFastqWorkflow implements FastqWorkflow {
         bamResult.getCommand().getTempDirs().add(sample.getTmpOutdir());
 
         if (sample.getSampleType().equals(PipelineUtils.CASE) || sample.getSampleType().equals(PipelineUtils.TUMOR)) {
-            resultCmd.append(DnaUtils.checkPeriodicBamStatus("Index mkdup bam", sample.getName(), null,
+            resultCmd.append(DnaUtils.checkPeriodicBamStatus(stringTag, sample.getName(), null,
                     configuration, null));
             final boolean isPaired = StringUtils.isNoneBlank(sample.getControlName())
                     && !PipelineUtils.NA.equals(sample.getControlName());
