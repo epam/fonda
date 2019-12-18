@@ -16,6 +16,7 @@
 
 package com.epam.fonda.tools.impl;
 
+import com.epam.fonda.entity.command.AbstractCommand;
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.samples.fastq.FastqFileSample;
@@ -27,6 +28,8 @@ import lombok.Data;
 import lombok.NonNull;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+
+import java.util.Arrays;
 
 @Data
 public class StarFusion implements Tool<StarFusionResult> {
@@ -92,8 +95,12 @@ public class StarFusion implements Tool<StarFusionResult> {
                 .starFusionOutdir(additionalStarFusionFields.starFusionOutdir)
                 .build();
         starFusionOutput.createDirectory();
+        AbstractCommand command = BashCommand.withTool(cmd);
+        command.setTempDirs(Arrays.asList(additionalStarFusionFields.unSortedBam,
+                additionalStarFusionFields.unSortedBamIndex,
+                additionalStarFusionFields.bamIndex, star4fusionBam));
         return StarFusionResult.builder()
-                .command(BashCommand.withTool(cmd))
+                .command(command)
                 .starFusionOutput(starFusionOutput)
                 .build();
     }
