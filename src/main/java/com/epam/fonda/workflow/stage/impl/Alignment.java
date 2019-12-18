@@ -43,6 +43,11 @@ import com.epam.fonda.workflow.impl.Flag;
 import com.epam.fonda.workflow.stage.Stage;
 import org.thymeleaf.TemplateEngine;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 /**
  * The second stage of workflow.
  * Consists of list of tools that require {@link FastqResult} and
@@ -152,10 +157,14 @@ public class Alignment implements Stage {
     private AbstractCommand mergeCommands(final AbstractCommand toolCommand) {
         final AbstractCommand fastqCommand = fastqResult.getCommand();
         final AbstractCommand metricsCommand = metricsResult.getCommand();
-        toolCommand.setToolCommand(fastqCommand.getToolCommand() + toolCommand.getToolCommand()
-                + metricsCommand.getToolCommand());
-        toolCommand.getTempDirs().addAll(fastqCommand.getTempDirs());
-        toolCommand.getTempDirs().addAll(metricsCommand.getTempDirs());
+        final String command = String.join(fastqCommand.getToolCommand(), toolCommand.getToolCommand(),
+                metricsCommand.getToolCommand());
+        toolCommand.setToolCommand(command);
+        final List<String> tempDirs = Stream.of(toolCommand.getTempDirs(), fastqCommand.getTempDirs(),
+                metricsCommand.getTempDirs())
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+        toolCommand.setTempDirs(tempDirs);
         return toolCommand;
     }
 
