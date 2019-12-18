@@ -1,0 +1,5 @@
+[# th:if = "${readType != paired}"]parameterType	shortName	Parameter1	Parameter2	sample_type	match_control
+[# th:each="listObjects : ${listObjects}"]fastqFile	[(${listObjects.sampleName})]	[(${outDir})]/[(${listObjects.sampleName})]/fastq/[(${listObjects.sampleName})].R1.fastq.gz	[(${outDir})]/[(${listObjects.sampleName})]/fastq/[(${listObjects.sampleName})].R2.fastq.gz	[(${listObjects.sampleType})]	[(${listObjects.matchControl})]
+[/][/][# th:unless = "${readType != paired}"]parameterType    shortName   Parameter   sample_type match_control
+[# th:each="listObjects : ${listObjects}"]fastqFile [(${listObjects.sampleName})]   [(${outDir})]/[(${listObjects.sampleName})]/fastq/[(${listObjects.sampleName})].fastq.gz    [(${listObjects.sampleType})]   [(${listObjects.matchControl})]
+[/][/]

@@ -1,63 +1,65 @@
 package com.epam.fonda.tools.impl;
 
+import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.samples.fastq.FastqFileSample;
-import com.epam.fonda.samples.fastq.FastqReadType;
 import com.epam.fonda.tools.PostProcessTool;
+import com.epam.fonda.tools.Tool;
+import com.epam.fonda.tools.results.BamResult;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class FastqListAnalysis implements PostProcessTool {
+@Data
+public class FastqListAnalysis implements Tool<BamResult> {
+    private static final String FASTQ_LIST_ANALYSIS_TEMPLATE = "fastq_list_analysis_template";
 
     @NonNull
     private List<FastqFileSample> samples;
 
     @Override
-    public void generate(Configuration configuration, TemplateEngine templateEngine) throws IOException {
+    public BamResult generate(Configuration configuration, TemplateEngine templateEngine) {
         FastqListAnalysisFields toolFields = initFastqListAnalysisFields(configuration);
-        String bamList = configuration.getStudyConfig().getBamList();
         String fastqPath = String.format("%s/%s-%s-%s-FastqPaths.txt", toolFields.outdir, toolFields.project,
                 toolFields.runID, toolFields.date);
-        StringBuilder resultStr = new StringBuilder();
+        List<AdditionalToolFields> additionalToolFieldsList = buildToolFieldsList();
+        Context context = new Context();
+        context.setVariable("listObjects", additionalToolFieldsList);
+        context.setVariable("outDir", toolFields.outdir);
+        context.setVariable("readType", toolFields.readType);
+        String defineOfFileWithFastq = templateEngine.process(FASTQ_LIST_ANALYSIS_TEMPLATE, context);
+        try {
+            Files.newBufferedWriter(Paths.get(fastqPath)).write(defineOfFileWithFastq);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return BamResult.builder()
+                .command(BashCommand.withTool(defineOfFileWithFastq))
+                .build();
+    }
 
-//        Files.newBufferedReader(Paths.get(bamList)).lines().skip(1).forEach(line -> {
-//            String[] lineOfWordsFromBamList = line.trim().split("\\t");
-//            if (lineOfWordsFromBamList.length != 5 && lineOfWordsFromBamList.length != 3) {
-//                System.out.println("Error Step: Please check the number of columns in bam_list file." +
-//                        " It should be either 3 or 5!");
-//                return;
-//            }
-//            String sampleName = lineOfWordsFromBamList[1];
-//            String sampleType = lineOfWordsFromBamList.length == 5 ? lineOfWordsFromBamList[3] : "tumor";
-//            String matchControl = lineOfWordsFromBamList.length == 5 ? lineOfWordsFromBamList[4] : "NA";
-//            if (FastqReadType.PAIRED.name().equals(toolFields.readType)) {
-//                resultStr.append("parameterType\tshortName\tParameter1\tParameter2\tsample_type\tmatch_control\n");
-//                String fq1 = String.format("%s/%s/fastq/%s.R1.fastq.gz", toolFields.getOutdir(), sampleName,
-//                        sampleName);
-//                String fq2 = String.format("%s/%s/fastq/%s.R2.fastq.gz", toolFields.getOutdir(), sampleName,
-//                        sampleName);
-//                resultStr.append(String.format("fastqFile\t%s\t%s\t%s\t%s\t%s\n", sampleName, fq1, fq2, sampleType,
-//                        matchControl));
-//            } else if (FastqReadType.SINGLE.name().equals(toolFields.readType)) {
-//                resultStr.append("parameterType\\tshortName\\tParameter\\tsample_type\\tmatch_control\\n");
-//                String fq = String.format("%s/%s/fastq/%s.fastq.gz", toolFields.getOutdir(), sampleName,
-//                        sampleName);
-//                resultStr.append(String.format("fastqFile\t%s\t%s\t%s\t%s\n", sampleName, fq, sampleType,
-//                        matchControl));
-//            }
-//            try {
-//                Files.newBufferedWriter(Paths.get(fastqPath)).write(resultStr.toString());
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        });
+    private List<AdditionalToolFields> buildToolFieldsList() {
+        return samples.stream().map(sample -> AdditionalToolFields.builder()
+                .sampleName(sample.getName())
+                .sampleType(sample.getSampleType())
+                .matchControl(sample.getMatchControl())
+                .build()).collect(Collectors.toList());
+    }
+
+    @Data
+    @Builder
+    private static class AdditionalToolFields {
+        private String sampleName;
+        private String sampleType;
+        private String matchControl;
     }
 
     @Data
