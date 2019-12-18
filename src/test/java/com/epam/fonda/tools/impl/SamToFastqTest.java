@@ -1,3 +1,19 @@
+/*
+ * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.epam.fonda.tools.impl;
 
 import com.epam.fonda.entity.configuration.Configuration;
@@ -39,14 +55,14 @@ class SamToFastqTest extends AbstractTest {
     @Test
     void testGenerateSamToFastqWithSingleTypeRead() throws IOException, URISyntaxException {
         assertEquals(buildCmd(SAM_TO_FASTQ_TEST_OUTPUT_DATA_PATH_WITH_SINGLE_TYPE_READ),
-                samToFastq.generate(buildConfigurationWithSingleReadType(), templateEngine).getCommand()
+                samToFastq.generate(buildConfiguration(FastqReadType.SINGLE.getType()), templateEngine).getCommand()
                         .getToolCommand());
     }
 
     @Test
     void testGenerateSamToFastqWithPairedTypeRead() throws IOException, URISyntaxException {
         assertEquals(buildCmd(SAM_TO_FASTQ_TEST_OUTPUT_DATA_PATH_WITH_PAIRED_TYPE_READ),
-                samToFastq.generate(buildConfigurationWithPairedReadType(), templateEngine).getCommand()
+                samToFastq.generate(buildConfiguration(FastqReadType.PAIRED.getType()), templateEngine).getCommand()
                         .getToolCommand());
     }
 
@@ -56,28 +72,17 @@ class SamToFastqTest extends AbstractTest {
         return readFile(path);
     }
 
-    private Configuration buildConfiguration() {
+    private Configuration buildConfiguration(String readType) {
         GlobalConfig.ToolConfig expectedTool = new GlobalConfig.ToolConfig();
         expectedTool.setJava("java");
         expectedTool.setPicard("picard");
         GlobalConfig.PipelineInfo expectedPipelineInfo = new GlobalConfig.PipelineInfo();
+        expectedPipelineInfo.setReadType(readType);
         GlobalConfig expectedGlobalConfig = new GlobalConfig();
         expectedGlobalConfig.setToolConfig(expectedTool);
         expectedGlobalConfig.setPipelineInfo(expectedPipelineInfo);
         Configuration configuration = new Configuration();
         configuration.setGlobalConfig(expectedGlobalConfig);
         return configuration;
-    }
-
-    private Configuration buildConfigurationWithSingleReadType() {
-        Configuration configurationWithSingleReadType = buildConfiguration();
-        configurationWithSingleReadType.getGlobalConfig().getPipelineInfo().setReadType(FastqReadType.SINGLE.name());
-        return configurationWithSingleReadType;
-    }
-
-    private Configuration buildConfigurationWithPairedReadType() {
-        Configuration configurationWithPairedReadType = buildConfiguration();
-        configurationWithPairedReadType.getGlobalConfig().getPipelineInfo().setReadType(FastqReadType.PAIRED.name());
-        return configurationWithPairedReadType;
     }
 }
