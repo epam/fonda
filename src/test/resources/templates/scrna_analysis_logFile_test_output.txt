@@ -1,16 +1,16 @@
-logFile=output/log_files/scrnaExpressionFastq_count_for_sampleName_analysis.log
+logFile=output/log_files/scrnaExpressionFastq_alignment_for_sampleName_analysis.log
 str=""
 while [[ $str = "" ]]
 do
 if [[ -f $logFile  ]];
 then
-	str=$(grep -E "(Successful|Error) Step: count" $logFile;)
+	str=$(grep -E "(Successful|Error) Step: Generate gene-barcode matrix" $logFile;)
 fi
-	echo Waiting for step: count
+	echo Waiting for step: Generate gene-barcode matrix
 	sleep 60
 done
 
-if [[ $str == "*Error Step: count*" ]];
+if [[ $str == "*Error Step: Generate gene-barcode matrix*" ]];
 then
 	echo $(date) Error gene expression results from sampleName:
 	echo $str
