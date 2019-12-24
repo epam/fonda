@@ -1,3 +1,3 @@
 parameterType	shortName	Parameter1	Parameter2	sample_type	match_control
-fastqFile	sampleName	outDir/sampleName/fastq/sampleName.R1.fastq.gz	outDir/sampleName/fastq/sampleName.R2.fastq.gz	sampeType	matchControl
-fastqFile	sampleName	outDir/sampleName/fastq/sampleName.R1.fastq.gz	outDir/sampleName/fastq/sampleName.R2.fastq.gz	sampeType	matchControl
+fastqFile	sampleName	output/sampleName/fastq/sampleName.R1.fastq.gz	output/sampleName/fastq/sampleName.R2.fastq.gz	sampeType	matchControl
+fastqFile	sampleName	output/sampleName/fastq/sampleName.R1.fastq.gz	output/sampleName/fastq/sampleName.R2.fastq.gz	sampeType	matchControl

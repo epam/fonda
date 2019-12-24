@@ -1,27 +1,40 @@
+/*
+ * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.epam.fonda.tools.impl;
 
+import com.epam.fonda.entity.configuration.CommonOutdir;
 import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.entity.configuration.GlobalConfig;
 import com.epam.fonda.entity.configuration.StudyConfig;
 import com.epam.fonda.samples.fastq.FastqFileSample;
-import com.epam.fonda.utils.PipelineUtils;
 import com.epam.fonda.utils.TemplateEngineUtils;
-import com.epam.fonda.utils.ToolUtils;
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.thymeleaf.TemplateEngine;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FastqListAnalysisTest extends AbstractTest {
     private static final String FASTQ_LIST_ANALYSIS_TOOL_TEST_OUTPUT_DATA_WITH_PAIRED_READ_TYPE_PATH =
@@ -35,10 +48,11 @@ class FastqListAnalysisTest extends AbstractTest {
     private TemplateEngine templateEngine = TemplateEngineUtils.init();
     private String expectedCmdWithPaired;
     private String expectedCmdWithSingle;
+    private String actualFastqPath;
+    private String actualCmd;
 
     @BeforeEach
     void setUp() throws IOException, URISyntaxException {
-
         configurationWithPaired = buildConfiguration("paired");
         configurationWithSingle = buildConfiguration("single");
         List<FastqFileSample> samples = buildFastqFileSample();
@@ -46,20 +60,30 @@ class FastqListAnalysisTest extends AbstractTest {
         Path pathWithPaired = Paths.get(Objects.requireNonNull(this.getClass().getClassLoader()
                 .getResource(FASTQ_LIST_ANALYSIS_TOOL_TEST_OUTPUT_DATA_WITH_PAIRED_READ_TYPE_PATH)).toURI());
         expectedCmdWithPaired = readFile(pathWithPaired);
-
         Path pathWithSingle = Paths.get(Objects.requireNonNull(this.getClass().getClassLoader()
                 .getResource(FASTQ_LIST_ANALYSIS_TOOL_TEST_OUTPUT_DATA_WITH_SINGLE_READ_TYPE_PATH)).toURI());
         expectedCmdWithSingle = readFile(pathWithSingle);
+        CommonOutdir commonOutdir = new CommonOutdir(TEST_DIRECTORY);
+        commonOutdir.createDirectory();
+        actualFastqPath = String.format("%s/%s-%s-%s-FastqPaths.txt",
+                configurationWithPaired.getStudyConfig().getDirOut(),
+                configurationWithPaired.getStudyConfig().getProject(),
+                configurationWithPaired.getStudyConfig().getRun(),
+                configurationWithPaired.getStudyConfig().getDate());
     }
 
     @Test
     void generateWithPaired() throws IOException {
-        Assert.assertEquals(expectedCmdWithPaired, fastqListAnalysis.generate(configurationWithPaired, templateEngine).getCommand().getToolCommand());
+        fastqListAnalysis.generate(configurationWithPaired, templateEngine);
+        actualCmd = readFile(Paths.get(actualFastqPath));
+        assertEquals(expectedCmdWithPaired, actualCmd);
     }
 
     @Test
     void generateWithSingle() throws IOException {
-        Assert.assertEquals(expectedCmdWithSingle, fastqListAnalysis.generate(configurationWithSingle, templateEngine).getCommand().getToolCommand());
+        fastqListAnalysis.generate(configurationWithSingle, templateEngine);
+        actualCmd = readFile(Paths.get(actualFastqPath));
+        assertEquals(expectedCmdWithSingle, actualCmd);
     }
 
     private List<FastqFileSample> buildFastqFileSample() {
@@ -78,7 +102,7 @@ class FastqListAnalysisTest extends AbstractTest {
     private Configuration buildConfiguration(String readType) {
         Configuration configuration = new Configuration();
         StudyConfig studyConfig = new StudyConfig();
-        studyConfig.setDirOut("outDir");
+        studyConfig.setDirOut(TEST_DIRECTORY);
         studyConfig.setRun("run1234");
         studyConfig.setDate("20140318");
         studyConfig.setProject("Example_project");
