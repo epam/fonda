@@ -157,7 +157,7 @@ public class Alignment implements Stage {
     private AbstractCommand mergeCommands(final AbstractCommand toolCommand) {
         final AbstractCommand fastqCommand = fastqResult.getCommand();
         final AbstractCommand metricsCommand = metricsResult.getCommand();
-        final String command = String.join(fastqCommand.getToolCommand(), toolCommand.getToolCommand(),
+        final String command = String.join("", fastqCommand.getToolCommand(), toolCommand.getToolCommand(),
                 metricsCommand.getToolCommand());
         toolCommand.setToolCommand(command);
         final List<String> tempDirs = Stream.of(toolCommand.getTempDirs(), fastqCommand.getTempDirs(),

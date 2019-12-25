@@ -52,9 +52,11 @@ public class RnaExpressionBamWorkflow implements BamWorkflow {
         sample.createDirectory();
         configuration.setCustTask("ExpressionEstimation");
         final BamOutput bamOutput = BamOutput.builder().bam(sample.getBam()).build();
+        final BashCommand command = BashCommand.withTool("");
+        command.getTempDirs().add(sample.getTmpOutdir());
         final BamResult bamResult = BamResult.builder()
                 .bamOutput(bamOutput)
-                .command(BashCommand.withTool(""))
+                .command(command)
                 .build();
         final String secondaryAnalysis = new SecondaryAnalysis(bamResult, sample.getName(), sample.getSampleOutputDir())
                 .process(flag, configuration, TEMPLATE_ENGINE);

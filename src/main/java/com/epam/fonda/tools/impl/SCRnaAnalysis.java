@@ -39,6 +39,7 @@ import static com.epam.fonda.utils.RnaAnalysisUtils.getSampleFileListReference;
 public class SCRnaAnalysis implements PostProcessTool {
     private static final String SCRNA_ANALYSIS_LOG_FILE_TEMPLATE = "analysis_logFile_template";
     private static final String SCRNA_ANALYSIS_EXPRESS_DATA_TEMPLATE = "scRna_analysis_count_tool_template";
+    private static final String TOOL_STEP = "Generate gene-barcode matrix";
     private static final String COUNT_TOOL = "count";
     private static final int PERIOD = 60;
 
@@ -63,7 +64,7 @@ public class SCRnaAnalysis implements PostProcessTool {
 
     @Override
     public void generate(Configuration configuration, TemplateEngine templateEngine) {
-        if (!flag.isConversion() && !flag.isCount()) {
+        if (!flag.isConversion() || !flag.isCount()) {
             return;
         }
         StringBuilder command = new StringBuilder()
@@ -106,12 +107,12 @@ public class SCRnaAnalysis implements PostProcessTool {
                                               String logDir, String sampleName) {
         Validate.notBlank(logDir, "Logging directory is not specified");
         SCRnaAnalysis.SCRnaAnalysisFields scRnaAnalysisFields = new SCRnaAnalysis.SCRnaAnalysisFields();
-        String fileName = workflow + "_" + COUNT_TOOL + "_for_" + sampleName + "_analysis";
+        String fileName = workflow + "_alignment_for_" + sampleName + "_analysis";
         scRnaAnalysisFields.errorMessage = "Error gene expression results from " + sampleName;
         scRnaAnalysisFields.successMessage = "Confirm gene expression results from " + sampleName;
         scRnaAnalysisFields.logFile = String.format("%s/%s.log", logDir, fileName);
         scRnaAnalysisFields.period = PERIOD;
-        scRnaAnalysisFields.toolName = COUNT_TOOL;
+        scRnaAnalysisFields.toolName = TOOL_STEP;
         Context context = new Context();
         context.setVariable("fields", scRnaAnalysisFields);
         return templateEngine.process(SCRNA_ANALYSIS_LOG_FILE_TEMPLATE, context);

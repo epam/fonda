@@ -4,10 +4,10 @@ mv output/cufflinks/genes.fpkm_tracking output/cufflinks/smv1.cufflinks.gene.exp
 mv output/cufflinks/isoforms.fpkm_tracking output/cufflinks/smv1.cufflinks.isoform.expression.results
 if [ $? -eq 0 ]
 then
-	echo `date` Successful Step: Run cufflinks.
+	echo `date` Successful Step: cufflinks
 	sleep 8
 else
-	echo `date` Error Step: Run cufflinks.
+	echo `date` Error Step: cufflinks
 
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
