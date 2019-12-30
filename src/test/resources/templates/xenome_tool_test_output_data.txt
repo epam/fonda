@@ -1,11 +1,11 @@
 echo `date` Begin Step:  Xenome classification...
 xenome classify -T 8 -P MOUSEXENOMEINDEX --pairs --graft-name human --host-name mouse --output-filename-prefix stmpOutdir/sampleName --tmp-dir stmpOutdir -i merged_fastq1 -i merged_fastq2
-awk '{if (NR % 4 == 1) print \"@\"$0; else if (NR % 4 == 3) print \"+\"$0; else print $0 }' stmpOutdir/sampleName_human_1.fastq > stmpOutdir/sampleName_convert_human_1.fastq
-awk '{if (NR % 4 == 1) print \"@\"$0; else if (NR % 4 == 3) print \"+\"$0; else print $0 }' stmpOutdir/sampleName_human_2.fastq > stmpOutdir/sampleName_convert_human_2.fastq
-awk '{if (NR % 4 == 1) print \"@\"$0; else if (NR % 4 == 3) print \"+\"$0; else print $0 }' stmpOutdir/sampleName_both_1.fastq > stmpOutdir/sampleName_convert_both_1.fastq
-awk '{if (NR % 4 == 1) print \"@\"$0; else if (NR % 4 == 3) print \"+\"$0; else print $0 }' stmpOutdir/sampleName_both_2.fastq > stmpOutdir/sampleName_convert_both_2.fastq
-awk '{if (NR % 4 == 1) print \"@\"$0; else if (NR % 4 == 3) print \"+\"$0; else print $0 }' stmpOutdir/sampleName_ambiguous_1.fastq > stmpOutdir/sampleName_convert_ambiguous_1.fastq
-awk '{if (NR % 4 == 1) print \"@\"$0; else if (NR % 4 == 3) print \"+\"$0; else print $0 }' stmpOutdir/sampleName_ambiguous_2.fastq > stmpOutdir/sampleName_convert_ambiguous_2.fastq
+awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' stmpOutdir/sampleName_human_1.fastq > stmpOutdir/sampleName_convert_human_1.fastq
+awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' stmpOutdir/sampleName_human_2.fastq > stmpOutdir/sampleName_convert_human_2.fastq
+awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' stmpOutdir/sampleName_both_1.fastq > stmpOutdir/sampleName_convert_both_1.fastq
+awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' stmpOutdir/sampleName_both_2.fastq > stmpOutdir/sampleName_convert_both_2.fastq
+awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' stmpOutdir/sampleName_ambiguous_1.fastq > stmpOutdir/sampleName_convert_ambiguous_1.fastq
+awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' stmpOutdir/sampleName_ambiguous_2.fastq > stmpOutdir/sampleName_convert_ambiguous_2.fastq
 cat stmpOutdir/sampleName_convert_human_1.fastq stmpOutdir/sampleName_convert_both_1.fastq stmpOutdir/sampleName_convert_ambiguous_1.fastq | gzip -c > sfqOutdir/sampleName_classified_R1.fq.gz
 cat stmpOutdir/sampleName_convert_human_2.fastq stmpOutdir/sampleName_convert_both_2.fastq stmpOutdir/sampleName_convert_ambiguous_2.fastq | gzip -c > sfqOutdir/sampleName_classified_R2.fq.gz
 if [ $? -eq 0 ]
