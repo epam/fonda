@@ -107,7 +107,7 @@ sequence trimming: `trimmomatic`, `seqpurge`
 sequence alignment: `star`, `hisat2`  
 expression estimation: `cufflinks`, `stringtie`, `rsem`  
 read count: `feature_count`  
-qc: `qc`, `ranseqc`  
+qc: `qc`, `rnaseqc`  
 data processing: `samtools`, `picard`  
 expression data combination: `conversion`
 
