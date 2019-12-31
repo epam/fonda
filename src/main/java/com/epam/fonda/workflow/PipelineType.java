@@ -30,8 +30,11 @@ import java.util.stream.Collectors;
 public enum PipelineType {
 
     DNA_WGS_VAR_FASTQ("DnaWgsVar_Fastq"),
+    DNA_WGS_VAR_BAM("DnaWgsVar_Bam"),
     DNA_AMPLICON_VAR_FASTQ("DnaAmpliconVar_Fastq"),
+    DNA_AMPLICON_VAR_BAM("DnaAmpliconVar_Bam"),
     DNA_CAPTURE_VAR_FASTQ("DnaCaptureVar_Fastq"),
+    DNA_CAPTURE_VAR_BAM("DnaCaptureVar_Bam"),
     SC_RNA_EXPRESSION_FASTQ("scRnaExpression_Fastq"),
     RNA_EXPRESSION_FASTQ("RnaExpression_Fastq"),
     RNA_EXPRESSION_BAM("RnaExpression_Bam"),

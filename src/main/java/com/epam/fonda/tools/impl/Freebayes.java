@@ -52,6 +52,7 @@ public class Freebayes implements Tool<VariantsVcfResult> {
         private final String vcf;
         private final String sampleName;
         private final String outDir;
+        private final boolean isWgs;
     }
 
     /**
@@ -84,6 +85,8 @@ public class Freebayes implements Tool<VariantsVcfResult> {
         final String outputDir = String.format("%s/freebayes", sampleOutDir);
         final GlobalConfig.ToolConfig toolConfig = configuration.getGlobalConfig().getToolConfig();
         final GlobalConfig.DatabaseConfig databaseConfig = configuration.getGlobalConfig().getDatabaseConfig();
+        final boolean isWgs = configuration.getGlobalConfig().getPipelineInfo().getWorkflow().toLowerCase()
+                .contains("wgs");
         return ToolFields.builder()
                 .freebayes(validate(toolConfig.getFreebayes(), GlobalConfigFormat.FREEBAYES))
                 .genome(validate(databaseConfig.getGenome(), GlobalConfigFormat.GENOME))
@@ -92,6 +95,7 @@ public class Freebayes implements Tool<VariantsVcfResult> {
                 .sampleName(validate(sampleName, ToolUtils.SAMPLE_NAME))
                 .vcf(String.format("%s/%s.%s", outputDir, sampleName, "freebayes.variants.vcf"))
                 .outDir(outputDir)
+                .isWgs(isWgs)
                 .build();
     }
 }

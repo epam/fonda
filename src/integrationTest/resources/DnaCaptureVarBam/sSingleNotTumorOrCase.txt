@@ -1,0 +1,7 @@
+[Series_Info]
+job_name = DnaCaptureVarBam
+dir_out = build/resources/integrationTest/output
+bam_list = build/resources/integrationTest/bamListSingleNotTumorOrCase.tsv
+Date = 031814
+Project = Example_project
+Run = run1234

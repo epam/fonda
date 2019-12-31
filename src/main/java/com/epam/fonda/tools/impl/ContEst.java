@@ -50,6 +50,7 @@ public class ContEst implements Tool<ContEstResult> {
         private String bed;
         private String bam;
         private String contEstPopAF;
+        private boolean isWgs;
     }
 
     @NonNull
@@ -105,6 +106,7 @@ public class ContEst implements Tool<ContEstResult> {
                 .bed(configuration.getGlobalConfig().getDatabaseConfig().getBed())
                 .bam(bamResult.getBamOutput().getBam())
                 .contEstPopAF(configuration.getGlobalConfig().getDatabaseConfig().getContEstPopAF())
+                .isWgs(configuration.getGlobalConfig().getPipelineInfo().getWorkflow().toLowerCase().contains("wgs"))
                 .build();
     }
 }

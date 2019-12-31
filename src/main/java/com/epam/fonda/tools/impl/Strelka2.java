@@ -58,6 +58,8 @@ public class Strelka2 implements Tool<VariantsVcfResult> {
         private final String controlSampleName;
         private final String outDir;
         private final boolean isPaired;
+        private final boolean isWgs;
+        private final String memMb;
     }
 
     /**
@@ -90,6 +92,8 @@ public class Strelka2 implements Tool<VariantsVcfResult> {
         final String outputDir = String.format("%s/strelka2", sampleOutDir);
         final GlobalConfig.DatabaseConfig databaseConfig = configuration.getGlobalConfig().getDatabaseConfig();
         final GlobalConfig.ToolConfig toolConfig = configuration.getGlobalConfig().getToolConfig();
+        final boolean isWgs = configuration.getGlobalConfig().getPipelineInfo().getWorkflow().toLowerCase()
+                .contains("wgs");
         return ToolFields.builder()
                 .genome(validate(databaseConfig.getGenome(), GlobalConfigFormat.GENOME))
                 .bed(validate(databaseConfig.getBed(), GlobalConfigFormat.BED))
@@ -101,6 +105,8 @@ public class Strelka2 implements Tool<VariantsVcfResult> {
                 .outDir(outputDir)
                 .vcf(outputFile(outputDir, sampleName))
                 .isPaired(isPaired)
+                .isWgs(isWgs)
+                .memMb(isWgs ? "10240" : "2048")
                 .build();
     }
 

@@ -126,6 +126,9 @@ class Strelka2Test extends AbstractTest {
         toolConfig.setPython("python");
         toolConfig.setStrelka2("strelka2");
         globalConfig.setToolConfig(toolConfig);
+        final GlobalConfig.PipelineInfo pipelineInfo = new GlobalConfig.PipelineInfo();
+        pipelineInfo.setWorkflow("DnaCaptureVar_Bam");
+        globalConfig.setPipelineInfo(pipelineInfo);
         final GlobalConfig.DatabaseConfig databaseConfig = new GlobalConfig.DatabaseConfig();
         databaseConfig.setGenome("GENOME");
         databaseConfig.setBed("BED");
