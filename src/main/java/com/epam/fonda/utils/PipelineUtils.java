@@ -97,6 +97,21 @@ public final class PipelineUtils {
     }
 
     /**
+     * This method writes into the file.
+     *
+     * @param path   is the type or {@link String} and contains the path to the file.
+     * @param source is the type or {@link String} and contains the file itself.
+     * @throws IOException throws when file cannot be written or be created properly
+     **/
+    public static void writeToFile(String path, String source) {
+        try {
+            Files.write(Paths.get(path), Collections.singleton(source));
+        } catch (IOException e) {
+            log.error(format("Could not write to file %s", path), e);
+        }
+    }
+
+    /**
      * This method adds task name to the script.
      *
      * @param configuration is the type of {@link Configuration} which contains

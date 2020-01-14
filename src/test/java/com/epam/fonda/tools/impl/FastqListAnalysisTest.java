@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.entity.configuration.GlobalConfig;
 import com.epam.fonda.entity.configuration.StudyConfig;
 import com.epam.fonda.samples.fastq.FastqFileSample;
+import com.epam.fonda.samples.fastq.FastqReadType;
 import com.epam.fonda.utils.TemplateEngineUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,8 +54,8 @@ class FastqListAnalysisTest extends AbstractTest {
 
     @BeforeEach
     void setUp() throws IOException, URISyntaxException {
-        configurationWithPaired = buildConfiguration("paired");
-        configurationWithSingle = buildConfiguration("single");
+        configurationWithPaired = buildConfiguration(FastqReadType.PAIRED.getType());
+        configurationWithSingle = buildConfiguration(FastqReadType.SINGLE.getType());
         List<FastqFileSample> samples = buildFastqFileSample();
         fastqListAnalysis = new FastqListAnalysis(samples);
         Path pathWithPaired = Paths.get(Objects.requireNonNull(this.getClass().getClassLoader()
@@ -76,14 +77,14 @@ class FastqListAnalysisTest extends AbstractTest {
     void generateWithPaired() throws IOException {
         fastqListAnalysis.generate(configurationWithPaired, templateEngine);
         actualCmd = readFile(Paths.get(actualFastqPath));
-        assertEquals(expectedCmdWithPaired, actualCmd);
+        assertEquals(expectedCmdWithPaired.trim(), actualCmd.trim());
     }
 
     @Test
     void generateWithSingle() throws IOException {
         fastqListAnalysis.generate(configurationWithSingle, templateEngine);
         actualCmd = readFile(Paths.get(actualFastqPath));
-        assertEquals(expectedCmdWithSingle, actualCmd);
+        assertEquals(expectedCmdWithSingle.trim(), actualCmd.trim());
     }
 
     private List<FastqFileSample> buildFastqFileSample() {
@@ -93,7 +94,7 @@ class FastqListAnalysisTest extends AbstractTest {
                         .matchControl("matchControl")
                         .build(),
                 FastqFileSample.builder()
-                        .name("sampleName")
+                        .name("sampleName2")
                         .sampleType("sampeType")
                         .matchControl("matchControl")
                         .build());

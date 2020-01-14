@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,15 +19,13 @@ package com.epam.fonda.tools.impl;
 import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.PostProcessTool;
+import com.epam.fonda.utils.PipelineUtils;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,11 +53,7 @@ public class FastqListAnalysis implements PostProcessTool {
         context.setVariable("outDir", toolFields.outdir);
         context.setVariable("readType", toolFields.readType);
         String defineOfFileWithFastq = templateEngine.process(FASTQ_LIST_ANALYSIS_TEMPLATE, context);
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(fastqPath))) {
-            bw.write(defineOfFileWithFastq);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        PipelineUtils.writeToFile(fastqPath, defineOfFileWithFastq);
     }
 
     @Data
