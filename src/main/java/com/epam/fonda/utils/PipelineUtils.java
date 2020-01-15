@@ -253,4 +253,12 @@ public final class PipelineUtils {
                    index)
                 : format("%s_%s_for_%s_analysis", workflow, custTask, sampleName);
     }
+
+    /**
+     * @param type contains the type of the sample.
+     * @return the result of checking.
+     */
+    public static boolean checkSampleType(String type) {
+        return type.equals(TUMOR) || type.equals(CASE);
+    }
 }
