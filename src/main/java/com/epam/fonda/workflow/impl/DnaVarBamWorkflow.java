@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import com.epam.fonda.tools.impl.DnaAnalysis;
 import com.epam.fonda.tools.impl.QcSummary;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
-import com.epam.fonda.utils.PipelineUtils;
 import com.epam.fonda.utils.TemplateEngineUtils;
 import com.epam.fonda.workflow.BamWorkflow;
 import com.epam.fonda.workflow.stage.impl.SecondaryAnalysis;
@@ -30,14 +29,15 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.thymeleaf.TemplateEngine;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.epam.fonda.utils.DnaUtils.isNotCaseOrTumor;
 import static com.epam.fonda.utils.PipelineUtils.cleanUpTmpDir;
+import static com.epam.fonda.utils.PipelineUtils.isPaired;
 import static com.epam.fonda.utils.PipelineUtils.printShell;
 
 @Slf4j
@@ -56,13 +56,11 @@ public class DnaVarBamWorkflow implements BamWorkflow {
         }
         sample.createDirectory();
         configuration.setCustTask("variantDetection");
-        final boolean isPaired = StringUtils.isNoneBlank(sample.getControlName())
-                && !PipelineUtils.NA.equals(sample.getControlName());
         final BamResult bamResult = buildBamResult(sample);
 
         final String resultCmd = new SecondaryAnalysis(bamResult, sample.getName(), sample.getSampleOutputDir(),
-                sample.getControlName(), isPaired).process(flag, configuration, TEMPLATE_ENGINE) +
-                cleanUpTmpDir(bamResult.getCommand().getTempDirs());
+                sample.getControlName(), isPaired(sample.getControlName()))
+                .process(flag, configuration, TEMPLATE_ENGINE) + cleanUpTmpDir(bamResult.getCommand().getTempDirs());
         printShell(configuration, resultCmd, sample.getName(), null);
 
         log.debug(String.format("Successful step: the %s sample was processed.", sample.getName()));
@@ -94,9 +92,5 @@ public class DnaVarBamWorkflow implements BamWorkflow {
                 .bamOutput(bamOutput)
                 .command(command)
                 .build();
-    }
-
-    private boolean isNotCaseOrTumor(final String sampleType) {
-        return !sampleType.equals(PipelineUtils.CASE) && !sampleType.equals(PipelineUtils.TUMOR);
     }
 }

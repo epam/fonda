@@ -154,7 +154,7 @@ jacocoTestReport {
     executionData file("$buildDir/jacoco/integrationTest.exec")
     reports {
         xml.enabled true
-        html.enabled false
+        html.enabled true
     }
 }
 

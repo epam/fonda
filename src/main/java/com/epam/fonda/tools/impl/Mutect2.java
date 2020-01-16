@@ -56,6 +56,7 @@ public class Mutect2 implements Tool<VariantsVcfResult> {
         private final String bam;
         private final String controlBam;
         private final String vcf;
+        private boolean isWgs;
     }
 
     /**
@@ -102,6 +103,7 @@ public class Mutect2 implements Tool<VariantsVcfResult> {
                 .outDir(outputDir)
                 .outTmpDir(outputTmpDir)
                 .vcf(String.format("%s/%s.mutect2.somatic.variants.vcf", outputDir, sampleName))
+                .isWgs(configuration.getGlobalConfig().getPipelineInfo().getWorkflow().toLowerCase().contains("wgs"))
                 .build();
     }
 }

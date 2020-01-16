@@ -57,6 +57,7 @@ public class Lofreq implements Tool<VariantsVcfResult> {
         private final String prefix;
         private final boolean isPaired;
         private final Integer numThreads;
+        private boolean isWgs;
     }
 
     /**
@@ -101,6 +102,7 @@ public class Lofreq implements Tool<VariantsVcfResult> {
                 .outDir(outputDir)
                 .prefix(String.format("%s/%s.", outputDir, sampleName))
                 .isPaired(isPaired)
+                .isWgs(configuration.getGlobalConfig().getPipelineInfo().getWorkflow().toLowerCase().contains("wgs"))
                 .build();
     }
 

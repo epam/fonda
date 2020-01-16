@@ -53,6 +53,7 @@ public class GatkHaplotypeCaller implements Tool<VariantsVcfResult> {
         private String gatkHapOutdir;
         private String gatkHapVariants;
         private String tmpGatkHapOutdir;
+        private boolean isWgs;
     }
 
     @NonNull
@@ -71,7 +72,7 @@ public class GatkHaplotypeCaller implements Tool<VariantsVcfResult> {
      */
     @Override
     public VariantsVcfResult generate(Configuration configuration, TemplateEngine templateEngine) {
-        final AdditionalFields additionalFields = initializeAdditionalFields();
+        final AdditionalFields additionalFields = initializeAdditionalFields(configuration);
         final String cmd = templateEngine.process(AMPLICON_GATK_HAPLOTYPE_TOOL_TEMPLATE_NAME,
                 buildContext(configuration, additionalFields));
         VariantsVcfOutput variantsVcfOutput = VariantsVcfOutput.builder()
@@ -104,12 +105,14 @@ public class GatkHaplotypeCaller implements Tool<VariantsVcfResult> {
         return databaseFields;
     }
 
-    private AdditionalFields initializeAdditionalFields() {
+    private AdditionalFields initializeAdditionalFields(Configuration configuration) {
         AdditionalFields additionalFields = new AdditionalFields();
         additionalFields.gatkHapOutdir = format("%s/gatkHaplotypeCaller", outDir);
         additionalFields.gatkHapVariants = format("%s/%s.gatkHaplotypeCaller.variants.vcf", additionalFields
                         .gatkHapOutdir, sampleName);
         additionalFields.tmpGatkHapOutdir = format("%s/tmp", additionalFields.gatkHapOutdir);
+        additionalFields.isWgs = configuration.getGlobalConfig().getPipelineInfo().getWorkflow().toLowerCase()
+                .contains("wgs");
         return additionalFields;
     }
 

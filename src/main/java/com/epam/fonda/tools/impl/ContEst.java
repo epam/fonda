@@ -18,6 +18,7 @@ package com.epam.fonda.tools.impl;
 
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.GlobalConfigFormat;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.tools.results.ContEstOutput;
@@ -28,6 +29,10 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+
+import java.util.Collections;
+
+import static com.epam.fonda.utils.ToolUtils.validate;
 
 @RequiredArgsConstructor
 public class ContEst implements Tool<ContEstResult> {
@@ -84,8 +89,10 @@ public class ContEst implements Tool<ContEstResult> {
                 .build();
         contEstOutput.createDirectory();
         String cmd = templateEngine.process(CONT_EST_TOOL_TEMPLATE_NAME, context);
+        final BashCommand command = BashCommand.withTool(cmd);
+        command.setTempDirs(Collections.singletonList(additionalFields.tmpContEstOutDir));
         return ContEstResult.builder()
-                .command(BashCommand.withTool(cmd))
+                .command(command)
                 .contEstOutput(contEstOutput)
                 .build();
     }
@@ -102,10 +109,14 @@ public class ContEst implements Tool<ContEstResult> {
     private AdditionalFields initializeAdditionalFields(Configuration configuration) {
         return AdditionalFields.builder()
                 .tmpContEstOutDir(String.format("%s/contEst/tmp", sampleOutputDir))
-                .genome(configuration.getGlobalConfig().getDatabaseConfig().getGenome())
-                .bed(configuration.getGlobalConfig().getDatabaseConfig().getBed())
+                .genome(validate(
+                        configuration.getGlobalConfig().getDatabaseConfig().getGenome(),
+                        GlobalConfigFormat.GENOME))
+                .bed(validate(configuration.getGlobalConfig().getDatabaseConfig().getBed(), GlobalConfigFormat.BED))
                 .bam(bamResult.getBamOutput().getBam())
-                .contEstPopAF(configuration.getGlobalConfig().getDatabaseConfig().getContEstPopAF())
+                .contEstPopAF(validate(
+                        configuration.getGlobalConfig().getDatabaseConfig().getContEstPopAF(),
+                        GlobalConfigFormat.CONTEST_POPAF))
                 .isWgs(configuration.getGlobalConfig().getPipelineInfo().getWorkflow().toLowerCase().contains("wgs"))
                 .build();
     }

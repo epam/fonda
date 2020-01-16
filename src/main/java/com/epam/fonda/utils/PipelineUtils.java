@@ -246,6 +246,16 @@ public final class PipelineUtils {
         return variablesMap;
     }
 
+    /**
+     * Checks control sample.
+     * If control sample is not NA, it means the case sample has a matched control, then run paired mode analysis.
+     * @param sampleControlName
+     * @return true if control sample is not NA and not blank
+     */
+    public static boolean isPaired(final String sampleControlName) {
+        return StringUtils.isNoneBlank(sampleControlName) && !PipelineUtils.NA.equals(sampleControlName);
+    }
+
     private static String constructFilenameIfSampleNotNull(String sampleName, String workflow, String custTask,
                                                            String index) {
         return StringUtils.isNotBlank(index)

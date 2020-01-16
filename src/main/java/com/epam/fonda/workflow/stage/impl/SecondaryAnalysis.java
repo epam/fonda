@@ -100,17 +100,17 @@ public class SecondaryAnalysis implements Stage {
         rsem(flag, configuration, templateEngine, alignCmd, tempDirs);
         cufflinks(flag, configuration, templateEngine, alignCmd, tempDirs);
         stringtie(flag, configuration, templateEngine, alignCmd, tempDirs);
-        vardict(flag, configuration, templateEngine, alignCmd, tempDirs);
-        strelka2(flag, configuration, templateEngine, alignCmd, tempDirs);
-        mutect1(flag, configuration, templateEngine, alignCmd, tempDirs);
-        mutect2(flag, configuration, templateEngine, alignCmd, tempDirs);
-        scalpel(flag, configuration, templateEngine, alignCmd, tempDirs);
-        lofreq(flag, configuration, templateEngine, alignCmd, tempDirs);
-        sequensa(flag, configuration, templateEngine, alignCmd, tempDirs);
-        exomecnv(flag, configuration, templateEngine, alignCmd, tempDirs);
-        gatkHaplotypeCaller(flag, configuration, templateEngine, alignCmd, tempDirs);
-        freebayes(flag, configuration, templateEngine, alignCmd, tempDirs);
+        vardict(flag, configuration, templateEngine, alignCmd);
+        gatkHaplotypeCaller(flag, configuration, templateEngine, alignCmd);
         contEst(flag, configuration, templateEngine, alignCmd, tempDirs);
+        strelka2(flag, configuration, templateEngine, alignCmd);
+        mutect1(flag, configuration, templateEngine, alignCmd);
+        mutect2(flag, configuration, templateEngine, alignCmd);
+        scalpel(flag, configuration, templateEngine, alignCmd);
+        lofreq(flag, configuration, templateEngine, alignCmd);
+        sequenza(flag, configuration, templateEngine, alignCmd, tempDirs);
+        exomecnv(flag, configuration, templateEngine, alignCmd, tempDirs);
+        freebayes(flag, configuration, templateEngine, alignCmd);
         return alignCmd.toString();
     }
 
@@ -122,28 +122,28 @@ public class SecondaryAnalysis implements Stage {
         final ContEstResult result = new ContEst(sampleName, sampleOutputDir, bamResult)
                 .generate(configuration, templateEngine);
         tempDirs.addAll(ListUtils.emptyIfNull(result.getCommand().getTempDirs()));
-        createCustomToolShell(configuration, alignCmd,
-                result.getCommand().getToolCommand() + cleanUpTmpDir(tempDirs), "contEst");
+        createCustomToolShell(configuration, alignCmd, result.getCommand().getToolCommand() +
+                cleanUpTmpDir(result.getCommand().getTempDirs()), "contEst");
     }
 
     private void freebayes(final Flag flag, final Configuration configuration, final TemplateEngine templateEngine,
-                           final StringBuilder alignCmd, final List<String> tempDirs) throws IOException {
+                           final StringBuilder alignCmd) throws IOException {
         if (isPaired || !flag.isFreebayes()) {
             return;
         }
         final Freebayes freebayes = new Freebayes(sampleName, bamResult.getBamOutput(), sampleOutputDir);
-        processVcfTool(configuration, templateEngine, alignCmd, tempDirs, freebayes);
+        processVcfTool(configuration, templateEngine, alignCmd, freebayes);
     }
 
     private void gatkHaplotypeCaller(final Flag flag, final Configuration configuration,
-                                     final TemplateEngine templateEngine, final StringBuilder alignCmd,
-                                     final List<String> tempDirs) throws IOException {
+                                     final TemplateEngine templateEngine, final StringBuilder alignCmd)
+            throws IOException {
         if (isPaired || !flag.isGatkHaplotypeCaller()) {
             return;
         }
         final GatkHaplotypeCaller gatkHaplotypeCaller = new GatkHaplotypeCaller(sampleName,
                 bamResult.getBamOutput().getBam(), sampleOutputDir);
-        processVcfTool(configuration, templateEngine, alignCmd, tempDirs, gatkHaplotypeCaller);
+        processVcfTool(configuration, templateEngine, alignCmd, gatkHaplotypeCaller);
     }
 
     private void exomecnv(final Flag flag, final Configuration configuration, final TemplateEngine templateEngine,
@@ -154,11 +154,11 @@ public class SecondaryAnalysis implements Stage {
         final ExomecnvResult result = new Exomecnv(sampleName, controlSampleName, bamResult.getBamOutput(),
                 sampleOutputDir).generate(configuration, templateEngine);
         tempDirs.addAll(ListUtils.emptyIfNull(result.getCommand().getTempDirs()));
-        createCustomToolShell(configuration, alignCmd,
-                result.getCommand().getToolCommand() + cleanUpTmpDir(tempDirs), result.getToolName());
+        createCustomToolShell(configuration, alignCmd, result.getCommand().getToolCommand() +
+                cleanUpTmpDir(result.getCommand().getTempDirs()), result.getToolName());
     }
 
-    private void sequensa(final Flag flag, final Configuration configuration, final TemplateEngine templateEngine,
+    private void sequenza(final Flag flag, final Configuration configuration, final TemplateEngine templateEngine,
                           final StringBuilder alignCmd, final List<String> tempDirs) throws IOException {
         if (!(isPaired && flag.isSequenza())) {
             return;
@@ -169,62 +169,63 @@ public class SecondaryAnalysis implements Stage {
                 .generate(configuration, templateEngine);
         tempDirs.addAll(ListUtils.emptyIfNull(result.getCommand().getTempDirs()));
         createCustomToolShell(configuration, alignCmd, pileupResult.getCommand().getToolCommand()
-                + result.getCommand().getToolCommand() + cleanUpTmpDir(tempDirs), result.getToolName());
+                        + result.getCommand().getToolCommand() + cleanUpTmpDir(result.getCommand().getTempDirs()),
+                result.getToolName());
     }
 
     private void lofreq(final Flag flag, final Configuration configuration, final TemplateEngine templateEngine,
-                        final StringBuilder alignCmd, final List<String> tempDirs) throws IOException {
+                        final StringBuilder alignCmd) throws IOException {
         if (!flag.isLofreq()) {
             return;
         }
         final Lofreq lofreq = new Lofreq(sampleName, bamResult.getBamOutput(), sampleOutputDir, isPaired);
-        processVcfTool(configuration, templateEngine, alignCmd, tempDirs, lofreq);
+        processVcfTool(configuration, templateEngine, alignCmd, lofreq);
     }
 
     private void scalpel(final Flag flag, final Configuration configuration, final TemplateEngine templateEngine,
-                         final StringBuilder alignCmd, final List<String> tempDirs) throws IOException {
+                         final StringBuilder alignCmd) throws IOException {
         if (!flag.isScalpel()) {
             return;
         }
         final Scalpel scalpel = new Scalpel(sampleName, bamResult.getBamOutput(), sampleOutputDir, isPaired);
-        processVcfTool(configuration, templateEngine, alignCmd, tempDirs, scalpel);
+        processVcfTool(configuration, templateEngine, alignCmd, scalpel);
     }
 
     private void mutect2(final Flag flag, final Configuration configuration, final TemplateEngine templateEngine,
-                         final StringBuilder alignCmd, final List<String> tempDirs) throws IOException {
+                         final StringBuilder alignCmd) throws IOException {
         if (!(isPaired && flag.isMutect2())) {
             return;
         }
         final Mutect2 mutect2 = new Mutect2(sampleName, bamResult.getBamOutput(), sampleOutputDir);
-        processVcfTool(configuration, templateEngine, alignCmd, tempDirs, mutect2);
+        processVcfTool(configuration, templateEngine, alignCmd, mutect2);
     }
 
     private void mutect1(final Flag flag, final Configuration configuration, final TemplateEngine templateEngine,
-                         final StringBuilder alignCmd, final List<String> tempDirs) throws IOException {
+                         final StringBuilder alignCmd) throws IOException {
         if (isPaired || !flag.isMutect1()) {
             return;
         }
         final Mutect1 mutect1 = new Mutect1(sampleName, bamResult.getBamOutput(), sampleOutputDir);
-        processVcfTool(configuration, templateEngine, alignCmd, tempDirs, mutect1);
+        processVcfTool(configuration, templateEngine, alignCmd, mutect1);
     }
 
     private void strelka2(final Flag flag, final Configuration configuration, final TemplateEngine templateEngine,
-                          final StringBuilder alignCmd, final List<String> tempDirs) throws IOException {
+                          final StringBuilder alignCmd) throws IOException {
         if (!flag.isStrelka2()) {
             return;
         }
         final Strelka2 strelka2 = new Strelka2(sampleName, bamResult.getBamOutput(), sampleOutputDir, isPaired);
-        processVcfTool(configuration, templateEngine, alignCmd, tempDirs, strelka2);
+        processVcfTool(configuration, templateEngine, alignCmd, strelka2);
     }
 
     private void vardict(final Flag flag, final Configuration configuration, final TemplateEngine templateEngine,
-                         final StringBuilder alignCmd, final List<String> tempDirs) throws IOException {
+                         final StringBuilder alignCmd) throws IOException {
         if (!flag.isVardict()) {
             return;
         }
         final Vardict vardict = new Vardict(sampleName, controlSampleName, bamResult.getBamOutput(),
                 sampleOutputDir, isPaired);
-        processVcfTool(configuration, templateEngine, alignCmd, tempDirs, vardict);
+        processVcfTool(configuration, templateEngine, alignCmd, vardict);
     }
 
     private void stringtie(final Flag flag, final Configuration configuration, final TemplateEngine templateEngine,
@@ -277,21 +278,19 @@ public class SecondaryAnalysis implements Stage {
     }
 
     private void processVcfTool(final Configuration configuration, final TemplateEngine templateEngine,
-                                final StringBuilder alignCmd, final List<String> tempDirs,
-                                final Tool<VariantsVcfResult> tool) throws IOException {
+                                final StringBuilder alignCmd, final Tool<VariantsVcfResult> tool) throws IOException {
         final VariantsVcfResult toolResult = tool.generate(configuration, templateEngine);
         final VcfScnpeffAnnonationResult vcfSnpeffAnnotationResult = new VcfSnpeffAnnotation(sampleName, toolResult)
                 .generate(configuration, templateEngine);
-        createVcfToolShell(configuration, alignCmd, tempDirs, toolResult, vcfSnpeffAnnotationResult);
+        createVcfToolShell(configuration, alignCmd, toolResult, vcfSnpeffAnnotationResult);
     }
 
     private void createVcfToolShell(final Configuration configuration, final StringBuilder alignCmd,
-                                    final List<String> tempDirs,
                                     final VariantsVcfResult vcfToolResult,
                                     final VcfScnpeffAnnonationResult vcfScnpeffAnnonationResult) throws IOException {
-        tempDirs.addAll(ListUtils.emptyIfNull(vcfToolResult.getAbstractCommand().getTempDirs()));
         createCustomToolShell(configuration, alignCmd, vcfToolResult.getAbstractCommand().getToolCommand()
-                        + vcfScnpeffAnnonationResult.getCommand().getToolCommand() + cleanUpTmpDir(tempDirs),
+                        + vcfScnpeffAnnonationResult.getCommand().getToolCommand()
+                        + cleanUpTmpDir(ListUtils.emptyIfNull(vcfToolResult.getAbstractCommand().getTempDirs())),
                 vcfToolResult.getFilteredTool());
     }
 

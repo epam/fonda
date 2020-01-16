@@ -9,10 +9,10 @@ rm [(${output})]/strelka2/results/variants/somatic.snvs.vcf
 rm [(${output})]/strelka2/results/variants/somatic.indels.vcf
 if [ $? -eq 0 ]
 then
-	echo `date` Successful Step: Stelka2 detection.
+	echo `date` Successful Step: Strelka2 detection.
 	sleep 8
 else
-	echo `date` Error Step: Stelka2 detection.
+	echo `date` Error Step: Strelka2 detection.
 
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;

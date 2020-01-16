@@ -4,10 +4,10 @@ python [(${output})]/strelka2/runWorkflow.py -m local -j 8
 zcat [(${output})]/strelka2/results/variants/variants.vcf.gz > [(${output})]/strelka2/sample_name.strelka2.variants.vcf
 if [ $? -eq 0 ]
 then
-	echo `date` Successful Step: Stelka2 detection.
+	echo `date` Successful Step: Strelka2 detection.
 	sleep 8
 else
-	echo `date` Error Step: Stelka2 detection.
+	echo `date` Error Step: Strelka2 detection.
 
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
