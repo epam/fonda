@@ -24,6 +24,7 @@ import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.VariantsVcfOutput;
 import com.epam.fonda.tools.results.VariantsVcfResult;
+import com.epam.fonda.utils.DnaUtils;
 import com.epam.fonda.utils.ToolUtils;
 import lombok.Builder;
 import lombok.Data;
@@ -102,7 +103,7 @@ public class Lofreq implements Tool<VariantsVcfResult> {
                 .outDir(outputDir)
                 .prefix(String.format("%s/%s.", outputDir, sampleName))
                 .isPaired(isPaired)
-                .isWgs(configuration.getGlobalConfig().getPipelineInfo().getWorkflow().toLowerCase().contains("wgs"))
+                .isWgs(DnaUtils.isWgsWorkflow(configuration))
                 .build();
     }
 

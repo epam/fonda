@@ -24,6 +24,7 @@ import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.VariantsVcfOutput;
 import com.epam.fonda.tools.results.VariantsVcfResult;
+import com.epam.fonda.utils.DnaUtils;
 import com.epam.fonda.utils.ToolUtils;
 import lombok.Builder;
 import lombok.Data;
@@ -92,8 +93,7 @@ public class Strelka2 implements Tool<VariantsVcfResult> {
         final String outputDir = String.format("%s/strelka2", sampleOutDir);
         final GlobalConfig.DatabaseConfig databaseConfig = configuration.getGlobalConfig().getDatabaseConfig();
         final GlobalConfig.ToolConfig toolConfig = configuration.getGlobalConfig().getToolConfig();
-        final boolean isWgs = configuration.getGlobalConfig().getPipelineInfo().getWorkflow().toLowerCase()
-                .contains("wgs");
+        final boolean isWgs = DnaUtils.isWgsWorkflow(configuration);
         return ToolFields.builder()
                 .genome(validate(databaseConfig.getGenome(), GlobalConfigFormat.GENOME))
                 .bed(validate(databaseConfig.getBed(), GlobalConfigFormat.BED))

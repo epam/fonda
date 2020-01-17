@@ -23,6 +23,7 @@ import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.tools.results.ContEstOutput;
 import com.epam.fonda.tools.results.ContEstResult;
+import com.epam.fonda.utils.DnaUtils;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
@@ -117,7 +118,7 @@ public class ContEst implements Tool<ContEstResult> {
                 .contEstPopAF(validate(
                         configuration.getGlobalConfig().getDatabaseConfig().getContEstPopAF(),
                         GlobalConfigFormat.CONTEST_POPAF))
-                .isWgs(configuration.getGlobalConfig().getPipelineInfo().getWorkflow().toLowerCase().contains("wgs"))
+                .isWgs(DnaUtils.isWgsWorkflow(configuration))
                 .build();
     }
 }

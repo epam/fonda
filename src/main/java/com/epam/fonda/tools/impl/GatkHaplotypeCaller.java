@@ -21,6 +21,7 @@ import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.VariantsVcfOutput;
 import com.epam.fonda.tools.results.VariantsVcfResult;
+import com.epam.fonda.utils.DnaUtils;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -111,8 +112,7 @@ public class GatkHaplotypeCaller implements Tool<VariantsVcfResult> {
         additionalFields.gatkHapVariants = format("%s/%s.gatkHaplotypeCaller.variants.vcf", additionalFields
                         .gatkHapOutdir, sampleName);
         additionalFields.tmpGatkHapOutdir = format("%s/tmp", additionalFields.gatkHapOutdir);
-        additionalFields.isWgs = configuration.getGlobalConfig().getPipelineInfo().getWorkflow().toLowerCase()
-                .contains("wgs");
+        additionalFields.isWgs = DnaUtils.isWgsWorkflow(configuration);
         return additionalFields;
     }
 

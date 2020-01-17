@@ -144,6 +144,15 @@ public final class DnaUtils {
         return !sampleType.equals(PipelineUtils.CASE) && !sampleType.equals(PipelineUtils.TUMOR);
     }
 
+    /**
+     * Checks if the launched workflow is wgs
+     * @param configuration
+     * @return true if the launched workflow is wgs
+     */
+    public static boolean isWgsWorkflow(final Configuration configuration) {
+        return configuration.getGlobalConfig().getPipelineInfo().getWorkflow().toLowerCase().contains("wgs");
+    }
+
     private static String getLogFileScanningShellScript(LogFileFields logFileFields, String tag,
                                                         Map<String, String> msgMap, Integer period, String index) {
         return TEMPLATE_ENGINE.process(LOGFILE_SCANNING_SHELL_SCRIPT_TEMPLATE_NAME, buildContext(logFileFields,

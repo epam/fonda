@@ -24,6 +24,7 @@ import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.VariantsVcfOutput;
 import com.epam.fonda.tools.results.VariantsVcfResult;
+import com.epam.fonda.utils.DnaUtils;
 import com.epam.fonda.utils.ToolUtils;
 import lombok.Builder;
 import lombok.Data;
@@ -103,7 +104,7 @@ public class Mutect2 implements Tool<VariantsVcfResult> {
                 .outDir(outputDir)
                 .outTmpDir(outputTmpDir)
                 .vcf(String.format("%s/%s.mutect2.somatic.variants.vcf", outputDir, sampleName))
-                .isWgs(configuration.getGlobalConfig().getPipelineInfo().getWorkflow().toLowerCase().contains("wgs"))
+                .isWgs(DnaUtils.isWgsWorkflow(configuration))
                 .build();
     }
 }
