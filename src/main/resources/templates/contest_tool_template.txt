@@ -1,5 +1,5 @@
 echo `date` Begin Step: Contamination estimation...
-[(${toolFields.java})] -Xmx10g -Djava.io.tmpdir=[(${additionalFields.tmpContEstOutDir})] -jar [(${toolFields.gatk})] -T ContEst -R [(${additionalFields.genome})] -L [(${additionalFields.bed})] -I:eval [(${additionalFields.bam})] -I:genotype [(${toolFields.controlBam})] -pf [(${additionalFields.contEstPopAF})] -pc 0.01 -o [(${contEstRes})] -isr INTERSECTION --min_mapq 20 -U ALLOW_SEQ_DICT_INCOMPATIBILITY --validation_strictness SILENT
+[(${toolFields.java})] -Xmx10g -Djava.io.tmpdir=[(${additionalFields.tmpContEstOutDir})] -jar [(${toolFields.gatk})] -T ContEst -R [(${additionalFields.genome})] [# th:unless = "${additionalFields.isWgs}"]-L [(${additionalFields.bed})] [/]-I:eval [(${additionalFields.bam})] -I:genotype [(${toolFields.controlBam})] -pf [(${additionalFields.contEstPopAF})] -pc 0.01 -o [(${contEstRes})] -isr INTERSECTION --min_mapq 20 -U ALLOW_SEQ_DICT_INCOMPATIBILITY --validation_strictness SILENT
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Contamination estimation.

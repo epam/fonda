@@ -1,5 +1,5 @@
 echo `date` Begin Step: Mutect2 detection...
-[(${toolFields.java})] -Xmx10g -Djava.io.tmpdir=[(${toolFields.outTmpDir})] -jar [(${toolFields.gatk})] -T MuTect2 -R [(${toolFields.genome})] --intervals [(${toolFields.bed})] --input_file:normal [(${toolFields.controlBam})] --input_file:tumor [(${toolFields.bam})] --out [(${toolFields.vcf})] --validation_strictness SILENT
+[(${toolFields.java})] -Xmx10g -Djava.io.tmpdir=[(${toolFields.outTmpDir})] -jar [(${toolFields.gatk})] -T MuTect2 -R [(${toolFields.genome})][# th:unless = "${toolFields.isWgs}"] --intervals [(${toolFields.bed})][/] --input_file:normal [(${toolFields.controlBam})] --input_file:tumor [(${toolFields.bam})] --out [(${toolFields.vcf})] --validation_strictness SILENT
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Mutect2 detection.

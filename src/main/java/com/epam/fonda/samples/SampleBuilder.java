@@ -163,7 +163,7 @@ public class SampleBuilder {
                 .sampleType(parameters.getSampleType())
                 .matchControl(parameters.getMatchControl())
                 .controlName(parameters.getMatchControl())
-                .controlBam(getControlBamName(file1, parameters.getMatchControl()))
+                .controlBam(getControlBamName(file1, parameters.getMatchControl(), sampleName))
                 .sampleOutputDir(outputDir)
                 .tmpOutdir(format(DIR_FORMAT, outputDir, TMP))
                 .build();
@@ -176,11 +176,11 @@ public class SampleBuilder {
      * @param controlName control name parameter from {@code Parameters}
      * @return bam file name If the name is not NA or empty
      */
-    private String getControlBamName(String fileName, String controlName) {
+    private String getControlBamName(String fileName, String controlName, String sampleName) {
         if (controlName.equals(PipelineUtils.NA) || controlName.equals("")) {
             return null;
         }
-        return fileName;
+        return fileName.replace(sampleName, controlName);
     }
 
     /**

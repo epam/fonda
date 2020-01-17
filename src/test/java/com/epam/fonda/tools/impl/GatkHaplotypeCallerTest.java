@@ -80,5 +80,8 @@ class GatkHaplotypeCallerTest extends AbstractTest {
         expectedDatabaseConfig.setGenome("genome");
         expectedGlobalConfig.setToolConfig(expectedToolConfig);
         expectedGlobalConfig.setDatabaseConfig(expectedDatabaseConfig);
+        final GlobalConfig.PipelineInfo pipelineInfo = new GlobalConfig.PipelineInfo();
+        pipelineInfo.setWorkflow("DnaCaptureVar_Bam");
+        expectedGlobalConfig.setPipelineInfo(pipelineInfo);
     }
 }

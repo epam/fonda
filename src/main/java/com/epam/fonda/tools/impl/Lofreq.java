@@ -24,6 +24,7 @@ import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.VariantsVcfOutput;
 import com.epam.fonda.tools.results.VariantsVcfResult;
+import com.epam.fonda.utils.DnaUtils;
 import com.epam.fonda.utils.ToolUtils;
 import lombok.Builder;
 import lombok.Data;
@@ -57,6 +58,7 @@ public class Lofreq implements Tool<VariantsVcfResult> {
         private final String prefix;
         private final boolean isPaired;
         private final Integer numThreads;
+        private boolean isWgs;
     }
 
     /**
@@ -101,6 +103,7 @@ public class Lofreq implements Tool<VariantsVcfResult> {
                 .outDir(outputDir)
                 .prefix(String.format("%s/%s.", outputDir, sampleName))
                 .isPaired(isPaired)
+                .isWgs(DnaUtils.isWgsWorkflow(configuration))
                 .build();
     }
 

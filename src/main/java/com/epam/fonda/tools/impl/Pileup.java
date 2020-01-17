@@ -18,6 +18,7 @@ package com.epam.fonda.tools.impl;
 
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.GlobalConfigFormat;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.tools.results.PileupOutput;
@@ -28,6 +29,8 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+
+import static com.epam.fonda.utils.ToolUtils.validate;
 
 @RequiredArgsConstructor
 public class Pileup implements Tool<PileupResult> {
@@ -112,7 +115,8 @@ public class Pileup implements Tool<PileupResult> {
 
     private ToolFields constructFieldsForPileup(Configuration configuration) {
         return ToolFields.builder()
-                .samtools(configuration.getGlobalConfig().getToolConfig().getSamTools())
+                .samtools(validate(configuration.getGlobalConfig().getToolConfig().getSamTools(),
+                        GlobalConfigFormat.SAMTOOLS))
                 .pileupOutdir(String.format("%s/pileup", sampleOutputDir))
                 .controlBam(bamResult.getBamOutput().getControlBam())
                 .build();

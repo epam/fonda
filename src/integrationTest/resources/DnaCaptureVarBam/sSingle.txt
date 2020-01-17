@@ -1,0 +1,9 @@
+[Series_Info]
+job_name = dnaCaptureVarBam
+dir_out = build/resources/integrationTest/output
+bam_list = build/resources/integrationTest/bamListOneSample.tsv
+LibraryType = DNASeq_Single
+DataGenerationSource = Internal
+Date = 031814
+Project = Example_project
+Run = run1234

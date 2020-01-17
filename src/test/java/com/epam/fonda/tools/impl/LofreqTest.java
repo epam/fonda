@@ -116,6 +116,9 @@ class LofreqTest extends AbstractTest {
         final GlobalConfig.QueueParameters queueParameters = new GlobalConfig.QueueParameters();
         queueParameters.setNumThreads(4);
         globalConfig.setQueueParameters(queueParameters);
+        final GlobalConfig.PipelineInfo pipelineInfo = new GlobalConfig.PipelineInfo();
+        pipelineInfo.setWorkflow("DnaCaptureVar_Bam");
+        globalConfig.setPipelineInfo(pipelineInfo);
         configuration.setGlobalConfig(globalConfig);
         return configuration;
     }

@@ -127,6 +127,9 @@ class Mutect2Test extends AbstractTest {
         databaseConfig.setGenome("GENOME");
         databaseConfig.setBed("BED");
         globalConfig.setDatabaseConfig(databaseConfig);
+        final GlobalConfig.PipelineInfo pipelineInfo = new GlobalConfig.PipelineInfo();
+        pipelineInfo.setWorkflow("DnaCaptureVar_Bam");
+        globalConfig.setPipelineInfo(pipelineInfo);
         configuration.setGlobalConfig(globalConfig);
         return configuration;
     }

@@ -135,6 +135,24 @@ public final class DnaUtils {
         return TEMPLATE_ENGINE.process(PERIODIC_INDEX_BAM_STATUS_CHECK, context);
     }
 
+    /**
+     * Checks the sample type
+     * @param sampleType
+     * @return true if sample type is not "case" or "tumor" type
+     */
+    public static boolean isNotCaseOrTumor(final String sampleType) {
+        return !sampleType.equals(PipelineUtils.CASE) && !sampleType.equals(PipelineUtils.TUMOR);
+    }
+
+    /**
+     * Checks if the launched workflow is wgs
+     * @param configuration
+     * @return true if the launched workflow is wgs
+     */
+    public static boolean isWgsWorkflow(final Configuration configuration) {
+        return configuration.getGlobalConfig().getPipelineInfo().getWorkflow().toLowerCase().contains("wgs");
+    }
+
     private static String getLogFileScanningShellScript(LogFileFields logFileFields, String tag,
                                                         Map<String, String> msgMap, Integer period, String index) {
         return TEMPLATE_ENGINE.process(LOGFILE_SCANNING_SHELL_SCRIPT_TEMPLATE_NAME, buildContext(logFileFields,

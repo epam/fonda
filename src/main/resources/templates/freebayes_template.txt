@@ -1,5 +1,5 @@
 echo `date` Begin Step: Freebayes detection...
-[(${toolFields.freebayes})] -f [(${toolFields.genome})] -F 0.05 -C 3 -m 20 -t [(${toolFields.bed})] [(${toolFields.bam})] > [(${toolFields.vcf})]
+[(${toolFields.freebayes})] -f [(${toolFields.genome})] -F 0.05 -C 3 -m 20 [# th:unless = "${toolFields.isWgs}"]-t [(${toolFields.bed})] [/][(${toolFields.bam})] > [(${toolFields.vcf})]
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Freebayes detection.
