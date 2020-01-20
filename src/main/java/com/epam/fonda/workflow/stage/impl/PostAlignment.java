@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,5 +86,12 @@ public class PostAlignment implements Stage {
 
     private boolean isCapture(final Configuration configuration) {
         return configuration.getGlobalConfig().getPipelineInfo().getWorkflow().toLowerCase().contains("capture");
+    }
+
+    public BamResult process(final Flag flag, final FastqFileSample fastqFileSample, final BamFileSample bamFileSample,
+                             final Configuration configuration, final TemplateEngine templateEngine) {
+        bamResult = new SortBamByReadName(fastqFileSample.getSampleOutputDir(), bamFileSample).
+                generate(configuration, templateEngine);
+        return bamResult;
     }
 }
