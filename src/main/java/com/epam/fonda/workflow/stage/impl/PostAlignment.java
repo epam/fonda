@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,6 @@ import com.epam.fonda.tools.impl.SortBamByReadName;
 import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.tools.results.MetricsOutput;
 import com.epam.fonda.tools.results.MetricsResult;
-import com.epam.fonda.utils.PipelineUtils;
 import com.epam.fonda.workflow.impl.Flag;
 import com.epam.fonda.workflow.stage.Stage;
 import lombok.AllArgsConstructor;
@@ -85,19 +84,17 @@ public class PostAlignment implements Stage {
             bamResult = new AmpliconGatkRecalibrate(sample.getTmpOutdir(), bamResult)
                     .generate(configuration, templateEngine);
         }
-        if (PipelineUtils.checkSampleType(sample.getSampleType())) {
-            bamResult = new SortBamByReadName(sample.getSampleOutputDir(),
-                    BamFileSample
-                            .builder()
-                            .bam(bamResult.getBamOutput().getBam())
-                            .name(sample.getName())
-                            .build())
-                    .generate(configuration, templateEngine);
-        }
         return bamResult;
     }
 
     private boolean isCapture(final Configuration configuration) {
         return configuration.getGlobalConfig().getPipelineInfo().getWorkflow().toLowerCase().contains("capture");
+    }
+
+    public BamResult process(final Flag flag, final FastqFileSample fastqFileSample, final BamFileSample bamFileSample,
+                             final Configuration configuration, final TemplateEngine templateEngine) {
+        bamResult = new SortBamByReadName(fastqFileSample.getSampleOutputDir(), bamFileSample).
+                generate(configuration, templateEngine);
+        return bamResult;
     }
 }
