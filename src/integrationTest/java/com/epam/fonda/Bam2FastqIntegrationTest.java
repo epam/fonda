@@ -30,7 +30,8 @@ import static org.junit.Assert.assertTrue;
 
 public class Bam2FastqIntegrationTest extends AbstractIntegrationTest {
     private static final String OUTPUT_DIR_ROOT = "build/resources/integrationTest/";
-    private static final String OUTPUT_DIR = "output";
+    private static final String OUTPUT_DIR = "output/";
+    private static final String SAMPLE_NAME = "GA51/";
     private static final String OUTPUT_SH_FILE = "output/sh_files/Bam2Fastq_convert_for_GA5_analysis.sh";
     private static final String OUTPUT_FASTQ_FILE = "output/Example_project-run1234-031814-FastqPaths.txt";
 
@@ -104,14 +105,14 @@ public class Bam2FastqIntegrationTest extends AbstractIntegrationTest {
         cleanOutputDirForNextTest(OUTPUT_DIR, false);
     }
 
-    @Test(expected = NullPointerException.class)
-    public void testSingleNotTumorOrCase() throws IOException {
-        startAppWithConfigs(
-                "Bam2Fastq/gSinglePicard.txt", "Bam2Fastq/sSingleNotTumorOrCase.txt");
-        File outputFastqPathsFile = new File(this.getClass().getClassLoader().getResource(OUTPUT_SH_FILE).getPath());
-
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
-    }
+//    @Test(expected = NullPointerException.class)
+//    public void testSingleNotTumorOrCase() throws IOException {
+//        startAppWithConfigs(
+//                "Bam2Fastq/gSinglePicard.txt", "Bam2Fastq/sSingleNotTumorOrCase.txt");
+//        File outputFastqPathsFile = new File(this.getClass().getClassLoader().getResource(OUTPUT_SH_FILE).getPath());
+//
+//        cleanOutputDirForNextTest(OUTPUT_DIR, false);
+//    }
 
     @Test
     public void testGetFastqListSingle() throws IOException {
@@ -149,15 +150,14 @@ public class Bam2FastqIntegrationTest extends AbstractIntegrationTest {
         cleanOutputDirForNextTest(OUTPUT_DIR, false);
     }
 
-//    @Test
-//    public void testSpecificDir() throws IOException {
-//        startAppWithConfigs("Bam2Fastq/gPairedPicard.txt", "Bam2Fastq/sPaired.txt");
-//        assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "sample").exists());
-//        assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "sh_files").exists());
-//        assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "log_files").exists());
-//        assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "err_files").exists());
-//        assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "sample/fastq").exists());
-//        cleanOutputDirForNextTest(OUTPUT_DIR, true);
-//    }
+    @Test
+    public void testSpecificDir() throws IOException {
+        startAppWithConfigs("Bam2Fastq/gPairedPicard.txt", "Bam2Fastq/sPaired.txt");
+        assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + SAMPLE_NAME).exists());
+        assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "sh_files").exists());
+        assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "log_files").exists());
+        assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "err_files").exists());
+        assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + SAMPLE_NAME + "fastq").exists());
+        cleanOutputDirForNextTest(OUTPUT_DIR, true);
+    }
 }
-

@@ -19,6 +19,7 @@ package com.epam.fonda.workflow.stage.impl;
 import com.epam.fonda.entity.command.AbstractCommand;
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.samples.bam.BamFileSample;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.impl.AmpliconAbraRealign;
 import com.epam.fonda.tools.impl.AmpliconGatkRealign;
@@ -26,6 +27,7 @@ import com.epam.fonda.tools.impl.AmpliconGatkRecalibrate;
 import com.epam.fonda.tools.impl.DnaPicardQc;
 import com.epam.fonda.tools.impl.PicardMarkDuplicate;
 import com.epam.fonda.tools.impl.PicardRemoveDuplicate;
+import com.epam.fonda.tools.impl.SortBamByReadName;
 import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.tools.results.MetricsOutput;
 import com.epam.fonda.tools.results.MetricsResult;
@@ -45,9 +47,10 @@ public class PostAlignment implements Stage {
     /**
      * Method consists of list of tools that can be invoked on after alignment stage
      * to improve on the alignments of the reads.
-     * @param flag is the type of {@link Flag} that indicates whether tool was set in configuration
-     * @param configuration is the type of {@link Configuration} which contains its fields: workflow, outdir,
-     *                      logOutdir, rScript, fastqList, bamList.
+     *
+     * @param flag           is the type of {@link Flag} that indicates whether tool was set in configuration
+     * @param configuration  is the type of {@link Configuration} which contains its fields: workflow, outdir,
+     *                       logOutdir, rScript, fastqList, bamList.
      * @param templateEngine an instance of {@link TemplateEngine} to process multiple template
      * @return {@link BamResult} which presents paths to bam, index of bam, sorted bam, etc
      */
@@ -88,10 +91,10 @@ public class PostAlignment implements Stage {
         return configuration.getGlobalConfig().getPipelineInfo().getWorkflow().toLowerCase().contains("capture");
     }
 
-    public BamResult process(final Flag flag, final FastqFileSample fastqFileSample, final BamFileSample bamFileSample,
+    public BamResult process(final FastqFileSample fastqFileSample, final BamFileSample bamFileSample,
                              final Configuration configuration, final TemplateEngine templateEngine) {
-        bamResult = new SortBamByReadName(fastqFileSample.getSampleOutputDir(), bamFileSample).
-                generate(configuration, templateEngine);
+        bamResult = new SortBamByReadName(fastqFileSample.getSampleOutputDir(), bamFileSample)
+                .generate(configuration, templateEngine);
         return bamResult;
     }
 }

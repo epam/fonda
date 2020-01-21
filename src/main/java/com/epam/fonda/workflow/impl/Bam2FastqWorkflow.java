@@ -52,6 +52,8 @@ public class Bam2FastqWorkflow implements BamWorkflow {
     @Override
     public void run(Configuration configuration, BamFileSample sample) throws IOException {
         sample.createDirectory();
+        sample.setSampleOutputDir(sample.getSampleOutputDir() + "/fastq");
+        sample.createDirectory();
         configuration.setCustTask("convert");
         BamResult bamResult = BamResult.builder()
                 .bamOutput(BamOutput.builder()
@@ -62,10 +64,10 @@ public class Bam2FastqWorkflow implements BamWorkflow {
                 .name(sample.getName())
                 .sampleOutputDir(sample.getSampleOutputDir())
                 .build();
-        final StringBuilder cmd = new StringBuilder("");
+        final StringBuilder cmd = new StringBuilder();
         if (PipelineUtils.checkSampleType(sample.getSampleType())) {
             bamResult = new PostAlignment(bamResult)
-                    .process(flag, fastqFileSample, sample, configuration, TEMPLATE_ENGINE);
+                    .process(fastqFileSample, sample, configuration, TEMPLATE_ENGINE);
             cmd.append(bamResult.getCommand().getToolCommand());
         }
         if (flag.isPicard()) {
@@ -79,7 +81,7 @@ public class Bam2FastqWorkflow implements BamWorkflow {
     }
 
     @Override
-    public void postProcess(Configuration configuration, List<BamFileSample> samples) throws IOException {
+    public void postProcess(Configuration configuration, List<BamFileSample> samples) {
         List<FastqFileSample> fastqFileSamples = samples.stream().map(s -> FastqFileSample.builder()
                 .name(s.getName())
                 .sampleType(s.getSampleType())
