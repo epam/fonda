@@ -17,6 +17,7 @@
 package com.epam.fonda.utils;
 
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.GlobalConfigFormat;
 import com.epam.fonda.entity.configuration.StudyConfig;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
@@ -26,6 +27,8 @@ import org.thymeleaf.context.Context;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.epam.fonda.utils.ToolUtils.validate;
 
 public final class RnaAnalysisUtils {
     private static final String RNA_ANALYSIS_LOG_FILE_TEMPLATE = "analysis_logFile_template";
@@ -147,7 +150,8 @@ public final class RnaAnalysisUtils {
         rnaAnalysisFields.jarPath = PipelineUtils.getExecutionPath();
         rnaAnalysisFields.outdir = configuration.getCommonOutdir().getRootOutdir();
         rnaAnalysisFields.sampleList = getSampleFileListReference(configuration.getStudyConfig());
-        rnaAnalysisFields.rScript = configuration.getGlobalConfig().getToolConfig().getRScript();
+        rnaAnalysisFields.rScript = validate(configuration.getGlobalConfig().getToolConfig().getRScript(),
+                GlobalConfigFormat.R_SCRIPT);
         Context context = new Context();
         context.setVariable("rnaAnalysisFields", rnaAnalysisFields);
         return context;

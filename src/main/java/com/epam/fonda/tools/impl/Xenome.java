@@ -19,6 +19,7 @@ package com.epam.fonda.tools.impl;
 import com.epam.fonda.entity.command.AbstractCommand;
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.GlobalConfigFormat;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.FastqOutput;
@@ -29,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import static com.epam.fonda.utils.ToolUtils.validate;
 import static java.lang.String.format;
 
 @RequiredArgsConstructor
@@ -107,8 +109,11 @@ public class Xenome implements Tool<FastqResult> {
         }
         xenomeFields.fastq1 = result.getOut().getMergedFastq1();
         xenomeFields.fastq2 = result.getOut().getMergedFastq2();
-        xenomeFields.xenome = configuration.getGlobalConfig().getToolConfig().getXenome();
-        xenomeFields.mouseXenomeIndex = configuration.getGlobalConfig().getDatabaseConfig().getMouseXenomeIndex();
+        xenomeFields.xenome = validate(configuration.getGlobalConfig().getToolConfig().getXenome(),
+                GlobalConfigFormat.XENOME);
+        xenomeFields.mouseXenomeIndex = validate(
+                configuration.getGlobalConfig().getDatabaseConfig().getMouseXenomeIndex(),
+                GlobalConfigFormat.MOUSE_XENOME_INDEX);
         xenomeFields.stmpOutDir = sample.getTmpOutdir();
         if (xenomeFields.index != null) {
             xenomeFields.prefix = format("%s/%s_%s", xenomeFields.stmpOutDir, sample

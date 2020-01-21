@@ -19,6 +19,7 @@ package com.epam.fonda.tools.impl;
 import com.epam.fonda.entity.command.AbstractCommand;
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.GlobalConfigFormat;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.FastqOutput;
@@ -30,6 +31,8 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.util.Arrays;
+
+import static com.epam.fonda.utils.ToolUtils.validate;
 
 @Data
 public class StarFusion implements Tool<StarFusionResult> {
@@ -114,7 +117,8 @@ public class StarFusion implements Tool<StarFusionResult> {
      **/
     private AdditionalStarFusionFields constructFieldsByIndex(Configuration configuration) {
         AdditionalStarFusionFields starFusionFields = new AdditionalStarFusionFields();
-        starFusionFields.starIndex = configuration.getGlobalConfig().getDatabaseConfig().getStarIndex();
+        starFusionFields.starIndex = validate(configuration.getGlobalConfig().getDatabaseConfig().getStarIndex(),
+                GlobalConfigFormat.STARINDEX);
         starFusionFields.sampleName = sample.getName();
         starFusionFields.numThreads = configuration.getGlobalConfig().getQueueParameters().getNumThreads();
         starFusionFields.mergedFastq1 = fastqOutput.getMergedFastq1();
@@ -128,18 +132,23 @@ public class StarFusion implements Tool<StarFusionResult> {
                 starFusionFields.sampleName);
         starFusionFields.juncFile = String.format("%s/%s.Chimeric.out.junction", starFusionFields.bamOutdir,
                 starFusionFields.sampleName);
-        starFusionFields.starFusion = configuration.getGlobalConfig().getToolConfig().getStarFusion();
-        starFusionFields.starFusionLib = configuration.getGlobalConfig().getDatabaseConfig().getStarFusionLib();
+        starFusionFields.starFusion = validate(configuration.getGlobalConfig().getToolConfig().getStarFusion(),
+                GlobalConfigFormat.STAR_FUSION);
+        starFusionFields.starFusionLib = validate(
+                configuration.getGlobalConfig().getDatabaseConfig().getStarFusionLib(),
+                GlobalConfigFormat.STAR_FUSION_LIB);
         starFusionFields.starFusionOutdir = String.format("%s/starFusion", sample.getSampleOutputDir());
         return starFusionFields;
     }
 
     private ToolFields initializeToolFields(Configuration configuration) {
         ToolFields toolFields = new ToolFields();
-        toolFields.java = configuration.getGlobalConfig().getToolConfig().getJava();
-        toolFields.picard = configuration.getGlobalConfig().getToolConfig().getPicard();
-        toolFields.samtools = configuration.getGlobalConfig().getToolConfig().getSamTools();
-        toolFields.star = configuration.getGlobalConfig().getToolConfig().getStar();
+        toolFields.java = validate(configuration.getGlobalConfig().getToolConfig().getJava(), GlobalConfigFormat.JAVA);
+        toolFields.picard = validate(configuration.getGlobalConfig().getToolConfig().getPicard(),
+                GlobalConfigFormat.PICARD);
+        toolFields.samtools = validate(configuration.getGlobalConfig().getToolConfig().getSamTools(),
+                GlobalConfigFormat.SAMTOOLS);
+        toolFields.star = validate(configuration.getGlobalConfig().getToolConfig().getStar(), GlobalConfigFormat.STAR);
         return toolFields;
     }
 }

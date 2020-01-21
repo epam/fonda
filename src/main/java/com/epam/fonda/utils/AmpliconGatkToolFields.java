@@ -16,9 +16,14 @@
 package com.epam.fonda.utils;
 
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.GlobalConfigFormat;
+import lombok.Builder;
 import lombok.Data;
 
+import static com.epam.fonda.utils.ToolUtils.validate;
+
 @Data
+@Builder
 public class AmpliconGatkToolFields {
 
     private String java;
@@ -32,9 +37,9 @@ public class AmpliconGatkToolFields {
      * @return {@link AmpliconGatkToolFields} with its fields.
      **/
     public static AmpliconGatkToolFields init(final Configuration configuration) {
-        AmpliconGatkToolFields fields = new AmpliconGatkToolFields();
-        fields.setGatk(configuration.getGlobalConfig().getToolConfig().getGatk());
-        fields.setJava(configuration.getGlobalConfig().getToolConfig().getJava());
-        return fields;
+        return AmpliconGatkToolFields.builder()
+                .gatk(validate(configuration.getGlobalConfig().getToolConfig().getGatk(), GlobalConfigFormat.GATK))
+                .java(validate(configuration.getGlobalConfig().getToolConfig().getJava(), GlobalConfigFormat.JAVA))
+                .build();
     }
 }

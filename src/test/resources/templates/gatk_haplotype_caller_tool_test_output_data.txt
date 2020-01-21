@@ -1,5 +1,5 @@
 echo `date` Begin Step: GATK haplotypecaller detection...
-java -Xmx10g -Djava.io.tmpdir=output/gatkHaplotypeCaller/tmp -jar gatk -T HaplotypeCaller -R genome -mmq 20 [# th:if = "${bed != null}"]--intervals bed [/]--input_file sbamOutdir/sampleName.toolName.sorted.file.bam --out output/gatkHaplotypeCaller/samplename.gatkHaplotypeCaller.variants.vcf --validation_strictness SILENT
+java -Xmx10g -Djava.io.tmpdir=output/gatkHaplotypeCaller/tmp -jar gatk -T HaplotypeCaller -R genome -mmq 20 [# th:unless = "${isWgs}"]--intervals bed [/]--input_file sbamOutdir/sampleName.toolName.sorted.file.bam --out output/gatkHaplotypeCaller/samplename.gatkHaplotypeCaller.variants.vcf --validation_strictness SILENT
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: GATK haplotypecaller detection.

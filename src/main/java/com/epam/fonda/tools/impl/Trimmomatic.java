@@ -19,6 +19,7 @@ package com.epam.fonda.tools.impl;
 import com.epam.fonda.entity.command.AbstractCommand;
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.GlobalConfigFormat;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.FastqOutput;
@@ -30,6 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import static com.epam.fonda.utils.ToolUtils.validate;
 import static java.lang.String.format;
 
 @RequiredArgsConstructor
@@ -101,9 +103,11 @@ public class Trimmomatic implements Tool<FastqResult> {
             trimmomaticFields.index = String.valueOf(index);
         }
         trimmomaticFields.adapterSEQ = configuration.getGlobalConfig().getDatabaseConfig().getAdapterSEQ();
-        trimmomaticFields.java = configuration.getGlobalConfig().getToolConfig().getJava();
+        trimmomaticFields.java = validate(configuration.getGlobalConfig().getToolConfig().getJava(),
+                GlobalConfigFormat.JAVA);
         trimmomaticFields.numThreads = configuration.getGlobalConfig().getQueueParameters().getNumThreads();
-        trimmomaticFields.trimmomatic = configuration.getGlobalConfig().getToolConfig().getTrimmomatic();
+        trimmomaticFields.trimmomatic = validate(configuration.getGlobalConfig().getToolConfig().getTrimmomatic(),
+                GlobalConfigFormat.TRIMMOMATIC);
         trimmomaticFields.sfqOutdir = sample.getFastqOutdir();
         trimmomaticFields.sampleName = sample.getName();
         trimmomaticFields.fastq1 = result.getOut().getMergedFastq1();

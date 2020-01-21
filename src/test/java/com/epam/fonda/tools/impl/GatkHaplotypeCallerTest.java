@@ -52,8 +52,9 @@ class GatkHaplotypeCallerTest extends AbstractTest {
     void shouldGenerateForGatkHaplotypeCallerUnpaired() {
         GatkHaplotypeCaller gatkHaplotypeCaller = new GatkHaplotypeCaller("samplename",
                 "sbamOutdir/sampleName.toolName.sorted.file.bam", TEST_DIRECTORY);
+        expectedDatabaseConfig.setBed("bed");
         Context context = new Context();
-        context.setVariable("bed", null);
+        context.setVariable("bed", expectedGlobalConfig.getDatabaseConfig().getBed());
         String expectedCmd = expectedTemplateEngine.process(GATK_HAPLOTYPE_CALLER_TOOL_TEST_TEMPLATE_NAME, context);
         variantsVcfResult = gatkHaplotypeCaller.generate(expectedConfiguration, expectedTemplateEngine);
         assertEquals(expectedCmd, variantsVcfResult.getAbstractCommand().getToolCommand());
@@ -63,10 +64,10 @@ class GatkHaplotypeCallerTest extends AbstractTest {
     void shouldGenerateForWgsGatkHaplotypeCallerUnpaired() {
         GatkHaplotypeCaller gatkHaplotypeCaller = new GatkHaplotypeCaller("samplename",
                 "sbamOutdir/sampleName.toolName.sorted.file.bam", TEST_DIRECTORY);
-        expectedDatabaseConfig.setBed("bed");
         expectedGlobalConfig.setDatabaseConfig(expectedDatabaseConfig);
+        expectedConfiguration.getGlobalConfig().getPipelineInfo().setWorkflow("DnaWgsVar_Bam");
         Context context = new Context();
-        context.setVariable("bed", expectedGlobalConfig.getDatabaseConfig().getBed());
+        context.setVariable("isWgs", true);
         String expectedCmd = expectedTemplateEngine.process(GATK_HAPLOTYPE_CALLER_TOOL_TEST_TEMPLATE_NAME, context);
         variantsVcfResult = gatkHaplotypeCaller.generate(expectedConfiguration, expectedTemplateEngine);
         assertEquals(expectedCmd, variantsVcfResult.getAbstractCommand().getToolCommand());

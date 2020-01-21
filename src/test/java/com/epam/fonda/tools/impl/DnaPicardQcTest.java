@@ -128,6 +128,12 @@ class DnaPicardQcTest extends AbstractTest {
         GlobalConfig.ToolConfig expectedToolConfig = expectedConfiguration.getGlobalConfig().getToolConfig();
         expectedToolConfig.setBedTools(BED_TOOLS);
         expectedConfiguration.getGlobalConfig().setToolConfig(expectedToolConfig);
+        StudyConfig studyConfig = new StudyConfig();
+        studyConfig.setLibraryType("DNAWholeExomeSeq_Paired");
+        studyConfig.setDate("20200121");
+        studyConfig.setProject("Example_project");
+        studyConfig.setRun("run1");
+        expectedConfiguration.setStudyConfig(studyConfig);
         Context context = new Context();
         context.setVariable(JAR_PATH, jarPath);
         context.setVariable(READ_TYPE, expectedPipelineInfo.getReadType());
@@ -150,6 +156,12 @@ class DnaPicardQcTest extends AbstractTest {
         GlobalConfig.ToolConfig expectedToolConfig = expectedConfiguration.getGlobalConfig().getToolConfig();
         expectedToolConfig.setBedTools(BED_TOOLS);
         expectedConfiguration.getGlobalConfig().setToolConfig(expectedToolConfig);
+        StudyConfig studyConfig = new StudyConfig();
+        studyConfig.setLibraryType("DNAWholeExomeSeq_Paired");
+        studyConfig.setDate("20200121");
+        studyConfig.setProject("Example_project");
+        studyConfig.setRun("run1");
+        expectedConfiguration.setStudyConfig(studyConfig);
         Context context = new Context();
         context.setVariable(JAR_PATH, jarPath);
         context.setVariable(READ_TYPE, expectedPipelineInfo.getReadType());

@@ -87,8 +87,7 @@ public class AmpliconGatkRecalibrate implements Tool<BamResult> {
         additionalFields.bam = bamResult.getBamOutput().getBam();
         additionalFields.recalBam = additionalFields.bam.replace(".bam", ".recal.bam");
         additionalFields.recalBamIndex = additionalFields.recalBam.replace(".bam", ".bam.bai");
-        additionalFields.recalTable = additionalFields.recalBam
-                .replace(".bam", ".table");
+        additionalFields.recalTable = additionalFields.recalBam.replace(".bam", ".table");
         return additionalFields;
     }
 }

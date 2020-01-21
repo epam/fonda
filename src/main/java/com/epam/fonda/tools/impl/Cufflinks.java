@@ -18,6 +18,8 @@ package com.epam.fonda.tools.impl;
 
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.GlobalConfigFormat;
+import com.epam.fonda.entity.configuration.StudyConfigFormat;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.CufflinksOutput;
@@ -27,6 +29,7 @@ import lombok.Data;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import static com.epam.fonda.utils.ToolUtils.validate;
 import static java.lang.String.format;
 
 @AllArgsConstructor
@@ -67,13 +70,17 @@ public class Cufflinks implements Tool<CufflinksResult> {
 
     private CufflinksFields constructFields(final Configuration configuration, final String cufflinksOutdir) {
         CufflinksFields cufflinksFields = new CufflinksFields();
-        cufflinksFields.genome = configuration.getGlobalConfig().getDatabaseConfig().getGenome();
-        cufflinksFields.annotgene = configuration.getGlobalConfig().getDatabaseConfig().getAnnotgene();
-        cufflinksFields.cufflinks = configuration.getGlobalConfig().getToolConfig().getCufflinks();
+        cufflinksFields.genome = validate(configuration.getGlobalConfig().getDatabaseConfig().getGenome(),
+                GlobalConfigFormat.GENOME);
+        cufflinksFields.annotgene = validate(configuration.getGlobalConfig().getDatabaseConfig().getAnnotgene(),
+                GlobalConfigFormat.ANNOTGENE);
+        cufflinksFields.cufflinks = validate(configuration.getGlobalConfig().getToolConfig().getCufflinks(),
+                GlobalConfigFormat.CUFFLINKS);
         cufflinksFields.nThreads = String.valueOf(configuration.getGlobalConfig().getQueueParameters().getNumThreads());
         cufflinksFields.sampleName = sampleName;
         cufflinksFields.sCufflinksOutDir = cufflinksOutdir;
-        cufflinksFields.sCufflinksLibraryType = configuration.getStudyConfig().getCufflinksLibraryType();
+        cufflinksFields.sCufflinksLibraryType = validate(configuration.getStudyConfig().getCufflinksLibraryType(),
+                StudyConfigFormat.CUFFLINKS_LIBRARY_TYPE);
         cufflinksFields.cufflinksGeneResult = format("%s/%s.cufflinks.gene.expression.results",
                 cufflinksFields.sCufflinksOutDir,
                 cufflinksFields.sampleName);

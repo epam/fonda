@@ -17,6 +17,7 @@
 package com.epam.fonda.tools.impl;
 
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.GlobalConfigFormat;
 import com.epam.fonda.tools.PostProcessTool;
 import com.epam.fonda.utils.PipelineUtils;
 import com.epam.fonda.workflow.impl.Flag;
@@ -33,6 +34,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.epam.fonda.utils.RnaAnalysisUtils.getSampleFileListReference;
+import static com.epam.fonda.utils.ToolUtils.validate;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -129,9 +131,11 @@ public class SCRnaAnalysis implements PostProcessTool {
         SCRnaAnalysis.SCRnaAnalysisFields scRnaAnalysisFields = new SCRnaAnalysis.SCRnaAnalysisFields();
         scRnaAnalysisFields.jarPath = PipelineUtils.getExecutionPath();
         scRnaAnalysisFields.sampleList = getSampleFileListReference(configuration.getStudyConfig());
-        scRnaAnalysisFields.rScript = configuration.getGlobalConfig().getToolConfig().getRScript();
+        scRnaAnalysisFields.rScript = validate(configuration.getGlobalConfig().getToolConfig().getRScript(),
+                GlobalConfigFormat.R_SCRIPT);
         scRnaAnalysisFields.outdir = configuration.getCommonOutdir().getRootOutdir();
-        scRnaAnalysisFields.genomeBuild = configuration.getGlobalConfig().getDatabaseConfig().getGenomeBuild();
+        scRnaAnalysisFields.genomeBuild = validate(configuration.getGlobalConfig().getDatabaseConfig().getGenomeBuild(),
+                GlobalConfigFormat.GENOME_BUILD);
 
         Context context = new Context();
         context.setVariable("scRnaAnalysisFields", scRnaAnalysisFields);

@@ -17,6 +17,8 @@
 package com.epam.fonda.tools.impl;
 
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.GlobalConfigFormat;
+import com.epam.fonda.entity.configuration.StudyConfigFormat;
 import com.epam.fonda.tools.PostProcessTool;
 import com.epam.fonda.utils.PipelineUtils;
 import com.epam.fonda.workflow.PipelineType;
@@ -32,6 +34,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.epam.fonda.utils.ToolUtils.validate;
 
 @RequiredArgsConstructor
 public class QcSummary implements PostProcessTool {
@@ -72,8 +76,9 @@ public class QcSummary implements PostProcessTool {
     private QcSummaryFields constructFields(final Configuration configuration, String sample) {
         final QcSummaryFields qcSummaryFields = QcSummaryFields.builder()
                 .workflow(configuration.getGlobalConfig().getPipelineInfo().getWorkflow())
-                .outDir(configuration.getStudyConfig().getDirOut())
-                .rScript(configuration.getGlobalConfig().getToolConfig().getRScript())
+                .outDir(validate(configuration.getStudyConfig().getDirOut(), StudyConfigFormat.DIR_OUT))
+                .rScript(validate(configuration.getGlobalConfig().getToolConfig().getRScript(),
+                        GlobalConfigFormat.R_SCRIPT))
                 .fastqList(configuration.getStudyConfig().getFastqList())
                 .statusCheckPeriod(defaultOrSpecifiedPeriod(configuration))
                 .errorMessage("Error QC results from " + sample)

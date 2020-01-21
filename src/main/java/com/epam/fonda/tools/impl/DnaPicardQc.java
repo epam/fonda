@@ -18,6 +18,8 @@ package com.epam.fonda.tools.impl;
 
 import com.epam.fonda.entity.command.AbstractCommand;
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.GlobalConfigFormat;
+import com.epam.fonda.entity.configuration.StudyConfigFormat;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.MetricsOutput;
@@ -34,6 +36,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.epam.fonda.utils.PipelineUtils.getExecutionPath;
+import static com.epam.fonda.utils.ToolUtils.validate;
 
 @RequiredArgsConstructor
 public class DnaPicardQc implements Tool<MetricsResult> {
@@ -116,7 +119,7 @@ public class DnaPicardQc implements Tool<MetricsResult> {
     @Override
     public MetricsResult generate(Configuration configuration, TemplateEngine templateEngine) {
         workflowType = configuration.getGlobalConfig().getPipelineInfo().getWorkflow();
-        libraryType = configuration.getStudyConfig().getLibraryType();
+        libraryType = validate(configuration.getStudyConfig().getLibraryType(), StudyConfigFormat.LIBRARY_TYPE);
         if (!isWorkflowDnaAmplicon() && (!isWorkflowDnaCapture() &&
                 !(matchesExomeLibraryTypeCondition(libraryType) || matchesCaptureLibraryTypeCondition(libraryType)))) {
             return metricsResult;
@@ -215,12 +218,16 @@ public class DnaPicardQc implements Tool<MetricsResult> {
     private ToolFields initializeToolFields(Configuration configuration) {
         ToolFields toolFields = new ToolFields();
         if (isWorkflowDnaAmplicon() || isCaptureWorkflowTargetType(libraryType)) {
-            toolFields.bedtools = configuration.getGlobalConfig().getToolConfig().getBedTools();
+            toolFields.bedtools = validate(configuration.getGlobalConfig().getToolConfig().getBedTools(),
+                    GlobalConfigFormat.BEDTOOLS);
         }
-        toolFields.java = configuration.getGlobalConfig().getToolConfig().getJava();
-        toolFields.picard = configuration.getGlobalConfig().getToolConfig().getPicard();
-        toolFields.python = configuration.getGlobalConfig().getToolConfig().getPython();
-        toolFields.samtools = configuration.getGlobalConfig().getToolConfig().getSamTools();
+        toolFields.java = validate(configuration.getGlobalConfig().getToolConfig().getJava(), GlobalConfigFormat.JAVA);
+        toolFields.picard = validate(configuration.getGlobalConfig().getToolConfig().getPicard(),
+                GlobalConfigFormat.PICARD);
+        toolFields.python = validate(configuration.getGlobalConfig().getToolConfig().getPython(),
+                GlobalConfigFormat.PYTHON);
+        toolFields.samtools = validate(configuration.getGlobalConfig().getToolConfig().getSamTools(),
+                GlobalConfigFormat.SAMTOOLS);
         return toolFields;
     }
 
@@ -233,10 +240,15 @@ public class DnaPicardQc implements Tool<MetricsResult> {
      **/
     private DatabaseFields initializeDatabaseFields(Configuration configuration) {
         DatabaseFields databaseFields = new DatabaseFields();
-        databaseFields.bed = configuration.getGlobalConfig().getDatabaseConfig().getBed();
-        databaseFields.bedForCoverage = configuration.getGlobalConfig().getDatabaseConfig().getBedForCoverage();
-        databaseFields.bedWithHeader = configuration.getGlobalConfig().getDatabaseConfig().getBedWithHeader();
-        databaseFields.genome = configuration.getGlobalConfig().getDatabaseConfig().getGenome();
+        databaseFields.bed = validate(configuration.getGlobalConfig().getDatabaseConfig().getBed(),
+                GlobalConfigFormat.BED);
+        databaseFields.bedForCoverage = validate(
+                configuration.getGlobalConfig().getDatabaseConfig().getBedForCoverage(),
+                GlobalConfigFormat.BED_FOR_COVERAGE);
+        databaseFields.bedWithHeader = validate(configuration.getGlobalConfig().getDatabaseConfig().getBedWithHeader(),
+                GlobalConfigFormat.BED_WITH_HEADER);
+        databaseFields.genome = validate(configuration.getGlobalConfig().getDatabaseConfig().getGenome(),
+                GlobalConfigFormat.GENOME);
         return databaseFields;
     }
 
@@ -339,11 +351,12 @@ public class DnaPicardQc implements Tool<MetricsResult> {
         if (!isWorkflowDnaAmplicon()) {
             additionalFields.mkdupBam = metricsResult.getBamOutput().getMkdupBam();
         }
-        additionalFields.date = configuration.getStudyConfig().getDate();
+        additionalFields.date = validate(configuration.getStudyConfig().getDate(), StudyConfigFormat.DATE);
         additionalFields.jarPath = getExecutionPath();
-        additionalFields.project = configuration.getStudyConfig().getProject();
-        additionalFields.readType = configuration.getGlobalConfig().getPipelineInfo().getReadType();
-        additionalFields.run = configuration.getStudyConfig().getRun();
+        additionalFields.project = validate(configuration.getStudyConfig().getProject(), StudyConfigFormat.PROJECT);
+        additionalFields.readType = validate(configuration.getGlobalConfig().getPipelineInfo().getReadType(),
+                GlobalConfigFormat.READ_TYPE);
+        additionalFields.run = validate(configuration.getStudyConfig().getRun(), StudyConfigFormat.RUN);
         additionalFields.sampleName = sample.getName();
         return additionalFields;
     }
