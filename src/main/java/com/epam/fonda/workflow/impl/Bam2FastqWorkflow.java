@@ -53,14 +53,15 @@ public class Bam2FastqWorkflow implements BamWorkflow {
         if (!PipelineUtils.checkSampleType(sample.getSampleType())) {
             return;
         }
+        String fastqOutdir = sample.getSampleOutputDir() + "/fastq";
         sample.createDirectory();
-        PipelineUtils.createDir(sample.getSampleOutputDir() + "/fastq");
+        PipelineUtils.createDir(fastqOutdir);
         configuration.setCustTask("convert");
         BamResult bamResult = new SortBamByReadName(sample.getSampleOutputDir(), sample)
                 .generate(configuration, TEMPLATE_ENGINE);
         final StringBuilder cmd = new StringBuilder(bamResult.getCommand().getToolCommand());
         if (flag.isPicard()) {
-            FastqResult fastqResult = new SamToFastq(sample.getName(), sample.getSampleOutputDir(), bamResult)
+            FastqResult fastqResult = new SamToFastq(sample.getName(), fastqOutdir, bamResult)
                     .generate(configuration, TEMPLATE_ENGINE);
             cmd.append(fastqResult.getCommand().getToolCommand());
         }

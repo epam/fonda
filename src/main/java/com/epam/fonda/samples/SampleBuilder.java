@@ -162,12 +162,12 @@ public class SampleBuilder {
         return BamFileSample.builder()
                 .name(sampleName)
                 .bam(file1)
-                .controlBam(getControlBamName(file1, parameters.getMatchControl(), sampleName))
-                .sampleOutputDir(outputDir)
-                .tmpOutdir(format(DIR_FORMAT, outputDir, TMP))
                 .sampleType(parameters.getSampleType())
                 .matchControl(parameters.getMatchControl())
                 .controlName(parameters.getMatchControl())
+                .controlBam(getControlBamName(file1, parameters.getMatchControl(), sampleName))
+                .sampleOutputDir(outputDir)
+                .tmpOutdir(format(DIR_FORMAT, outputDir, TMP))
                 .build();
     }
 

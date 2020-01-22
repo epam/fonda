@@ -285,6 +285,6 @@ public final class PipelineUtils {
      * @return the result of checking.
      */
     public static boolean checkSampleType(String type) {
-        return type.equals(TUMOR) || type.equals(CASE);
+        return TUMOR.equals(type) || CASE.equals(type);
     }
 }
