@@ -57,7 +57,7 @@ public class Bam2FastqWorkflow implements BamWorkflow {
         sample.createDirectory();
         PipelineUtils.createDir(fastqOutdir);
         configuration.setCustTask("convert");
-        BamResult bamResult = new SortBamByReadName(sample.getSampleOutputDir(), sample)
+        BamResult bamResult = new SortBamByReadName(fastqOutdir, sample)
                 .generate(configuration, TEMPLATE_ENGINE);
         final StringBuilder cmd = new StringBuilder(bamResult.getCommand().getToolCommand());
         if (flag.isPicard()) {
