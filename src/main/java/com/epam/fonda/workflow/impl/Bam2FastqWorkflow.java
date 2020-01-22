@@ -21,13 +21,12 @@ import com.epam.fonda.samples.bam.BamFileSample;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.impl.FastqListAnalysis;
 import com.epam.fonda.tools.impl.SamToFastq;
-import com.epam.fonda.tools.results.BamOutput;
+import com.epam.fonda.tools.impl.SortBamByReadName;
 import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.tools.results.FastqResult;
 import com.epam.fonda.utils.PipelineUtils;
 import com.epam.fonda.utils.TemplateEngineUtils;
 import com.epam.fonda.workflow.BamWorkflow;
-import com.epam.fonda.workflow.stage.impl.PostAlignment;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,25 +50,15 @@ public class Bam2FastqWorkflow implements BamWorkflow {
 
     @Override
     public void run(Configuration configuration, BamFileSample sample) throws IOException {
-        sample.createDirectory();
-        sample.setSampleOutputDir(sample.getSampleOutputDir() + "/fastq");
-        sample.createDirectory();
-        configuration.setCustTask("convert");
-        BamResult bamResult = BamResult.builder()
-                .bamOutput(BamOutput.builder()
-                        .bam(sample.getBam())
-                        .build())
-                .build();
-        FastqFileSample fastqFileSample = FastqFileSample.builder()
-                .name(sample.getName())
-                .sampleOutputDir(sample.getSampleOutputDir())
-                .build();
-        final StringBuilder cmd = new StringBuilder();
-        if (PipelineUtils.checkSampleType(sample.getSampleType())) {
-            bamResult = new PostAlignment(bamResult)
-                    .process(fastqFileSample, sample, configuration, TEMPLATE_ENGINE);
-            cmd.append(bamResult.getCommand().getToolCommand());
+        if (!PipelineUtils.checkSampleType(sample.getSampleType())) {
+            return;
         }
+        sample.createDirectory();
+        PipelineUtils.createDir(sample.getSampleOutputDir() + "/fastq");
+        configuration.setCustTask("convert");
+        BamResult bamResult = new SortBamByReadName(sample.getSampleOutputDir(), sample)
+                .generate(configuration, TEMPLATE_ENGINE);
+        final StringBuilder cmd = new StringBuilder(bamResult.getCommand().getToolCommand());
         if (flag.isPicard()) {
             FastqResult fastqResult = new SamToFastq(sample.getName(), sample.getSampleOutputDir(), bamResult)
                     .generate(configuration, TEMPLATE_ENGINE);
@@ -82,11 +71,13 @@ public class Bam2FastqWorkflow implements BamWorkflow {
 
     @Override
     public void postProcess(Configuration configuration, List<BamFileSample> samples) {
-        List<FastqFileSample> fastqFileSamples = samples.stream().map(s -> FastqFileSample.builder()
-                .name(s.getName())
-                .sampleType(s.getSampleType())
-                .matchControl(s.getMatchControl())
-                .build()).collect(Collectors.toList());
+        List<FastqFileSample> fastqFileSamples = samples.stream()
+                .map(s -> FastqFileSample.builder()
+                            .name(s.getName())
+                            .sampleType(s.getSampleType())
+                            .matchControl(s.getMatchControl())
+                            .build())
+                .collect(Collectors.toList());
         new FastqListAnalysis(fastqFileSamples).generate(configuration, TEMPLATE_ENGINE);
     }
 }

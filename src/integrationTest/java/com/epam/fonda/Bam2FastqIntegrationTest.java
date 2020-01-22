@@ -31,7 +31,7 @@ import static org.junit.Assert.assertTrue;
 public class Bam2FastqIntegrationTest extends AbstractIntegrationTest {
     private static final String OUTPUT_DIR_ROOT = "build/resources/integrationTest/";
     private static final String OUTPUT_DIR = "output/";
-    private static final String SAMPLE_NAME = "GA51/";
+    private static final String SAMPLE_NAME = "GA5/";
     private static final String OUTPUT_SH_FILE = "output/sh_files/Bam2Fastq_convert_for_GA5_analysis.sh";
     private static final String OUTPUT_FASTQ_FILE = "output/Example_project-run1234-031814-FastqPaths.txt";
 
@@ -110,7 +110,6 @@ public class Bam2FastqIntegrationTest extends AbstractIntegrationTest {
 //        startAppWithConfigs(
 //                "Bam2Fastq/gSinglePicard.txt", "Bam2Fastq/sSingleNotTumorOrCase.txt");
 //        File outputFastqPathsFile = new File(this.getClass().getClassLoader().getResource(OUTPUT_SH_FILE).getPath());
-//
 //        cleanOutputDirForNextTest(OUTPUT_DIR, false);
 //    }
 
@@ -123,7 +122,7 @@ public class Bam2FastqIntegrationTest extends AbstractIntegrationTest {
         try (BufferedReader reader = new BufferedReader(new FileReader(outputFastqPathsFile))) {
             List<String> lines = reader.lines().collect(Collectors.toList());
             assertTrue(lines.get(0).contains("Parameter"));
-            //assertTrue(lines.get(1).contains("tumor\tNA"));
+            assertTrue(lines.get(1).contains("tumor\tNA"));
             assertTrue(lines.stream().noneMatch(line -> line.contains("null")));
         }
         cleanOutputDirForNextTest(OUTPUT_DIR, false);
@@ -140,12 +139,12 @@ public class Bam2FastqIntegrationTest extends AbstractIntegrationTest {
             assertTrue(lines.get(0).contains("Parameter1\tParameter2"));
             assertTrue(lines.get(1).contains("sample\tGA52"));
             assertTrue(lines.get(2).contains("tumor\tGA51"));
-            //assertTrue(lines.get(3).contains("tumor\tNA"));
+            assertTrue(lines.get(3).contains("tumor\tNA"));
             assertTrue(lines.stream().noneMatch(line -> line.contains("null")));
             lines.remove(0);
             String fastqPairedPathPattern = ".+?R1.fastq.gz.+?R2.fastq.gz.+?(\\n|$)";
-
-            //assertTrue(lines.stream().allMatch(line -> line.matches(fastqPairedPathPattern)));
+            assertTrue(lines.stream().filter(i -> !(i.isEmpty() && lines.get(lines.size() - 1).equals(i)))
+                    .allMatch(line -> line.matches(fastqPairedPathPattern)));
         }
         cleanOutputDirForNextTest(OUTPUT_DIR, false);
     }

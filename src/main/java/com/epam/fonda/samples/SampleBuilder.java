@@ -23,6 +23,7 @@ import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.samples.fastq.FastqReadType;
 import com.epam.fonda.samples.parameters.Parameters;
 import com.epam.fonda.utils.PipelineUtils;
+import com.epam.fonda.workflow.PipelineType;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -58,9 +59,9 @@ public class SampleBuilder {
     /**
      * Build list of Fastq samples according to configuration
      *
+     * @param rootOutdir the root directory to output
      * @return list of Fastq samples
      * @throws IOException throws {@code IOException} if configuration has none fastq list of files
-     * @param rootOutdir the root directory to output
      */
     public List<FastqFileSample> buildFastqSamples(final String rootOutdir) throws IOException {
         checkConfig(SampleType.FASTQ);
@@ -94,7 +95,7 @@ public class SampleBuilder {
     /**
      * Parse fastq file with samples line by line, returning paired or single sample
      *
-     * @param line one entry of fastq file list
+     * @param line       one entry of fastq file list
      * @param rootOutdir the root directory to output
      * @return fastq sample
      */
@@ -145,7 +146,7 @@ public class SampleBuilder {
     /**
      * Parse bam file with samples line by line, returning bam sample
      *
-     * @param line one entry of bam file list
+     * @param line       one entry of bam file list
      * @param rootOutdir the root directory to output
      * @return bam sample
      */
@@ -156,17 +157,31 @@ public class SampleBuilder {
 
         checkInputParameters(sampleName, file1);
         final Parameters parameters = Parameters.setParameters(BAM, values, 3);
+        setParametersForSpecialConditionsInBam2FastqWorkflow(parameters, values);
         final String outputDir = format(DIR_FORMAT, rootOutdir, sampleName);
         return BamFileSample.builder()
                 .name(sampleName)
                 .bam(file1)
-                .sampleType(parameters.getSampleType())
-                .matchControl(parameters.getMatchControl())
-                .controlName(parameters.getMatchControl())
                 .controlBam(getControlBamName(file1, parameters.getMatchControl(), sampleName))
                 .sampleOutputDir(outputDir)
                 .tmpOutdir(format(DIR_FORMAT, outputDir, TMP))
+                .sampleType(parameters.getSampleType())
+                .matchControl(parameters.getMatchControl())
+                .controlName(parameters.getMatchControl())
                 .build();
+    }
+
+    /**
+     * @param parameters the type of {@link Parameters} which
+     *                   contains values of sample
+     * @param values     the array of one entry of bam file list
+     */
+    private void setParametersForSpecialConditionsInBam2FastqWorkflow(Parameters parameters, String[] values) {
+        if (globalConfig.getPipelineInfo().getWorkflow().equalsIgnoreCase(PipelineType.BAM_2_FASTQ.getName())
+                && values.length == 3) {
+            parameters.setSampleType(PipelineUtils.TUMOR);
+            parameters.setMatchControl(PipelineUtils.NA);
+        }
     }
 
     /**

@@ -19,7 +19,6 @@ package com.epam.fonda.workflow.stage.impl;
 import com.epam.fonda.entity.command.AbstractCommand;
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
-import com.epam.fonda.samples.bam.BamFileSample;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.impl.AmpliconAbraRealign;
 import com.epam.fonda.tools.impl.AmpliconGatkRealign;
@@ -27,7 +26,6 @@ import com.epam.fonda.tools.impl.AmpliconGatkRecalibrate;
 import com.epam.fonda.tools.impl.DnaPicardQc;
 import com.epam.fonda.tools.impl.PicardMarkDuplicate;
 import com.epam.fonda.tools.impl.PicardRemoveDuplicate;
-import com.epam.fonda.tools.impl.SortBamByReadName;
 import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.tools.results.MetricsOutput;
 import com.epam.fonda.tools.results.MetricsResult;
@@ -89,12 +87,5 @@ public class PostAlignment implements Stage {
 
     private boolean isCapture(final Configuration configuration) {
         return configuration.getGlobalConfig().getPipelineInfo().getWorkflow().toLowerCase().contains("capture");
-    }
-
-    public BamResult process(final FastqFileSample fastqFileSample, final BamFileSample bamFileSample,
-                             final Configuration configuration, final TemplateEngine templateEngine) {
-        bamResult = new SortBamByReadName(fastqFileSample.getSampleOutputDir(), bamFileSample)
-                .generate(configuration, templateEngine);
-        return bamResult;
     }
 }

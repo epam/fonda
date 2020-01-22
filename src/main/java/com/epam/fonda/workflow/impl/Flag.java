@@ -62,7 +62,6 @@ public class Flag {
     private boolean abraRealign;
     private boolean gatkRealign;
     private boolean contEst;
-    private boolean bam2Fastq;
 
     public static Flag buildFlags(final Configuration configuration) {
         final Set tasks = configuration.getGlobalConfig().getPipelineInfo().getToolset();
