@@ -180,7 +180,6 @@ public class SampleBuilder {
         if (globalConfig.getPipelineInfo().getWorkflow().equalsIgnoreCase(PipelineType.BAM_2_FASTQ.getName())
                 && values.length == 3) {
             parameters.setSampleType(PipelineUtils.TUMOR);
-            parameters.setMatchControl(PipelineUtils.NA);
         }
     }
 

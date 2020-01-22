@@ -105,14 +105,6 @@ public class Bam2FastqIntegrationTest extends AbstractIntegrationTest {
         cleanOutputDirForNextTest(OUTPUT_DIR, false);
     }
 
-//    @Test(expected = NullPointerException.class)
-//    public void testSingleNotTumorOrCase() throws IOException {
-//        startAppWithConfigs(
-//                "Bam2Fastq/gSinglePicard.txt", "Bam2Fastq/sSingleNotTumorOrCase.txt");
-//        File outputFastqPathsFile = new File(this.getClass().getClassLoader().getResource(OUTPUT_SH_FILE).getPath());
-//        cleanOutputDirForNextTest(OUTPUT_DIR, false);
-//    }
-
     @Test
     public void testGetFastqListSingle() throws IOException {
         startAppWithConfigs(
