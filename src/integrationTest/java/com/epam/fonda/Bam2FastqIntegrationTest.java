@@ -34,18 +34,20 @@ public class Bam2FastqIntegrationTest extends AbstractIntegrationTest {
     private static final String SAMPLE_NAME = "GA5/";
     private static final String OUTPUT_SH_FILE = "output/sh_files/Bam2Fastq_convert_for_GA5_analysis.sh";
     private static final String OUTPUT_FASTQ_FILE = "output/Example_project-run1234-031814-FastqPaths.txt";
+    private static final String PAIRED_STUDY_CONFIG = "Bam2Fastq/sPaired.txt";
+    private static final String NULL = "null";
 
     @Test
     public void testSortPairedNonPicard() throws IOException {
         startAppWithConfigs(
-                "Bam2Fastq/gPairedNonPicard.txt", "Bam2Fastq/sPaired.txt");
+                "Bam2Fastq/gPairedNonPicard.txt", PAIRED_STUDY_CONFIG);
         File outputShFile = new File(this.getClass().getClassLoader().getResource(OUTPUT_SH_FILE).getPath());
         try (BufferedReader reader = new BufferedReader(new FileReader(outputShFile))) {
             List<String> lines = reader.lines().collect(Collectors.toList());
             assertTrue(lines.stream().anyMatch(line -> line.contains("SortSam INPUT=")));
             assertTrue(lines.stream().anyMatch(line -> line.contains("SORT_ORDER=queryname")));
             assertFalse(lines.stream().anyMatch(line -> line.contains("FASTQ=")));
-            assertTrue(lines.stream().noneMatch(line -> line.contains("null")));
+            assertTrue(lines.stream().noneMatch(line -> line.contains(NULL)));
         }
 
         cleanOutputDirForNextTest(OUTPUT_DIR, false);
@@ -54,7 +56,7 @@ public class Bam2FastqIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void testPairedPicard() throws IOException {
         startAppWithConfigs(
-                "Bam2Fastq/gPairedPicard.txt", "Bam2Fastq/sPaired.txt");
+                "Bam2Fastq/gPairedPicard.txt", PAIRED_STUDY_CONFIG);
         File outputShFile = new File(this.getClass().getClassLoader().getResource(OUTPUT_SH_FILE).getPath());
 
         try (BufferedReader reader = new BufferedReader(new FileReader(outputShFile))) {
@@ -62,7 +64,7 @@ public class Bam2FastqIntegrationTest extends AbstractIntegrationTest {
             assertTrue(lines.stream().anyMatch(line -> line.contains("UNPAIRED_FASTQ=")));
             assertTrue(lines.stream().anyMatch(line -> line.contains("SECOND_END_FASTQ=")));
             assertTrue(lines.stream().anyMatch(line -> line.contains(".R2.fastq")));
-            assertTrue(lines.stream().noneMatch(line -> line.contains("null")));
+            assertTrue(lines.stream().noneMatch(line -> line.contains(NULL)));
         }
 
         cleanOutputDirForNextTest(OUTPUT_DIR, false);
@@ -80,7 +82,7 @@ public class Bam2FastqIntegrationTest extends AbstractIntegrationTest {
             assertFalse(lines.stream().anyMatch(line -> line.contains("UNPAIRED_FASTQ=")));
             assertFalse(lines.stream().anyMatch(line -> line.contains("SECOND_END_FASTQ=")));
             assertFalse(lines.stream().anyMatch(line -> line.contains(".R2.fastq")));
-            assertTrue(lines.stream().noneMatch(line -> line.contains("null")));
+            assertTrue(lines.stream().noneMatch(line -> line.contains(NULL)));
         }
 
         cleanOutputDirForNextTest(OUTPUT_DIR, false);
@@ -99,7 +101,7 @@ public class Bam2FastqIntegrationTest extends AbstractIntegrationTest {
             assertFalse(lines.stream().anyMatch(line -> line.contains("UNPAIRED_FASTQ=")));
             assertFalse(lines.stream().anyMatch(line -> line.contains("SECOND_END_FASTQ=")));
             assertFalse(lines.stream().anyMatch(line -> line.contains(".R2.fastq")));
-            assertTrue(lines.stream().noneMatch(line -> line.contains("null")));
+            assertTrue(lines.stream().noneMatch(line -> line.contains(NULL)));
         }
 
         cleanOutputDirForNextTest(OUTPUT_DIR, false);
@@ -115,7 +117,7 @@ public class Bam2FastqIntegrationTest extends AbstractIntegrationTest {
             List<String> lines = reader.lines().collect(Collectors.toList());
             assertTrue(lines.get(0).contains("Parameter"));
             assertTrue(lines.get(1).contains("tumor\tNA"));
-            assertTrue(lines.stream().noneMatch(line -> line.contains("null")));
+            assertTrue(lines.stream().noneMatch(line -> line.contains(NULL)));
         }
         cleanOutputDirForNextTest(OUTPUT_DIR, false);
     }
@@ -123,7 +125,7 @@ public class Bam2FastqIntegrationTest extends AbstractIntegrationTest {
     @Test
     public void testGetFastqListPaired() throws IOException {
         startAppWithConfigs(
-                "Bam2Fastq/gPairedPicard.txt", "Bam2Fastq/sPaired.txt");
+                "Bam2Fastq/gPairedPicard.txt", PAIRED_STUDY_CONFIG);
         File outputFastqPathsFile = new File(this.getClass().getClassLoader().getResource(OUTPUT_FASTQ_FILE).getPath());
 
         try (BufferedReader reader = new BufferedReader(new FileReader(outputFastqPathsFile))) {
@@ -132,7 +134,7 @@ public class Bam2FastqIntegrationTest extends AbstractIntegrationTest {
             assertTrue(lines.get(1).contains("sample\tGA52"));
             assertTrue(lines.get(2).contains("tumor\tGA51"));
             assertTrue(lines.get(3).contains("tumor\tNA"));
-            assertTrue(lines.stream().noneMatch(line -> line.contains("null")));
+            assertTrue(lines.stream().noneMatch(line -> line.contains(NULL)));
             lines.remove(0);
             String fastqPairedPathPattern = ".+?R1.fastq.gz.+?R2.fastq.gz.+?(\\n|$)";
             assertTrue(lines.stream().filter(i -> !(i.isEmpty() && lines.get(lines.size() - 1).equals(i)))
@@ -143,7 +145,7 @@ public class Bam2FastqIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void testSpecificDir() throws IOException {
-        startAppWithConfigs("Bam2Fastq/gPairedPicard.txt", "Bam2Fastq/sPaired.txt");
+        startAppWithConfigs("Bam2Fastq/gPairedPicard.txt", PAIRED_STUDY_CONFIG);
         assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + SAMPLE_NAME).exists());
         assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "sh_files").exists());
         assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "log_files").exists());
