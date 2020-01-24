@@ -8,7 +8,7 @@
 #$ -e [(${output})]/err_files/DnaAmpliconVar_Fastq_mergeMutation_for_cohort_analysis.err
 #$ -q queue
 #$ -R y
-#$  0
+#$  1
 #$ -m a
 
 # --- The commands to be executed --- #
