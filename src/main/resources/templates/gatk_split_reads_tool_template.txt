@@ -1,0 +1,12 @@
+echo `date` Begin Step: GATK SplitNCigarReads...
+[(${toolFields.java})] -Xmx10g -Djava.io.tmpdir=[(${tmpGatkSplitOutdir})] -jar [(${toolFields.gatk})] -T SplitNCigarReads -R [(${toolFields.genome})] --input_file [(${pathToBam})] -rf ReassignOneMappingQuality -RMQF 255 -RMQT 60 -U ALLOW_N_CIGAR_READS --out [(${splitBam})] --validation_strictness SILENT
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: GATK SplitNCigarReads.
+	sleep 8
+else
+	echo `date` Error Step: GATK SplitNCigarReads.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
