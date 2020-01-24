@@ -17,16 +17,18 @@
 package com.epam.fonda.tools.impl;
 
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.GlobalConfigFormat;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.utils.PipelineUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.Validate;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.util.Set;
+
+import static com.epam.fonda.utils.ToolUtils.validate;
 
 @Slf4j
 @AllArgsConstructor
@@ -82,29 +84,18 @@ public class SCRNASeqDoubletDetection {
      * @return {@link DoubleDetectionFields} with set fields
      */
     private DoubleDetectionFields constructFields(Configuration configuration) {
-        checkValues(configuration);
         DoubleDetectionFields doubleDetectionFields = new DoubleDetectionFields();
         doubleDetectionFields.jarPath = PipelineUtils.getExecutionPath();
-        doubleDetectionFields.python = configuration.getGlobalConfig().getToolConfig().getPython();
-        doubleDetectionFields.doubleDetectionPythonPath =
-                configuration.getGlobalConfig().getToolConfig().getDoubleDetectionPython();
+        doubleDetectionFields.python = validate(configuration.getGlobalConfig().getToolConfig().getPython(),
+                GlobalConfigFormat.PYTHON);
+        doubleDetectionFields.doubleDetectionPythonPath = validate(
+                configuration.getGlobalConfig().getToolConfig().getDoubleDetectionPython(),
+                GlobalConfigFormat.DOUBLE_DETECTION_PYTHON);
         doubleDetectionFields.outDir = configuration.getCommonOutdir().getRootOutdir();
-        doubleDetectionFields.genomeBuild = configuration.getGlobalConfig().getDatabaseConfig().getGenomeBuild();
+        doubleDetectionFields.genomeBuild = validate(
+                configuration.getGlobalConfig().getDatabaseConfig().getGenomeBuild(),
+                GlobalConfigFormat.GENOME_BUILD);
         doubleDetectionFields.sampleName = sample.getName();
         return doubleDetectionFields;
-    }
-
-    /**
-     * Method checks all needed fields of configuration for null/empty values
-     *
-     * @param configuration
-     */
-    private void checkValues(Configuration configuration) {
-        Validate.notBlank(configuration.getGlobalConfig().getToolConfig().getDoubleDetectionPython(),
-                "Double detection python script is not specified");
-        Validate.notBlank(configuration.getGlobalConfig().getToolConfig().getPython(),
-                "Python path is not specified");
-        Validate.notBlank(configuration.getGlobalConfig().getDatabaseConfig().getGenomeBuild(),
-                "Genome build configuration is not specified");
     }
 }

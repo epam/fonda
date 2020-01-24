@@ -18,15 +18,19 @@ package com.epam.fonda.tools.impl;
 
 import com.epam.fonda.entity.command.AbstractCommand;
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.GlobalConfigFormat;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+
+import static com.epam.fonda.utils.ToolUtils.validate;
 
 @RequiredArgsConstructor
 public class AmpliconAbraRealign implements Tool<BamResult> {
@@ -34,14 +38,16 @@ public class AmpliconAbraRealign implements Tool<BamResult> {
     private static final String AMPLICON_ABRA_REALIGN_TOOL_TEMPLATE_NAME = "amplicon_abra_realign_tool_template";
 
     @Data
-    private class ToolFields {
+    @Builder
+    private static class ToolFields {
         private String java;
         private String samtools;
         private String abra2;
     }
 
     @Data
-    private class AdditionalFields {
+    @Builder
+    private static class AdditionalFields {
         private String genome;
         private String bed;
         private int numThreads;
@@ -86,11 +92,12 @@ public class AmpliconAbraRealign implements Tool<BamResult> {
      * @return {@link ToolFields} with its fields.
      **/
     private ToolFields initializeToolFields(Configuration configuration) {
-        ToolFields toolFields = new ToolFields();
-        toolFields.java = configuration.getGlobalConfig().getToolConfig().getJava();
-        toolFields.samtools = configuration.getGlobalConfig().getToolConfig().getSamTools();
-        toolFields.abra2 = configuration.getGlobalConfig().getToolConfig().getAbra2();
-        return toolFields;
+        return ToolFields.builder()
+                .java(validate(configuration.getGlobalConfig().getToolConfig().getJava(), GlobalConfigFormat.JAVA))
+                .samtools(validate(configuration.getGlobalConfig().getToolConfig().getSamTools(),
+                        GlobalConfigFormat.SAMTOOLS))
+                .abra2(validate(configuration.getGlobalConfig().getToolConfig().getAbra2(), GlobalConfigFormat.ABRA2))
+                .build();
     }
 
     /**
@@ -101,15 +108,16 @@ public class AmpliconAbraRealign implements Tool<BamResult> {
      * @return {@link AdditionalFields} with its fields.
      **/
     private AdditionalFields initializeAdditionalFields(Configuration configuration) {
-        AdditionalFields additionalFields = new AdditionalFields();
-        additionalFields.realignBam = bamResult.getBamOutput().getBam()
-                .replace(".bam", ".realign.bam");
-        additionalFields.bam = bamResult.getBamOutput().getBam();
-        additionalFields.bed = configuration.getGlobalConfig().getDatabaseConfig().getBed();
-        additionalFields.genome = configuration.getGlobalConfig().getDatabaseConfig().getGenome();
-        additionalFields.numThreads = configuration.getGlobalConfig().getQueueParameters().getNumThreads();
-        additionalFields.readType = configuration.getGlobalConfig().getPipelineInfo().getReadType();
-        additionalFields.tmpOutdir = sample.getTmpOutdir();
-        return additionalFields;
+        return AdditionalFields.builder()
+                .bam(bamResult.getBamOutput().getBam())
+                .bed(validate(configuration.getGlobalConfig().getDatabaseConfig().getBed(), GlobalConfigFormat.BED))
+                .genome(validate(configuration.getGlobalConfig().getDatabaseConfig().getGenome(),
+                        GlobalConfigFormat.GENOME))
+                .realignBam(bamResult.getBamOutput().getBam().replace(".bam", ".realign.bam"))
+                .numThreads(configuration.getGlobalConfig().getQueueParameters().getNumThreads())
+                .readType(validate(configuration.getGlobalConfig().getPipelineInfo().getReadType(),
+                        GlobalConfigFormat.READ_TYPE))
+                .tmpOutdir(sample.getTmpOutdir())
+                .build();
     }
 }

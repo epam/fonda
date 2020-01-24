@@ -17,6 +17,8 @@
 package com.epam.fonda.tools.impl;
 
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.GlobalConfigFormat;
+import com.epam.fonda.entity.configuration.StudyConfigFormat;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.PostProcessTool;
 import com.epam.fonda.utils.PipelineUtils;
@@ -28,6 +30,8 @@ import org.thymeleaf.context.Context;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.epam.fonda.utils.ToolUtils.validate;
 
 @Data
 public class FastqListAnalysis implements PostProcessTool {
@@ -97,12 +101,13 @@ public class FastqListAnalysis implements PostProcessTool {
      */
     private FastqListAnalysisFields initFastqListAnalysisFields(Configuration configuration) {
         return FastqListAnalysisFields.builder()
-                .outdir(configuration.getStudyConfig().getDirOut())
-                .runID(configuration.getStudyConfig().getRun())
-                .date(configuration.getStudyConfig().getDate())
-                .project(configuration.getStudyConfig().getProject())
+                .outdir(validate(configuration.getStudyConfig().getDirOut(), StudyConfigFormat.DIR_OUT))
+                .runID(validate(configuration.getStudyConfig().getRun(), StudyConfigFormat.RUN))
+                .date(validate(configuration.getStudyConfig().getDate(), StudyConfigFormat.DATE))
+                .project(validate(configuration.getStudyConfig().getProject(), StudyConfigFormat.PROJECT))
                 .workflow(configuration.getGlobalConfig().getPipelineInfo().getWorkflow())
-                .readType(configuration.getGlobalConfig().getPipelineInfo().getReadType())
+                .readType(validate(configuration.getGlobalConfig().getPipelineInfo().getReadType(),
+                        GlobalConfigFormat.READ_TYPE))
                 .build();
     }
 }

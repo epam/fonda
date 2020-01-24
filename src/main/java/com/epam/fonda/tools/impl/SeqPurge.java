@@ -19,6 +19,7 @@ package com.epam.fonda.tools.impl;
 import com.epam.fonda.entity.command.AbstractCommand;
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.GlobalConfigFormat;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.FastqOutput;
@@ -29,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import static com.epam.fonda.utils.ToolUtils.validate;
 import static java.lang.String.format;
 
 @RequiredArgsConstructor
@@ -102,7 +104,8 @@ public class SeqPurge implements Tool<FastqResult> {
         seqPurgeFields.adapterFWD = configuration.getGlobalConfig().getDatabaseConfig().getAdapterFWD();
         seqPurgeFields.adapterREV = configuration.getGlobalConfig().getDatabaseConfig().getAdapterREV();
         seqPurgeFields.numThreads = configuration.getGlobalConfig().getQueueParameters().getNumThreads();
-        seqPurgeFields.seqPurge = configuration.getGlobalConfig().getToolConfig().getSeqpurge();
+        seqPurgeFields.seqPurge = validate(configuration.getGlobalConfig().getToolConfig().getSeqpurge(),
+                GlobalConfigFormat.SEQPURGE);
         seqPurgeFields.sfqOutdir = sample.getFastqOutdir();
         seqPurgeFields.sampleName = sample.getName();
         seqPurgeFields.fastq1 = result.getOut().getMergedFastq1();

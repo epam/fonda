@@ -18,6 +18,7 @@ package com.epam.fonda.tools.impl;
 
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.GlobalConfigFormat;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.VariantsVcfResult;
 import com.epam.fonda.tools.results.VcfScnpeffAnnonationResult;
@@ -29,6 +30,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import static com.epam.fonda.utils.PipelineUtils.getExecutionPath;
+import static com.epam.fonda.utils.ToolUtils.validate;
 
 @RequiredArgsConstructor
 public class VcfSnpeffAnnotation implements Tool<VcfScnpeffAnnonationResult> {
@@ -94,9 +96,12 @@ public class VcfSnpeffAnnotation implements Tool<VcfScnpeffAnnonationResult> {
      **/
     private ToolFields initializeToolFields(Configuration configuration) {
         ToolFields toolFields = new ToolFields();
-        toolFields.transvar = configuration.getGlobalConfig().getToolConfig().getTransvar();
-        toolFields.python = configuration.getGlobalConfig().getToolConfig().getPython();
-        toolFields.snpsift = configuration.getGlobalConfig().getToolConfig().getSnpsift();
+        toolFields.transvar = validate(configuration.getGlobalConfig().getToolConfig().getTransvar(),
+                GlobalConfigFormat.TRANSVAR);
+        toolFields.python = validate(configuration.getGlobalConfig().getToolConfig().getPython(),
+                GlobalConfigFormat.PYTHON);
+        toolFields.snpsift = validate(configuration.getGlobalConfig().getToolConfig().getSnpsift(),
+                GlobalConfigFormat.SNPSIFT);
         return toolFields;
     }
 
@@ -109,10 +114,13 @@ public class VcfSnpeffAnnotation implements Tool<VcfScnpeffAnnonationResult> {
      **/
     private DatabaseFields initializeDatabaseFields(Configuration configuration) {
         DatabaseFields databaseFields = new DatabaseFields();
-        databaseFields.genomeBuild = configuration.getGlobalConfig().getDatabaseConfig().getGenomeBuild();
-        databaseFields.snpsiftDb = configuration.getGlobalConfig().getDatabaseConfig().getSnpsiftdb();
-        databaseFields.canonicalTranscript = configuration.getGlobalConfig().getDatabaseConfig()
-                .getCanonicalTranscript();
+        databaseFields.genomeBuild = validate(configuration.getGlobalConfig().getDatabaseConfig().getGenomeBuild(),
+                GlobalConfigFormat.GENOME_BUILD);
+        databaseFields.snpsiftDb = validate(configuration.getGlobalConfig().getDatabaseConfig().getSnpsiftdb(),
+                GlobalConfigFormat.SNPSIFTDB);
+        databaseFields.canonicalTranscript = validate(
+                configuration.getGlobalConfig().getDatabaseConfig().getCanonicalTranscript(),
+                GlobalConfigFormat.CANONICAL_TRANSCRIPT);
         return databaseFields;
     }
 

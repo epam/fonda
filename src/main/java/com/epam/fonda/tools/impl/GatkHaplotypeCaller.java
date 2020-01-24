@@ -18,6 +18,7 @@ package com.epam.fonda.tools.impl;
 
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.GlobalConfigFormat;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.VariantsVcfOutput;
 import com.epam.fonda.tools.results.VariantsVcfResult;
@@ -30,6 +31,7 @@ import org.thymeleaf.context.Context;
 
 import java.util.Collections;
 
+import static com.epam.fonda.utils.ToolUtils.validate;
 import static java.lang.String.format;
 
 @RequiredArgsConstructor
@@ -94,15 +96,17 @@ public class GatkHaplotypeCaller implements Tool<VariantsVcfResult> {
 
     private ToolFields initializeToolFields(Configuration configuration) {
         ToolFields toolFields = new ToolFields();
-        toolFields.java = configuration.getGlobalConfig().getToolConfig().getJava();
-        toolFields.gatk = configuration.getGlobalConfig().getToolConfig().getGatk();
+        toolFields.java = validate(configuration.getGlobalConfig().getToolConfig().getJava(), GlobalConfigFormat.JAVA);
+        toolFields.gatk = validate(configuration.getGlobalConfig().getToolConfig().getGatk(), GlobalConfigFormat.GATK);
         return toolFields;
     }
 
     private DatabaseFields initializeDatabaseFields(Configuration configuration) {
         DatabaseFields databaseFields = new DatabaseFields();
-        databaseFields.genome = configuration.getGlobalConfig().getDatabaseConfig().getGenome();
-        databaseFields.bed = configuration.getGlobalConfig().getDatabaseConfig().getBed();
+        databaseFields.genome = validate(configuration.getGlobalConfig().getDatabaseConfig().getGenome(),
+                GlobalConfigFormat.GENOME);
+        databaseFields.bed = DnaUtils.isWgsWorkflow(configuration) ? null
+                : validate(configuration.getGlobalConfig().getDatabaseConfig().getBed(), GlobalConfigFormat.BED);
         return databaseFields;
     }
 

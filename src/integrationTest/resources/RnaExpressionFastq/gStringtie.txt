@@ -13,6 +13,7 @@ TRANSCRIPTOME = /common/reference_genome/GRCh38/Sequence/GRCh38.gencode.v26.pc_t
 STARINDEX = /common/reference_genome/GRCh38/Index/STAR_g26
 ANNOTGENESAF = /common/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.annotation.saf
 ADAPTER_SEQ = adapter_seq
+HISAT2INDEX = HISAT2INDEX
 
 [all_tools]
 star = /opt/STAR/STAR-STAR_2.4.0h1/bin/Linux_x86_64/STAR
@@ -27,6 +28,7 @@ rnaseqc = /opt/rnaseqc/RNA-SeQC_v1.1.8.jar
 python = /usr/bin/python
 Rscript = /usr/bin/Rscript
 stringtie = path/to/stringtie
+hisat2 = path/to/hisat2
 
 [Pipeline_Info]
 workflow = RnaExpression_Fastq

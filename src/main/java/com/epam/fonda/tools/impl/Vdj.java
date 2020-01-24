@@ -18,6 +18,7 @@ package com.epam.fonda.tools.impl;
 
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.GlobalConfigFormat;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamOutput;
@@ -29,6 +30,8 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+
+import static com.epam.fonda.utils.ToolUtils.validate;
 
 @RequiredArgsConstructor
 public class Vdj implements Tool<BamResult> {
@@ -113,12 +116,17 @@ public class Vdj implements Tool<BamResult> {
         sampleFields = initializeSampleFields(configuration);
         vdjFields.bam = String.format("%s/%s/outs/all_contig.bam", sampleFields.getVdjOutdir(),
                 sampleFields.getSampleName());
-        vdjFields.cellRanger = configuration.getGlobalConfig().getToolConfig().getCellranger();
-        vdjFields.chain = configuration.getGlobalConfig().getCellrangerConfig().getCellrangerChain();
+        vdjFields.cellRanger = validate(configuration.getGlobalConfig().getToolConfig().getCellranger(),
+                GlobalConfigFormat.CELLRANGER);
+        vdjFields.chain = validate(configuration.getGlobalConfig().getCellrangerConfig().getCellrangerChain(),
+                GlobalConfigFormat.CELLRANGER_CHAIN);
         vdjFields.denovo = configuration.getGlobalConfig().getCellrangerConfig().getCellrangerDenovo();
-        vdjFields.forcedCells = configuration.getGlobalConfig().getCellrangerConfig().getCellrangerForcedCells();
+        vdjFields.forcedCells = validate(
+                configuration.getGlobalConfig().getCellrangerConfig().getCellrangerForcedCells(),
+                GlobalConfigFormat.CELLRANGER_FORCED_CELLS);
         vdjFields.indices = configuration.getGlobalConfig().getCellrangerConfig().getCellrangerIndices();
         vdjFields.lanes = configuration.getGlobalConfig().getCellrangerConfig().getCellrangerLanes();
-        vdjFields.genome = configuration.getGlobalConfig().getDatabaseConfig().getGenome();
+        vdjFields.genome = validate(configuration.getGlobalConfig().getDatabaseConfig().getGenome(),
+                GlobalConfigFormat.GENOME);
     }
 }

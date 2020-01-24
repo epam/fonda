@@ -18,15 +18,17 @@ package com.epam.fonda.tools.impl;
 
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.GlobalConfigFormat;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.RsemOutput;
 import com.epam.fonda.tools.results.RsemResult;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.apache.commons.lang3.Validate;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+
+import static com.epam.fonda.utils.ToolUtils.validate;
 
 @AllArgsConstructor
 public class RsemExpression implements Tool<RsemResult> {
@@ -84,11 +86,12 @@ public class RsemExpression implements Tool<RsemResult> {
      * @return {@link RsemExpressionFields} with fields
      */
     private RsemExpressionFields constructFields(final Configuration configuration, final String rsemOutdir) {
-        checkValues(configuration);
         RsemExpressionFields rsemExpressionFields = new RsemExpressionFields();
         rsemExpressionFields.nthreads = configuration.getGlobalConfig().getQueueParameters().getNumThreads();
-        rsemExpressionFields.index = configuration.getGlobalConfig().getToolConfig().getRsemIndex();
-        rsemExpressionFields.rsem = configuration.getGlobalConfig().getToolConfig().getRsem();
+        rsemExpressionFields.index = validate(configuration.getGlobalConfig().getToolConfig().getRsemIndex(),
+                GlobalConfigFormat.RSEMINDEX);
+        rsemExpressionFields.rsem = validate(configuration.getGlobalConfig().getToolConfig().getRsem(),
+                GlobalConfigFormat.RSEM);
         rsemExpressionFields.sampleName = sampleName;
         rsemExpressionFields.srsemOutdir = rsemOutdir;
         rsemExpressionFields.bam = bamOutput.getBam();
@@ -97,16 +100,5 @@ public class RsemExpression implements Tool<RsemResult> {
         rsemExpressionFields.rsemIsoformResult = String.format("%s/%s.rsem.isoform.expression.results",
                 rsemExpressionFields.srsemOutdir, rsemExpressionFields.sampleName);
         return rsemExpressionFields;
-    }
-
-    /**
-     * Method checks all needed fields of configuration for null/empty values
-     *
-     * @param configuration
-     */
-    private void checkValues(Configuration configuration) {
-        String message = "Empty configuration values appeared";
-        Validate.notBlank(configuration.getGlobalConfig().getToolConfig().getRsemIndex(), message);
-        Validate.notBlank(configuration.getGlobalConfig().getToolConfig().getRsem(), message);
     }
 }

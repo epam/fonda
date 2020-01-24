@@ -16,9 +16,14 @@
 package com.epam.fonda.utils;
 
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.GlobalConfigFormat;
+import lombok.Builder;
 import lombok.Data;
 
+import static com.epam.fonda.utils.ToolUtils.validate;
+
 @Data
+@Builder
 public class AmpliconGatkDatabaseFields {
 
     private String genome;
@@ -34,11 +39,15 @@ public class AmpliconGatkDatabaseFields {
      * @return {@link AmpliconGatkDatabaseFields} with its fields.
      **/
     public static AmpliconGatkDatabaseFields init(final Configuration configuration) {
-        AmpliconGatkDatabaseFields fields = new AmpliconGatkDatabaseFields();
-        fields.setGenome(configuration.getGlobalConfig().getDatabaseConfig().getGenome());
-        fields.setDbSnp(configuration.getGlobalConfig().getDatabaseConfig().getDbsnp());
-        fields.setKnownIndelsMills(configuration.getGlobalConfig().getDatabaseConfig().getKnownIndelsMills());
-        fields.setKnownIndelsPhase1(configuration.getGlobalConfig().getDatabaseConfig().getKnownIndelsPhase1());
-        return fields;
+        return AmpliconGatkDatabaseFields.builder()
+                .dbSnp(validate(configuration.getGlobalConfig().getDatabaseConfig().getDbsnp(),
+                        GlobalConfigFormat.DBSNP))
+                .genome(validate(configuration.getGlobalConfig().getDatabaseConfig().getGenome(),
+                        GlobalConfigFormat.GENOME))
+                .knownIndelsMills(validate(configuration.getGlobalConfig().getDatabaseConfig().getKnownIndelsMills(),
+                        GlobalConfigFormat.KNOWN_INDELS_MILLS))
+                .knownIndelsPhase1(validate(configuration.getGlobalConfig().getDatabaseConfig().getKnownIndelsPhase1(),
+                        GlobalConfigFormat.KNOWN_INDELS_PHASE1))
+                .build();
     }
 }

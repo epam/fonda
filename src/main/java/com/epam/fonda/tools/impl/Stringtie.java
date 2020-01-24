@@ -18,6 +18,7 @@ package com.epam.fonda.tools.impl;
 
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.GlobalConfigFormat;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.StringtieOutput;
@@ -26,6 +27,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+
+import static com.epam.fonda.utils.ToolUtils.validate;
 
 @AllArgsConstructor
 public class Stringtie implements Tool<StringtieResult> {
@@ -77,8 +80,10 @@ public class Stringtie implements Tool<StringtieResult> {
 
     private StringTieFields constructFields(final Configuration configuration, final String stringtieOutdir) {
         StringTieFields stringtieFields = new StringTieFields();
-        stringtieFields.annotgene = configuration.getGlobalConfig().getDatabaseConfig().getAnnotgene();
-        stringtieFields.stringtie = configuration.getGlobalConfig().getToolConfig().getStringtie();
+        stringtieFields.annotgene = validate(configuration.getGlobalConfig().getDatabaseConfig().getAnnotgene(),
+                GlobalConfigFormat.ANNOTGENE);
+        stringtieFields.stringtie = validate(configuration.getGlobalConfig().getToolConfig().getStringtie(),
+                GlobalConfigFormat.STRINGTIE);
         stringtieFields.numThreads = String.valueOf(
                 configuration.getGlobalConfig().getQueueParameters().getNumThreads());
         stringtieFields.sampleName = sampleName;

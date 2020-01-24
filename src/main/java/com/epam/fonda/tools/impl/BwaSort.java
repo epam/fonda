@@ -19,6 +19,7 @@ package com.epam.fonda.tools.impl;
 import com.epam.fonda.entity.command.AbstractCommand;
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.GlobalConfigFormat;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamOutput;
@@ -31,6 +32,8 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.util.Arrays;
+
+import static com.epam.fonda.utils.ToolUtils.validate;
 
 @Data
 @AllArgsConstructor
@@ -79,9 +82,11 @@ public class BwaSort implements Tool<BamResult> {
     private BwaSortFields constructFieldsForBwaSort(Configuration configuration) {
         BwaSortFields bwaSortFields = new BwaSortFields();
 
-        bwaSortFields.bwa = configuration.getGlobalConfig().getToolConfig().getBwa();
-        bwaSortFields.genome = configuration.getGlobalConfig().getDatabaseConfig().getGenome();
-        bwaSortFields.samtools = configuration.getGlobalConfig().getToolConfig().getSamTools();
+        bwaSortFields.bwa = validate(configuration.getGlobalConfig().getToolConfig().getBwa(), GlobalConfigFormat.BWA);
+        bwaSortFields.genome = validate(configuration.getGlobalConfig().getDatabaseConfig().getGenome(),
+                GlobalConfigFormat.GENOME);
+        bwaSortFields.samtools = validate(configuration.getGlobalConfig().getToolConfig().getSamTools(),
+                GlobalConfigFormat.SAMTOOLS);
         bwaSortFields.sbamOutDir = sample.getBamOutdir();
         bwaSortFields.numThreads = configuration.getGlobalConfig().getQueueParameters().getNumThreads();
         bwaSortFields.index = index;

@@ -19,6 +19,7 @@ package com.epam.fonda.tools.impl;
 import com.epam.fonda.entity.command.AbstractCommand;
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.GlobalConfigFormat;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamOutput;
@@ -31,6 +32,8 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.util.Arrays;
+
+import static com.epam.fonda.utils.ToolUtils.validate;
 
 @Data
 @AllArgsConstructor
@@ -79,9 +82,12 @@ public class NovoalignSort implements Tool<BamResult> {
     private NovoalignSortFields constructFieldsForNovoalignSort(Configuration configuration) {
         NovoalignSortFields novoalignSortFields = new NovoalignSortFields();
 
-        novoalignSortFields.novoalign = configuration.getGlobalConfig().getToolConfig().getNovoalign();
-        novoalignSortFields.novoindex = configuration.getGlobalConfig().getDatabaseConfig().getNovoIndex();
-        novoalignSortFields.samtools = configuration.getGlobalConfig().getToolConfig().getSamTools();
+        novoalignSortFields.novoalign = validate(configuration.getGlobalConfig().getToolConfig().getNovoalign(),
+                GlobalConfigFormat.NOVOALIGN);
+        novoalignSortFields.novoindex = validate(configuration.getGlobalConfig().getDatabaseConfig().getNovoIndex(),
+                GlobalConfigFormat.NOVOINDEX);
+        novoalignSortFields.samtools = validate(configuration.getGlobalConfig().getToolConfig().getSamTools(),
+                GlobalConfigFormat.SAMTOOLS);
         novoalignSortFields.bedPrimer = constructFieldBedPrimer(configuration);
         novoalignSortFields.bamOutdir = sample.getBamOutdir();
         novoalignSortFields.sampleName = sample.getName();

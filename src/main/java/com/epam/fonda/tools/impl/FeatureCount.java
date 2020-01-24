@@ -18,6 +18,8 @@ package com.epam.fonda.tools.impl;
 
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.GlobalConfigFormat;
+import com.epam.fonda.entity.configuration.StudyConfigFormat;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.tools.results.FeatureCountOutput;
@@ -31,6 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.epam.fonda.utils.PipelineUtils.cleanUpTmpDir;
+import static com.epam.fonda.utils.ToolUtils.validate;
 import static java.lang.String.format;
 
 @AllArgsConstructor
@@ -115,12 +118,13 @@ public class FeatureCount implements Tool<FeatureCountResult> {
     private AdditionalFeatureCountFields initializeAdditionalFeatureCountFields(final Configuration configuration,
                                                                                 final String featureOutdir) {
         AdditionalFeatureCountFields additionalFeatureCountFields = new AdditionalFeatureCountFields();
-        additionalFeatureCountFields.annotgeneSaf = configuration.getGlobalConfig().getDatabaseConfig()
-                .getAnnotgenesaf();
+        additionalFeatureCountFields.annotgeneSaf = validate(configuration.getGlobalConfig().getDatabaseConfig()
+                .getAnnotgenesaf(), GlobalConfigFormat.ANNOTGENESAF);
         additionalFeatureCountFields.bam = bamResult.getBamOutput().getBam();
-        additionalFeatureCountFields.cufflinksLibraryType = configuration.getStudyConfig().getCufflinksLibraryType();
-        additionalFeatureCountFields.featureCount = configuration.getGlobalConfig().getToolConfig()
-                .getFeatureCount();
+        additionalFeatureCountFields.cufflinksLibraryType = validate(
+                configuration.getStudyConfig().getCufflinksLibraryType(), StudyConfigFormat.CUFFLINKS_LIBRARY_TYPE);
+        additionalFeatureCountFields.featureCount = validate(
+                configuration.getGlobalConfig().getToolConfig().getFeatureCount(), GlobalConfigFormat.FEATURE_COUNT);
         additionalFeatureCountFields.workflow = configuration.getGlobalConfig().getPipelineInfo().getWorkflow();
         additionalFeatureCountFields.sampleName = sampleName;
         additionalFeatureCountFields.fileName = format("%s_%s_for_%s_analysis", configuration
@@ -145,8 +149,10 @@ public class FeatureCount implements Tool<FeatureCountResult> {
     private QueueParametersFields initializeQueueParametersFields(Configuration configuration) {
         QueueParametersFields queueParametersFields = new QueueParametersFields();
         queueParametersFields.numThreads = configuration.getGlobalConfig().getQueueParameters().getNumThreads();
-        queueParametersFields.pe = configuration.getGlobalConfig().getQueueParameters().getPe();
-        queueParametersFields.queue = configuration.getGlobalConfig().getQueueParameters().getQueue();
+        queueParametersFields.pe = validate(configuration.getGlobalConfig().getQueueParameters().getPe(),
+                GlobalConfigFormat.PE);
+        queueParametersFields.queue = validate(configuration.getGlobalConfig().getQueueParameters().getQueue(),
+                GlobalConfigFormat.QUEUE);
         return queueParametersFields;
     }
 

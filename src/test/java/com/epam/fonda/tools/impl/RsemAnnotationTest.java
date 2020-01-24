@@ -29,7 +29,6 @@ import org.thymeleaf.context.Context;
 
 import static com.epam.fonda.utils.PipelineUtils.getExecutionPath;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class RsemAnnotationTest extends AbstractTest {
     private static final String RSEM_EXPRESSION_TEST_INPUT_DATA_PATH = "rsem_annotation_test_input_data.txt";
@@ -64,12 +63,5 @@ class RsemAnnotationTest extends AbstractTest {
                 .getCommand().getToolCommand();
 
         assertEquals(expectedCmd, actualBashCommand);
-    }
-
-    @Test
-    void generateTestNullParameter() {
-        rsemOutput.setRsemGeneResult("");
-        assertThrows(IllegalArgumentException.class, () ->
-                rsemAnnotation.generate(expectedConfiguration, expectedTemplateEngine));
     }
 }

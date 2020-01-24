@@ -90,6 +90,7 @@ class AmpliconGatkRealignTest extends AbstractTest {
         expectedDatabaseConfig.setGenome("genome");
         expectedDatabaseConfig.setKnownIndelsMills("knownIndelsMills");
         expectedDatabaseConfig.setKnownIndelsPhase1("knownIndelsPhase1");
+        expectedDatabaseConfig.setDbsnp("dbsnp");
         expectedGlobalConfig.setDatabaseConfig(expectedDatabaseConfig);
     }
 }

@@ -19,6 +19,7 @@ package com.epam.fonda.tools.impl;
 import com.epam.fonda.entity.command.AbstractCommand;
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.GlobalConfigFormat;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
@@ -29,6 +30,8 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.util.Arrays;
+
+import static com.epam.fonda.utils.ToolUtils.validate;
 
 @RequiredArgsConstructor
 @Data
@@ -52,7 +55,8 @@ public class PicardRemoveDuplicate implements Tool<BamResult> {
         final String mkdupBam = bamResult.getBamOutput().getMkdupBam();
         final String rmdupBam = mkdupBam.replace(".mkdup.bam", ".rmdup.bam");
         Context context = new Context();
-        context.setVariable("samtools", configuration.getGlobalConfig().getToolConfig().getSamTools());
+        context.setVariable("samtools",
+                validate(configuration.getGlobalConfig().getToolConfig().getSamTools(), GlobalConfigFormat.SAMTOOLS));
         context.setVariable("mkdupBam", mkdupBam);
         context.setVariable("rmdupBam", rmdupBam);
         final String cmd = templateEngine.process(PICARD_REMOVE_DUPLICATE_TOOL_TEMPLATE_NAME, context);

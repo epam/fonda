@@ -105,8 +105,9 @@ public class Pileup implements Tool<PileupResult> {
      **/
     private AdditionaPileuplFields initializeAdditionalFields(Configuration configuration) {
         return AdditionaPileuplFields.builder()
-                .genome(configuration.getGlobalConfig().getDatabaseConfig().getGenome())
-                .bed(configuration.getGlobalConfig().getDatabaseConfig().getBed())
+                .genome(validate(configuration.getGlobalConfig().getDatabaseConfig().getGenome(),
+                        GlobalConfigFormat.GENOME))
+                .bed(validate(configuration.getGlobalConfig().getDatabaseConfig().getBed(), GlobalConfigFormat.BED))
                 .sampleName(sampleName)
                 .controlSampleName(sampleControlName)
                 .bam(bamResult.getBamOutput().getBam())

@@ -88,9 +88,9 @@ class NovoalignSortTest extends AbstractTest {
     }
 
     @Test
-    void shouldGenerateWithFastq1WithoutBedPrimerForAmpliconVarFastq() throws URISyntaxException, IOException {
+    void shouldGenerateWithFastq1WithoutBedPrimerForCaptureVarFastq() throws URISyntaxException, IOException {
         expectedConfiguration.getGlobalConfig().getPipelineInfo()
-                .setWorkflow(PipelineType.DNA_AMPLICON_VAR_FASTQ.getName());
+                .setWorkflow(PipelineType.DNA_CAPTURE_VAR_FASTQ.getName());
         novoalignSort.setFastq2(null);
         expectedBashCommand =
                 getExpectedBashCommandFromFile(
@@ -113,9 +113,9 @@ class NovoalignSortTest extends AbstractTest {
     }
 
     @Test
-    void shouldGenerateWithFastq1AndFastq2WithoutBedPrimerForAmpliconVarFastq() throws URISyntaxException, IOException {
+    void shouldGenerateWithFastq1AndFastq2WithoutBedPrimerForCaptureVarFastq() throws URISyntaxException, IOException {
         expectedConfiguration.getGlobalConfig().getPipelineInfo()
-                .setWorkflow(PipelineType.DNA_AMPLICON_VAR_FASTQ.getName());
+                .setWorkflow(PipelineType.DNA_CAPTURE_VAR_FASTQ.getName());
         expectedBashCommand =
                 getExpectedBashCommandFromFile(
                         AMPLICON_NOVOALIGN_SORT_TEST_INPUT_DATA_WITH_FASTQ1_AND_FASTQ1_WITHOUT_BEDPRIMER_PATH);

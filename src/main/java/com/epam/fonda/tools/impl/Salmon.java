@@ -18,6 +18,7 @@ package com.epam.fonda.tools.impl;
 
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.GlobalConfigFormat;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.FastqResult;
@@ -29,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import static com.epam.fonda.utils.ToolUtils.validate;
 import static java.lang.String.format;
 
 @RequiredArgsConstructor
@@ -99,8 +101,10 @@ public class Salmon implements Tool<SalmonResult> {
      **/
     private SalmonFields constructFieldsForSalmon(final Configuration configuration, final String salmonOutdir) {
         SalmonFields salmonFields = new SalmonFields();
-        salmonFields.annotgene = configuration.getGlobalConfig().getDatabaseConfig().getAnnotgene();
-        salmonFields.salmon = configuration.getGlobalConfig().getToolConfig().getSalmon();
+        salmonFields.annotgene = validate(configuration.getGlobalConfig().getDatabaseConfig().getAnnotgene(),
+                GlobalConfigFormat.ANNOTGENE);
+        salmonFields.salmon = validate(configuration.getGlobalConfig().getToolConfig().getSalmon(),
+                GlobalConfigFormat.SALMON);
         salmonFields.salmonOutdir = salmonOutdir;
         salmonFields.sampleName = sample.getName();
         salmonFields.fastq1 = fastqResult.getOut().getMergedFastq1();
@@ -112,7 +116,8 @@ public class Salmon implements Tool<SalmonResult> {
                 .salmonOutdir, salmonFields.sampleName);
         salmonFields.decopMergedFastq1 = salmonFields.fastq1.replace(".gz", "");
         salmonFields.decopMergedFastq2 = salmonFields.fastq2.replace(".gz", "");
-        salmonFields.index = configuration.getGlobalConfig().getDatabaseConfig().getSalmonIndex();
+        salmonFields.index = validate(configuration.getGlobalConfig().getDatabaseConfig().getSalmonIndex(),
+                GlobalConfigFormat.SALMONINDEX);
         return salmonFields;
     }
 }

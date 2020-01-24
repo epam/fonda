@@ -19,6 +19,7 @@ package com.epam.fonda.tools.impl;
 import com.epam.fonda.entity.command.AbstractCommand;
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.GlobalConfigFormat;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.FastqResult;
@@ -30,6 +31,8 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.util.Collections;
+
+import static com.epam.fonda.utils.ToolUtils.validate;
 
 @Data
 public class FusionCatcher implements Tool<FusionCatcherResult> {
@@ -92,7 +95,8 @@ public class FusionCatcher implements Tool<FusionCatcherResult> {
      **/
     private FusionCatcherFields constructFieldsByIndex(Configuration configuration) {
         FusionCatcherFields fusionCatcherFields = new FusionCatcherFields();
-        fusionCatcherFields.fusionCatcher = configuration.getGlobalConfig().getToolConfig().getFusionCatcher();
+        fusionCatcherFields.fusionCatcher = validate(configuration.getGlobalConfig().getToolConfig().getFusionCatcher(),
+                GlobalConfigFormat.FUSION_CATCHER);
         fusionCatcherFields.fusionCatcherOutdir = String.format("%s/fusionCatcher", sample.getSampleOutputDir());
         fusionCatcherFields.tmpFusionCatcherOutdir = String.format("%s/fusionCatcher/tmp", sample.getSampleOutputDir());
         fusionCatcherFields.numThreads = configuration.getGlobalConfig().getQueueParameters().getNumThreads();

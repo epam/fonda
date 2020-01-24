@@ -18,15 +18,17 @@ package com.epam.fonda.tools.impl;
 
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.GlobalConfigFormat;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.RsemResult;
 import com.epam.fonda.utils.PipelineUtils;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.Validate;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+
+import static com.epam.fonda.utils.ToolUtils.validate;
 
 @RequiredArgsConstructor
 public class RsemAnnotation implements Tool<RsemResult> {
@@ -69,26 +71,15 @@ public class RsemAnnotation implements Tool<RsemResult> {
      * @return {@link RsemAnnotationFields} with fields
      */
     private RsemAnnotationFields constructFields(Configuration configuration) {
-        checkValues(configuration);
         RsemAnnotationFields rsemExpressionFields = new RsemAnnotationFields();
-        rsemExpressionFields.annotGeneSaf = configuration.getGlobalConfig().getDatabaseConfig().getAnnotgenesaf();
+        rsemExpressionFields.annotGeneSaf = validate(
+                configuration.getGlobalConfig().getDatabaseConfig().getAnnotgenesaf(), GlobalConfigFormat.ANNOTGENESAF);
         rsemExpressionFields.jarPath = PipelineUtils.getExecutionPath();
-        rsemExpressionFields.python = configuration.getGlobalConfig().getToolConfig().getPython();
+        rsemExpressionFields.python = validate(configuration.getGlobalConfig().getToolConfig().getPython(),
+                GlobalConfigFormat.PYTHON);
         rsemExpressionFields.rsemGeneResult = rsemResult.getRsemOutput().getRsemGeneResult();
         rsemExpressionFields.rsemAnnoGeneResult = rsemExpressionFields.rsemGeneResult
                 .replace(".gene", ".annotate.gene");
         return rsemExpressionFields;
-    }
-
-    /**
-     * Method checks all needed fields of configuration for null/empty values
-     *
-     * @param configuration
-     */
-    private void checkValues(Configuration configuration) {
-        String message = "Empty configuration values appeared";
-        Validate.notBlank(configuration.getGlobalConfig().getDatabaseConfig().getAnnotgenesaf(), message);
-        Validate.notBlank(configuration.getGlobalConfig().getToolConfig().getPython(), message);
-        Validate.notBlank(rsemResult.getRsemOutput().getRsemGeneResult(), message);
     }
 }

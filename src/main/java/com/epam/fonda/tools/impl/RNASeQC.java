@@ -19,6 +19,8 @@ package com.epam.fonda.tools.impl;
 import com.epam.fonda.entity.command.AbstractCommand;
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.GlobalConfigFormat;
+import com.epam.fonda.entity.configuration.StudyConfigFormat;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamOutput;
@@ -33,6 +35,7 @@ import org.thymeleaf.context.Context;
 import java.util.Arrays;
 
 import static com.epam.fonda.utils.PipelineUtils.getExecutionPath;
+import static com.epam.fonda.utils.ToolUtils.validate;
 
 @RequiredArgsConstructor
 @Data
@@ -129,11 +132,15 @@ public class RNASeQC implements Tool<MetricsResult> {
      **/
     private ToolFields initializeToolFields(Configuration configuration) {
         ToolFields toolFields = new ToolFields();
-        toolFields.java = configuration.getGlobalConfig().getToolConfig().getJava();
-        toolFields.picard = configuration.getGlobalConfig().getToolConfig().getPicard();
-        toolFields.python = configuration.getGlobalConfig().getToolConfig().getPython();
-        toolFields.rnaSeqc = configuration.getGlobalConfig().getToolConfig().getRnaseqc();
-        toolFields.rnaSeqcJava = configuration.getGlobalConfig().getToolConfig().getRnaseqcJava();
+        toolFields.java = validate(configuration.getGlobalConfig().getToolConfig().getJava(), GlobalConfigFormat.JAVA);
+        toolFields.picard = validate(configuration.getGlobalConfig().getToolConfig().getPicard(),
+                GlobalConfigFormat.PICARD);
+        toolFields.python = validate(configuration.getGlobalConfig().getToolConfig().getPython(),
+                GlobalConfigFormat.PYTHON);
+        toolFields.rnaSeqc = validate(configuration.getGlobalConfig().getToolConfig().getRnaseqc(),
+                GlobalConfigFormat.RNA_SEQC);
+        toolFields.rnaSeqcJava = validate(configuration.getGlobalConfig().getToolConfig().getRnaseqcJava(),
+                GlobalConfigFormat.RNA_SEQC_JAVA);
         return toolFields;
     }
 
@@ -146,9 +153,12 @@ public class RNASeQC implements Tool<MetricsResult> {
      **/
     private DatabaseFields initializeDatabaseFields(Configuration configuration) {
         DatabaseFields databaseFields = new DatabaseFields();
-        databaseFields.annotgene = configuration.getGlobalConfig().getDatabaseConfig().getAnnotgene();
-        databaseFields.genome = configuration.getGlobalConfig().getDatabaseConfig().getGenome();
-        databaseFields.rRnaBed = configuration.getGlobalConfig().getDatabaseConfig().getRRNABED();
+        databaseFields.annotgene = validate(configuration.getGlobalConfig().getDatabaseConfig().getAnnotgene(),
+                GlobalConfigFormat.ANNOTGENE);
+        databaseFields.genome = validate(configuration.getGlobalConfig().getDatabaseConfig().getGenome(),
+                GlobalConfigFormat.GENOME);
+        databaseFields.rRnaBed = validate(configuration.getGlobalConfig().getDatabaseConfig().getRRNABED(),
+                GlobalConfigFormat.R_RNABED);
         return databaseFields;
     }
 
@@ -166,10 +176,11 @@ public class RNASeQC implements Tool<MetricsResult> {
         additionalQcFields.stmpOutdir = sample.getTmpOutdir();
         additionalQcFields.sampleName = sample.getName();
         additionalQcFields.jarPath = getExecutionPath();
-        additionalQcFields.readType = configuration.getGlobalConfig().getPipelineInfo().getReadType();
-        additionalQcFields.project = configuration.getStudyConfig().getProject();
-        additionalQcFields.run = configuration.getStudyConfig().getRun();
-        additionalQcFields.date = configuration.getStudyConfig().getDate();
+        additionalQcFields.readType = validate(configuration.getGlobalConfig().getPipelineInfo().getReadType(),
+                GlobalConfigFormat.READ_TYPE);
+        additionalQcFields.project = validate(configuration.getStudyConfig().getProject(), StudyConfigFormat.PROJECT);
+        additionalQcFields.run = validate(configuration.getStudyConfig().getRun(), StudyConfigFormat.RUN);
+        additionalQcFields.date = validate(configuration.getStudyConfig().getDate(), StudyConfigFormat.DATE);
         return additionalQcFields;
     }
 

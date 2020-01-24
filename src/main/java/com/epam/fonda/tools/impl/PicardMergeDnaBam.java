@@ -18,6 +18,7 @@ package com.epam.fonda.tools.impl;
 
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.GlobalConfigFormat;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamOutput;
@@ -31,6 +32,8 @@ import org.thymeleaf.context.Context;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.epam.fonda.utils.ToolUtils.validate;
 
 @RequiredArgsConstructor
 public class PicardMergeDnaBam implements Tool<BamResult> {
@@ -95,9 +98,11 @@ public class PicardMergeDnaBam implements Tool<BamResult> {
      **/
     private ToolFields initializeToolFields(Configuration configuration) {
         ToolFields toolFields = new ToolFields();
-        toolFields.java = configuration.getGlobalConfig().getToolConfig().getJava();
-        toolFields.picard = configuration.getGlobalConfig().getToolConfig().getPicard();
-        toolFields.samtools = configuration.getGlobalConfig().getToolConfig().getSamTools();
+        toolFields.java = validate(configuration.getGlobalConfig().getToolConfig().getJava(), GlobalConfigFormat.JAVA);
+        toolFields.picard = validate(configuration.getGlobalConfig().getToolConfig().getPicard(),
+                GlobalConfigFormat.PICARD);
+        toolFields.samtools = validate(configuration.getGlobalConfig().getToolConfig().getSamTools(),
+                GlobalConfigFormat.SAMTOOLS);
         return toolFields;
     }
 

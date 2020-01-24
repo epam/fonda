@@ -18,7 +18,7 @@ else
 fi
 
 echo `date` Begin Step: Merge DNA QC...
-python [(${jarPath})]/src/python/dna_rna_variant_qc_metrics.py --sample sampleName --align sqcOutdir/sampleName.toolName.sorted.file.align.metrics --mkdup_hybrid sqcOutdir/sampleName.toolName.sorted.file.hs.metrics[# th:if = "${readType == 'paired'}"] --insert sqcOutdir/sampleName.toolName.sorted.file.insertsize.metrics[/] --gcbias sqcOutdir/sampleName.toolName.sorted.file.gc.summary.metrics --duplicate sbamOutdir/sampleName.toolName.sorted.mkdup.metrics --pileup sqcOutdir/sampleName.toolName.sorted.file.pileup --read_type [(${readType})] --bedcov sqcOutdir/sampleName.toolName.sorted.file.coverage.per.base.txt --type capture --project project --run run --date date --output sqcOutdir/sampleName.alignment.merged.QC.metric.txt
+python [(${jarPath})]/src/python/dna_rna_variant_qc_metrics.py --sample sampleName --align sqcOutdir/sampleName.toolName.sorted.file.align.metrics --mkdup_hybrid sqcOutdir/sampleName.toolName.sorted.file.hs.metrics[# th:if = "${readType == 'paired'}"] --insert sqcOutdir/sampleName.toolName.sorted.file.insertsize.metrics[/] --gcbias sqcOutdir/sampleName.toolName.sorted.file.gc.summary.metrics --duplicate sbamOutdir/sampleName.toolName.sorted.mkdup.metrics --pileup sqcOutdir/sampleName.toolName.sorted.file.pileup --read_type [(${readType})] --bedcov sqcOutdir/sampleName.toolName.sorted.file.coverage.per.base.txt --type capture --project Example_project --run run1 --date 20200121 --output sqcOutdir/sampleName.alignment.merged.QC.metric.txt
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Merge DNA QC.

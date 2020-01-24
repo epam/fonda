@@ -35,7 +35,7 @@ public class GlobalConfig {
     @Data
     public static class QueueParameters {
         @Parameter(names = GlobalConfigFormat.NUMTHREADS)
-        private int numThreads;
+        private int numThreads = 1;
         @Parameter(names = GlobalConfigFormat.MAXMEM)
         private String maxMem;
         @Parameter(names = GlobalConfigFormat.QUEUE)
