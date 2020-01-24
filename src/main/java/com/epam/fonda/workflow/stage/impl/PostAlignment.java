@@ -45,9 +45,10 @@ public class PostAlignment implements Stage {
     /**
      * Method consists of list of tools that can be invoked on after alignment stage
      * to improve on the alignments of the reads.
-     * @param flag is the type of {@link Flag} that indicates whether tool was set in configuration
-     * @param configuration is the type of {@link Configuration} which contains its fields: workflow, outdir,
-     *                      logOutdir, rScript, fastqList, bamList.
+     *
+     * @param flag           is the type of {@link Flag} that indicates whether tool was set in configuration
+     * @param configuration  is the type of {@link Configuration} which contains its fields: workflow, outdir,
+     *                       logOutdir, rScript, fastqList, bamList.
      * @param templateEngine an instance of {@link TemplateEngine} to process multiple template
      * @return {@link BamResult} which presents paths to bam, index of bam, sorted bam, etc
      */

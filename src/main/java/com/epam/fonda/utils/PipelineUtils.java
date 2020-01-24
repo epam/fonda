@@ -264,6 +264,7 @@ public final class PipelineUtils {
     /**
      * Checks control sample.
      * If control sample is not NA, it means the case sample has a matched control, then run paired mode analysis.
+     *
      * @param sampleControlName
      * @return true if control sample is not NA and not blank
      */
@@ -275,7 +276,15 @@ public final class PipelineUtils {
                                                            String index) {
         return StringUtils.isNotBlank(index)
                 ? format("%s_%s_for_%s_%s_analysis", workflow, custTask, sampleName,
-                   index)
+                index)
                 : format("%s_%s_for_%s_analysis", workflow, custTask, sampleName);
+    }
+
+    /**
+     * @param type contains the type of the sample.
+     * @return the result of checking.
+     */
+    public static boolean checkSampleType(String type) {
+        return TUMOR.equals(type) || CASE.equals(type);
     }
 }

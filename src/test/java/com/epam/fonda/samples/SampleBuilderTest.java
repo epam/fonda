@@ -22,6 +22,7 @@ import com.epam.fonda.entity.configuration.GlobalConfig;
 import com.epam.fonda.samples.bam.BamFileSample;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.impl.AbstractTest;
+import com.epam.fonda.workflow.PipelineType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -60,6 +61,7 @@ public class SampleBuilderTest extends AbstractTest {
     @Test
     void buildBamSamples() throws IOException {
         globalConfig.getPipelineInfo().setReadType(SINGLE);
+        globalConfig.getPipelineInfo().setWorkflow(PipelineType.BAM_2_FASTQ.getName());
         studyConfig.setBamList(new File(getClass().getClassLoader().
                 getResource(BAM_FILE_LIST).getFile()).getAbsolutePath());
 
@@ -72,6 +74,7 @@ public class SampleBuilderTest extends AbstractTest {
     @Test
     void buildBamSamplesNA() throws IOException {
         globalConfig.getPipelineInfo().setReadType(SINGLE);
+        globalConfig.getPipelineInfo().setWorkflow(PipelineType.BAM_2_FASTQ.getName());
         studyConfig.setBamList(new File(getClass().getClassLoader().
                 getResource(BAM_FILE_LIST_NA).getFile()).getAbsolutePath());
 
