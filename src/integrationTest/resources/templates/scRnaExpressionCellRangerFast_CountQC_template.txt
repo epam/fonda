@@ -1,0 +1,78 @@
+#!/bin/bash -x
+
+# --- SGE options --- #
+
+#$ -wd build/resources/integrationTest/output
+#$ -N scRnaExpression_CellRanger_Fastq_alignment_for_smv1_analysis
+#$ -o build/resources/integrationTest/output/log_files/scRnaExpression_CellRanger_Fastq_alignment_for_smv1_analysis.log
+#$ -e build/resources/integrationTest/output/err_files/scRnaExpression_CellRanger_Fastq_alignment_for_smv1_analysis.err
+#$ -q main.q
+#$ -R y
+#$ PE 4
+#$ -m a
+
+# --- The commands to be executed --- #
+
+cd build/resources/integrationTest/output
+
+echo `date` Begin the job execution...
+
+echo `date` Begin Step: Cellranger count...
+cd build/resources/integrationTest/output/count
+path/to/cellranger count --id=smv1 --transcriptome=/common/reference_genome/GRCh38/Sequence/GRCh38.gencode.v26.pc_transcripts.fa --chemistry=auto --fastqs=/ngs/data/demo/test/fastq --sample=smv1 --expect-cells=5000
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Cellranger count.
+	sleep 8
+else
+	echo `date` Error Step: Cellranger count.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Generate gene-barcode matrix...
+path/to/cellranger mat2csv build/resources/integrationTest/output/count/smv1/outs/filtered_feature_bc_matrix smv1_genome1_umi_count_matrix.csv
+tr '\,' '\t' < smv1_genome1_umi_count_matrix.csv > smv1_genome1_umi_count_matrix.tsv
+rm smv1_genome1_umi_count_matrix.csv
+path/to/cellranger mat2csv build/resources/integrationTest/output/count/smv1/outs/filtered_feature_bc_matrix smv1_genome2_umi_count_matrix.csv
+tr '\,' '\t' < smv1_genome2_umi_count_matrix.csv > smv1_genome2_umi_count_matrix.tsv
+rm smv1_genome2_umi_count_matrix.csv
+
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Generate gene-barcode matrix.
+	sleep 8
+else
+	echo `date` Error Step: Generate gene-barcode matrix.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Merge gene-barcode matrix...
+/usr/bin/Rscript /home/karim/IdeaProjects/fonda/build/classes/java/main/src/R/merge_data_matrix.R -a smv1_genome1_umi_count_matrix.tsv -b smv1_genome2_umi_count_matrix.tsv -o smv1_genome1_and_genome2_umi_count_matrix.tsv
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Merge gene-barcode matrix.
+	sleep 8
+else
+	echo `date` Error Step: Merge gene-barcode matrix.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+echo `date` Begin Step: Remove temporary directories...
+
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Remove temporary directories.
+	sleep 8
+else
+	echo `date` Error Step: Remove temporary directories.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+echo `date` Finish the job execution!
+
