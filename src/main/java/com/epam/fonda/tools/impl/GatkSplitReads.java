@@ -19,9 +19,11 @@ package com.epam.fonda.tools.impl;
 import com.epam.fonda.entity.command.AbstractCommand;
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.GlobalConfigFormat;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
+import com.epam.fonda.utils.PipelineUtils;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
@@ -30,14 +32,16 @@ import org.thymeleaf.context.Context;
 
 import java.util.Arrays;
 
+import static com.epam.fonda.utils.ToolUtils.validate;
+
 @Data
 public class GatkSplitReads implements Tool<BamResult> {
     private static final String GATK_SPLIT_READS_TOOL_TEMPLATE_NAME = "gatk_split_reads_tool_template";
 
     @NonNull
-    private String outDir;
+    private String sampleOutdir;
     @NonNull
-    private String bam;
+    private BamResult bamResult;
 
     /**
      * This method generates bash script {@link BashCommand} for GatkSplitReads tool.
@@ -49,23 +53,24 @@ public class GatkSplitReads implements Tool<BamResult> {
     @Override
     public BamResult generate(Configuration configuration, TemplateEngine templateEngine) {
         ToolFields toolFields = initializeToolFields(configuration);
-        String tmpGatkSplitOutdir = String.format("%s/tmp", outDir);
-        String splitBam = bam.replace(".bam", ".splitRead.bam");
-        String splitBamIndex = bam.replace(".bam", ".bam.bai");
+        PipelineUtils.createDir(String.format("%s/gatkSplit", sampleOutdir));
+        String tmpGatkSplitOutdir = String.format("%s/gatkSplit/tmp", sampleOutdir);
+        PipelineUtils.createDir(tmpGatkSplitOutdir);
+        String splitBam = bamResult.getBamOutput().getBam().replace(".bam", ".splitRead.bam");
+        String splitBamIndex = bamResult.getBamOutput().getBam().replace(".bam", ".bam.bai");
         Context context = new Context();
         context.setVariable("toolFields", toolFields);
         context.setVariable("tmpGatkSplitOutdir", tmpGatkSplitOutdir);
         context.setVariable("splitBam", splitBam);
-        context.setVariable("pathToBam", bam);
+        context.setVariable("pathToBam", bamResult.getBamOutput().getBam());
         String cmd = templateEngine.process(GATK_SPLIT_READS_TOOL_TEMPLATE_NAME, context);
         AbstractCommand command = BashCommand.withTool(cmd);
         command.setTempDirs(Arrays.asList(splitBam, splitBamIndex));
-        return BamResult.builder()
-                .command(command)
-                .bamOutput(BamOutput.builder()
-                        .bam(splitBam)
-                        .build())
-                .build();
+        bamResult.setCommand(command);
+        bamResult.setBamOutput(BamOutput.builder()
+                .bam(splitBam)
+                .build());
+        return bamResult;
     }
 
     @Data
@@ -78,9 +83,10 @@ public class GatkSplitReads implements Tool<BamResult> {
 
     private ToolFields initializeToolFields(Configuration configuration) {
         return ToolFields.builder()
-                .genome(configuration.getGlobalConfig().getDatabaseConfig().getGenome())
-                .java(configuration.getGlobalConfig().getToolConfig().getJava())
-                .gatk(configuration.getGlobalConfig().getToolConfig().getGatk())
+                .genome(validate(configuration.getGlobalConfig().getDatabaseConfig().getGenome(),
+                        GlobalConfigFormat.GENOME))
+                .java(validate(configuration.getGlobalConfig().getToolConfig().getJava(), GlobalConfigFormat.JAVA))
+                .gatk(validate(configuration.getGlobalConfig().getToolConfig().getGatk(), GlobalConfigFormat.GATK))
                 .build();
     }
 }

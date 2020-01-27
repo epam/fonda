@@ -18,7 +18,9 @@ package com.epam.fonda.tools.impl;
 
 import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.entity.configuration.GlobalConfig;
+import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
+import com.epam.fonda.utils.PipelineUtils;
 import com.epam.fonda.utils.TemplateEngineUtils;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,16 +33,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-class GatkSplitReadsTest {
+class GatkSplitReadsTest extends AbstractTest{
     private static final String GATK_SPLIT_READS_TOOL_TEST_TEMPLATE_NAME =
             "templates/gatk_split_reads_tool_test_output_data.txt";
     private TemplateEngine expectedTemplateEngine = TemplateEngineUtils.init();
     private Configuration expectedConfoguration;
     private String expectedCmd;
 
-
     @BeforeEach
     void setup() throws URISyntaxException, IOException {
+        PipelineUtils.createDir(TEST_DIRECTORY);
         expectedConfoguration = buildConfiguration();
         Path path = Paths.get(this.getClass().getClassLoader()
                 .getResource(GATK_SPLIT_READS_TOOL_TEST_TEMPLATE_NAME).toURI());
@@ -64,8 +66,12 @@ class GatkSplitReadsTest {
 
     @Test
     void generate() {
-        BamResult bamResult = new GatkSplitReads("outDir", "GA5.star.sorted.rmdup.bam")
-                .generate(expectedConfoguration, expectedTemplateEngine);
+        BamResult bamResult = new GatkSplitReads(TEST_DIRECTORY,
+                BamResult.builder()
+                        .bamOutput(BamOutput.builder()
+                                    .bam("GA5.star.sorted.rmdup.bam")
+                                    .build())
+                        .build()).generate(expectedConfoguration, expectedTemplateEngine);
         String actualCmd = bamResult.getCommand().getToolCommand();
         Assert.assertEquals(expectedCmd, actualCmd);
     }
