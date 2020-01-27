@@ -25,7 +25,6 @@ import com.epam.fonda.tools.results.FastqOutput;
 import com.epam.fonda.tools.results.FastqResult;
 import com.epam.fonda.tools.results.MixcrResult;
 import com.epam.fonda.utils.TemplateEngineUtils;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.thymeleaf.TemplateEngine;
 
@@ -34,20 +33,128 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class MixcrTest extends AbstractTest{
-    private static final String MIXCR_TEST_OUTPUT_DATA_PATH = "templates/mixcr_tool_test_output_data.txt";
+    public static final String HUMAN = "human";
+    private static final String MIXCR_TEST_OUTPUT_DATA_HUMAN_RNA_PAIRED =
+            "templates/mixcr_tool_test_human_rna_paired_output_data.txt";
+    private static final String MIXCR_TEST_OUTPUT_DATA_HUMAN_DNA_PAIRED =
+            "templates/mixcr_tool_test_human_dna_paired_output_data.txt";
+    private static final String MIXCR_TEST_OUTPUT_DATA_HUMAN_DNA_SINGLE =
+            "templates/mixcr_tool_test_human_dna_single_output_data.txt";
+    private static final String MIXCR_TEST_OUTPUT_DATA_HUMAN_RNA_SINGLE =
+            "templates/mixcr_tool_test_human_rna_single_output_data.txt";
+    private static final String MIXCR_TEST_OUTPUT_DATA_MOUSE_RNA_PAIRED =
+            "templates/mixcr_tool_test_mouse_rna_paired_output_data.txt";
+    private static final String MIXCR_TEST_OUTPUT_DATA_MOUSE_DNA_PAIRED =
+            "templates/mixcr_tool_test_mouse_dna_paired_output_data.txt";
+    private static final String MIXCR_TEST_OUTPUT_DATA_MOUSE_RNA_SINGLE =
+            "templates/mixcr_tool_test_mouse_rna_single_output_data.txt";
+    private static final String MIXCR_TEST_OUTPUT_DATA_MOUSE_DNA_SINGLE =
+            "templates/mixcr_tool_test_mouse_dna_single_output_data.txt";
+    public static final String MOUSE = "mouse";
+    public static final String RNA = "RNA";
+    public static final String DNA = "DNA";
+
     private Mixcr mixcr;
+    private FastqFileSample expectedSample = new FastqFileSample();
     private Configuration expectedConfiguration;
-    private BashCommand expectedBashCommand;
     private TemplateEngine expectedTemplateEngine = TemplateEngineUtils.init();
 
-    @BeforeEach
-    void setup() throws URISyntaxException, IOException {
-        FastqFileSample expectedSample = new FastqFileSample();
+    @Test
+    void shouldGenerateHumanDnaPaired() throws IOException, URISyntaxException {
+        setup(HUMAN, DNA);
+        BashCommand bashCommand = getExpectedBashCommandFromFile(MIXCR_TEST_OUTPUT_DATA_HUMAN_DNA_PAIRED);
+
+        MixcrResult mixcrResult = mixcr.generate(expectedConfiguration, expectedTemplateEngine);
+
+        assertEquals(bashCommand.getToolCommand(), mixcrResult.getCommand().getToolCommand());
+    }
+
+    @Test
+    void shouldGenerateHumanDnaSingle() throws IOException, URISyntaxException {
+        setup(HUMAN, DNA);
+        mixcr = getSingleFastqMixcr();
+        expectedConfiguration.getStudyConfig().setLibraryType(DNA);
+        BashCommand bashCommand = getExpectedBashCommandFromFile(MIXCR_TEST_OUTPUT_DATA_HUMAN_DNA_SINGLE);
+
+        MixcrResult mixcrResult = mixcr.generate(expectedConfiguration, expectedTemplateEngine);
+
+        assertEquals(bashCommand.getToolCommand(), mixcrResult.getCommand().getToolCommand());
+    }
+
+    @Test
+    void shouldGenerateHumanRnaPaired() throws IOException, URISyntaxException {
+        setup(HUMAN, RNA);
+        BashCommand bashCommand = getExpectedBashCommandFromFile(MIXCR_TEST_OUTPUT_DATA_HUMAN_RNA_PAIRED);
+
+        MixcrResult mixcrResult = mixcr.generate(expectedConfiguration, expectedTemplateEngine);
+
+        assertEquals(bashCommand.getToolCommand(), mixcrResult.getCommand().getToolCommand());
+    }
+
+    @Test
+    void shouldGenerateHumanRnaSingle() throws IOException, URISyntaxException {
+        setup(HUMAN, RNA);
+        mixcr = getSingleFastqMixcr();
+        BashCommand bashCommand = getExpectedBashCommandFromFile(MIXCR_TEST_OUTPUT_DATA_HUMAN_RNA_SINGLE);
+
+        MixcrResult mixcrResult = mixcr.generate(expectedConfiguration, expectedTemplateEngine);
+
+        assertEquals(bashCommand.getToolCommand(), mixcrResult.getCommand().getToolCommand());
+    }
+
+    @Test
+    void shouldGenerateMouseDnaPaired() throws IOException, URISyntaxException {
+        setup(MOUSE, DNA);
+        BashCommand bashCommand = getExpectedBashCommandFromFile(MIXCR_TEST_OUTPUT_DATA_MOUSE_DNA_PAIRED);
+
+        MixcrResult mixcrResult = mixcr.generate(expectedConfiguration, expectedTemplateEngine);
+
+        assertEquals(bashCommand.getToolCommand(), mixcrResult.getCommand().getToolCommand());
+    }
+
+    @Test
+    void shouldGenerateMouseDnaSingle() throws IOException, URISyntaxException {
+        setup(MOUSE, DNA);
+        mixcr = getSingleFastqMixcr();
+        BashCommand bashCommand = getExpectedBashCommandFromFile(MIXCR_TEST_OUTPUT_DATA_MOUSE_DNA_SINGLE);
+
+        MixcrResult mixcrResult = mixcr.generate(expectedConfiguration, expectedTemplateEngine);
+
+        assertEquals(bashCommand.getToolCommand(), mixcrResult.getCommand().getToolCommand());
+    }
+
+    @Test
+    void shouldGenerateMouseRnaPaired() throws IOException, URISyntaxException {
+        setup(MOUSE, RNA);
+        BashCommand bashCommand = getExpectedBashCommandFromFile(MIXCR_TEST_OUTPUT_DATA_MOUSE_RNA_PAIRED);
+
+        MixcrResult mixcrResult = mixcr.generate(expectedConfiguration, expectedTemplateEngine);
+
+        assertEquals(bashCommand.getToolCommand(), mixcrResult.getCommand().getToolCommand());
+    }
+
+    @Test
+    void shouldGenerateMouseRnaSingle() throws IOException, URISyntaxException {
+        setup(MOUSE, RNA);
+        mixcr = getSingleFastqMixcr();
+        BashCommand bashCommand = getExpectedBashCommandFromFile(MIXCR_TEST_OUTPUT_DATA_MOUSE_RNA_SINGLE);
+
+        MixcrResult mixcrResult = mixcr.generate(expectedConfiguration, expectedTemplateEngine);
+
+        assertEquals(bashCommand.getToolCommand(), mixcrResult.getCommand().getToolCommand());
+    }
+
+    void setup(String species, String libraryType) throws URISyntaxException, IOException {
+        GlobalConfig globalConfig = new GlobalConfig();
+        GlobalConfig.DatabaseConfig databaseConfig = new GlobalConfig.DatabaseConfig();
+        databaseConfig.setSpecies(species);
+        globalConfig.setDatabaseConfig(databaseConfig);
+        StudyConfig studyConfig = new StudyConfig();
+        studyConfig.setLibraryType(libraryType);
         expectedSample.setName("sampleName");
         expectedSample.setSampleOutputDir("output");
         expectedSample.createDirectory();
@@ -60,30 +167,33 @@ class MixcrTest extends AbstractTest{
                 .build();
         mixcr = new Mixcr(expectedSample, fastqResult);
         expectedConfiguration = new Configuration();
-        GlobalConfig expectedGlobalConfig = new GlobalConfig();
         GlobalConfig.QueueParameters expectedQueueParameters = new GlobalConfig.QueueParameters();
         expectedQueueParameters.setNumThreads(5);
+        globalConfig.setQueueParameters(expectedQueueParameters);
         GlobalConfig.ToolConfig expectedToolConfig = new GlobalConfig.ToolConfig();
         expectedToolConfig.setMixcr("mixcr");
-        expectedGlobalConfig.setQueueParameters(expectedQueueParameters);
-        expectedGlobalConfig.setToolConfig(expectedToolConfig);
-        GlobalConfig.DatabaseConfig expectedDatabaseConfig = new GlobalConfig.DatabaseConfig();
-        expectedDatabaseConfig.setSpecies("human");
-        expectedGlobalConfig.setDatabaseConfig(expectedDatabaseConfig);
-        StudyConfig studyConfig = new StudyConfig();
-        studyConfig.setLibraryType("RNA");
+        globalConfig.setToolConfig(expectedToolConfig);
         expectedConfiguration.setStudyConfig(studyConfig);
-        expectedConfiguration.setGlobalConfig(expectedGlobalConfig);
-        Path path = Paths.get(Objects.requireNonNull(
-                this.getClass().getClassLoader().getResource(MIXCR_TEST_OUTPUT_DATA_PATH)).toURI());
-        byte[] fileBytes = Files.readAllBytes(path);
-        String expectedCmd = new String(fileBytes);
-        expectedBashCommand = new BashCommand(expectedCmd);
+        expectedConfiguration.setGlobalConfig(globalConfig);
     }
 
-    @Test
-    void shouldGenerate() {
-        MixcrResult mixcrResult = mixcr.generate(expectedConfiguration, expectedTemplateEngine);
-        assertEquals(expectedBashCommand.getToolCommand(), mixcrResult.getCommand().getToolCommand());
+    private BashCommand getExpectedBashCommandFromFile(final String filePath) throws IOException, URISyntaxException {
+        Path path = Paths.get(this.getClass().getClassLoader().getResource(
+                filePath).toURI());
+        byte[] fileBytes = Files.readAllBytes(path);
+        String expectedCmd = new String(fileBytes);
+
+        return new BashCommand(expectedCmd);
+    }
+
+    private Mixcr getSingleFastqMixcr() {
+        FastqOutput fastqOutput = FastqOutput.builder()
+                .mergedFastq1("merged_fastq1.gz")
+                .mergedFastq2(null)
+                .build();
+        FastqResult fastqResult = FastqResult.builder()
+                .out(fastqOutput)
+                .build();
+        return new Mixcr(expectedSample, fastqResult);
     }
 }

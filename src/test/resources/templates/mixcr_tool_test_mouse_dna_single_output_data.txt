@@ -1,0 +1,15 @@
+echo `date` Begin Step: MIXCR detection...
+
+mixcr align -s mmu -t 5 merged_fastq1.gz output/mixcr/sampleName.mixcr.alignment.vdjca
+mixcr assemble -f -t 5 output/mixcr/sampleName.mixcr.alignment.vdjca output/mixcr/sampleName.mixcr.clones.clns
+mixcr exportClones -f output/mixcr/sampleName.mixcr.clones.clns output/mixcr/sampleName.mixcr.clones.txt
+if [ $? -eq 0 ]
+then
+ 	echo `date` Successful Step: MIXCR detection
+ 	sleep 8
+else
+ 	echo `date` Error Step: MIXCR detection
+
+ 	echo `date` The job was aborted due to ERRORS found;
+ 	exit 1;
+fi
