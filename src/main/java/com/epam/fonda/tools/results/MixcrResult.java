@@ -23,7 +23,7 @@ import lombok.Data;
 @Data
 @Builder
 public class MixcrResult implements Result {
-    private AbstractCommand abstractCommand;
+    private AbstractCommand command;
     private MixcrOutput mixcrOutput;
     private FastqResult fastqResult;
 }

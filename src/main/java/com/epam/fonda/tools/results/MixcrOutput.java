@@ -26,7 +26,7 @@ import java.util.List;
 @Data
 @Builder
 public class MixcrOutput implements DirectoryManager {
-    private String mixcrOutput;
+    private String mixcrOutdir;
     private String mixcrAlignVdjca;
     private String mixcrContigVdjca;
     private String mixcrAssembly;
@@ -34,6 +34,6 @@ public class MixcrOutput implements DirectoryManager {
 
     @Override
     public List<String> getDirs() {
-        return Collections.singletonList(mixcrOutput);
+        return Collections.singletonList(mixcrOutdir);
     }
 }
