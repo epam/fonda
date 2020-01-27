@@ -25,9 +25,11 @@ import com.epam.fonda.tools.results.MixcrOutput;
 import com.epam.fonda.tools.results.MixcrResult;
 import lombok.Data;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+@RequiredArgsConstructor
 public class Mixcr implements Tool<MixcrResult> {
 
     private static final String MIXCR_TOOL_TEMPLATE_NAME = "mixcr_tool_template";
@@ -65,11 +67,15 @@ public class Mixcr implements Tool<MixcrResult> {
     @Override
     public MixcrResult generate(Configuration configuration, TemplateEngine templateEngine) {
         final String mixcrOutdir = String.format("%s/mixcr", sample.getSampleOutputDir());
+        MixcrFields mixcrFields = constructMixcrFields(configuration, mixcrOutdir);
         MixcrOutput mixcrOutput = MixcrOutput.builder()
                 .mixcrOutdir(mixcrOutdir)
+                .mixcrAlignVdjca(mixcrFields.mixcrAlignVdjca)
+                .mixcrAssembly(mixcrFields.mixcrAssembly)
+                .mixcrClones(mixcrFields.mixcrClones)
+                .mixcrContigVdjca(mixcrFields.mixcrContigVdjca)
                 .build();
         mixcrOutput.createDirectory();
-        MixcrFields mixcrFields = constructMixcrFields(configuration, mixcrOutdir);
         if (mixcrFields.fastq1 == null) {
             throw new IllegalArgumentException(
                     "Error Step: In mixcr: not fastq files are properly provided, please check!");
@@ -77,10 +83,6 @@ public class Mixcr implements Tool<MixcrResult> {
         Context context = new Context();
         context.setVariable("mixcrFields", mixcrFields);
         final String cmd = templateEngine.process(MIXCR_TOOL_TEMPLATE_NAME, context);
-        mixcrOutput.setMixcrAlignVdjca(mixcrFields.mixcrAlignVdjca);
-        mixcrOutput.setMixcrAssembly(mixcrFields.mixcrAssembly);
-        mixcrOutput.setMixcrClones(mixcrFields.mixcrClones);
-        mixcrOutput.setMixcrContigVdjca(mixcrFields.mixcrContigVdjca);
         return MixcrResult.builder()
                 .command(BashCommand.withTool(cmd))
                 .fastqResult(fastqResult)
