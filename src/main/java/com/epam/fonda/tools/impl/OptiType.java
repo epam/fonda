@@ -63,11 +63,13 @@ public class OptiType implements Tool<OptiTypeResult> {
     @Override
     public OptiTypeResult generate(Configuration configuration, TemplateEngine templateEngine) {
         final String optiTypeOutDir = format("%s/optiType", sample.getSampleOutputDir());
+        OptiType.OptiTypeFields optiTypeFields = constructFieldsForOptiType(configuration, optiTypeOutDir);
         OptiTypeOutput optiTypeOutput = OptiTypeOutput.builder()
                 .optiTypeOutdir(optiTypeOutDir)
+                .mhc1hlaTypeRes(optiTypeFields.mhc1hlaTypeRes)
+                .mhc1hlaCoverage(optiTypeFields.mhc1hlaCoverage)
                 .build();
         optiTypeOutput.createDirectory();
-        OptiType.OptiTypeFields optiTypeFields = constructFieldsForOptiType(configuration, optiTypeOutDir);
         if (optiTypeFields.fastq1 == null) {
             throw new IllegalArgumentException(
                     "Error Step: In optiType: not fastq files are properly provided, please check!");
@@ -75,8 +77,6 @@ public class OptiType implements Tool<OptiTypeResult> {
         Context context = new Context();
         context.setVariable("optiTypeFields", optiTypeFields);
         final String cmd = templateEngine.process(OPTY_TIPE_TOOL_TEMPLATE_NAME, context);
-        optiTypeOutput.setMhc1hlaTypeRes(optiTypeFields.mhc1hlaTypeRes);
-        optiTypeOutput.setMhc1hlaCoverage(optiTypeFields.mhc1hlaCoverage);
         return OptiTypeResult.builder()
                 .fastqResult(fastqResult)
                 .optiTypeOutput(optiTypeOutput)

@@ -1,7 +1,8 @@
 echo `date` Begin Step: OptiType HLA typing...
 
+
 [(${optiTypeFields.python})] [(${optiTypeFields.optiType})]/OptiTypePipeline.py -i [(${optiTypeFields.fastq1})][# th:if = "${optiTypeFields.fastq2 != null}"] [(${optiTypeFields.fastq2})]
---dna --config [(${optiTypeFields.optiType})]/config.ini --outdir [(${optiTypeFields.sOptiTypeOutDir})]
+[# th:if = "${optiTypeFields.libraryType == 'DNA'}"]--dna[/][# th:if = "${optiTypeFields.libraryType == 'RNA'}"]--rna[/] --config [(${optiTypeFields.optiType})]/config.ini --outdir [(${optiTypeFields.sOptiTypeOutDir})]
 mv [(${optiTypeFields.sOptiTypeOutDir})]/hla_result.tsv [(${optiTypeFields.mhc1hlaTypeRes})]
 mv [(${optiTypeFields.sOptiTypeOutDir})]/hla_coverage_plot.pdf [(${optiTypeFields.mhc1hlaCoverage})][/]
 if [ $? -eq 0 ]
