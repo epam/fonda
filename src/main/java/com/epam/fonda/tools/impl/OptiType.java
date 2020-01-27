@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,9 @@ import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.Tool;
-import com.epam.fonda.tools.results.*;
+import com.epam.fonda.tools.results.OptiTypeResult;
+import com.epam.fonda.tools.results.FastqResult;
+import com.epam.fonda.tools.results.OptiTypeOutput;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
