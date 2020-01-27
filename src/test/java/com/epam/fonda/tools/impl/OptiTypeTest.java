@@ -23,10 +23,13 @@ import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class OptiTypeTest extends AbstractTest {
-    private static final String OPTY_TIPE_TEST_OUTPUT_DATA_PATH = "templates/optiType_tool_test_output_data.txt";
+    private static final String OPTY_TIPE_DNA_TEST_OUTPUT_DATA_PATH = "templates/optiType_dna_tool_test_output_data.txt";
+    private static final String OPTY_TIPE_RNA_TEST_OUTPUT_DATA_PATH = "templates/optiType_rna_tool_test_output_data.txt";
     private OptiType optiType;
-    private Configuration expectedConfiguration;
-    private BashCommand expectedBashCommand;
+    private Configuration expectedConfigurationWithDnaLibraryType;
+    private Configuration expectedConfigurationWithRnaLibraryType;
+    private BashCommand expectedBashCommandForDnaLibraryType;
+    private BashCommand expectedBashCommandForRnaLibraryType;
     private TemplateEngine expectedTemplateEngine = TemplateEngineUtils.init();
 
     @BeforeEach
@@ -43,28 +46,46 @@ public class OptiTypeTest extends AbstractTest {
                 .out(fastqOutput)
                 .build();
         optiType = new OptiType(expectedSample, fastqResult);
-        expectedConfiguration = new Configuration();
+        expectedConfigurationWithDnaLibraryType = new Configuration();
+        expectedConfigurationWithRnaLibraryType = new Configuration();
         GlobalConfig expectedGlobalConfig = new GlobalConfig();
-        StudyConfig expectedStudyConfig = new StudyConfig();
-        expectedStudyConfig.setLibraryType("RNA");
+        StudyConfig expectedStudyConfigWithDna = new StudyConfig();
+        StudyConfig expectedStudyConfigWithRna = new StudyConfig();
+        expectedStudyConfigWithDna.setLibraryType("DNA");
+        expectedStudyConfigWithRna.setLibraryType("RNA");
         GlobalConfig.QueueParameters expectedQueueParameters = new GlobalConfig.QueueParameters();
         expectedQueueParameters.setNumThreads(5);
         GlobalConfig.ToolConfig expectedToolConfig = new GlobalConfig.ToolConfig();
         expectedToolConfig.setOptitype("optiType");
         expectedGlobalConfig.setQueueParameters(expectedQueueParameters);
         expectedGlobalConfig.setToolConfig(expectedToolConfig);
-        expectedConfiguration.setGlobalConfig(expectedGlobalConfig);
-        expectedConfiguration.setStudyConfig(expectedStudyConfig);
-        Path path = Paths.get(Objects.requireNonNull(
-                this.getClass().getClassLoader().getResource(OPTY_TIPE_TEST_OUTPUT_DATA_PATH)).toURI());
-        byte[] fileBytes = Files.readAllBytes(path);
-        String expectedCmd = new String(fileBytes);
-        expectedBashCommand = new BashCommand(expectedCmd);
+        expectedConfigurationWithDnaLibraryType.setGlobalConfig(expectedGlobalConfig);
+        expectedConfigurationWithDnaLibraryType.setStudyConfig(expectedStudyConfigWithDna);
+        expectedConfigurationWithRnaLibraryType.setGlobalConfig(expectedGlobalConfig);
+        expectedConfigurationWithRnaLibraryType.setStudyConfig(expectedStudyConfigWithRna);
+        Path pathToOptiTypeWithDna = Paths.get(Objects.requireNonNull(
+                this.getClass().getClassLoader().getResource(OPTY_TIPE_DNA_TEST_OUTPUT_DATA_PATH)).toURI());
+        byte[] fileBytesForDnaLibraryType  = Files.readAllBytes(pathToOptiTypeWithDna);
+        String expectedCmdForDnaLibraryType  = new String(fileBytesForDnaLibraryType );
+        expectedBashCommandForDnaLibraryType = new BashCommand(expectedCmdForDnaLibraryType);
+        Path pathToOptiTypeWithRna = Paths.get(Objects.requireNonNull(
+                this.getClass().getClassLoader().getResource(OPTY_TIPE_RNA_TEST_OUTPUT_DATA_PATH)).toURI());
+        byte[] fileBytesForRnaLibraryType  = Files.readAllBytes(pathToOptiTypeWithRna);
+        String expectedCmdForRnaLibraryType  = new String(fileBytesForRnaLibraryType );
+        expectedBashCommandForRnaLibraryType = new BashCommand(expectedCmdForRnaLibraryType);
     }
 
     @Test
     void shouldGenerate() {
-        OptiTypeResult optiTypeResult = optiType.generate(expectedConfiguration, expectedTemplateEngine);
-        assertEquals(expectedBashCommand.getToolCommand(), optiTypeResult.getCommand().getToolCommand());
+        OptiTypeResult optiTypeResultForDnaLibraryType = optiType
+                .generate(expectedConfigurationWithDnaLibraryType, expectedTemplateEngine);
+        OptiTypeResult optiTypeResultForRnaLibraryType = optiType
+                .generate(expectedConfigurationWithRnaLibraryType, expectedTemplateEngine);
+        assertEquals(
+                expectedBashCommandForDnaLibraryType.getToolCommand(),
+                optiTypeResultForDnaLibraryType.getCommand().getToolCommand());
+        assertEquals(
+                expectedBashCommandForRnaLibraryType.getToolCommand(),
+                optiTypeResultForRnaLibraryType.getCommand().getToolCommand());
     }
 }
