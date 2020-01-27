@@ -24,6 +24,8 @@ import org.thymeleaf.TemplateEngine;
 
 public class Mixcr implements Tool<MixcrResult> {
 
+    private static final String MIXCR_TOOL_TEMPLATE_NAME = "mixcr_tool_template";
+
     @Data
     private class MixcrFiels {
         private String mixcr;
@@ -38,6 +40,7 @@ public class Mixcr implements Tool<MixcrResult> {
         private String mixcrAssembly;
         private String mixcrClones;
         private String spe;
+        private int nThreads;
     }
 
     @Override
