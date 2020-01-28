@@ -8,10 +8,10 @@ echo `date` Begin Step: MIXCR detection...
 [(${mixcrFields.mixcr})] exportClones -f [(${mixcrFields.mixcrAssembly})] [(${mixcrFields.mixcrClones})][/]
 if [ $? -eq 0 ]
 then
- 	echo `date` Successful Step: MIXCR detection
+ 	echo `date` Successful Step: MIXCR detection.
  	sleep 8
 else
- 	echo `date` Error Step: MIXCR detection
+ 	echo `date` Error Step: MIXCR detection.
 
  	echo `date` The job was aborted due to ERRORS found;
  	exit 1;

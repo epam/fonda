@@ -106,7 +106,8 @@ public class Mixcr implements Tool<MixcrResult> {
      * @return {@link Mixcr.MixcrFields} with fields.
      **/
     private MixcrFields constructMixcrFields(Configuration configuration, String mixcrOutdir) {
-        String species = validate(configuration.getGlobalConfig().getDatabaseConfig().getSpecies(), GlobalConfigFormat.SPECIES);
+        String species = validate(configuration.getGlobalConfig().getDatabaseConfig().getSpecies(),
+                GlobalConfigFormat.SPECIES);
         String sampleName = validate(sample.getName(), ToolUtils.SAMPLE_NAME);
         String spe = "";
         if (species.equals("human")) {
