@@ -18,16 +18,22 @@ package com.epam.fonda.tools.impl;
 
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.GlobalConfigFormat;
+import com.epam.fonda.entity.configuration.StudyConfigFormat;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.FastqResult;
 import com.epam.fonda.tools.results.MixcrOutput;
 import com.epam.fonda.tools.results.MixcrResult;
+import com.epam.fonda.utils.ToolUtils;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+
+import static com.epam.fonda.utils.ToolUtils.validate;
 
 @RequiredArgsConstructor
 public class Mixcr implements Tool<MixcrResult> {
@@ -40,7 +46,8 @@ public class Mixcr implements Tool<MixcrResult> {
     private FastqResult fastqResult;
 
     @Data
-    private class MixcrFields {
+    @Builder
+    private static class MixcrFields {
         private String mixcr;
         private String mixcrOutdir;
         private String sampleName;
@@ -68,6 +75,10 @@ public class Mixcr implements Tool<MixcrResult> {
     public MixcrResult generate(Configuration configuration, TemplateEngine templateEngine) {
         final String mixcrOutdir = String.format("%s/mixcr", sample.getSampleOutputDir());
         MixcrFields mixcrFields = constructMixcrFields(configuration, mixcrOutdir);
+        if (mixcrFields.fastq1 == null) {
+            throw new IllegalArgumentException(
+                    "Error Step: In mixcr: not fastq files are properly provided, please check!");
+        }
         MixcrOutput mixcrOutput = MixcrOutput.builder()
                 .mixcrOutdir(mixcrOutdir)
                 .mixcrAlignVdjca(mixcrFields.mixcrAlignVdjca)
@@ -76,10 +87,6 @@ public class Mixcr implements Tool<MixcrResult> {
                 .mixcrContigVdjca(mixcrFields.mixcrContigVdjca)
                 .build();
         mixcrOutput.createDirectory();
-        if (mixcrFields.fastq1 == null) {
-            throw new IllegalArgumentException(
-                    "Error Step: In mixcr: not fastq files are properly provided, please check!");
-        }
         Context context = new Context();
         context.setVariable("mixcrFields", mixcrFields);
         final String cmd = templateEngine.process(MIXCR_TOOL_TEMPLATE_NAME, context);
@@ -95,29 +102,33 @@ public class Mixcr implements Tool<MixcrResult> {
      *
      * @param configuration is the type of {@link Configuration} which contains
      *                      its fields: mixcr, species, numThreads.
-     * @param mixcrOutdir
+     * @param mixcrOutdir   is the output path
      * @return {@link Mixcr.MixcrFields} with fields.
      **/
     private MixcrFields constructMixcrFields(Configuration configuration, String mixcrOutdir) {
-        MixcrFields mixcrFields = new MixcrFields();
-        mixcrFields.mixcr = configuration.getGlobalConfig().getToolConfig().getMixcr();
-        mixcrFields.mixcrOutdir = mixcrOutdir;
-        mixcrFields.sampleName = sample.getName();
-        mixcrFields.libraryType = configuration.getStudyConfig().getLibraryType();
-        mixcrFields.species = configuration.getGlobalConfig().getDatabaseConfig().getSpecies();
-        mixcrFields.fastq1 = fastqResult.getOut().getMergedFastq1();
-        mixcrFields.fastq2 = fastqResult.getOut().getMergedFastq2();
-        mixcrFields.mixcrAlignVdjca = String.format("%s/%s.mixcr.alignment.vdjca", mixcrOutdir, mixcrFields.sampleName);
-        mixcrFields.mixcrContigVdjca = String.format("%s/%s.mixcr.alignment.contig.vdjca",
-                mixcrOutdir, mixcrFields.sampleName);
-        mixcrFields.mixcrAssembly = String.format("%s/%s.mixcr.clones.clns", mixcrOutdir, mixcrFields.sampleName);
-        mixcrFields.mixcrClones = String.format("%s/%s.mixcr.clones.txt", mixcrOutdir, mixcrFields.sampleName);
-        if (mixcrFields.species.equals("human")) {
-            mixcrFields.spe = "hsa";
-        } else if (mixcrFields.species.equals("mouse")) {
-            mixcrFields.spe = "mmu";
+        String species = validate(configuration.getGlobalConfig().getDatabaseConfig().getSpecies(), GlobalConfigFormat.SPECIES);
+        String sampleName = validate(sample.getName(), ToolUtils.SAMPLE_NAME);
+        String spe = "";
+        if (species.equals("human")) {
+            spe = "hsa";
+        } else if (species.equals("mouse")) {
+            spe = "mmu";
         }
-        mixcrFields.nThreads = configuration.getGlobalConfig().getQueueParameters().getNumThreads();
-        return mixcrFields;
+        return MixcrFields.builder()
+                .mixcr(validate(configuration.getGlobalConfig().getToolConfig().getMixcr(), GlobalConfigFormat.MIXCR))
+                .mixcrOutdir(mixcrOutdir)
+                .sampleName(sampleName)
+                .libraryType(validate(configuration.getStudyConfig().getLibraryType(), StudyConfigFormat.LIBRARY_TYPE))
+                .species(species)
+                .fastq1(fastqResult.getOut().getMergedFastq1())
+                .fastq2(fastqResult.getOut().getMergedFastq2())
+                .mixcrAlignVdjca(String.format("%s/%s.mixcr.alignment.vdjca", mixcrOutdir, sampleName))
+                .mixcrContigVdjca(String.format("%s/%s.mixcr.alignment.contig.vdjca",
+                        mixcrOutdir, sampleName))
+                .mixcrAssembly(String.format("%s/%s.mixcr.clones.clns", mixcrOutdir, sampleName))
+                .mixcrClones(String.format("%s/%s.mixcr.clones.txt", mixcrOutdir, sampleName))
+                .spe(spe)
+                .nThreads(configuration.getGlobalConfig().getQueueParameters().getNumThreads())
+                .build();
     }
 }
