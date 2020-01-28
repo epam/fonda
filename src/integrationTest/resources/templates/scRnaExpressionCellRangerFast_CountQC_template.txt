@@ -19,7 +19,7 @@ echo `date` Begin the job execution...
 
 echo `date` Begin Step: Cellranger count...
 cd build/resources/integrationTest/output/count
-path/to/cellranger count --id=smv1 --transcriptome=/common/reference_genome/GRCh38/Sequence/GRCh38.gencode.v26.pc_transcripts.fa --chemistry=auto --fastqs=/ngs/data/demo/test/fastq --sample=smv1 --expect-cells=5000
+path/to/cellranger count --id=smv1 --transcriptome=/common/reference_genome/GRCh38/Sequence/GRCh38.gencode.v26.pc_transcripts.fa --chemistry=auto --fastqs=[(${sampleList})] --sample=smv1 --expect-cells=5000
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Cellranger count.
@@ -51,7 +51,7 @@ else
 fi
 
 echo `date` Begin Step: Merge gene-barcode matrix...
-/usr/bin/Rscript /home/karim/IdeaProjects/fonda/build/classes/java/main/src/R/merge_data_matrix.R -a smv1_genome1_umi_count_matrix.tsv -b smv1_genome2_umi_count_matrix.tsv -o smv1_genome1_and_genome2_umi_count_matrix.tsv
+/usr/bin/Rscript [(${jarPath})]/src/R/merge_data_matrix.R -a smv1_genome1_umi_count_matrix.tsv -b smv1_genome2_umi_count_matrix.tsv -o smv1_genome1_and_genome2_umi_count_matrix.tsv
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Merge gene-barcode matrix.
