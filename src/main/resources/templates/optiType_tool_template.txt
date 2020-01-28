@@ -1,10 +1,8 @@
-echo `date` Begin Step: OptiType HLA typing...
-
-
+[# th:if = "${optiTypeFields.libraryType == 'DNA'} or ${optiTypeFields.libraryType == 'RNA'}"]echo `date` Begin Step: OptiType HLA typing...
 [(${optiTypeFields.python})] [(${optiTypeFields.optiType})]/OptiTypePipeline.py -i [(${optiTypeFields.fastq1})][# th:if = "${optiTypeFields.fastq2 != null}"] [(${optiTypeFields.fastq2})]
-[# th:if = "${optiTypeFields.libraryType == 'DNA'}"]--dna[/][# th:if = "${optiTypeFields.libraryType == 'RNA'}"]--rna[/] --config [(${optiTypeFields.optiType})]/config.ini --outdir [(${optiTypeFields.sOptiTypeOutDir})]
-mv [(${optiTypeFields.sOptiTypeOutDir})]/hla_result.tsv [(${optiTypeFields.mhc1hlaTypeRes})]
-mv [(${optiTypeFields.sOptiTypeOutDir})]/hla_coverage_plot.pdf [(${optiTypeFields.mhc1hlaCoverage})][/]
+[# th:if = "${optiTypeFields.libraryType == 'DNA'}"]--dna[/][# th:if = "${optiTypeFields.libraryType == 'RNA'}"]--rna[/] --config [(${optiTypeFields.optiType})]/config.ini --outdir [(${optiTypeFields.optiTypeOutDir})]
+mv [(${optiTypeFields.optiTypeOutDir})]/hla_result.tsv [(${optiTypeFields.mhc1hlaTypeRes})]
+mv [(${optiTypeFields.optiTypeOutDir})]/hla_coverage_plot.pdf [(${optiTypeFields.mhc1hlaCoverage})][/]
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: OptiType HLA typing.
@@ -14,4 +12,4 @@ else
 
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
-fi
+fi[/][# th:unless = "${optiTypeFields.libraryType == 'DNA'} or ${optiTypeFields.libraryType == 'RNA'}"]Skip HLA typing since neither DNA or RNA sequencing data was supplied.[/]

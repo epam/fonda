@@ -17,18 +17,21 @@
 package com.epam.fonda.tools.impl;
 
 import com.epam.fonda.entity.command.BashCommand;
-import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.*;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.OptiTypeResult;
 import com.epam.fonda.tools.results.FastqResult;
 import com.epam.fonda.tools.results.OptiTypeOutput;
+import com.epam.fonda.utils.ToolUtils;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import static com.epam.fonda.utils.ToolUtils.validate;
 import static java.lang.String.format;
 
 @RequiredArgsConstructor
@@ -36,10 +39,16 @@ public class OptiType implements Tool<OptiTypeResult> {
 
     private static final String OPTY_TIPE_TOOL_TEMPLATE_NAME = "optiType_tool_template";
 
+    @NonNull
+    private FastqFileSample sample;
+    @NonNull
+    private FastqResult fastqResult;
+
     @Data
-    private class OptiTypeFields {
+    @Builder
+    private static class OptiTypeFields {
         private String optiType;
-        private String sOptiTypeOutDir;
+        private String optiTypeOutDir;
         private String sampleName;
         private String libraryType;
         private String python;
@@ -48,11 +57,6 @@ public class OptiType implements Tool<OptiTypeResult> {
         private String mhc1hlaTypeRes;
         private String mhc1hlaCoverage;
     }
-
-    @NonNull
-    private FastqFileSample sample;
-    @NonNull
-    private FastqResult fastqResult;
 
     /**
      * This method generates bash script {@link BashCommand} for OptiType tool.
@@ -64,18 +68,17 @@ public class OptiType implements Tool<OptiTypeResult> {
      **/
     @Override
     public OptiTypeResult generate(Configuration configuration, TemplateEngine templateEngine) {
-        final String optiTypeOutDir = format("%s/optiType", sample.getSampleOutputDir());
-        OptiType.OptiTypeFields optiTypeFields = constructFieldsForOptiType(configuration, optiTypeOutDir);
-        OptiTypeOutput optiTypeOutput = OptiTypeOutput.builder()
-                .optiTypeOutdir(optiTypeOutDir)
-                .mhc1hlaTypeRes(optiTypeFields.mhc1hlaTypeRes)
-                .mhc1hlaCoverage(optiTypeFields.mhc1hlaCoverage)
-                .build();
-        optiTypeOutput.createDirectory();
+        final OptiTypeFields optiTypeFields = constructFieldsForOptiType(configuration);
         if (optiTypeFields.fastq1 == null) {
             throw new IllegalArgumentException(
                     "Error Step: In optiType: not fastq files are properly provided, please check!");
         }
+        OptiTypeOutput optiTypeOutput = OptiTypeOutput.builder()
+                .optiTypeOutdir(optiTypeFields.getOptiTypeOutDir())
+                .mhc1hlaTypeRes(optiTypeFields.mhc1hlaTypeRes)
+                .mhc1hlaCoverage(optiTypeFields.mhc1hlaCoverage)
+                .build();
+        optiTypeOutput.createDirectory();
         Context context = new Context();
         context.setVariable("optiTypeFields", optiTypeFields);
         final String cmd = templateEngine.process(OPTY_TIPE_TOOL_TEMPLATE_NAME, context);
@@ -91,22 +94,22 @@ public class OptiType implements Tool<OptiTypeResult> {
      *
      * @param configuration  is the type of {@link Configuration} which contains
      *                       its fields: optiType, libraryType, python.
-     * @param optiTypeOutDir its a root to directory with output files.
      * @return {@link OptiType.OptiTypeFields} with fields.
      **/
-    private OptiTypeFields constructFieldsForOptiType(final Configuration configuration, final String optiTypeOutDir) {
-        OptiTypeFields optiTypeFields = new OptiTypeFields();
-        optiTypeFields.optiType = configuration.getGlobalConfig().getToolConfig().getOptitype();
-        optiTypeFields.sOptiTypeOutDir = optiTypeOutDir;
-        optiTypeFields.sampleName = sample.getName();
-        optiTypeFields.libraryType = configuration.getStudyConfig().getLibraryType();
-        optiTypeFields.python = configuration.getGlobalConfig().getToolConfig().getPython();
-        optiTypeFields.fastq1 = fastqResult.getOut().getMergedFastq1();
-        optiTypeFields.fastq2 = fastqResult.getOut().getMergedFastq2();
-        optiTypeFields.mhc1hlaTypeRes = format("%s/%s.mhc1hla.type.results", optiTypeFields.sOptiTypeOutDir,
-                optiTypeFields.sampleName);
-        optiTypeFields.mhc1hlaCoverage = format("%s/%s.mhc1hla.coverage", optiTypeFields.sOptiTypeOutDir,
-                optiTypeFields.sampleName);
-        return optiTypeFields;
+    private OptiTypeFields constructFieldsForOptiType(final Configuration configuration) {
+        final String optiTypeOutDir = format("%s/optitype", sample.getSampleOutputDir());
+        final GlobalConfig.ToolConfig toolConfig = configuration.getGlobalConfig().getToolConfig();
+        final StudyConfig studyConfig = configuration.getStudyConfig();
+        return OptiTypeFields.builder()
+                .optiType(validate(toolConfig.getOptitype(), GlobalConfigFormat.OPTITYPE))
+                .optiTypeOutDir(optiTypeOutDir)
+                .sampleName(validate(sample.getName(), ToolUtils.SAMPLE_NAME))
+                .libraryType(validate(studyConfig.getLibraryType(), StudyConfigFormat.LIBRARY_TYPE))
+                .python(validate(toolConfig.getPython(), GlobalConfigFormat.PYTHON))
+                .fastq1(fastqResult.getOut().getMergedFastq1())
+                .fastq2(fastqResult.getOut().getMergedFastq2())
+                .mhc1hlaTypeRes(format("%s/%s_hla_result.tsv", optiTypeOutDir, sample.getName()))
+                .mhc1hlaCoverage(format("%s/%s_hla_coverage_plot.pdf", optiTypeOutDir, sample.getName()))
+                .build();
     }
 }

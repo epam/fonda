@@ -1,10 +1,8 @@
 echo `date` Begin Step: OptiType HLA typing...
-
-
- optiType/OptiTypePipeline.py -i merged_fastq1.gz merged_fastq2.gz
---dna --config optiType/config.ini --outdir output/optiType
-mv output/optiType/hla_result.tsv output/optiType/sampleName.mhc1hla.type.results
-mv output/optiType/hla_coverage_plot.pdf output/optiType/sampleName.mhc1hla.coverage
+python optiType/OptiTypePipeline.py -i merged_fastq1.gz merged_fastq2.gz
+--dna --config optiType/config.ini --outdir output/optitype
+mv output/optitype/hla_result.tsv output/optitype/sampleName_hla_result.tsv
+mv output/optitype/hla_coverage_plot.pdf output/optitype/sampleName_hla_coverage_plot.pdf
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: OptiType HLA typing.
