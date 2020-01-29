@@ -63,9 +63,7 @@ public class OptiTypeTest extends AbstractTest {
 
     @ParameterizedTest
     @MethodSource("initParameters")
-    void shouldGenerate(String libraryType, String pathToTemplate)
-            throws IOException, URISyntaxException
-    {
+    void shouldGenerate(String libraryType, String pathToTemplate) throws IOException, URISyntaxException {
         setup(libraryType, pathToTemplate);
         OptiTypeResult optiTypeResult = optiType.generate(expectedConfiguration, expectedTemplateEngine);
         assertEquals(expectedBashCommand.getToolCommand(), optiTypeResult.getCommand().getToolCommand());
