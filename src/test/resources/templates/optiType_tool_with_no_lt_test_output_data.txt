@@ -1,0 +1,1 @@
+Skip HLA typing since neither DNA or RNA sequencing data was supplied.
