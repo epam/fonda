@@ -17,7 +17,11 @@
 package com.epam.fonda.tools.impl;
 
 import com.epam.fonda.entity.command.BashCommand;
-import com.epam.fonda.entity.configuration.*;
+import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.GlobalConfig;
+import com.epam.fonda.entity.configuration.GlobalConfigFormat;
+import com.epam.fonda.entity.configuration.StudyConfig;
+import com.epam.fonda.entity.configuration.StudyConfigFormat;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.OptiTypeResult;
