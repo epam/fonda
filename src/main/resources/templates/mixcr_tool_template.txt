@@ -1,0 +1,18 @@
+echo `date` Begin Step: MIXCR detection...
+[# th:if = "${mixcrFields.libraryType == 'RNA'}"][(${mixcrFields.mixcr})] align -p rna-seq -s [(${mixcrFields.spe})] -t [(${mixcrFields.nThreads})] -OallowPartialAlignments=true [(${mixcrFields.fastq1})] [# th:if = "${mixcrFields.fastq2 != null}"] [(${mixcrFields.fastq2})] [/] [(${mixcrFields.mixcrAlignVdjca})]
+[(${mixcrFields.mixcr})] assemblePartial -f [(${mixcrFields.mixcrAlignVdjca})] [(${mixcrFields.mixcrContigVdjca})]
+[(${mixcrFields.mixcr})] assemble -f -t [(${mixcrFields.nThreads})] [(${mixcrFields.mixcrContigVdjca})] [(${mixcrFields.mixcrAssembly})]
+[(${mixcrFields.mixcr})] exportClones -f [(${mixcrFields.mixcrAssembly})] [(${mixcrFields.mixcrClones})][/]
+[# th:unless = "${mixcrFields.libraryType == 'RNA'}"][(${mixcrFields.mixcr})] align -s [(${mixcrFields.spe})] -t [(${mixcrFields.nThreads})] [(${mixcrFields.fastq1})][# th:if = "${mixcrFields.fastq2 != null}"] [(${mixcrFields.fastq2})] [/] [(${mixcrFields.mixcrAlignVdjca})]
+[(${mixcrFields.mixcr})] assemble -f -t [(${mixcrFields.nThreads})] [(${mixcrFields.mixcrAlignVdjca})] [(${mixcrFields.mixcrAssembly})]
+[(${mixcrFields.mixcr})] exportClones -f [(${mixcrFields.mixcrAssembly})] [(${mixcrFields.mixcrClones})][/]
+if [ $? -eq 0 ]
+then
+ 	echo `date` Successful Step: MIXCR detection.
+ 	sleep 8
+else
+ 	echo `date` Error Step: MIXCR detection.
+
+ 	echo `date` The job was aborted due to ERRORS found;
+ 	exit 1;
+fi
