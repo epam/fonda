@@ -16,13 +16,13 @@
 
 package com.epam.fonda.tools.impl;
 
+import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.entity.configuration.GlobalConfig;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.utils.PipelineUtils;
 import com.epam.fonda.utils.TemplateEngineUtils;
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.thymeleaf.TemplateEngine;
@@ -32,36 +32,25 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 
-class GatkSplitReadsTest extends AbstractTest{
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+class GatkSplitReadsTest extends AbstractTest {
     private static final String GATK_SPLIT_READS_TOOL_TEST_TEMPLATE_NAME =
             "templates/gatk_split_reads_tool_test_output_data.txt";
     private TemplateEngine expectedTemplateEngine = TemplateEngineUtils.init();
-    private Configuration expectedConfoguration;
+    private Configuration expectedConfiguration;
     private String expectedCmd;
 
     @BeforeEach
     void setup() throws URISyntaxException, IOException {
         PipelineUtils.createDir(TEST_DIRECTORY);
-        expectedConfoguration = buildConfiguration();
-        Path path = Paths.get(this.getClass().getClassLoader()
-                .getResource(GATK_SPLIT_READS_TOOL_TEST_TEMPLATE_NAME).toURI());
+        expectedConfiguration = buildConfiguration();
+        Path path = Paths.get(Objects.requireNonNull(this.getClass().getClassLoader()
+                .getResource(GATK_SPLIT_READS_TOOL_TEST_TEMPLATE_NAME)).toURI());
         byte[] fileBytes = Files.readAllBytes(path);
         expectedCmd = new String(fileBytes);
-    }
-
-    private Configuration buildConfiguration() {
-        Configuration expectedConfoguration = new Configuration();
-        GlobalConfig.DatabaseConfig databaseConfig = new GlobalConfig.DatabaseConfig();
-        databaseConfig.setGenome("genome");
-        GlobalConfig.ToolConfig toolConfig = new GlobalConfig.ToolConfig();
-        toolConfig.setJava("java");
-        toolConfig.setGatk("gatk");
-        GlobalConfig globalConfig = new GlobalConfig();
-        globalConfig.setDatabaseConfig(databaseConfig);
-        globalConfig.setToolConfig(toolConfig);
-        expectedConfoguration.setGlobalConfig(globalConfig);
-        return expectedConfoguration;
     }
 
     @Test
@@ -71,8 +60,24 @@ class GatkSplitReadsTest extends AbstractTest{
                         .bamOutput(BamOutput.builder()
                                     .bam("GA5.star.sorted.rmdup.bam")
                                     .build())
-                        .build()).generate(expectedConfoguration, expectedTemplateEngine);
+                        .command(BashCommand.withTool(""))
+                        .build())
+                .generate(expectedConfiguration, expectedTemplateEngine);
         String actualCmd = bamResult.getCommand().getToolCommand();
-        Assert.assertEquals(expectedCmd, actualCmd);
+        assertEquals(expectedCmd, actualCmd);
+    }
+
+    private Configuration buildConfiguration() {
+        Configuration expectedConfiguration = new Configuration();
+        GlobalConfig.DatabaseConfig databaseConfig = new GlobalConfig.DatabaseConfig();
+        databaseConfig.setGenome("genome");
+        GlobalConfig.ToolConfig toolConfig = new GlobalConfig.ToolConfig();
+        toolConfig.setJava("java");
+        toolConfig.setGatk("gatk");
+        GlobalConfig globalConfig = new GlobalConfig();
+        globalConfig.setDatabaseConfig(databaseConfig);
+        globalConfig.setToolConfig(toolConfig);
+        expectedConfiguration.setGlobalConfig(globalConfig);
+        return expectedConfiguration;
     }
 }
