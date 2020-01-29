@@ -59,12 +59,16 @@ public class GatkHaplotypeCallerRnaFilter implements Tool<VariantsVcfResult> {
         final String cmd = templateEngine.process(GATK_HAPLOTYPE_CALLER_RNA_FILTER_TOOL_TEMPLATE_NAME, context);
         AbstractCommand command = BashCommand.withTool(variantsVcfResult.getAbstractCommand().getToolCommand() + cmd);
         command.getTempDirs().addAll(Collections.singletonList(additionalFields.tmpGatkHapOutdir));
+        setFieldsVariantsVcfResult(additionalFields, command);
+        return variantsVcfResult;
+    }
+
+    private void setFieldsVariantsVcfResult(AdditionalFields additionalFields, AbstractCommand command) {
         variantsVcfResult.setAbstractCommand(command);
         variantsVcfResult.getVariantsVcfOutput().setGatkHapFiltered(additionalFields.gatkHapFiltered);
         variantsVcfResult.getVariantsVcfOutput().setVariantsOutputDir(additionalFields.gatkHapOutdir);
         variantsVcfResult.getVariantsVcfOutput().setVariantsTmpOutputDir(additionalFields.tmpGatkHapOutdir);
         variantsVcfResult.getVariantsVcfOutput().createDirectory();
-        return variantsVcfResult;
     }
 
     private Context buildContext(ToolFields toolFields, AdditionalFields additionalFields) {
