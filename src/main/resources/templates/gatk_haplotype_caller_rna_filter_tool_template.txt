@@ -1,0 +1,12 @@
+echo `date` Begin Step: GATK haplotypecaller filtration...
+[(${toolFields.java})] -Xmx10g -Djava.io.tmpdir=[(${additionalFields.tmpGatkHapOutdir})] -jar [(${toolFields.gatk})] -T VariantFiltration -R [(${toolFields.genome})] -V [(${gatkHapRaw})] -window 35 -cluster 3 -filterName FS -filter "FS>30.0" -filterName QD -filter "QD<2.0" --out [(${additionalFields.gatkHapFiltered})] --validation_strictness SILENT
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: GATK haplotypecaller filtration.
+	sleep 8
+else
+	echo `date` Error Step: GATK haplotypecaller filtration.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
