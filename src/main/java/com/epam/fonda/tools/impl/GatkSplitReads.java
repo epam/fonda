@@ -21,7 +21,6 @@ import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.entity.configuration.GlobalConfigFormat;
 import com.epam.fonda.tools.Tool;
-import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.utils.PipelineUtils;
 import lombok.Builder;
@@ -64,12 +63,10 @@ public class GatkSplitReads implements Tool<BamResult> {
         context.setVariable("splitBam", splitBam);
         context.setVariable("pathToBam", bamResult.getBamOutput().getBam());
         String cmd = templateEngine.process(GATK_SPLIT_READS_TOOL_TEMPLATE_NAME, context);
-        AbstractCommand command = BashCommand.withTool(cmd);
-        command.setTempDirs(Arrays.asList(splitBam, splitBamIndex));
-        bamResult.setCommand(command);
-        bamResult.setBamOutput(BamOutput.builder()
-                .bam(splitBam)
-                .build());
+        AbstractCommand resultCommand = bamResult.getCommand();
+        resultCommand.setToolCommand(resultCommand.getToolCommand() + cmd);
+        resultCommand.getTempDirs().addAll(Arrays.asList(splitBam, splitBamIndex));
+        bamResult.getBamOutput().setBam(splitBam);
         return bamResult;
     }
 
