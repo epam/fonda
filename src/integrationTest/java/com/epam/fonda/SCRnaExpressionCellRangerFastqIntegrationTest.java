@@ -21,7 +21,8 @@ import com.epam.fonda.utils.TemplateEngineUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -34,8 +35,10 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import static com.epam.fonda.utils.PipelineUtils.getExecutionPath;
+import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -86,27 +89,33 @@ public class SCRnaExpressionCellRangerFastqIntegrationTest extends AbstractInteg
         startAppWithConfigs("scRnaExpressionCellRangerFastq/gCount.txt",
                 SCRNA_EXPRESSION_FASTQ_STUDY_CONFIG);
 
-        assertAll(() -> assertTrue(new File(String.format("%s%s/sh_files", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
-            () -> assertTrue(new File(String.format("%s%s/log_files", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
-            () -> assertTrue(new File(String.format("%s%s/err_files", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
-            () -> assertTrue(new File(String.format("%s%s/count", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()));
+        assertAll(() -> assertTrue(new File(format("%s%s/sh_files", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/log_files", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/err_files", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/count", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()));
 
         cleanOutputDirForNextTest(OUTPUT_DIR, false);
     }
 
     @ParameterizedTest
-    @CsvSource({
-            SCRNA_EXPRESSION_FASTQ_COUNT_QC_GLOBAL_CONFIG + ", " + SCRNA_ANALYSIS_COUNT_QC_TEST_TEMPLATE_PATH,
-            SCRNA_EXPRESSION_FASTQ_COUNT_QC_DOUBLET_DETECTION_GLOBAL_CONFIG + ", "
-                    + SCRNA_ANALYSIS_COUNT_QC_DOUBLET_DETECTION_TEST_TEMPLATE_PATH,
-            SCRNA_EXPRESSION_FASTQ_COUNT_QC_SCRUBLET_GLOBAL_CONFIG + ", "
-                    + SCRNA_ANALYSIS_COUNT_QC_SCRUBLET_TEST_TEMPLATE_PATH
-        })
-    public void testCount(String globalConfigName, String templatePath) throws IOException, URISyntaxException {
-        startAppWithConfigs(globalConfigName, SCRNA_EXPRESSION_FASTQ_STUDY_CONFIG);
+    @MethodSource("initParameters")
+    public void testCount(String globalConfigPath, String templatePath) throws IOException, URISyntaxException {
+        startAppWithConfigs(globalConfigPath, SCRNA_EXPRESSION_FASTQ_STUDY_CONFIG);
         final String expectedCmd = expectedTemplateEngine.process(templatePath, context);
         assertEquals(expectedCmd, getActualCmd());
         cleanOutputDirForNextTest(OUTPUT_DIR, false);
+    }
+
+    @SuppressWarnings("PMD")
+    private static Stream<Arguments> initParameters() {
+        return Stream.of(
+                Arguments.of(SCRNA_EXPRESSION_FASTQ_COUNT_QC_GLOBAL_CONFIG,
+                        SCRNA_ANALYSIS_COUNT_QC_TEST_TEMPLATE_PATH),
+                Arguments.of(SCRNA_EXPRESSION_FASTQ_COUNT_QC_DOUBLET_DETECTION_GLOBAL_CONFIG,
+                        SCRNA_ANALYSIS_COUNT_QC_DOUBLET_DETECTION_TEST_TEMPLATE_PATH),
+                Arguments.of(SCRNA_EXPRESSION_FASTQ_COUNT_QC_SCRUBLET_GLOBAL_CONFIG,
+                        SCRNA_ANALYSIS_COUNT_QC_SCRUBLET_TEST_TEMPLATE_PATH)
+        );
     }
 
     @Test
