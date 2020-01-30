@@ -28,8 +28,6 @@ import lombok.NonNull;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import java.util.Collections;
-
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 @Data
@@ -58,17 +56,9 @@ public class GatkHaplotypeCallerRnaFilter implements Tool<VariantsVcfResult> {
         final Context context = buildContext(toolFields, additionalFields);
         final String cmd = templateEngine.process(GATK_HAPLOTYPE_CALLER_RNA_FILTER_TOOL_TEMPLATE_NAME, context);
         AbstractCommand command = BashCommand.withTool(variantsVcfResult.getAbstractCommand().getToolCommand() + cmd);
-        command.getTempDirs().addAll(Collections.singletonList(additionalFields.tmpGatkHapOutdir));
-        setFieldsVariantsVcfResult(additionalFields, command);
-        return variantsVcfResult;
-    }
-
-    private void setFieldsVariantsVcfResult(AdditionalFields additionalFields, AbstractCommand command) {
         variantsVcfResult.setAbstractCommand(command);
-        variantsVcfResult.getVariantsVcfOutput().setGatkHapFiltered(additionalFields.gatkHapFiltered);
-        variantsVcfResult.getVariantsVcfOutput().setVariantsOutputDir(additionalFields.gatkHapOutdir);
-        variantsVcfResult.getVariantsVcfOutput().setVariantsTmpOutputDir(additionalFields.tmpGatkHapOutdir);
-        variantsVcfResult.getVariantsVcfOutput().createDirectory();
+        variantsVcfResult.getVariantsVcfOutput().setVariantsVcfFiltered(additionalFields.variantsVcfFiltered);
+        return variantsVcfResult;
     }
 
     private Context buildContext(ToolFields toolFields, AdditionalFields additionalFields) {
@@ -89,11 +79,11 @@ public class GatkHaplotypeCallerRnaFilter implements Tool<VariantsVcfResult> {
     }
 
     private AdditionalFields initializeAdditionalFields() {
-        String gatkHapOutdir = String.format("%s/gatkHaplotypeCaller", sampleOutdir);
+        String gatkHapOutdir = variantsVcfResult.getVariantsVcfOutput().getVariantsOutputDir();
         return AdditionalFields.builder()
                 .gatkHapOutdir(gatkHapOutdir)
-                .tmpGatkHapOutdir(String.format("%s/tmp", gatkHapOutdir))
-                .gatkHapFiltered(String.format("%s/%s.gatkHaplotypeCaller.variants.vcf", gatkHapOutdir, sampleName))
+                .tmpGatkHapOutdir(variantsVcfResult.getVariantsVcfOutput().getVariantsTmpOutputDir())
+                .variantsVcfFiltered(String.format("%s/%s.gatkHaplotypeCaller.variants.vcf", gatkHapOutdir, sampleName))
                 .build();
     }
 
@@ -110,6 +100,6 @@ public class GatkHaplotypeCallerRnaFilter implements Tool<VariantsVcfResult> {
     private static class AdditionalFields {
         private String gatkHapOutdir;
         private String tmpGatkHapOutdir;
-        private String gatkHapFiltered;
+        private String variantsVcfFiltered;
     }
 }

@@ -1,5 +1,5 @@
 echo `date` Begin Step: GATK haplotypecaller filtration...
-java -Xmx10g -Djava.io.tmpdir=output/gatkHaplotypeCaller/tmp -jar gatk -T VariantFiltration -R genome -V gatkHapRaw -window 35 -cluster 3 -filterName FS -filter "FS>30.0" -filterName QD -filter "QD<2.0" --out output/gatkHaplotypeCaller/sampleName.gatkHaplotypeCaller.variants.vcf --validation_strictness SILENT
+java -Xmx10g -Djava.io.tmpdir=output/tmp -jar gatk -T VariantFiltration -R genome -V gatkHapRaw -window 35 -cluster 3 -filterName FS -filter "FS>30.0" -filterName QD -filter "QD<2.0" --out output/sampleName.gatkHaplotypeCaller.variants.vcf --validation_strictness SILENT
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: GATK haplotypecaller filtration.

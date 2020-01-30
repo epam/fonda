@@ -46,6 +46,8 @@ class GatkHaplotypeCallerRnaFilterTest extends AbstractTest {
         variantsVcfResult = VariantsVcfResult.builder()
                 .variantsVcfOutput(VariantsVcfOutput.builder()
                         .variantsVcf("gatkHapRaw")
+                        .variantsOutputDir(TEST_DIRECTORY)
+                        .variantsTmpOutputDir(String.format("%s/tmp", TEST_DIRECTORY))
                         .build())
                 .abstractCommand(BashCommand.withTool(""))
                 .build();

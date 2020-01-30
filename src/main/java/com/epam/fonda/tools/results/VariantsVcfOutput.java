@@ -31,7 +31,7 @@ public class VariantsVcfOutput implements DirectoryManager {
     private String variantsOutputDir;
     private String variantsTmpOutputDir;
     private String variantsVcf;
-    private String gatkHapFiltered;
+    private String variantsVcfFiltered;
 
     @Override
     public List<String> getDirs() {
