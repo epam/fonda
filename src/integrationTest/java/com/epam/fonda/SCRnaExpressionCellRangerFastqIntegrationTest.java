@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SCRnaExpressionCellRangerFastqIntegrationTest extends AbstractIntegrationTest {
+class SCRnaExpressionCellRangerFastqIntegrationTest extends AbstractIntegrationTest {
 
     private static final String OUTPUT_DIR = "output";
     private static final String OUTPUT_DIR_ROOT = "build/resources/integrationTest/";
@@ -71,7 +71,7 @@ public class SCRnaExpressionCellRangerFastqIntegrationTest extends AbstractInteg
     private Context context;
 
     @BeforeEach
-    public void setup() throws URISyntaxException {
+    void setup() {
         expectedSample = new FastqFileSample();
         expectedSample.setFastq1(Arrays.asList(FASTQ_1, FASTQ_2));
         expectedSample.setName(SAMPLE_1);
@@ -84,7 +84,7 @@ public class SCRnaExpressionCellRangerFastqIntegrationTest extends AbstractInteg
     }
 
     @Test
-    public void testCreateRnaCellRangerFastqSpecificDir() throws IOException {
+    void testCreateRnaCellRangerFastqSpecificDir() throws IOException {
         startAppWithConfigs("scRnaExpressionCellRangerFastq/gCount.txt",
                 SCRNA_EXPRESSION_FASTQ_STUDY_CONFIG);
 
@@ -98,7 +98,7 @@ public class SCRnaExpressionCellRangerFastqIntegrationTest extends AbstractInteg
 
     @ParameterizedTest
     @MethodSource("initParameters")
-    public void testCount(String globalConfigPath, String templatePath) throws IOException, URISyntaxException {
+    void testCount(String globalConfigPath, String templatePath) throws IOException, URISyntaxException {
         startAppWithConfigs(globalConfigPath, SCRNA_EXPRESSION_FASTQ_STUDY_CONFIG);
         final String expectedCmd = expectedTemplateEngine.process(templatePath, context);
         assertEquals(expectedCmd.trim(), getCmd(TEST_SHELL_SCRIPT_TEMPLATE_PATH).trim());
@@ -118,7 +118,7 @@ public class SCRnaExpressionCellRangerFastqIntegrationTest extends AbstractInteg
     }
 
     @Test
-    public void testExtractFastqDirFastq1() {
+    void testExtractFastqDirFastq1() {
         expectedSample.setFastq1(Arrays.asList(FASTQ_1, FASTQ_2));
         FastqFileSample actualSample = CellRangerUtils.extractFastqDir(expectedSample);
 
@@ -126,7 +126,7 @@ public class SCRnaExpressionCellRangerFastqIntegrationTest extends AbstractInteg
     }
 
     @Test
-    public void testExtractFastqDirFastq1Length1() {
+    void testExtractFastqDirFastq1Length1() {
         expectedSample.setFastq1(Collections.singletonList(FASTQ_1));
         FastqFileSample actualSample = CellRangerUtils.extractFastqDir(expectedSample);
 
@@ -134,7 +134,7 @@ public class SCRnaExpressionCellRangerFastqIntegrationTest extends AbstractInteg
     }
 
     @Test
-    public void testExtractFastqDirFastq1Fastq2() {
+    void testExtractFastqDirFastq1Fastq2() {
         expectedSample.setFastq1(Collections.singletonList(FASTQ_1));
         expectedSample.setFastq2(Collections.singletonList(FASTQ_2));
         FastqFileSample actualSample = CellRangerUtils.extractFastqDir(expectedSample);
