@@ -29,12 +29,8 @@ import org.thymeleaf.context.Context;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 import static com.epam.fonda.utils.PipelineUtils.getExecutionPath;
@@ -53,7 +49,6 @@ public class SCRnaExpressionCellRangerFastqIntegrationTest extends AbstractInteg
             "scRnaExpressionCellRangerFast_CountQC_template";
     private static final String SCRNA_ANALYSIS_COUNT_QC_SCRUBLET_TEST_TEMPLATE_PATH =
             "scRnaExpressionCellRangerFast_CountScrubletQC_template";
-    private static final String SCRNA_TEST_SAMPLE_LIST = "/ngs/data/demo/test/fastq";
     private static final String SCRNA_EXPRESSION_FASTQ_STUDY_CONFIG =
             "scRnaExpressionCellRangerFastq/sscRnaExpressionCellRangerFastq.txt";
     private static final String TEST_SHELL_SCRIPT_TEMPLATE_PATH =
@@ -65,23 +60,27 @@ public class SCRnaExpressionCellRangerFastqIntegrationTest extends AbstractInteg
             "scRnaExpressionCellRangerFastq/gDoubletDetection.txt";
     private static final String SCRNA_EXPRESSION_FASTQ_COUNT_QC_SCRUBLET_GLOBAL_CONFIG =
             "scRnaExpressionCellRangerFastq/gScrublet.txt";
+    private static final String FASTQ_DIR = "/ngs/data/demo/test/fastq/smv1_GTGTTCTA_L004_R1_001.fastq.gz";
 
     private static final String FASTQ_1 = "fastq1";
     private static final String FASTQ_2 = "fastq2";
-    public static final String SAMPLE_1 = "sampleName";
+    private static final String SAMPLE_1 = "sampleName";
 
     private FastqFileSample expectedSample;
     private TemplateEngine expectedTemplateEngine = TemplateEngineUtils.init();
     private Context context;
 
     @BeforeEach
-    public void setup() {
+    public void setup() throws URISyntaxException {
         expectedSample = new FastqFileSample();
         expectedSample.setFastq1(Arrays.asList(FASTQ_1, FASTQ_2));
         expectedSample.setName(SAMPLE_1);
         context = new Context();
         context.setVariable("jarPath", getExecutionPath());
-        context.setVariable("sampleList", SCRNA_TEST_SAMPLE_LIST);
+        FastqFileSample sampleForTestingWorkflow = new FastqFileSample();
+        sampleForTestingWorkflow.setFastq1(Collections.singletonList(FASTQ_DIR));
+        context.setVariable("sampleList", String.join(",",
+                CellRangerUtils.extractFastqDir(sampleForTestingWorkflow).getFastqDirs()));
     }
 
     @Test
@@ -102,7 +101,7 @@ public class SCRnaExpressionCellRangerFastqIntegrationTest extends AbstractInteg
     public void testCount(String globalConfigPath, String templatePath) throws IOException, URISyntaxException {
         startAppWithConfigs(globalConfigPath, SCRNA_EXPRESSION_FASTQ_STUDY_CONFIG);
         final String expectedCmd = expectedTemplateEngine.process(templatePath, context);
-        assertEquals(expectedCmd, getActualCmd());
+        assertEquals(expectedCmd.trim(), getCmd(TEST_SHELL_SCRIPT_TEMPLATE_PATH).trim());
         cleanOutputDirForNextTest(OUTPUT_DIR, false);
     }
 
@@ -141,12 +140,5 @@ public class SCRnaExpressionCellRangerFastqIntegrationTest extends AbstractInteg
         FastqFileSample actualSample = CellRangerUtils.extractFastqDir(expectedSample);
 
         assertTrue(actualSample.getFastqDirs().get(0).endsWith(APP_NAME));
-    }
-
-    private String getActualCmd() throws URISyntaxException, IOException {
-        Path path = Paths.get(Objects.requireNonNull(this.getClass().getClassLoader()
-                .getResource(TEST_SHELL_SCRIPT_TEMPLATE_PATH)).toURI());
-        byte[] fileBytes = Files.readAllBytes(path);
-        return new String(fileBytes);
     }
 }
