@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Comparator;
+import java.util.Objects;
 
 /**
  * Helper class to provide common functionality of integration tests
@@ -73,5 +74,18 @@ public abstract class AbstractIntegrationTest {
         String[] arg = new String[]{"-test", "-global_config", globalConfig, "-study_config", studyConfig};
 
         Main.main(arg);
+    }
+
+    /**
+     * @param templatePath path to a template
+     * @return the template represented by {@code String}
+     * @throws URISyntaxException if this URI cannot be converted to a URI
+     * @throws IOException if an I/O error occurs reading from the stream
+     */
+    public String getCmd(final String templatePath) throws URISyntaxException, IOException {
+        Path path = Paths.get(Objects.requireNonNull(this.getClass().getClassLoader()
+                .getResource(templatePath)).toURI());
+        byte[] fileBytes = Files.readAllBytes(path);
+        return new String(fileBytes);
     }
 }
