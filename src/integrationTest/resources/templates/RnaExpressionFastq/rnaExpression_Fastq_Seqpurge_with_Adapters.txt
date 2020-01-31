@@ -1,0 +1,62 @@
+#!/bin/bash -x
+
+# --- SGE options --- #
+
+#$ -wd build/resources/integrationTest/output
+#$ -N RnaExpression_Fastq_alignment_for_smv1_analysis
+#$ -o build/resources/integrationTest/output/log_files/RnaExpression_Fastq_alignment_for_smv1_analysis.log
+#$ -e build/resources/integrationTest/output/err_files/RnaExpression_Fastq_alignment_for_smv1_analysis.err
+#$ -q main.q
+#$ -R y
+#$ PE 4
+#$ -m a
+
+# --- The commands to be executed --- #
+
+cd build/resources/integrationTest/output
+
+echo `date` Begin the job execution...
+
+echo `date` Begin Step: Merge fastqs...
+zcat /ngs/data/demo/test/fastq/smv1_GTGTTCTA_L004_R1_001.fastq.gz /ngs/data/demo/test/fastq/smv1_GTGTTCTA_L005_R1_001.fastq.gz /ngs/data/demo/test/fastq/smv1_GTGTTCTA_L006_R1_001.fastq.gz /ngs/data/demo/test/fastq/smv1_GTGTTCTA_L007_R1_001.fastq.gz | gzip -c > build/resources/integrationTest/output/smv1/fastq/smv1.merged_R1.fastq.gz
+zcat /ngs/data/demo/test/fastq/smv1_GTGTTCTA_L004_R2_001.fastq.gz /ngs/data/demo/test/fastq/smv1_GTGTTCTA_L005_R2_001.fastq.gz /ngs/data/demo/test/fastq/smv1_GTGTTCTA_L006_R2_001.fastq.gz /ngs/data/demo/test/fastq/smv1_GTGTTCTA_L007_R2_001.fastq.gz | gzip -c > build/resources/integrationTest/output/smv1/fastq/smv1.merged_R2.fastq.gz
+
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Merge fastqs.
+	sleep 8
+else
+	echo `date` Error Step: Merge fastqs.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Seqpurge trimming...
+/opt/ngs_bits/ngs-bits/bin/SeqPurge -threads 4 -in1 build/resources/integrationTest/output/smv1/fastq/smv1.merged_R1.fastq.gz -in2 build/resources/integrationTest/output/smv1/fastq/smv1.merged_R2.fastq.gz -out1 build/resources/integrationTest/output/smv1/fastq/smv1.trimmed.R1.fastq.gz -out2 build/resources/integrationTest/output/smv1/fastq/smv1.trimmed.R2.fastq.gz -qcut 20 -a1 AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC -a2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Seqpurge trimming.
+	sleep 8
+else
+	echo `date` Error Step: Seqpurge trimming.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Remove temporary directories...
+rm -rf build/resources/integrationTest/output/smv1/tmp
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Remove temporary directories.
+	sleep 8
+else
+	echo `date` Error Step: Remove temporary directories.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Finish the job execution!
+

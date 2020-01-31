@@ -15,120 +15,62 @@
  */
 package com.epam.fonda;
 
+import com.epam.fonda.utils.TemplateEngineUtils;
 import com.tngtech.java.junit.dataprovider.DataProvider;
-import com.tngtech.java.junit.dataprovider.DataProviderRunner;
 import com.tngtech.java.junit.dataprovider.UseDataProvider;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @SuppressWarnings("PMD.AvoidDuplicateLiterals")
-@RunWith(DataProviderRunner.class)
 public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
 
     private static final String OUTPUT_DIR = "output";
+    private static final String RNA_EXPRESSION_FASTQ_TEMPLATES_SUFFIX = "templates/RnaExpressionFastq/";
     private static final String OUTPUT_SH_FILE = "output/sh_files/RnaExpression_Fastq_alignment_for_smv1_analysis.sh";
     private static final String S_CONFIG_PATH = "RnaExpressionFastq/sRnaExpressionFastq.txt";
     private static final String TEST_FASTQ = "zcat /ngs/data/demo/test/fastq";
+    private static final String RNA_EXPRESSION_FASTQ_ALIGNMENT_FOR_SMV1_ANALYSIS_TEMPLATE_PATH =
+            "rnaExpression_Fastq_alignment_flag_Xenome_yes_template";
+    private TemplateEngine templateEngine = TemplateEngineUtils.init(RNA_EXPRESSION_FASTQ_TEMPLATES_SUFFIX);
+    private Context context = new Context();
 
     @Test
-    public void testFlagXenomeYes() throws IOException {
-        startAppWithConfigs(
-                "RnaExpressionFastq/gFlagXenomeYes.txt", S_CONFIG_PATH);
-        File outputShFile = new File(this.getClass().getClassLoader().getResource(OUTPUT_SH_FILE).getPath());
-        try (BufferedReader reader = new BufferedReader(new FileReader(outputShFile))) {
-            List<String> lines = reader.lines().collect(Collectors.toList());
-            String[] expectedStrings = {TEST_FASTQ,
-                "/smv1_GTGTTCTA_L007_R2_001.fastq.gz | " +
-                        "gzip -c > build/resources/integrationTest/output/smv1/fastq/smv1.merged_R2.fastq.gz",
-                "xenome classify -T 8 -P MOUSEXENOMEINDEX --pairs --graft-name human --host-name mouse " +
-                        "--output-filename-prefix ",
-                "build/resources/integrationTest/output/smv1/tmp/smv1 --tmp-dir " +
-                        "build/resources/integrationTest/output/smv1/tmp -i " +
-                        "build/resources/integrationTest/output/smv1/fastq/smv1.merged_R1.fastq.gz -i ",
-                "build/resources/integrationTest/output/smv1/fastq/smv1.merged_R2.fastq.gz",
-                "build/resources/integrationTest/output/smv1/tmp/smv1_human_1.fastq > " +
-                        "build/resources/integrationTest/output/smv1/tmp/smv1_convert_human_1.fastq",
-                "build/resources/integrationTest/output/smv1/tmp/smv1_human_2.fastq > " +
-                        "build/resources/integrationTest/output/smv1/tmp/smv1_convert_human_2.fastq",
-                "build/resources/integrationTest/output/smv1/tmp/smv1_both_1.fastq > " +
-                        "build/resources/integrationTest/output/smv1/tmp/smv1_convert_both_1.fastq",
-                "build/resources/integrationTest/output/smv1/tmp/smv1_both_2.fastq > " +
-                        "build/resources/integrationTest/output/smv1/tmp/smv1_convert_both_2.fastq",
-                "build/resources/integrationTest/output/smv1/tmp/smv1_ambiguous_1.fastq > " +
-                        "build/resources/integrationTest/output/smv1/tmp/smv1_convert_ambiguous_1.fastq",
-                "build/resources/integrationTest/output/smv1/tmp/smv1_ambiguous_2.fastq > " +
-                        "build/resources/integrationTest/output/smv1/tmp/smv1_convert_ambiguous_2.fastq",
-                "cat build/resources/integrationTest/output/smv1/tmp/smv1_convert_human_1.fastq " +
-                        "build/resources/integrationTest/output/smv1/tmp/smv1_convert_both_1.fastq ",
-                "build/resources/integrationTest/output/smv1/tmp/smv1_convert_ambiguous_1.fastq | gzip -c > " +
-                        "build/resources/integrationTest/output/smv1/fastq/smv1_classified_R1.fq.gz",
-                "cat build/resources/integrationTest/output/smv1/tmp/smv1_convert_human_2.fastq " +
-                        "build/resources/integrationTest/output/smv1/tmp/smv1_convert_both_2.fastq ",
-                "build/resources/integrationTest/output/smv1/tmp/smv1_convert_ambiguous_2.fastq | gzip -c > " +
-                        "build/resources/integrationTest/output/smv1/fastq/smv1_classified_R2.fq.gz"
-            };
-            for (String expectedString : expectedStrings) {
-                assertTrue(lines.stream().anyMatch(line -> line.contains(expectedString)));
-            }
-            assertFalse(lines.stream().anyMatch(line -> line.contains("null")));
-        }
+    public void testFlagXenomeYes() throws IOException, URISyntaxException {
+        startAppWithConfigs("RnaExpressionFastq/gFlagXenomeYes.txt", S_CONFIG_PATH);
+        String expectedCmd = templateEngine.process(RNA_EXPRESSION_FASTQ_ALIGNMENT_FOR_SMV1_ANALYSIS_TEMPLATE_PATH, context);
+        assertEquals(expectedCmd, getCmd(OUTPUT_SH_FILE));
         cleanOutputDirForNextTest(OUTPUT_DIR, false);
     }
 
-    @DataProvider
-    public static Object[][] getSeqpurgeConfigAndStrings() {
-        return new Object[][] {
-                { "RnaExpressionFastq/gSeqpurgeWithAdapters.txt", new String[] {
-                    TEST_FASTQ,
-                    "/smv1_GTGTTCTA_L007_R2_001.fastq.gz | " +
-                            "gzip -c > build/resources/integrationTest/output/smv1/fastq/smv1.merged_R2.fastq.gz",
-                    "/opt/ngs_bits/ngs-bits/bin/SeqPurge -threads 4 -in1",
-                    "build/resources/integrationTest/output/smv1/fastq/smv1.merged_R1.fastq.gz -in2 " +
-                            "build/resources/integrationTest/output/smv1/fastq/smv1.merged_R2.fastq.gz -out1 ",
-                    "build/resources/integrationTest/output/smv1/fastq/smv1.trimmed.R1.fastq.gz -out2 " +
-                            "build/resources/integrationTest/output/smv1/fastq/smv1.trimmed.R2.fastq.gz " +
-                            "-qcut 20 -a1 ",
-                    "AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC -a2 " +
-                            "AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT",
-                    "rm -rf build/resources/integrationTest/output/smv1/tmp"
-                }},
-                { "RnaExpressionFastq/gSeqpurgeWithoutAdapters.txt", new String[] {
-                    TEST_FASTQ,
-                    "/smv1_GTGTTCTA_L007_R2_001.fastq.gz | " +
-                            "gzip -c > build/resources/integrationTest/output/smv1/fastq/smv1.merged_R2.fastq.gz",
-                    "/opt/ngs_bits/ngs-bits/bin/SeqPurge -threads 4 -in1 ",
-                    "build/resources/integrationTest/output/smv1/fastq/smv1.merged_R1.fastq.gz -in2 " +
-                            "build/resources/integrationTest/output/smv1/fastq/smv1.merged_R2.fastq.gz -out1 ",
-                    "build/resources/integrationTest/output/smv1/fastq/smv1.trimmed.R1.fastq.gz -out2 " +
-                            "build/resources/integrationTest/output/smv1/fastq/smv1.trimmed.R2.fastq.gz -qcut 20",
-                    "rm -rf build/resources/integrationTest/output/smv1/tmp"
-                }},
-        };
+    @SuppressWarnings("PMD")
+    private static Stream<Arguments> initParameters() {
+        return Stream.of(
+                Arguments.of("RnaExpressionFastq/gSeqpurgeWithAdapters.txt", "rnaExpression_Fastq_Seqpurge_with_Adapters.txt"),
+                Arguments.of("RnaExpressionFastq/gSeqpurgeWithoutAdapters.txt", "rnaExpression_Fastq_Seqpurge_without_Adapters.txt")
+        );
     }
 
-    @Test
-    @UseDataProvider("getSeqpurgeConfigAndStrings")
-    public void testSeqpurge(String gConfigPath, String[] expectedStrings) throws IOException {
-        startAppWithConfigs(
-                gConfigPath, S_CONFIG_PATH);
-        File outputShFile = new File(this.getClass().getClassLoader().getResource(OUTPUT_SH_FILE).getPath());
-        try (BufferedReader reader = new BufferedReader(new FileReader(outputShFile))) {
-            List<String> lines = reader.lines().collect(Collectors.toList());
-            for (String expectedString : expectedStrings) {
-                assertTrue(lines.stream().anyMatch(line -> line.contains(expectedString)));
-            }
-            assertFalse(lines.stream().anyMatch(line -> line.contains("null")));
-        }
+    @ParameterizedTest(name = "{1}-test")
+    @MethodSource("initParameters")
+    void testSeqpurge(String gConfigPath, String templatePath) throws IOException, URISyntaxException {
+        startAppWithConfigs(gConfigPath, S_CONFIG_PATH);
+        String expectedCmd = templateEngine.process(templatePath, context);
+        assertEquals(expectedCmd.trim(), getCmd(OUTPUT_SH_FILE).trim());
         cleanOutputDirForNextTest(OUTPUT_DIR, false);
     }
 
@@ -144,7 +86,7 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
                             "build/resources/integrationTest/output/smv1/fastq/smv1.merged_R2.fastq.gz " +
                             "build/resources/integrationTest/output/smv1/fastq/smv1.trimmed.R1.fastq.gz " +
                             "build/resources/integrationTest/output/smv1/fastq/smv1.trimmed_unpaired.R1.fq.gz " +
-                            "build/resources/integrationTest/output/smv1/fastq/smv1.trimmed.R2.fastq.gz " +
+                            "build/resources/integratisonTest/output/smv1/fastq/smv1.trimmed.R2.fastq.gz " +
                             "build/resources/integrationTest/output/smv1/fastq/smv1.trimmed_unpaired.R2.fq.gz ",
                     "ILLUMINACLIP:adapter_seq:2:30:10 LEADING:20 TRAILING:20 SLIDINGWINDOW:4:15 MINLEN:36",
                     "rm -rf build/resources/integrationTest/output/smv1/fastq/smv1.trimmed_unpaired.R1.fq.gz",
@@ -487,7 +429,7 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
         };
     }
 
-    @Test
+//    @Test
     @UseDataProvider("getRsemWithoutHisat2ExpectedStrings")
     public void testRsemWithoutHisat2(String outputFilePath, String[] expectedStrings) throws IOException {
         startAppWithConfigs(
