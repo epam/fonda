@@ -43,4 +43,3 @@ else
 	exit 1;
 fi
 echo `date` Finish the job execution!
-

@@ -18,43 +18,39 @@ package com.epam.fonda;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.utils.CellRangerUtils;
 import com.epam.fonda.utils.TemplateEngineUtils;
-import com.tngtech.java.junit.dataprovider.DataProvider;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
-import com.tngtech.java.junit.dataprovider.UseDataProvider;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertFalse;
-
 
 @RunWith(DataProviderRunner.class)
 public class SCImmuneProfileCellRangerFastqTest extends AbstractIntegrationTest {
 
     private static final String OUTPUT_DIR = "output";
-    private static final String SCIMMUNE_PROFILE_CELLRANGER_FASTQ_TEST_TEMPLATE_PATH =
+    private static final String SCIMMUNE_PROFILE_CELLRANGER_FASTQ_PBMC4K_TEST_TEMPLATE_PATH =
             "scImmuneProfileCellRangerFastq_VdjQc_template";
+    public static final String SCIMMUNE_PROFILE_CELL_RANGER_FASTQ_COHORT_TEST_TEMPLATE_PATH =
+            "SCImmuneProfileCellRangerFastq_Cohort_template";
     private static final String GLOBAL_CONFIG_NAME = "SCImmuneProfileCellRangerFastq/vdj.txt";
     private static final String STUDY_CONFIG_NAME =
             "SCImmuneProfileCellRangerFastq/SCImmuneProfileCellRangerFastq.txt";
+    private static final String OUTPUT_FILE_FOR_COHORT_ANALYSIS_SH =
+            "output/sh_files/scImmuneProfile_CellRanger_Fastq_qcsummary_for_cohort_analysis.sh";
+    public static final String OUTPUT_FILE_FOR_PBMC_4_K_ANALYSIS_SH =
+            "output/sh_files/scImmuneProfile_CellRanger_Fastq_alignment_for_pbmc4k_analysis.sh";
     private static String fastqDirs;
+    private Context context = new Context();
     private TemplateEngine expectedTemplateEngine = TemplateEngineUtils.init();
 
-    @Before
+    @BeforeEach
     public void setup() {
         FastqFileSample expectedSample = FastqFileSample.builder()
                 .name("sampleName")
@@ -63,35 +59,30 @@ public class SCImmuneProfileCellRangerFastqTest extends AbstractIntegrationTest 
                 .sampleOutputDir("build/resources/integrationTest/output/pbmc4k")
                 .build();
         fastqDirs = String.join(",", CellRangerUtils.extractFastqDir(expectedSample).getFastqDirs());
+        context.setVariable("fastqDir", fastqDirs);
+        startAppWithConfigs(GLOBAL_CONFIG_NAME, STUDY_CONFIG_NAME);
     }
 
-    @DataProvider
-    public static Object[] getSCImmuneProfileCellRangerFastqExpectedStrings() {
-        return new Object[][]{
-                {"output/sh_files/scImmuneProfile_CellRanger_Fastq_qcsummary_for_cohort_analysis.sh", new String[]{
-                    "echo $(date) Error QC results from pbmc4k:",
-                    "echo $(date) Confirm QC results from pbmc4k",
-                    "build/resources/integrationTest/output/log_files/"
-                            + "scImmuneProfile_CellRanger_Fastq_alignment_for_pbmc4k_analysis.log",
-                    "/ngs/data/app/R/v3.5.0/bin/Rscript",
-                    "scImmuneProfile_CellRanger_Fastq"}
-                }
-        };
-    }
+//    @DataProvider
+//    public static Object[] getSCImmuneProfileCellRangerFastqExpectedStrings() {
+//        return new Object[][]{
+//                {"output/sh_files/scImmuneProfile_CellRanger_Fastq_qcsummary_for_cohort_analysis.sh", new String[]{
+//                    "echo $(date) Error QC results from pbmc4k:",
+//                    "echo $(date) Confirm QC results from pbmc4k",
+//                    "build/resources/integrationTest/output/log_files/"
+//                            + "scImmuneProfile_CellRanger_Fastq_alignment_for_pbmc4k_analysis.log",
+//                    "/ngs/data/app/R/v3.5.0/bin/Rscript",
+//                    "scImmuneProfile_CellRanger_Fastq"}
+//                }
+//        };
+//    }
 
     @Test
-    @UseDataProvider("getSCImmuneProfileCellRangerFastqExpectedStrings")
-    public void testVdj(String outputFile, String[] expectedStrings) throws IOException, URISyntaxException {
+    public void testCohortAnalyses() throws IOException, URISyntaxException {
         startAppWithConfigs(GLOBAL_CONFIG_NAME, STUDY_CONFIG_NAME);
 
-        Path path = Paths.get(getClass().getClassLoader().getResource(outputFile).toURI());
-        Stream<String> lines = Files.lines(path);
-        List<String> linesList = lines.collect(Collectors.toList());
-        for (String expectedString : expectedStrings) {
-            assertTrue(linesList.stream().anyMatch(line -> line.contains(expectedString)));
-        }
-        assertFalse(linesList.stream().anyMatch(line -> line.contains("null")));
-        lines.close();
+        String expectedCmd = expectedTemplateEngine.process(SCIMMUNE_PROFILE_CELL_RANGER_FASTQ_COHORT_TEST_TEMPLATE_PATH, context);
+        assertEquals(expectedCmd, getCmd(OUTPUT_FILE_FOR_COHORT_ANALYSIS_SH));
         cleanOutputDirForNextTest(OUTPUT_DIR, false);
     }
 
@@ -99,16 +90,9 @@ public class SCImmuneProfileCellRangerFastqTest extends AbstractIntegrationTest 
     public void testVdjForPbmc4kAnalysis() throws IOException, URISyntaxException {
         startAppWithConfigs(GLOBAL_CONFIG_NAME, STUDY_CONFIG_NAME);
 
-        Context context = new Context();
-        context.setVariable("fastqDir", fastqDirs);
         final String expectedCmd = expectedTemplateEngine
-                .process(SCIMMUNE_PROFILE_CELLRANGER_FASTQ_TEST_TEMPLATE_PATH, context);
-
-        Path path = Paths.get(this.getClass().getClassLoader()
-                .getResource("output/sh_files/scImmuneProfile_CellRanger_Fastq_alignment_for_pbmc4k_analysis.sh")
-                .toURI());
-        byte[] fileBytes = Files.readAllBytes(path);
-        final String actualCmd = new String(fileBytes);
+                .process(SCIMMUNE_PROFILE_CELLRANGER_FASTQ_PBMC4K_TEST_TEMPLATE_PATH, context);
+        final String actualCmd = getCmd(OUTPUT_FILE_FOR_PBMC_4_K_ANALYSIS_SH).trim();
 
         assertEquals(expectedCmd, actualCmd);
         cleanOutputDirForNextTest(OUTPUT_DIR, false);

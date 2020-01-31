@@ -1,0 +1,53 @@
+#!/bin/bash -x
+
+# --- SGE options --- #
+
+#$ -wd build/resources/integrationTest/output
+#$ -N scImmuneProfile_CellRanger_Fastq_qcsummary_for_cohort_analysis
+#$ -o build/resources/integrationTest/output/scImmuneProfile_CellRanger_Fastq_Test/log_files/scImmuneProfile_CellRanger_Fastq_qcsummary_for_cohort_analysis.log
+#$ -e build/resources/integrationTest/output/scImmuneProfile_CellRanger_Fastq_Test/err_files/scImmuneProfile_CellRanger_Fastq_qcsummary_for_cohort_analysis.err
+#$ -q all.q
+#$ -R y
+#$ -pe threaded 8
+#$ -m a
+
+# --- The commands to be executed --- #
+
+cd build/resources/integrationTest/output
+
+echo `date` Begin the job execution...
+
+logFile=/build/resources/integrationTest/output/scImmuneProfile_CellRanger_Fastq_Test/log_files/scImmuneProfile_CellRanger_Fastq_alignment_for_pbmc4k_analysis.log
+str=""
+while [[ $str = "" ]]
+do
+if [[ -f $logFile  ]];
+then
+    str=$(grep -E "(Successful|Error) Step: Cellranger vdj analysis" $logFile;)
+fi
+    echo Waiting for step: Cellranger vdj analysis
+    sleep 60
+done
+
+if [[ $str == "*Error Step: Cellranger vdj analysis*" ]];
+then
+    echo $(date) Error QC results from pbmc4k:
+    echo $str
+else
+    echo $(date) Confirm QC results from pbmc4k
+fi
+
+echo `date` Begin Step: QC summary analysis...
+/ngs/data/app/R/v3.5.0/bin/Rscript build/libs/src/R/QC_summary_analysis.R -i example/sample_manifest/scImmuneProfile_CellRanger_RNASeq_SampleFastqPaths.txt -d build/resources/integrationTest/output/scImmuneProfile_CellRanger_Fastq_Test -w scImmuneProfile_CellRanger_Fastq
+if [ $? -eq 0 ]
+then
+    echo `date` Successful Step: QC summary analysis.
+    sleep 8
+else
+    echo `date` Error Step: QC summary analysis.
+
+    echo `date` The job was aborted due to ERRORS found.
+    exit 1;
+fi
+echo `date` Finish the job execution!
+
