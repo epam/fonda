@@ -19,9 +19,9 @@ echo `date` Begin the job execution...
 
 logFile=/build/resources/integrationTest/output/scImmuneProfile_CellRanger_Fastq_Test/log_files/scImmuneProfile_CellRanger_Fastq_alignment_for_pbmc4k_analysis.log
 str=""
-while [[ $str = "" ]]
+while [[('[')]][ $str = "" ]]
 do
-if [[ -f $logFile  ]];
+if [[('[')]][ -f $logFile  ]];
 then
     str=$(grep -E "(Successful|Error) Step: Cellranger vdj analysis" $logFile;)
 fi
@@ -29,7 +29,7 @@ fi
     sleep 60
 done
 
-if [[ $str == "*Error Step: Cellranger vdj analysis*" ]];
+if [[('[')]][ $str == "*Error Step: Cellranger vdj analysis*" ]];
 then
     echo $(date) Error QC results from pbmc4k:
     echo $str
