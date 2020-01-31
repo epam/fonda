@@ -33,6 +33,10 @@ import org.apache.commons.lang3.Validate;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.util.Arrays;
+
+import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
+
 @Slf4j
 @RequiredArgsConstructor
 public class Count implements Tool<BamResult> {
@@ -64,6 +68,7 @@ public class Count implements Tool<BamResult> {
         private String indices;
         private String bam;
         private String matrixInfo;
+        private int numThreads;
     }
 
     @Override
@@ -72,6 +77,10 @@ public class Count implements Tool<BamResult> {
         Context context = new Context();
         context.setVariable("countFields", countFields);
         final String cmd = templateEngine.process(COUNT_TEMPLATE, context);
+        TASK_TO_CHECK.addAll(Arrays.asList("Cellranger count", "Generate gene-barcode matrix"));
+        if (countFields.genomeBuild.split("\\s*,\\s*").length == 2) {
+            TASK_TO_CHECK.add("Merge gene-barcode matrix");
+        }
         bamResult.setCommand(BashCommand.withTool(cmd));
         bamResult.setBamOutput(BamOutput.builder().bam(countFields.bam).build());
         return bamResult;
@@ -108,6 +117,7 @@ public class Count implements Tool<BamResult> {
         countFields.bam = String.format("%s/%s/possorted_genome_bam.bam", samplePath, CELLRANGER_OUTPUT_FOLDER);
         countFields.matrixInfo = String.format("%s/%s/filtered_feature_bc_matrix", samplePath,
                 CELLRANGER_OUTPUT_FOLDER);
+        countFields.numThreads = configuration.getGlobalConfig().getQueueParameters().getNumThreads();
         return countFields;
     }
 

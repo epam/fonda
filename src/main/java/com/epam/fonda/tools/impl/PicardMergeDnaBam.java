@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 @RequiredArgsConstructor
@@ -75,6 +76,7 @@ public class PicardMergeDnaBam implements Tool<BamResult> {
         context.setVariable("toolFields", initializeToolFields(configuration));
         context.setVariable("additionalFields", additionalFields);
         String cmd = templateEngine.process(PICARD_MERGE_DNA_BAM_TOOL_TEMPLATE_NAME, context);
+        TASK_TO_CHECK.addAll(Arrays.asList("Merge DNA bams", "Index bam"));
         final BamOutput bamOutput = BamOutput.builder().bam(additionalFields.mergedBam).build();
         final BashCommand command = BashCommand.withTool(cmd);
         final List<String> filesToDelete = Arrays.asList(

@@ -15,6 +15,7 @@
  */
 package com.epam.fonda.tools.impl;
 
+import com.epam.fonda.utils.PipelineUtils;
 import lombok.Data;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
@@ -31,6 +32,7 @@ public abstract class AbstractTest {
     @AfterEach
     public void deleteTestDirectory() throws IOException {
         FileUtils.deleteDirectory(new File(TEST_DIRECTORY));
+        PipelineUtils.TASK_TO_CHECK.clear();
     }
 
     String readFile(Path path) throws IOException {

@@ -33,6 +33,7 @@ import org.thymeleaf.context.Context;
 
 import java.util.Arrays;
 
+import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 @RequiredArgsConstructor
@@ -87,6 +88,7 @@ public class Hisat2 implements Tool<BamResult> {
         context.setVariable("toolFields", initializeToolFields(configuration));
         context.setVariable("bam", bam);
         String cmd = templateEngine.process(HISAT2_TOOL_TEMPLATE_NAME, context);
+        TASK_TO_CHECK.addAll(Arrays.asList("HISAT2 alignment", "Index bam"));
         BamOutput bamOutput = BamOutput.builder().build();
         bamOutput.setBam(bam);
         bamOutput.setBamIndex(additionalHisat2Fields.bamIndex);

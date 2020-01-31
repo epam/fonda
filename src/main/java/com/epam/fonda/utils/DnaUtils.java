@@ -22,11 +22,13 @@ import lombok.Data;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static java.lang.String.format;
 
 public final class DnaUtils {
@@ -48,7 +50,7 @@ public final class DnaUtils {
     private static final String CONFIRM_MSG_WITH_SAMPLE = "confirmMsgWithSampleName";
     private static final String ERROR_MSG_WITH_CONTROL_SAMPLE = "errorMsgWithControlSampleName";
     private static final String CONFIRM_MSG_WITH_CONTROL_SAMPLE = "confirmMsgWithControlSampleName";
-    private static final String BAM_INDEX_TAG = "Index bam.";
+    private static final String BAM_INDEX_TAG = "Index bam";
 
     @Data
     @Builder
@@ -101,6 +103,7 @@ public final class DnaUtils {
                         sampleName));
             }
         }
+        TASK_TO_CHECK.addAll(Collections.singleton(tag));
         return getLogFileScanningShellScript(logFileFields, tag, msgMap, period, index);
     }
 
@@ -161,6 +164,7 @@ public final class DnaUtils {
 
     private static Context buildContext(LogFileFields logFileFields, String tag, Map<String, String> msgMap,
                                         Integer period, String index) {
+        TASK_TO_CHECK.add(tag);
         Context context = new Context();
         String ifScript1 = "if [[ $str == \"*Error Step: ";
         String ifScript2 = "if [[ -f $logFile  ]];";
@@ -168,7 +172,8 @@ public final class DnaUtils {
         context.setVariable("logFileWithSampleName", logFileFields.logFileWithSampleName);
         context.setVariable("logFileWithControlSampleName", logFileFields.logFileWithControlSampleName);
         context.setVariable("logFileWithSampleNameIndex", logFileFields.logFileWithSampleNameIndex);
-        context.setVariable("tag", tag);
+        context.setVariable("tag", TASK_TO_CHECK.stream().reduce((first, second) -> second).orElse(null));
+        context.setVariable("steps", String.join("|", TASK_TO_CHECK));
         context.setVariable(ERROR_MSG_WITH_SAMPLE, msgMap.get(ERROR_MSG_WITH_SAMPLE));
         context.setVariable(CONFIRM_MSG_WITH_SAMPLE, msgMap.get(CONFIRM_MSG_WITH_SAMPLE));
         context.setVariable(ERROR_MSG_WITH_CONTROL_SAMPLE, msgMap.get(ERROR_MSG_WITH_CONTROL_SAMPLE));

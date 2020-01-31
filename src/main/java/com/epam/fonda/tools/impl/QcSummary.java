@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 @RequiredArgsConstructor
@@ -85,6 +86,7 @@ public class QcSummary implements PostProcessTool {
                 .successMessage("Confirm QC results from " + sample)
                 .task("QC summary analysis")
                 .jarPath(PipelineUtils.getExecutionPath())
+                .steps(String.join("|", TASK_TO_CHECK))
                 .build();
         String workflow = qcSummaryFields.getWorkflow();
         final String tag = getValueForSpecificVar(workflow, Variable.TAG);
@@ -95,6 +97,7 @@ public class QcSummary implements PostProcessTool {
 
         qcSummaryFields.setTag(tag);
         qcSummaryFields.setLogFile(logFile);
+        TASK_TO_CHECK.add("QC summary analysis");
 
         return qcSummaryFields;
     }
@@ -166,5 +169,6 @@ public class QcSummary implements PostProcessTool {
         private String fastqList;
         private String jarPath;
         private String task;
+        private String steps;
     }
 }

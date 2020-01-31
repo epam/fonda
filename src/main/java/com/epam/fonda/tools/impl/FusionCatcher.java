@@ -32,6 +32,7 @@ import org.thymeleaf.context.Context;
 
 import java.util.Collections;
 
+import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 @Data
@@ -78,6 +79,7 @@ public class FusionCatcher implements Tool<FusionCatcherResult> {
         Context context = new Context();
         context.setVariable("fusionCatcherFields", fusionCatcherFields);
         final String cmd = templateEngine.process(FUSION_CATCHER_TOOL_TEMPLATE_NAME, context);
+        TASK_TO_CHECK.add("FusionCatcher");
         AbstractCommand command = BashCommand.withTool(cmd);
         command.setTempDirs(Collections.singletonList(fusionCatcherFields.tmpFusionCatcherOutdir));
         return FusionCatcherResult.builder()

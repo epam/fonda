@@ -15,6 +15,9 @@
  */
 package com.epam.fonda;
 
+import com.epam.fonda.utils.PipelineUtils;
+import org.junit.jupiter.api.AfterEach;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -29,6 +32,11 @@ import java.util.Objects;
  * Helper class to provide common functionality of integration tests
  */
 public abstract class AbstractIntegrationTest {
+
+    @AfterEach
+    public void cleanup() {
+        PipelineUtils.TASK_TO_CHECK.clear();
+    }
 
     /**
      * @param outputDir a path to the directory need to be deleted

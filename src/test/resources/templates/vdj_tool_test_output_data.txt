@@ -1,6 +1,6 @@
 echo `date` Begin Step: Cellranger vdj analysis...
 cd output/vdj
-cellranger vdj --id=sampleName --reference=genome --chain=chain  --lanes=lanes --indices=indices --denovo=TRUE --fastqs=[(${fastqDirs})] --sample=sampleName --force-cells=forcedCells
+cellranger vdj --localcores=3 --id=sampleName --reference=genome --lanes=lanes --indices=indices --denovo=TRUE --fastqs=[(${fastqDirs})] --sample=sampleName --force-cells=forcedCells
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Cellranger vdj analysis.

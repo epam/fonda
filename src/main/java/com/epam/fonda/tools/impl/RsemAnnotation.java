@@ -28,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 @RequiredArgsConstructor
@@ -60,6 +61,7 @@ public class RsemAnnotation implements Tool<RsemResult> {
         Context context = new Context();
         context.setVariable("rsemAnnotationFields", rsemAnnotationFields);
         final String cmd = templateEngine.process(RSEM_ANNOTATION_TEMPLATE_NAME, context);
+        TASK_TO_CHECK.add("RSEM annotation");
         rsemResult.setCommand(BashCommand.withTool(rsemResult.getCommand().getToolCommand() + cmd));
         return rsemResult;
     }

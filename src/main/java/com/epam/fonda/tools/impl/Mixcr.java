@@ -33,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 @RequiredArgsConstructor
@@ -90,6 +91,7 @@ public class Mixcr implements Tool<MixcrResult> {
         Context context = new Context();
         context.setVariable("mixcrFields", mixcrFields);
         final String cmd = templateEngine.process(MIXCR_TOOL_TEMPLATE_NAME, context);
+        TASK_TO_CHECK.add("MIXCR detection");
         return MixcrResult.builder()
                 .command(BashCommand.withTool(cmd))
                 .fastqResult(fastqResult)
@@ -110,9 +112,9 @@ public class Mixcr implements Tool<MixcrResult> {
                 GlobalConfigFormat.SPECIES);
         String sampleName = validate(sample.getName(), ToolUtils.SAMPLE_NAME);
         String spe = "";
-        if (species.equals("human")) {
+        if ("human".equals(species)) {
             spe = "hsa";
-        } else if (species.equals("mouse")) {
+        } else if ("mouse".equals(species)) {
             spe = "mmu";
         }
         return MixcrFields.builder()

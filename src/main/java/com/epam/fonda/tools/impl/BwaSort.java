@@ -33,6 +33,7 @@ import org.thymeleaf.context.Context;
 
 import java.util.Arrays;
 
+import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 @Data
@@ -73,6 +74,7 @@ public class BwaSort implements Tool<BamResult> {
                 : String.format("%s,%s", bamOutput.getBam(), bwaSortFields.sortedBam));
         AbstractCommand command = BashCommand.withTool(cmd);
         command.setTempDirs(Arrays.asList(bwaSortFields.sortedBam, bwaSortFields.sortedBamIndex));
+        TASK_TO_CHECK.addAll(Arrays.asList("BWA alignment", "Index bam"));
         return BamResult.builder()
                 .bamOutput(bamOutput)
                 .command(command)

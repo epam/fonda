@@ -32,6 +32,7 @@ import org.thymeleaf.context.Context;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.PipelineUtils.cleanUpTmpDir;
 import static com.epam.fonda.utils.ToolUtils.validate;
 import static java.lang.String.format;
@@ -99,6 +100,7 @@ public class FeatureCount implements Tool<FeatureCountResult> {
         context.setVariable("queueParametersFields", initializeQueueParametersFields(configuration));
         context.setVariable("directoryFields", initializeDirectoryFields(configuration, featureOutdir));
         String cmd = templateEngine.process(FEATURECOUNT_TOOL_TEMPLATE_NAME, context);
+        TASK_TO_CHECK.add("Feautrecounts");
         featureCountOutput.setFeatureCountGeneCount(additionalFeatureCountFields.featureCountGeneCount);
         return FeatureCountResult.builder()
                 .featureCountOutput(featureCountOutput)

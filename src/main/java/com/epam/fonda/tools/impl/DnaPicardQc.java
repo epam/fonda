@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.PipelineUtils.getExecutionPath;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
@@ -144,6 +145,7 @@ public class DnaPicardQc implements Tool<MetricsResult> {
             dnaPicardQcAdditionalResults.add(metricsFields.getRmdupHsMetrics());
             metricsResultsList.addAll(dnaPicardQcAdditionalResults);
         }
+        TASK_TO_CHECK.addAll(Arrays.asList("DNA QC metrics", "Merge DNA QC"));
         resultCommand.setToolCommand(resultCommand.getToolCommand() + cmd);
         resultCommand.getTempDirs().addAll(metricsResultsList);
 

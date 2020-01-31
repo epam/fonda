@@ -32,6 +32,7 @@ import org.thymeleaf.context.Context;
 
 import java.util.Collections;
 
+import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 @RequiredArgsConstructor
@@ -71,6 +72,7 @@ public class Sequenza implements Tool<SequenzaResult> {
         final Context context = new Context();
         context.setVariable("toolFields", toolFields);
         final String cmd = templateEngine.process(SEQUENZA_TOOL_TEMPLATE, context);
+        TASK_TO_CHECK.add("Sequenza detection");
         final SequenzaOutput output = SequenzaOutput.builder()
                 .sequenzaSegOutput(toolFields.getSequenzaSeg())
                 .sequenzaInforOutput(toolFields.getSequenzaInfor())

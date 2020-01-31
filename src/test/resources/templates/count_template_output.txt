@@ -1,6 +1,6 @@
 echo `date` Begin Step: Cellranger count...
 cd output/count
-cellRanger count --id=sampleName --transcriptome=transcriptome --chemistry=chemistry --r1-length=r1Length --r2-length=r2Length --lanes=lanes --indices=indices --fastqs=[(${fastqDirs})] --sample=sampleName --force-cells=forcedCells
+cellRanger count --localcores=3 --id=sampleName --transcriptome=transcriptome --chemistry=chemistry --r1-length=r1Length --r2-length=r2Length --lanes=lanes --indices=indices --fastqs=[(${fastqDirs})] --sample=sampleName --force-cells=forcedCells
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Cellranger count.

@@ -33,6 +33,7 @@ import org.thymeleaf.context.Context;
 
 import java.util.Collections;
 
+import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 @RequiredArgsConstructor
@@ -90,6 +91,7 @@ public class ContEst implements Tool<ContEstResult> {
                 .build();
         contEstOutput.createDirectory();
         String cmd = templateEngine.process(CONT_EST_TOOL_TEMPLATE_NAME, context);
+        TASK_TO_CHECK.add("Contamination estimation");
         final BashCommand command = BashCommand.withTool(cmd);
         command.setTempDirs(Collections.singletonList(additionalFields.tmpContEstOutDir));
         return ContEstResult.builder()

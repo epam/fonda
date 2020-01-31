@@ -30,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 import static java.lang.String.format;
 
@@ -84,6 +85,7 @@ public class Xenome implements Tool<FastqResult> {
         Context context = new Context();
         context.setVariable("xenomeFields", xenomeFields);
         final String cmd = templateEngine.process(XENOME_TOOL_TEMPLATE_NAME, context);
+        TASK_TO_CHECK.add("Xenome classification");
         final FastqOutput fastqOutput = result.getOut();
         fastqOutput.setMergedFastq1(xenomeFields.humanMergedFastq1);
         fastqOutput.setMergedFastq2(xenomeFields.humanMergedFastq2);

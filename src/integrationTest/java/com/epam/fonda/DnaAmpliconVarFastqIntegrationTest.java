@@ -503,7 +503,7 @@ public class DnaAmpliconVarFastqIntegrationTest extends AbstractIntegrationTest 
     }
 
     private void commonQcSummary(List<String> lines) {
-        assertTrue(lines.stream().anyMatch(line -> line.contains("grep -E \"(Successful|Error) Step: Merge DNA QC\"")));
+        assertTrue(lines.stream().anyMatch(line -> line.contains("(Successful Step: Merge DNA QC)")));
         assertTrue(lines.stream().anyMatch(line -> line.contains(
                 "build/resources/integrationTest/output/log_files/" +
                         "DnaAmpliconVar_Fastq_postalignment_for_GA5_analysis.log")));
@@ -514,7 +514,6 @@ public class DnaAmpliconVarFastqIntegrationTest extends AbstractIntegrationTest 
     }
 
     private void commonPostalignment(List<String> lines) {
-        assertTrue(lines.stream().anyMatch(line -> line.contains("grep -E \"(Successful|Error) Step: Index bam.\" ")));
         assertTrue(lines.stream().anyMatch(line -> line.contains(
                 "build/resources/integrationTest/output/log_files/" +
                         "DnaAmpliconVar_Fastq_alignment_for_GA5_1_analysis.log")));
@@ -525,7 +524,7 @@ public class DnaAmpliconVarFastqIntegrationTest extends AbstractIntegrationTest 
         assertTrue(lines.stream().anyMatch(line -> line.contains("Begin Step: Index bam...")));
         assertTrue(lines.stream().anyMatch(line -> line.contains("/opt/samtools/samtools-0.1.19/samtools index " +
                 "build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam")));
-        assertTrue(lines.stream().anyMatch(line -> line.contains("grep -E \"(Successful|Error) Step: Index mkdup ")));
+        assertTrue(lines.stream().anyMatch(line -> line.contains("Successful Step: Index bam")));
         assertTrue(lines.stream().anyMatch(line -> line.contains("build/resources/integrationTest/output/log_files/" +
                 "DnaAmpliconVar_Fastq_postalignment_for_GA5_analysis.log")));
         assertTrue(lines.stream().anyMatch(line -> line.contains(REMOVE_TEMP_DIRS_STEP)));

@@ -30,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 import static java.lang.String.format;
 
@@ -78,6 +79,7 @@ public class SeqPurge implements Tool<FastqResult> {
         Context context = new Context();
         context.setVariable("seqPurgeFields", seqPurgeFields);
         final String cmd = templateEngine.process(SEQPURGE_TOOL_TEMPLATE_NAME, context);
+        TASK_TO_CHECK.add("Seqpurge trimming");
         final FastqOutput fastqOutput = result.getOut();
         fastqOutput.setMergedFastq1(seqPurgeFields.trimmedFastq1);
         fastqOutput.setMergedFastq2(seqPurgeFields.trimmedFastq2);

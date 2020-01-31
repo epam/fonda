@@ -33,6 +33,7 @@ import org.thymeleaf.context.Context;
 
 import java.util.Arrays;
 
+import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 @RequiredArgsConstructor
@@ -75,6 +76,7 @@ public class Exomecnv implements Tool<ExomecnvResult> {
         final Context context = new Context();
         context.setVariable("toolFields", toolFields);
         final String cmd = templateEngine.process(EXOMECNV_TEMPLATE, context);
+        TASK_TO_CHECK.add("ExomeCNV detection");
         final ExomecnvOutput output = ExomecnvOutput.builder()
                 .readDepthSummary(toolFields.getReadDepthSummary())
                 .controlReadDepthSummary(toolFields.getControlReadDepthSummary())

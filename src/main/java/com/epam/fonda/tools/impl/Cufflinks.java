@@ -29,6 +29,7 @@ import lombok.Data;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 import static java.lang.String.format;
 
@@ -59,6 +60,7 @@ public class Cufflinks implements Tool<CufflinksResult> {
         Context context = new Context();
         context.setVariable("cufflinksFields", cufflinksFields);
         final String cmd = templateEngine.process(CUFFLINKS_TOOL_TEMPLATE_NAME, context);
+        TASK_TO_CHECK.add("Cufflinks");
         cufflinksOutput.setCufflinksGeneResult(cufflinksFields.cufflinksGeneResult);
         cufflinksOutput.setCufflinksIsoformResult(cufflinksFields.cufflinksIsoformResult);
         return CufflinksResult.builder()

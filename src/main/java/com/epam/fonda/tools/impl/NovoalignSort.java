@@ -33,6 +33,7 @@ import org.thymeleaf.context.Context;
 
 import java.util.Arrays;
 
+import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 @Data
@@ -64,6 +65,7 @@ public class NovoalignSort implements Tool<BamResult> {
         context.setVariable("fastq1", fastq1);
         context.setVariable("fastq2", fastq2);
         final String cmd = templateEngine.process(NOVOALIGN_SORT_TOOL_TEMPLATE_NAME, context);
+        TASK_TO_CHECK.addAll(Arrays.asList("Novoalign alignment", "Index bam"));
         BamOutput bamOutput = BamOutput.builder()
                 .sortedBam(novoalignSortFields.sortedBam)
                 .sortedBamIndex(novoalignSortFields.sortedBamIndex)

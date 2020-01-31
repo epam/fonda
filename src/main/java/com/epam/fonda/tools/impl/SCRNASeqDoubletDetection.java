@@ -28,6 +28,7 @@ import org.thymeleaf.context.Context;
 
 import java.util.Set;
 
+import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 @Slf4j
@@ -70,9 +71,11 @@ public class SCRNASeqDoubletDetection {
         StringBuilder command = new StringBuilder();
         if (toolNames.contains(DOUBLET_DETECTION)) {
             command.append(templateEngine.process(DOUBLE_DETECTION_TEMPLATE_NAME, context));
+            TASK_TO_CHECK.add("Doubletdetection doublet detection");
         }
         if (toolNames.contains(SCRUBLET)) {
             command.append(templateEngine.process(SCRUBLET_TEMPLATE_NAME, context));
+            TASK_TO_CHECK.add("Scrublet doublet detection");
         }
         return command.toString();
     }

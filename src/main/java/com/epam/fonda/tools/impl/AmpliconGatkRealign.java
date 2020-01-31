@@ -32,6 +32,8 @@ import org.thymeleaf.context.Context;
 
 import java.util.Arrays;
 
+import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
+
 @RequiredArgsConstructor
 public class AmpliconGatkRealign implements Tool<BamResult> {
 
@@ -67,6 +69,7 @@ public class AmpliconGatkRealign implements Tool<BamResult> {
         context.setVariable("databaseFields", AmpliconGatkDatabaseFields.init(configuration));
         context.setVariable("additionalFields", additionalFields);
         String cmd = templateEngine.process(AMPLICON_GATK_REALIGN_TOOL_TEMPLATE_NAME, context);
+        TASK_TO_CHECK.add("GATK realignment");
         BamOutput bamOutput = bamResult.getBamOutput();
         bamOutput.setBam(additionalFields.realignBam);
         AbstractCommand resultCommand = bamResult.getCommand();

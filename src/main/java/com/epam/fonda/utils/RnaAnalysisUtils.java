@@ -28,6 +28,7 @@ import org.thymeleaf.context.Context;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 public final class RnaAnalysisUtils {
@@ -95,6 +96,7 @@ public final class RnaAnalysisUtils {
      */
     public static String dataAnalysis(Configuration configuration, TemplateEngine templateEngine, String toolName) {
         final Context context = buildContext(configuration, toolName);
+        TASK_TO_CHECK.add("Merge gene expression");
         return templateEngine.process(RNA_ANALYSIS_DATA_ANALYSIS_TEMPLATE, context);
     }
 
@@ -134,6 +136,7 @@ public final class RnaAnalysisUtils {
     public static String dnaRnaMutationAnalysis(final Configuration configuration, final TemplateEngine templateEngine,
                                                 final String task) {
         final Context context = buildContext(configuration, task);
+        TASK_TO_CHECK.add("Merge mutation annotation");
         return templateEngine.process(MUTATION_ANALYSIS_TEMPLATE, context);
     }
 

@@ -33,6 +33,7 @@ import org.apache.commons.lang3.Validate;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 @RequiredArgsConstructor
@@ -74,6 +75,7 @@ public class Lofreq implements Tool<VariantsVcfResult> {
         final Context context = new Context();
         context.setVariable("toolFields", toolFields);
         final String cmd = templateEngine.process(LOFREQ_TOOL_TEMPLATE_NAME, context);
+        TASK_TO_CHECK.add("Lofreq detection");
         final VariantsVcfOutput output = VariantsVcfOutput.builder()
                 .variantsVcf(toolFields.getVcf())
                 .variantsOutputDir(toolFields.getOutDir())

@@ -125,6 +125,8 @@ public class CountTest extends AbstractTest {
         cellrangerConfig.setCellrangerNosecondary("nosecondary");
         cellrangerConfig.setCellrangerR1Length("r1Length");
         cellrangerConfig.setCellrangerR2Length("r2Length");
+        GlobalConfig.QueueParameters queueParameters = expectedConfiguration.getGlobalConfig().getQueueParameters();
+        queueParameters.setNumThreads(3);
         expectedConfiguration.getGlobalConfig().setCellrangerConfig(cellrangerConfig);
     }
 }

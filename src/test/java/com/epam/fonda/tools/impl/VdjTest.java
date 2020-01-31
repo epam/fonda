@@ -87,9 +87,11 @@ class VdjTest extends AbstractTest {
         cellrangerConfig.setCellrangerLanes("lanes");
         cellrangerConfig.setCellrangerIndices("indices");
         cellrangerConfig.setCellrangerForcedCells("forcedCells");
-        cellrangerConfig.setCellrangerChain("chain");
         cellrangerConfig.setCellrangerDenovo("TRUE");
         expectedGlobalConfig.setCellrangerConfig(cellrangerConfig);
+        GlobalConfig.QueueParameters queueParameters = new GlobalConfig.QueueParameters();
+        queueParameters.setNumThreads(3);
+        expectedGlobalConfig.setQueueParameters(queueParameters);
         expectedConfiguration.setGlobalConfig(expectedGlobalConfig);
     }
 }
