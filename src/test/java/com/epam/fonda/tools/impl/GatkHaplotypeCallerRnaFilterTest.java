@@ -23,7 +23,6 @@ import com.epam.fonda.tools.results.VariantsVcfOutput;
 import com.epam.fonda.tools.results.VariantsVcfResult;
 import com.epam.fonda.utils.PipelineUtils;
 import com.epam.fonda.utils.TemplateEngineUtils;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.thymeleaf.TemplateEngine;
@@ -32,6 +31,8 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.Objects;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class GatkHaplotypeCallerRnaFilterTest extends AbstractTest {
     private static final String GATK_HAPLOTYPE_CALLER_RNA_FILTER_TOOL_TEST_TEMPLATE_NAME =
@@ -59,9 +60,9 @@ class GatkHaplotypeCallerRnaFilterTest extends AbstractTest {
 
     @Test
     void generate() {
-        String actualCmd = new GatkHaplotypeCallerRnaFilter("sampleName", TEST_DIRECTORY, variantsVcfResult).
-                generate(expectedConfiguration, expectedTemplateEngine).getAbstractCommand().getToolCommand();
-        Assertions.assertEquals(expectedCmd, actualCmd);
+        String actualCmd = new GatkHaplotypeCallerRnaFilter("sampleName", variantsVcfResult)
+                .generate(expectedConfiguration, expectedTemplateEngine).getAbstractCommand().getToolCommand();
+        assertEquals(expectedCmd, actualCmd);
     }
 
     private void buildConfiguration() {

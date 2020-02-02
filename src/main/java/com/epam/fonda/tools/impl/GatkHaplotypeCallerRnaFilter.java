@@ -38,8 +38,6 @@ public class GatkHaplotypeCallerRnaFilter implements Tool<VariantsVcfResult> {
     @NonNull
     private String sampleName;
     @NonNull
-    private String sampleOutdir;
-    @NonNull
     private VariantsVcfResult variantsVcfResult;
 
     /**
