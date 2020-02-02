@@ -4,8 +4,8 @@
 
 #$ -wd build/resources/integrationTest/output
 #$ -N scImmuneProfile_CellRanger_Fastq_qcsummary_for_cohort_analysis
-#$ -o build/resources/integrationTest/output/scImmuneProfile_CellRanger_Fastq_Test/log_files/scImmuneProfile_CellRanger_Fastq_qcsummary_for_cohort_analysis.log
-#$ -e build/resources/integrationTest/output/scImmuneProfile_CellRanger_Fastq_Test/err_files/scImmuneProfile_CellRanger_Fastq_qcsummary_for_cohort_analysis.err
+#$ -o build/resources/integrationTest/output/log_files/scImmuneProfile_CellRanger_Fastq_qcsummary_for_cohort_analysis.log
+#$ -e build/resources/integrationTest/output/err_files/scImmuneProfile_CellRanger_Fastq_qcsummary_for_cohort_analysis.err
 #$ -q all.q
 #$ -R y
 #$ -pe threaded 8
@@ -17,7 +17,7 @@ cd build/resources/integrationTest/output
 
 echo `date` Begin the job execution...
 
-logFile=/build/resources/integrationTest/output/scImmuneProfile_CellRanger_Fastq_Test/log_files/scImmuneProfile_CellRanger_Fastq_alignment_for_pbmc4k_analysis.log
+logFile=build/resources/integrationTest/output/log_files/scImmuneProfile_CellRanger_Fastq_alignment_for_pbmc4k_analysis.log
 str=""
 while [[('[')]][ $str = "" ]]
 do
@@ -38,7 +38,7 @@ else
 fi
 
 echo `date` Begin Step: QC summary analysis...
-/ngs/data/app/R/v3.5.0/bin/Rscript build/libs/src/R/QC_summary_analysis.R -i example/sample_manifest/scImmuneProfile_CellRanger_RNASeq_SampleFastqPaths.txt -d build/resources/integrationTest/output/scImmuneProfile_CellRanger_Fastq_Test -w scImmuneProfile_CellRanger_Fastq
+/ngs/data/app/R/v3.5.0/bin/Rscript [(${jarPath})]/src/R/QC_summary_analysis.R -i build/resources/integrationTest/immuneFastqList.tsv -d build/resources/integrationTest/output -w scImmuneProfile_CellRanger_Fastq
 if [ $? -eq 0 ]
 then
     echo `date` Successful Step: QC summary analysis.

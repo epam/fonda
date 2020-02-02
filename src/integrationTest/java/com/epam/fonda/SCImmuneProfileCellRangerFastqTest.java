@@ -17,84 +17,102 @@ package com.epam.fonda;
 
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.utils.CellRangerUtils;
+import com.epam.fonda.utils.PipelineUtils;
 import com.epam.fonda.utils.TemplateEngineUtils;
-import com.tngtech.java.junit.dataprovider.DataProviderRunner;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Collections;
+import java.util.stream.Stream;
 
+import static java.lang.String.format;
 import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
-@RunWith(DataProviderRunner.class)
 public class SCImmuneProfileCellRangerFastqTest extends AbstractIntegrationTest {
 
+    private static final String OUTPUT_DIR_ROOT = "build/resources/integrationTest/";
     private static final String OUTPUT_DIR = "output";
-    private static final String SCIMMUNE_PROFILE_CELLRANGER_FASTQ_PBMC4K_TEST_TEMPLATE_PATH =
+    private static final String SCIMMUNE_PROFILE_CELLRANGER_FASTQ_PBMC4K_TEST_TEMPLATE =
             "scImmuneProfileCellRangerFastq_VdjQc_template";
-    public static final String SCIMMUNE_PROFILE_CELL_RANGER_FASTQ_COHORT_TEST_TEMPLATE_PATH =
+    public static final String SCIMMUNE_PROFILE_CELL_RANGER_FASTQ_COHORT_TEST_TEMPLATE =
             "SCImmuneProfileCellRangerFastq_Cohort_template";
     private static final String GLOBAL_CONFIG_NAME = "SCImmuneProfileCellRangerFastq/vdj.txt";
     private static final String STUDY_CONFIG_NAME =
             "SCImmuneProfileCellRangerFastq/SCImmuneProfileCellRangerFastq.txt";
-    private static final String OUTPUT_FILE_FOR_COHORT_ANALYSIS_SH =
+    private static final String OUTPUT_FILE_COHORT_ANALYSIS_SH =
             "output/sh_files/scImmuneProfile_CellRanger_Fastq_qcsummary_for_cohort_analysis.sh";
-    public static final String OUTPUT_FILE_FOR_PBMC_4_K_ANALYSIS_SH =
+    private static final String OUTPUT_FILE_PBMC_4_K_ANALYSIS_SH =
             "output/sh_files/scImmuneProfile_CellRanger_Fastq_alignment_for_pbmc4k_analysis.sh";
-    private static String fastqDirs;
+    private static final String FASTQ_DATA_FOLDER = "fastq_data";
     private Context context = new Context();
     private TemplateEngine expectedTemplateEngine = TemplateEngineUtils.init();
+    private FastqFileSample expectedSample;
 
     @BeforeEach
-    public void setup() {
-        FastqFileSample expectedSample = FastqFileSample.builder()
+    void setup() {
+        expectedSample = FastqFileSample.builder()
                 .name("sampleName")
                 .fastq1(Collections.singletonList("/ngs/data/demo/test/fastq_data/pbmc4k_S1_L001_R1_001.fastq.gz"))
                 .fastq2(Collections.singletonList("/ngs/data/demo/test/fastq_data/pbmc4k_S1_L002_R1_001.fastq.gz"))
                 .sampleOutputDir("build/resources/integrationTest/output/pbmc4k")
                 .build();
-        fastqDirs = String.join(",", CellRangerUtils.extractFastqDir(expectedSample).getFastqDirs());
+        String fastqDirs = String.join(",", CellRangerUtils.extractFastqDir(expectedSample).getFastqDirs());
+        String jarPath = PipelineUtils.getExecutionPath();
+        context = new Context();
         context.setVariable("fastqDir", fastqDirs);
+        context.setVariable("jarPath", jarPath);
         startAppWithConfigs(GLOBAL_CONFIG_NAME, STUDY_CONFIG_NAME);
     }
 
-//    @DataProvider
-//    public static Object[] getSCImmuneProfileCellRangerFastqExpectedStrings() {
-//        return new Object[][]{
-//                {"output/sh_files/scImmuneProfile_CellRanger_Fastq_qcsummary_for_cohort_analysis.sh", new String[]{
-//                    "echo $(date) Error QC results from pbmc4k:",
-//                    "echo $(date) Confirm QC results from pbmc4k",
-//                    "build/resources/integrationTest/output/log_files/"
-//                            + "scImmuneProfile_CellRanger_Fastq_alignment_for_pbmc4k_analysis.log",
-//                    "/ngs/data/app/R/v3.5.0/bin/Rscript",
-//                    "scImmuneProfile_CellRanger_Fastq"}
-//                }
-//        };
-//    }
-
-    @Test
-    public void testCohortAnalyses() throws IOException, URISyntaxException {
-        startAppWithConfigs(GLOBAL_CONFIG_NAME, STUDY_CONFIG_NAME);
-
-        String expectedCmd = expectedTemplateEngine.process(SCIMMUNE_PROFILE_CELL_RANGER_FASTQ_COHORT_TEST_TEMPLATE_PATH, context);
-        assertEquals(expectedCmd, getCmd(OUTPUT_FILE_FOR_COHORT_ANALYSIS_SH));
+    @AfterEach
+    void cleanUp() throws IOException {
         cleanOutputDirForNextTest(OUTPUT_DIR, false);
     }
 
     @Test
-    public void testVdjForPbmc4kAnalysis() throws IOException, URISyntaxException {
-        startAppWithConfigs(GLOBAL_CONFIG_NAME, STUDY_CONFIG_NAME);
+    void testCreateSpecificDir() {
+        assertAll(
+                () -> assertTrue(new File(format("%s%s/sh_files", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+                () -> assertTrue(new File(format("%s%s/log_files", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+                () -> assertTrue(new File(format("%s%s/err_files", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+                () -> assertTrue(new File(format("%s%s/vdj", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists())
+        );
+    }
 
-        final String expectedCmd = expectedTemplateEngine
-                .process(SCIMMUNE_PROFILE_CELLRANGER_FASTQ_PBMC4K_TEST_TEMPLATE_PATH, context);
-        final String actualCmd = getCmd(OUTPUT_FILE_FOR_PBMC_4_K_ANALYSIS_SH).trim();
+    @Test
+    void testExtractFastqDirFastq1Fastq2() {
+        FastqFileSample actualSample = CellRangerUtils.extractFastqDir(expectedSample);
+        String fastqDirs = actualSample.getFastqDirs().get(0);
+
+        assertTrue(fastqDirs.endsWith(FASTQ_DATA_FOLDER));
+    }
+
+    @ParameterizedTest
+    @MethodSource("initCmdAndOutput")
+    void testVdj(String testTemplate, String outputFilePath) throws IOException, URISyntaxException {
+        final String expectedCmd = expectedTemplateEngine.process(testTemplate, context).trim();
+        final String actualCmd = getCmd(outputFilePath).trim();
 
         assertEquals(expectedCmd, actualCmd);
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
+    }
+
+    @SuppressWarnings("PMD")
+    private static Stream<Arguments> initCmdAndOutput() {
+        return Stream.of(
+                Arguments.of(SCIMMUNE_PROFILE_CELL_RANGER_FASTQ_COHORT_TEST_TEMPLATE, OUTPUT_FILE_COHORT_ANALYSIS_SH),
+                Arguments.of(SCIMMUNE_PROFILE_CELLRANGER_FASTQ_PBMC4K_TEST_TEMPLATE, OUTPUT_FILE_PBMC_4_K_ANALYSIS_SH)
+        );
     }
 }
+
