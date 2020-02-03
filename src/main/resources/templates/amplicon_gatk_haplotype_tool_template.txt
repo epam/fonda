@@ -1,5 +1,5 @@
 echo `date` Begin Step: GATK haplotypecaller detection...
-[(${toolFields.java})] -Xmx10g -Djava.io.tmpdir=[(${additionalFields.tmpGatkHapOutdir})] -jar [(${toolFields.gatk})] -T HaplotypeCaller -R [(${databaseFields.genome})] -mmq 20 [# th:unless = "${additionalFields.isWgs == true}"]--intervals [(${databaseFields.bed})] [/]--input_file [(${bam})] --out [(${additionalFields.gatkHapVariants})] --validation_strictness SILENT
+[(${toolFields.java})] -Xmx10g -Djava.io.tmpdir=[(${additionalFields.tmpGatkHapOutdir})] -jar [(${toolFields.gatk})] -T HaplotypeCaller -R [(${databaseFields.genome})] -mmq 20 [# th:unless = "${additionalFields.isWgs == true}"]--intervals [(${databaseFields.bed})] [/]--input_file [(${bam})] --out [(${additionalFields.gatkHapFiltered})] --validation_strictness SILENT
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: GATK haplotypecaller detection.
@@ -10,4 +10,3 @@ else
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
 fi
-
