@@ -58,7 +58,7 @@ public class GatkHaplotypeCaller implements Tool<VariantsVcfResult> {
     @Builder
     private static class AdditionalFields {
         private String gatkHapOutdir;
-        private String gatkHapFiltered;
+        private String gatkHapRawVcf;
         private String tmpGatkHapOutdir;
         private String variantsVcf;
         private boolean isWgs;
@@ -88,7 +88,7 @@ public class GatkHaplotypeCaller implements Tool<VariantsVcfResult> {
                 ? templateEngine.process(GATK_HAPLOTYPE_RNA_TOOL_TEMPLATE_NAME, context)
                 : templateEngine.process(AMPLICON_GATK_HAPLOTYPE_TOOL_TEMPLATE_NAME, context);
         VariantsVcfOutput variantsVcfOutput = VariantsVcfOutput.builder()
-                .gatkHapFiltered(additionalFields.gatkHapFiltered)
+                .gatkHapRawVcf(additionalFields.gatkHapRawVcf)
                 .variantsTmpOutputDir(additionalFields.tmpGatkHapOutdir)
                 .variantsOutputDir(additionalFields.gatkHapOutdir)
                 .variantsVcf(additionalFields.variantsVcf)
@@ -125,10 +125,10 @@ public class GatkHaplotypeCaller implements Tool<VariantsVcfResult> {
         final String gatkHapOutdir = format("%s/gatkHaplotypeCaller", outDir);
         return AdditionalFields.builder()
                 .gatkHapOutdir(gatkHapOutdir)
-                .gatkHapFiltered(format("%s/%s.gatkHaplotypeCaller.variants.vcf", gatkHapOutdir, sampleName))
+                .gatkHapRawVcf(format("%s/%s.gatkHaplotypeCaller.raw.vcf", gatkHapOutdir, sampleName))
                 .tmpGatkHapOutdir(format("%s/tmp", gatkHapOutdir))
                 .isWgs(DnaUtils.isWgsWorkflow(configuration))
-                .variantsVcf(format("%s/%s.gatkHaplotypeCaller.raw.vcf", gatkHapOutdir, sampleName))
+                .variantsVcf(format("%s/%s.gatkHaplotypeCaller.variants.vcf", gatkHapOutdir, sampleName))
                 .build();
     }
 
