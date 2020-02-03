@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,8 +36,8 @@ import java.util.stream.Stream;
 
 import static java.lang.String.format;
 import static junit.framework.TestCase.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SCImmuneProfileCellRangerFastqTest extends AbstractIntegrationTest {
 
@@ -83,10 +83,10 @@ public class SCImmuneProfileCellRangerFastqTest extends AbstractIntegrationTest 
     @Test
     void testCreateSpecificDir() {
         assertAll(
-                () -> assertTrue(new File(format("%s%s/sh_files", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
-                () -> assertTrue(new File(format("%s%s/log_files", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
-                () -> assertTrue(new File(format("%s%s/err_files", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
-                () -> assertTrue(new File(format("%s%s/vdj", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists())
+            () -> assertTrue(new File(format("%s%s/sh_files", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/log_files", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/err_files", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/vdj", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists())
         );
     }
 
