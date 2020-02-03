@@ -1,0 +1,50 @@
+#!/bin/bash -x
+
+# --- SGE options --- #
+
+#$ -wd build/resources/integrationTest/output
+#$ -N RnaFusion_Fastq_fusion_for_smv1_analysis
+#$ -o build/resources/integrationTest/output/log_files/RnaFusion_Fastq_fusion_for_smv1_analysis.log
+#$ -e build/resources/integrationTest/output/err_files/RnaFusion_Fastq_fusion_for_smv1_analysis.err
+#$ -q main.q
+#$ -R y
+#$ PE 4
+#$ -m a
+
+# --- The commands to be executed --- #
+
+cd build/resources/integrationTest/output
+
+echo `date` Begin the job execution...
+
+echo `date` Begin Step: Merge fastqs...
+zcat /ngs/data/demo/test/fastq/smv1_GTGTTCTA_L004_R1_001.fastq.gz /ngs/data/demo/test/fastq/smv1_GTGTTCTA_L005_R1_001.fastq.gz /ngs/data/demo/test/fastq/smv1_GTGTTCTA_L006_R1_001.fastq.gz /ngs/data/demo/test/fastq/smv1_GTGTTCTA_L007_R1_001.fastq.gz | gzip -c > build/resources/integrationTest/output/smv1/fastq/smv1.merged_R1.fastq.gz
+zcat /ngs/data/demo/test/fastq/smv1_GTGTTCTA_L004_R2_001.fastq.gz /ngs/data/demo/test/fastq/smv1_GTGTTCTA_L005_R2_001.fastq.gz /ngs/data/demo/test/fastq/smv1_GTGTTCTA_L006_R2_001.fastq.gz /ngs/data/demo/test/fastq/smv1_GTGTTCTA_L007_R2_001.fastq.gz | gzip -c > build/resources/integrationTest/output/smv1/fastq/smv1.merged_R2.fastq.gz
+
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Merge fastqs.
+	sleep 8
+else
+	echo `date` Error Step: Merge fastqs.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` the adapter sequence trmming step was skipped since no adapter sequences were provided in the config files.
+
+echo `date` Begin Step: Remove temporary directories...
+rm -rf build/resources/integrationTest/output/smv1/tmp
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Remove temporary directories.
+	sleep 8
+else
+	echo `date` Error Step: Remove temporary directories.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Finish the job execution!
