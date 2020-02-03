@@ -4,10 +4,10 @@ mv [(${cufflinksFields.sCufflinksOutDir})]/genes.fpkm_tracking [(${cufflinksFiel
 mv [(${cufflinksFields.sCufflinksOutDir})]/isoforms.fpkm_tracking [(${cufflinksFields.cufflinksIsoformResult})]
 if [ $? -eq 0 ]
 then
-	echo `date` Successful Step: cufflinks
+	echo `date` Successful Step: Cufflinks.
 	sleep 8
 else
-	echo `date` Error Step: cufflinks
+	echo `date` Error Step: Cufflinks.
 
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;

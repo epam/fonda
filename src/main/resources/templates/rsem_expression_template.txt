@@ -2,6 +2,7 @@ echo `date` Begin Step: RSEM...
 [(${rsemExpressionFields.rsem})]/rsem-calculate-expression -p [(${rsemExpressionFields.nthreads})] --no-bam-output --paired-end --bam --estimate-rspd --seed 12345 [(${rsemExpressionFields.bam})] [(${rsemExpressionFields.index})] [(${rsemExpressionFields.srsemOutdir})]/[(${rsemExpressionFields.sampleName})]
 mv [(${rsemExpressionFields.srsemOutdir})]/[(${rsemExpressionFields.sampleName})].genes.results [(${rsemExpressionFields.rsemGeneResult})]
 mv [(${rsemExpressionFields.srsemOutdir})]/[(${rsemExpressionFields.sampleName})].isoforms.results [(${rsemExpressionFields.rsemIsoformResult})]
+
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: RSEM.

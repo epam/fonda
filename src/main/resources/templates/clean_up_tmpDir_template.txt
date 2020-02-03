@@ -1,5 +1,6 @@
 echo `date` Begin Step: Remove temporary directories...
-[# th:each = "field: ${fields}"]rm -rf [# th:text = "${field}"] [/][/]
+[# th:each = "field: ${fields}"]rm -rf [# th:text = "${field}"] [/]
+[/]
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Remove temporary directories.

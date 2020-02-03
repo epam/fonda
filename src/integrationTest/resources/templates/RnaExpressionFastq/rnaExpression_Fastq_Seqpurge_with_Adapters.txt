@@ -47,6 +47,7 @@ fi
 
 echo `date` Begin Step: Remove temporary directories...
 rm -rf build/resources/integrationTest/output/smv1/tmp
+
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Remove temporary directories.

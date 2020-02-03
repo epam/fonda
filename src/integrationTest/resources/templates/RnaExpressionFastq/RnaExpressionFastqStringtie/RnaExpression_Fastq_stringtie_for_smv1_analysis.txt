@@ -1,0 +1,51 @@
+#!/bin/bash -x
+
+# --- SGE options --- #
+
+#$ -wd build/resources/integrationTest/output
+#$ -N RnaExpression_Fastq_stringtie_for_smv1_analysis
+#$ -o build/resources/integrationTest/output/log_files/RnaExpression_Fastq_stringtie_for_smv1_analysis.log
+#$ -e build/resources/integrationTest/output/err_files/RnaExpression_Fastq_stringtie_for_smv1_analysis.err
+#$ -q main.q
+#$ -R y
+#$ PE 4
+#$ -m a
+
+# --- The commands to be executed --- #
+
+cd build/resources/integrationTest/output
+
+echo `date` Begin the job execution...
+
+echo `date` Begin Step: Stringtie...
+path/to/stringtie -p 4 -G /common/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.annotation.gtf -A build/resources/integrationTest/output/smv1/stringtie/smv1.stringtie.gene.expression.results -o build/resources/integrationTest/output/smv1/stringtie/smv1.stringtie.assembly.transcripts.gtf build/resources/integrationTest/output/smv1/bam/smv1.hisat2.sorted.mkdup.bam
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Stringtie.
+	sleep 8
+else
+	echo `date` Error Step: Stringtie.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Remove temporary directories...
+rm -rf build/resources/integrationTest/output/smv1/qc/smv1.hisat2.sorted.mkdup.metrics
+rm -rf build/resources/integrationTest/output/smv1/bam/smv1.hisat2.sorted.bam.bai
+rm -rf build/resources/integrationTest/output/smv1/tmp
+rm -rf build/resources/integrationTest/output/smv1/bam/smv1.hisat2.sorted.bam
+
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Remove temporary directories.
+	sleep 8
+else
+	echo `date` Error Step: Remove temporary directories.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Finish the job execution!
+

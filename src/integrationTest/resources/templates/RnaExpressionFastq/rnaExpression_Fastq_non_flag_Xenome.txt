@@ -33,7 +33,7 @@ else
 fi
 
 echo `date` Begin Step: Seqpurge trimming...
-/opt/ngs_bits/ngs-bits/bin/SeqPurge -threads 4 -in1 build/resources/integrationTest/output/smv1/fastq/smv1.merged_R1.fastq.gz -in2 build/resources/integrationTest/output/smv1/fastq/smv1.merged_R2.fastq.gz -out1 build/resources/integrationTest/output/smv1/fastq/smv1.trimmed.R1.fastq.gz -out2 build/resources/integrationTest/output/smv1/fastq/smv1.trimmed.R2.fastq.gz -qcut 20
+/opt/ngs_bits/ngs-bits/bin/SeqPurge -threads 4 -in1 build/resources/integrationTest/output/smv1/fastq/smv1.merged_R1.fastq.gz -in2 build/resources/integrationTest/output/smv1/fastq/smv1.merged_R2.fastq.gz -out1 build/resources/integrationTest/output/smv1/fastq/smv1.trimmed.R1.fastq.gz -out2 build/resources/integrationTest/output/smv1/fastq/smv1.trimmed.R2.fastq.gz -qcut 20 -a1 AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC -a2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Seqpurge trimming.
@@ -60,4 +60,3 @@ else
 fi
 
 echo `date` Finish the job execution!
-

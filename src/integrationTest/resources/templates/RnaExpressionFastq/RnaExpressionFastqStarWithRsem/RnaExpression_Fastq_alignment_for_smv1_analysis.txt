@@ -32,14 +32,27 @@ else
 	exit 1;
 fi
 
-echo `date` Begin Step: Seqpurge trimming...
-/opt/ngs_bits/ngs-bits/bin/SeqPurge -threads 4 -in1 build/resources/integrationTest/output/smv1/fastq/smv1.merged_R1.fastq.gz -in2 build/resources/integrationTest/output/smv1/fastq/smv1.merged_R2.fastq.gz -out1 build/resources/integrationTest/output/smv1/fastq/smv1.trimmed.R1.fastq.gz -out2 build/resources/integrationTest/output/smv1/fastq/smv1.trimmed.R2.fastq.gz -qcut 20
+echo `date` Begin Step: STAR alignment...
+path/to/star --genomeDir /common/reference_genome/GRCh38/Index/STAR_g26 --sjdbGTFfile /common/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.annotation.gtf --sjdbOverhang 100 --genomeLoad NoSharedMemory --readFilesIn build/resources/integrationTest/output/smv1/fastq/smv1.merged_R1.fastq.gz build/resources/integrationTest/output/smv1/fastq/smv1.merged_R2.fastq.gz --outFileNamePrefix build/resources/integrationTest/output/smv1/bam/smv1. --outFilterMatchNmin 0 --outStd Log --outFilterMultimapNmax 5 --outFilterMatchNminOverLread 0.66 --outFilterScoreMinOverLread 0.66 --outSAMunmapped Within --outFilterMultimapScoreRange 1 --outSAMstrandField intronMotif --outFilterScoreMin 0 --alignSJoverhangMin 8 --alignSJDBoverhangMin 1 --runThreadN 4 --outSAMtype None --quantMode TranscriptomeSAM --outSAMattrRGline ID:smv1 SM:smv1 LB:RNA PL:Illumina CN:cr --readFilesCommand zcat
 if [ $? -eq 0 ]
 then
-	echo `date` Successful Step: Seqpurge trimming.
+	echo `date` Successful Step: STAR alignment.
 	sleep 8
 else
-	echo `date` Error Step: Seqpurge trimming.
+	echo `date` Error Step: STAR alignment.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Run rsem...
+qsub build/resources/integrationTest/output/sh_files/RnaExpression_Fastq_rsem_for_smv1_analysis.sh
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Run rsem.
+	sleep 8
+else
+	echo `date` Error Step: Run rsem.
 
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;

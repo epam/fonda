@@ -6,15 +6,15 @@ if [# th:inline="none"][[[/] -f $logFile  ]];
 then
     str=$(grep -E "((Error Step: ([(${QcSummaryFields.steps})]))|(Successful Step: [(${QcSummaryFields.successPattern})]))" $logFile;)
 fi
-    echo Waiting for step: [(${QcSummaryFields.tag})]
-    sleep [(${QcSummaryFields.statusCheckPeriod})]
+	echo Waiting for step: [(${QcSummaryFields.tag})]
+	sleep [(${QcSummaryFields.statusCheckPeriod})]
 done
 
 if [# th:inline="none"][[[/] $str == "*Error Step: [(${QcSummaryFields.tag})]*" ]];
 then
-    echo $(date) [(${QcSummaryFields.errorMessage})]:
-    echo $str
+	echo $(date) [(${QcSummaryFields.errorMessage})]:
+	echo $str
 else
-    echo $(date) [(${QcSummaryFields.successMessage})]
+	echo $(date) [(${QcSummaryFields.successMessage})]
 fi
 

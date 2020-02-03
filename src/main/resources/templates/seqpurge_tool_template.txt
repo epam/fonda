@@ -1,5 +1,5 @@
 echo `date` Begin Step: Seqpurge trimming...
-[(${seqPurgeFields.seqPurge})] -threads [(${seqPurgeFields.numThreads})] -in1 [(${seqPurgeFields.fastq1})] -in2 [(${seqPurgeFields.fastq2})] -out1 [(${seqPurgeFields.trimmedFastq1})] -out2 [(${seqPurgeFields.trimmedFastq2})] -qcut 20 [# th:if = "${seqPurgeFields.adapterFWD != null and seqPurgeFields.adapterREV != null}"]-a1 [(${seqPurgeFields.adapterFWD})] -a2 [(${seqPurgeFields.adapterREV})][/]
+[(${seqPurgeFields.seqPurge})] -threads [(${seqPurgeFields.numThreads})] -in1 [(${seqPurgeFields.fastq1})] -in2 [(${seqPurgeFields.fastq2})] -out1 [(${seqPurgeFields.trimmedFastq1})] -out2 [(${seqPurgeFields.trimmedFastq2})] -qcut 20[# th:if = "${seqPurgeFields.adapterFWD != null and seqPurgeFields.adapterREV != null}"] -a1 [(${seqPurgeFields.adapterFWD})] -a2 [(${seqPurgeFields.adapterREV})][/]
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Seqpurge trimming.

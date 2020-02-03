@@ -32,14 +32,20 @@ else
 	exit 1;
 fi
 
-echo `date` Begin Step: Seqpurge trimming...
-/opt/ngs_bits/ngs-bits/bin/SeqPurge -threads 4 -in1 build/resources/integrationTest/output/smv1/fastq/smv1.merged_R1.fastq.gz -in2 build/resources/integrationTest/output/smv1/fastq/smv1.merged_R2.fastq.gz -out1 build/resources/integrationTest/output/smv1/fastq/smv1.trimmed.R1.fastq.gz -out2 build/resources/integrationTest/output/smv1/fastq/smv1.trimmed.R2.fastq.gz -qcut 20
+echo `date` Begin Step: SALMON...
+gunzip -c build/resources/integrationTest/output/smv1/fastq/smv1.merged_R1.fastq.gz > build/resources/integrationTest/output/smv1/fastq/smv1.merged_R1.fastq
+gunzip -c build/resources/integrationTest/output/smv1/fastq/smv1.merged_R2.fastq.gz > build/resources/integrationTest/output/smv1/fastq/smv1.merged_R2.fastq
+path/to/salmon quant -i SALMONINDEX -l IU -p 4 -1 build/resources/integrationTest/output/smv1/fastq/smv1.merged_R1.fastq -2 build/resources/integrationTest/output/smv1/fastq/smv1.merged_R2.fastq -g /common/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.annotation.gtf -o build/resources/integrationTest/output/smv1/salmon
+mv build/resources/integrationTest/output/smv1/salmon/quant.genes.sf build/resources/integrationTest/output/smv1/salmon/smv1.salmon.gene.results
+mv build/resources/integrationTest/output/smv1/salmon/quant.sf build/resources/integrationTest/output/smv1/salmon/smv1.salmon.transcript.results
+rm -rf build/resources/integrationTest/output/smv1/fastq/smv1.merged_R1.fastq
+rm -rf build/resources/integrationTest/output/smv1/fastq/smv1.merged_R2.fastq
 if [ $? -eq 0 ]
 then
-	echo `date` Successful Step: Seqpurge trimming.
+	echo `date` Successful Step: SALMON.
 	sleep 8
 else
-	echo `date` Error Step: Seqpurge trimming.
+	echo `date` Error Step: SALMON.
 
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;

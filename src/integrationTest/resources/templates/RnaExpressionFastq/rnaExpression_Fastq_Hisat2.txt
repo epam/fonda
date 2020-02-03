@@ -1,0 +1,104 @@
+#!/bin/bash -x
+
+# --- SGE options --- #
+
+#$ -wd build/resources/integrationTest/output
+#$ -N RnaExpression_Fastq_alignment_for_smv1_analysis
+#$ -o build/resources/integrationTest/output/log_files/RnaExpression_Fastq_alignment_for_smv1_analysis.log
+#$ -e build/resources/integrationTest/output/err_files/RnaExpression_Fastq_alignment_for_smv1_analysis.err
+#$ -q main.q
+#$ -R y
+#$ PE 4
+#$ -m a
+
+# --- The commands to be executed --- #
+
+cd build/resources/integrationTest/output
+
+echo `date` Begin the job execution...
+
+echo `date` Begin Step: Merge fastqs...
+zcat /ngs/data/demo/test/fastq/smv1_GTGTTCTA_L004_R1_001.fastq.gz /ngs/data/demo/test/fastq/smv1_GTGTTCTA_L005_R1_001.fastq.gz /ngs/data/demo/test/fastq/smv1_GTGTTCTA_L006_R1_001.fastq.gz /ngs/data/demo/test/fastq/smv1_GTGTTCTA_L007_R1_001.fastq.gz | gzip -c > build/resources/integrationTest/output/smv1/fastq/smv1.merged_R1.fastq.gz
+zcat /ngs/data/demo/test/fastq/smv1_GTGTTCTA_L004_R2_001.fastq.gz /ngs/data/demo/test/fastq/smv1_GTGTTCTA_L005_R2_001.fastq.gz /ngs/data/demo/test/fastq/smv1_GTGTTCTA_L006_R2_001.fastq.gz /ngs/data/demo/test/fastq/smv1_GTGTTCTA_L007_R2_001.fastq.gz | gzip -c > build/resources/integrationTest/output/smv1/fastq/smv1.merged_R2.fastq.gz
+
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Merge fastqs.
+	sleep 8
+else
+	echo `date` Error Step: Merge fastqs.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: HISAT2 alignment...
+path/to/hisat2 -x HISAT2INDEX -p 4 --rg "SM:smv1\tLB:smv1\tPL:Illumina" --rg-id smv1 --seed 12345 --dta -1 build/resources/integrationTest/output/smv1/fastq/smv1.merged_R1.fastq.gz -2 build/resources/integrationTest/output/smv1/fastq/smv1.merged_R2.fastq.gz | /opt/samtools/samtools-0.1.19/samtools view -bS -|/opt/samtools/samtools-0.1.19/samtools sort - build/resources/integrationTest/output/smv1/bam/smv1.hisat2.sorted
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: HISAT2 alignment.
+	sleep 8
+else
+	echo `date` Error Step: HISAT2 alignment.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Index bam...
+/opt/samtools/samtools-0.1.19/samtools index build/resources/integrationTest/output/smv1/bam/smv1.hisat2.sorted.bam
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Index bam.
+	sleep 8
+else
+	echo `date` Error Step: Index bam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Mark duplicates...
+/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx16g -jar /opt/picard/picard.jar MarkDuplicates INPUT=build/resources/integrationTest/output/smv1/bam/smv1.hisat2.sorted.bam OUTPUT=build/resources/integrationTest/output/smv1/bam/smv1.hisat2.sorted.mkdup.bam METRICS_FILE=build/resources/integrationTest/output/smv1/qc/smv1.hisat2.sorted.mkdup.metrics ASSUME_SORTED=true REMOVE_DUPLICATES=false VALIDATION_STRINGENCY=SILENT TMP_DIR=build/resources/integrationTest/output/smv1/tmp
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Mark duplicates.
+	sleep 8
+else
+	echo `date` Error Step: Mark duplicates.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Index mkdup bam...
+/opt/samtools/samtools-0.1.19/samtools index build/resources/integrationTest/output/smv1/bam/smv1.hisat2.sorted.mkdup.bam
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Index mkdup bam.
+	sleep 8
+else
+	echo `date` Error Step: Index mkdup bam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Remove temporary directories...
+rm -rf build/resources/integrationTest/output/smv1/qc/smv1.hisat2.sorted.mkdup.metrics
+rm -rf build/resources/integrationTest/output/smv1/bam/smv1.hisat2.sorted.bam.bai
+rm -rf build/resources/integrationTest/output/smv1/tmp
+rm -rf build/resources/integrationTest/output/smv1/bam/smv1.hisat2.sorted.bam
+
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Remove temporary directories.
+	sleep 8
+else
+	echo `date` Error Step: Remove temporary directories.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Finish the job execution!
