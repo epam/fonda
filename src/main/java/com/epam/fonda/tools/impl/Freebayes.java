@@ -26,6 +26,7 @@ import com.epam.fonda.tools.results.VariantsVcfOutput;
 import com.epam.fonda.tools.results.VariantsVcfResult;
 import com.epam.fonda.utils.DnaUtils;
 import com.epam.fonda.utils.ToolUtils;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +34,6 @@ import org.apache.commons.lang3.Validate;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 @RequiredArgsConstructor
@@ -70,7 +70,7 @@ public class Freebayes implements Tool<VariantsVcfResult> {
         final Context context = new Context();
         context.setVariable("toolFields", toolFields);
         final String cmd = templateEngine.process(FREEBAYES_TOOL_TEMPLATE_NAME, context);
-        TASK_TO_CHECK.add("Freebayes detection");
+        TaskContainer.addTasks("Freebayes detection");
         final VariantsVcfOutput output = VariantsVcfOutput.builder()
                 .variantsVcf(toolFields.getVcf())
                 .variantsOutputDir(toolFields.getOutDir())

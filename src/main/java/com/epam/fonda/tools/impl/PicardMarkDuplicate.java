@@ -24,6 +24,7 @@ import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -31,10 +32,8 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 @RequiredArgsConstructor
@@ -80,7 +79,7 @@ public class PicardMarkDuplicate implements Tool<BamResult> {
         context.setVariable("toolFields", initializeToolFields(configuration));
         context.setVariable("bam", bamResult.getBamOutput().getBam());
         final String cmd = templateEngine.process(MKDUP_TOOL_TEMPLATE_NAME, context);
-        TASK_TO_CHECK.addAll(Arrays.asList("Mark duplicates", "Index mkdup bam"));
+        TaskContainer.addTasks("Mark duplicates", "Index mkdup bam");
         final boolean amplicon = isAmplicon(configuration);
         BamOutput bamOutput = bamResult.getBamOutput();
         bamOutput.setBam(amplicon ? bamOutput.getBam() : additionalPicardMarkDuplicateFields.mkdupBam);

@@ -23,6 +23,7 @@ import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.VariantsVcfOutput;
 import com.epam.fonda.tools.results.VariantsVcfResult;
 import com.epam.fonda.utils.DnaUtils;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,6 @@ import org.thymeleaf.context.Context;
 
 import java.util.Collections;
 
-import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 import static java.lang.String.format;
 
@@ -79,7 +79,7 @@ public class GatkHaplotypeCaller implements Tool<VariantsVcfResult> {
         final AdditionalFields additionalFields = initializeAdditionalFields(configuration);
         final String cmd = templateEngine.process(AMPLICON_GATK_HAPLOTYPE_TOOL_TEMPLATE_NAME,
                 buildContext(configuration, additionalFields));
-        TASK_TO_CHECK.add("GATK haplotypecaller detection");
+        TaskContainer.addTasks("GATK haplotypecaller detection");
         VariantsVcfOutput variantsVcfOutput = VariantsVcfOutput.builder()
                 .variantsVcf(additionalFields.gatkHapVariants)
                 .variantsTmpOutputDir(additionalFields.tmpGatkHapOutdir)

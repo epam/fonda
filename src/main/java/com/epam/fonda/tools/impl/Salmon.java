@@ -24,13 +24,13 @@ import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.FastqResult;
 import com.epam.fonda.tools.results.SalmonOutput;
 import com.epam.fonda.tools.results.SalmonResult;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 import static java.lang.String.format;
 
@@ -83,7 +83,7 @@ public class Salmon implements Tool<SalmonResult> {
         Context context = new Context();
         context.setVariable("salmonFields", salmonFields);
         final String cmd = templateEngine.process(SALMON_TOOL_TEMPLATE_NAME, context);
-        TASK_TO_CHECK.add("SALMON");
+        TaskContainer.addTasks("SALMON");
         salmonOutput.setSalmonGeneResult(salmonFields.salmonGeneResult);
         salmonOutput.setSalmonTranscriptResult(salmonFields.salmonTranscriptResult);
         return SalmonResult.builder()

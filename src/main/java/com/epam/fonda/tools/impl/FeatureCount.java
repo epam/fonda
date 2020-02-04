@@ -24,6 +24,7 @@ import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.tools.results.FeatureCountOutput;
 import com.epam.fonda.tools.results.FeatureCountResult;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.thymeleaf.TemplateEngine;
@@ -32,7 +33,6 @@ import org.thymeleaf.context.Context;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.PipelineUtils.cleanUpTmpDir;
 import static com.epam.fonda.utils.ToolUtils.validate;
 import static java.lang.String.format;
@@ -100,7 +100,7 @@ public class FeatureCount implements Tool<FeatureCountResult> {
         context.setVariable("queueParametersFields", initializeQueueParametersFields(configuration));
         context.setVariable("directoryFields", initializeDirectoryFields(configuration, featureOutdir));
         String cmd = templateEngine.process(FEATURECOUNT_TOOL_TEMPLATE_NAME, context);
-        TASK_TO_CHECK.add("Feautrecounts");
+        TaskContainer.addTasks("Feautrecounts");
         featureCountOutput.setFeatureCountGeneCount(additionalFeatureCountFields.featureCountGeneCount);
         return FeatureCountResult.builder()
                 .featureCountOutput(featureCountOutput)

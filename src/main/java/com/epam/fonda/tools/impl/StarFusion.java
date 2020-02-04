@@ -25,6 +25,7 @@ import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.FastqOutput;
 import com.epam.fonda.tools.results.StarFusionOutput;
 import com.epam.fonda.tools.results.StarFusionResult;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Data;
 import lombok.NonNull;
 import org.thymeleaf.TemplateEngine;
@@ -32,7 +33,6 @@ import org.thymeleaf.context.Context;
 
 import java.util.Arrays;
 
-import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 @Data
@@ -94,7 +94,7 @@ public class StarFusion implements Tool<StarFusionResult> {
         context.setVariable("bam", star4fusionBam);
         context.setVariable("starFusionResult", starFusionResult);
         String cmd = templateEngine.process(STAR_FUSION_TOOL_TEMPLATE_NAME, context);
-        TASK_TO_CHECK.addAll(Arrays.asList("STAR4FUSION alignment", "Sort bam", "Index bam", "STAR-Fusion detection"));
+        TaskContainer.addTasks("STAR4FUSION alignment", "Sort bam", "Index bam", "STAR-Fusion detection");
         StarFusionOutput starFusionOutput = StarFusionOutput.builder()
                 .starFusionResult(starFusionResult)
                 .starFusionOutdir(additionalStarFusionFields.starFusionOutdir)

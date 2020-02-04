@@ -20,6 +20,7 @@ import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.entity.configuration.GlobalConfigFormat;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.utils.PipelineUtils;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +29,6 @@ import org.thymeleaf.context.Context;
 
 import java.util.Set;
 
-import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 @Slf4j
@@ -71,11 +71,11 @@ public class SCRNASeqDoubletDetection {
         StringBuilder command = new StringBuilder();
         if (toolNames.contains(DOUBLET_DETECTION)) {
             command.append(templateEngine.process(DOUBLE_DETECTION_TEMPLATE_NAME, context));
-            TASK_TO_CHECK.add("Doubletdetection doublet detection");
+            TaskContainer.addTasks("Doubletdetection doublet detection");
         }
         if (toolNames.contains(SCRUBLET)) {
             command.append(templateEngine.process(SCRUBLET_TEMPLATE_NAME, context));
-            TASK_TO_CHECK.add("Scrublet doublet detection");
+            TaskContainer.addTasks("Scrublet doublet detection");
         }
         return command.toString();
     }

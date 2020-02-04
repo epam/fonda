@@ -23,13 +23,13 @@ import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.VariantsVcfResult;
 import com.epam.fonda.tools.results.VcfScnpeffAnnonationResult;
 import com.epam.fonda.tools.results.VcfScnpeffAnnotationOutput;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.PipelineUtils.getExecutionPath;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
@@ -79,7 +79,7 @@ public class VcfSnpeffAnnotation implements Tool<VcfScnpeffAnnonationResult> {
         AdditionalFields additionalFields = initializeAdditionalFields();
         String cmd = templateEngine.process(VCF_SNPEFF_ANNOTATION_TOOL_TEMPLATE_NAME,
                 buildContext(configuration, additionalFields));
-        TASK_TO_CHECK.add("SnpEff annotation");
+        TaskContainer.addTasks("SnpEff annotation");
         VcfScnpeffAnnotationOutput vcfScnpeffAnnotationOutput = VcfScnpeffAnnotationOutput.builder()
                 .var2Snpsift(additionalFields.var2Snpsift)
                 .build();

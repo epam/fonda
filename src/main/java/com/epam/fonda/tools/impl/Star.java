@@ -25,6 +25,7 @@ import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.tools.results.FastqOutput;
+import com.epam.fonda.workflow.TaskContainer;
 import com.epam.fonda.workflow.impl.Flag;
 import lombok.Data;
 import lombok.NonNull;
@@ -34,7 +35,6 @@ import org.thymeleaf.context.Context;
 
 import java.util.Arrays;
 
-import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 import static java.lang.String.format;
 
@@ -102,7 +102,7 @@ public class Star implements Tool<BamResult> {
         BamOutput bamOutput = BamOutput.builder().build();
         if (flag.isRsem()) {
             bamOutput.setBam(transcriptomeBam);
-            TASK_TO_CHECK.add("STAR alignment");
+            TaskContainer.addTasks("STAR alignment");
         } else {
             bamOutput.setBam(genomeBam);
             bamOutput.setBamIndex(additionalStarFields.bamIndex);
@@ -110,7 +110,7 @@ public class Star implements Tool<BamResult> {
             bamOutput.setSortedBamIndex(additionalStarFields.bamIndex);
             bamOutput.setUnsortedBam(additionalStarFields.unsortedBam);
             bamOutput.setUnsortedBamIndex(additionalStarFields.unsortedBamIndex);
-            TASK_TO_CHECK.addAll(Arrays.asList("STAR alignment", "Sort bam", "Index bam"));
+            TaskContainer.addTasks("STAR alignment", "Sort bam", "Index bam");
         }
         AbstractCommand resultCommand = BashCommand.withTool(cmd);
         resultCommand.setTempDirs(Arrays.asList(bamOutput.getSortedBam(), bamOutput.getSortedBamIndex(),

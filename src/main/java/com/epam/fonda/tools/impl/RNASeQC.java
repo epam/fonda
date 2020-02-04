@@ -26,6 +26,7 @@ import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.MetricsOutput;
 import com.epam.fonda.tools.results.MetricsResult;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +35,6 @@ import org.thymeleaf.context.Context;
 
 import java.util.Arrays;
 
-import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.PipelineUtils.getExecutionPath;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
@@ -109,7 +109,7 @@ public class RNASeQC implements Tool<MetricsResult> {
         context.setVariable("metricFields", metricFields);
         context.setVariable("mkdupBam", bamOutput.getMkdupBam());
         final String cmd = templateEngine.process(RNASEQC_TOOL_TEMPLATE_NAME, context);
-        TASK_TO_CHECK.addAll(Arrays.asList("RNA QC metrics", "Merge RNA QC"));
+        TaskContainer.addTasks("RNA QC metrics", "Merge RNA QC");
         final MetricsOutput metricsOutput = MetricsOutput.builder().build();
         metricsOutput.setRnaMetrics(metricFields.rnaMetrics);
         metricsOutput.setMergedQcMetrics(metricFields.mergedQcMetrics);

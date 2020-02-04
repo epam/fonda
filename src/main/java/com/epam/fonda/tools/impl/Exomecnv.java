@@ -25,6 +25,7 @@ import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.ExomecnvOutput;
 import com.epam.fonda.tools.results.ExomecnvResult;
 import com.epam.fonda.utils.ToolUtils;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +34,6 @@ import org.thymeleaf.context.Context;
 
 import java.util.Arrays;
 
-import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 @RequiredArgsConstructor
@@ -76,7 +76,7 @@ public class Exomecnv implements Tool<ExomecnvResult> {
         final Context context = new Context();
         context.setVariable("toolFields", toolFields);
         final String cmd = templateEngine.process(EXOMECNV_TEMPLATE, context);
-        TASK_TO_CHECK.add("ExomeCNV detection");
+        TaskContainer.addTasks("ExomeCNV detection");
         final ExomecnvOutput output = ExomecnvOutput.builder()
                 .readDepthSummary(toolFields.getReadDepthSummary())
                 .controlReadDepthSummary(toolFields.getControlReadDepthSummary())

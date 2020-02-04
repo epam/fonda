@@ -25,6 +25,7 @@ import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.utils.CellRangerUtils;
 import com.epam.fonda.utils.PipelineUtils;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -32,10 +33,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.Validate;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-
-import java.util.Arrays;
-
-import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -77,9 +74,9 @@ public class Count implements Tool<BamResult> {
         Context context = new Context();
         context.setVariable("countFields", countFields);
         final String cmd = templateEngine.process(COUNT_TEMPLATE, context);
-        TASK_TO_CHECK.addAll(Arrays.asList("Cellranger count", "Generate gene-barcode matrix"));
+        TaskContainer.addTasks("Cellranger count", "Generate gene-barcode matrix");
         if (countFields.genomeBuild.split("\\s*,\\s*").length == 2) {
-            TASK_TO_CHECK.add("Merge gene-barcode matrix");
+            TaskContainer.addTasks("Merge gene-barcode matrix");
         }
         bamResult.setCommand(BashCommand.withTool(cmd));
         bamResult.setBamOutput(BamOutput.builder().bam(countFields.bam).build());

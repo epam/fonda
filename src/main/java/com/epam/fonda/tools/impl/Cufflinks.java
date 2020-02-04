@@ -24,12 +24,12 @@ import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.CufflinksOutput;
 import com.epam.fonda.tools.results.CufflinksResult;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 import static java.lang.String.format;
 
@@ -60,7 +60,7 @@ public class Cufflinks implements Tool<CufflinksResult> {
         Context context = new Context();
         context.setVariable("cufflinksFields", cufflinksFields);
         final String cmd = templateEngine.process(CUFFLINKS_TOOL_TEMPLATE_NAME, context);
-        TASK_TO_CHECK.add("Cufflinks");
+        TaskContainer.addTasks("Cufflinks");
         cufflinksOutput.setCufflinksGeneResult(cufflinksFields.cufflinksGeneResult);
         cufflinksOutput.setCufflinksIsoformResult(cufflinksFields.cufflinksIsoformResult);
         return CufflinksResult.builder()

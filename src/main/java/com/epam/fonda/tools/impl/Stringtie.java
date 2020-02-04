@@ -23,12 +23,12 @@ import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.StringtieOutput;
 import com.epam.fonda.tools.results.StringtieResult;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 @AllArgsConstructor
@@ -70,7 +70,7 @@ public class Stringtie implements Tool<StringtieResult> {
         Context context = new Context();
         context.setVariable("stringtieFields", stringtieFields);
         final String cmd = templateEngine.process(STRINGTIE_TOOL_TEMPLATE_NAME, context);
-        TASK_TO_CHECK.add("Stringtie");
+        TaskContainer.addTasks("Stringtie");
         stringtieOutput.setStringtieGeneResult(stringtieFields.stringtieGeneResult);
         stringtieOutput.setStringtieAssemblyTranscript(stringtieFields.stringtieAssemblyTranscript);
         return StringtieResult.builder()

@@ -28,6 +28,7 @@ import com.epam.fonda.tools.results.OptiTypeResult;
 import com.epam.fonda.tools.results.FastqResult;
 import com.epam.fonda.tools.results.OptiTypeOutput;
 import com.epam.fonda.utils.ToolUtils;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
@@ -35,7 +36,6 @@ import lombok.RequiredArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 import static java.lang.String.format;
 
@@ -87,7 +87,7 @@ public class OptiType implements Tool<OptiTypeResult> {
         Context context = new Context();
         context.setVariable("optiTypeFields", optiTypeFields);
         final String cmd = templateEngine.process(OPTY_TIPE_TOOL_TEMPLATE_NAME, context);
-        TASK_TO_CHECK.add("OptiType HLA typing");
+        TaskContainer.addTasks("OptiType HLA typing");
         return OptiTypeResult.builder()
                 .fastqResult(fastqResult)
                 .optiTypeOutput(optiTypeOutput)

@@ -23,6 +23,7 @@ import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.utils.AmpliconGatkDatabaseFields;
 import com.epam.fonda.utils.AmpliconGatkToolFields;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +31,6 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.util.Collections;
-
-import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 
 @RequiredArgsConstructor
 public class AmpliconGatkRecalibrate implements Tool<BamResult> {
@@ -69,7 +68,7 @@ public class AmpliconGatkRecalibrate implements Tool<BamResult> {
         context.setVariable("additionalFields", additionalFields);
         context.setVariable("tmpOutdir", tmpOutdir);
         String cmd = templateEngine.process(AMPLICON_GATK_RECALIBRATE_TOOL_TEMPLATE_NAME, context);
-        TASK_TO_CHECK.add("GATK recalibration");
+        TaskContainer.addTasks("GATK recalibration");
         BamOutput bamOutput = bamResult.getBamOutput();
         bamOutput.setBam(additionalFields.recalBam);
         AbstractCommand resultCommand = bamResult.getCommand();

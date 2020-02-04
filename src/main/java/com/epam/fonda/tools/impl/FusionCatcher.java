@@ -25,6 +25,7 @@ import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.FastqResult;
 import com.epam.fonda.tools.results.FusionCatcherOutput;
 import com.epam.fonda.tools.results.FusionCatcherResult;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Data;
 import lombok.NonNull;
 import org.thymeleaf.TemplateEngine;
@@ -32,7 +33,6 @@ import org.thymeleaf.context.Context;
 
 import java.util.Collections;
 
-import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 @Data
@@ -79,7 +79,7 @@ public class FusionCatcher implements Tool<FusionCatcherResult> {
         Context context = new Context();
         context.setVariable("fusionCatcherFields", fusionCatcherFields);
         final String cmd = templateEngine.process(FUSION_CATCHER_TOOL_TEMPLATE_NAME, context);
-        TASK_TO_CHECK.add("FusionCatcher");
+        TaskContainer.addTasks("FusionCatcher");
         AbstractCommand command = BashCommand.withTool(cmd);
         command.setTempDirs(Collections.singletonList(fusionCatcherFields.tmpFusionCatcherOutdir));
         return FusionCatcherResult.builder()

@@ -24,13 +24,13 @@ import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.FastqOutput;
 import com.epam.fonda.tools.results.FastqResult;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 import static java.lang.String.format;
 
@@ -79,7 +79,7 @@ public class SeqPurge implements Tool<FastqResult> {
         Context context = new Context();
         context.setVariable("seqPurgeFields", seqPurgeFields);
         final String cmd = templateEngine.process(SEQPURGE_TOOL_TEMPLATE_NAME, context);
-        TASK_TO_CHECK.add("Seqpurge trimming");
+        TaskContainer.addTasks("Seqpurge trimming");
         final FastqOutput fastqOutput = result.getOut();
         fastqOutput.setMergedFastq1(seqPurgeFields.trimmedFastq1);
         fastqOutput.setMergedFastq2(seqPurgeFields.trimmedFastq2);

@@ -23,6 +23,7 @@ import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
@@ -30,7 +31,6 @@ import lombok.RequiredArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 @RequiredArgsConstructor
@@ -78,7 +78,7 @@ public class AmpliconAbraRealign implements Tool<BamResult> {
         context.setVariable("toolFields", initializeToolFields(configuration));
         context.setVariable("additionalFields", additionalFields);
         String cmd = templateEngine.process(AMPLICON_ABRA_REALIGN_TOOL_TEMPLATE_NAME, context);
-        TASK_TO_CHECK.add("ABRA realignment");
+        TaskContainer.addTasks("ABRA realignment");
         BamOutput bamOutput = bamResult.getBamOutput();
         bamOutput.setBam(additionalFields.realignBam);
         AbstractCommand resultCommand = bamResult.getCommand();

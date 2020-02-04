@@ -24,6 +24,7 @@ import com.epam.fonda.samples.bam.BamFileSample;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
@@ -32,7 +33,6 @@ import org.thymeleaf.context.Context;
 
 import java.util.Arrays;
 
-import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 @Data
@@ -68,7 +68,7 @@ public class SortBamByReadName implements Tool<BamResult> {
         final String sortedBamIndex = String.format("%s.bai", sortedBam);
         Context context = buildContext(toolFields, bam, sortedBam, sortedBamIndex);
         final String cmd = templateEngine.process(SORT_BAM_BY_READ_NAME_TEMPLATE, context);
-        TASK_TO_CHECK.addAll(Arrays.asList("Sort bam", "Index bam"));
+        TaskContainer.addTasks("Sort bam", "Index bam");
         AbstractCommand command = BashCommand.withTool(cmd);
         command.setTempDirs(Arrays.asList(sortedBam, sortedBamIndex));
         return BamResult.builder()

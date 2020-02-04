@@ -23,6 +23,7 @@ import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.tools.results.PileupOutput;
 import com.epam.fonda.tools.results.PileupResult;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
@@ -30,7 +31,6 @@ import lombok.RequiredArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 @RequiredArgsConstructor
@@ -91,7 +91,7 @@ public class Pileup implements Tool<PileupResult> {
         context.setVariable("pileup", pileup);
         context.setVariable("controlPileup", controlPileup);
         String cmd = templateEngine.process(PILEUP_TOOL_TEMPLATE_NAME, context);
-        TASK_TO_CHECK.add("bam pileup");
+        TaskContainer.addTasks("bam pileup");
         return PileupResult.builder()
                 .command(BashCommand.withTool(cmd))
                 .pileupOutput(pileupOutput)

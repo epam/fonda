@@ -25,13 +25,13 @@ import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.tools.results.FastqOutput;
 import com.epam.fonda.tools.results.FastqResult;
 import com.epam.fonda.utils.ToolUtils;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 @Data
@@ -79,7 +79,7 @@ public class SamToFastq implements Tool<FastqResult> {
                 : null;
         Context context = buildContext(toolFields, fastq1, fastq2, unpairFastq);
         final String cmd = templateEngine.process(SAM_TO_FASTQ_TOOL_TEMPLATE_NAME, context);
-        TASK_TO_CHECK.add("Convert bam to fastq");
+        TaskContainer.addTasks("Convert bam to fastq");
         return FastqResult.builder()
                 .command(BashCommand.withTool(cmd))
                 .out(buildFastqOutput(fastq1, fastq2, configuration))

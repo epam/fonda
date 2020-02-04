@@ -24,6 +24,7 @@ import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.tools.results.ContEstOutput;
 import com.epam.fonda.tools.results.ContEstResult;
 import com.epam.fonda.utils.DnaUtils;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
@@ -33,7 +34,6 @@ import org.thymeleaf.context.Context;
 
 import java.util.Collections;
 
-import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 @RequiredArgsConstructor
@@ -91,7 +91,7 @@ public class ContEst implements Tool<ContEstResult> {
                 .build();
         contEstOutput.createDirectory();
         String cmd = templateEngine.process(CONT_EST_TOOL_TEMPLATE_NAME, context);
-        TASK_TO_CHECK.add("Contamination estimation");
+        TaskContainer.addTasks("Contamination estimation");
         final BashCommand command = BashCommand.withTool(cmd);
         command.setTempDirs(Collections.singletonList(additionalFields.tmpContEstOutDir));
         return ContEstResult.builder()

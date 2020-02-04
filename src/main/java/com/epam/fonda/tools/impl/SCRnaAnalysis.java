@@ -20,6 +20,7 @@ import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.entity.configuration.GlobalConfigFormat;
 import com.epam.fonda.tools.PostProcessTool;
 import com.epam.fonda.utils.PipelineUtils;
+import com.epam.fonda.workflow.TaskContainer;
 import com.epam.fonda.workflow.impl.Flag;
 import lombok.Data;
 import lombok.NonNull;
@@ -33,7 +34,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.RnaAnalysisUtils.getSampleFileListReference;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
@@ -140,7 +140,7 @@ public class SCRnaAnalysis implements PostProcessTool {
 
         Context context = new Context();
         context.setVariable("scRnaAnalysisFields", scRnaAnalysisFields);
-        TASK_TO_CHECK.add("Merge gene expression");
+        TaskContainer.addTasks("Merge gene expression");
         return templateEngine.process(SCRNA_ANALYSIS_EXPRESS_DATA_TEMPLATE, context);
     }
 

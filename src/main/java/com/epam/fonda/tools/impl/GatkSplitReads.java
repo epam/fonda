@@ -20,6 +20,7 @@ import com.epam.fonda.entity.command.AbstractCommand;
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.entity.configuration.GlobalConfigFormat;
+import com.epam.fonda.workflow.TaskContainer;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.utils.PipelineUtils;
@@ -31,7 +32,6 @@ import org.thymeleaf.context.Context;
 
 import java.util.Arrays;
 
-import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 @Data
@@ -64,7 +64,7 @@ public class GatkSplitReads implements Tool<BamResult> {
         context.setVariable("splitBam", splitBam);
         context.setVariable("pathToBam", bamResult.getBamOutput().getBam());
         String cmd = templateEngine.process(GATK_SPLIT_READS_TOOL_TEMPLATE_NAME, context);
-        TASK_TO_CHECK.add("GATK SplitNCigarReads");
+        TaskContainer.addTasks("GATK SplitNCigarReads");
         AbstractCommand resultCommand = bamResult.getCommand();
         resultCommand.setToolCommand(resultCommand.getToolCommand() + cmd);
         resultCommand.getTempDirs().addAll(Arrays.asList(splitBam, splitBamIndex));

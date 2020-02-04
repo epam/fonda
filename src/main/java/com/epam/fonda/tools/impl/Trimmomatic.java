@@ -24,6 +24,7 @@ import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.FastqOutput;
 import com.epam.fonda.tools.results.FastqResult;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 import static java.lang.String.format;
 
@@ -78,7 +78,7 @@ public class Trimmomatic implements Tool<FastqResult> {
         Context context = new Context();
         context.setVariable("trimmomaticFields", trimmomaticFields);
         final String cmd = templateEngine.process(TRIMMOMATIC_TOOL_TEMPLATE_NAME, context);
-        TASK_TO_CHECK.add("Trimmomatic trimming");
+        TaskContainer.addTasks("Trimmomatic trimming");
         final FastqOutput fastqOutput = result.getOut();
         if (StringUtils.isNoneBlank(trimmomaticFields.adapterSEQ)) {
             fastqOutput.setMergedFastq1(trimmomaticFields.trimmedFastq1);

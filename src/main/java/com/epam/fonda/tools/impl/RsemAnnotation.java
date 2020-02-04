@@ -22,13 +22,13 @@ import com.epam.fonda.entity.configuration.GlobalConfigFormat;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.RsemResult;
 import com.epam.fonda.utils.PipelineUtils;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 @RequiredArgsConstructor
@@ -61,7 +61,7 @@ public class RsemAnnotation implements Tool<RsemResult> {
         Context context = new Context();
         context.setVariable("rsemAnnotationFields", rsemAnnotationFields);
         final String cmd = templateEngine.process(RSEM_ANNOTATION_TEMPLATE_NAME, context);
-        TASK_TO_CHECK.add("RSEM annotation");
+        TaskContainer.addTasks("RSEM annotation");
         rsemResult.setCommand(BashCommand.withTool(rsemResult.getCommand().getToolCommand() + cmd));
         return rsemResult;
     }

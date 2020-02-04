@@ -26,6 +26,7 @@ import com.epam.fonda.tools.results.FastqResult;
 import com.epam.fonda.tools.results.MixcrOutput;
 import com.epam.fonda.tools.results.MixcrResult;
 import com.epam.fonda.utils.ToolUtils;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
@@ -33,7 +34,6 @@ import lombok.RequiredArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 @RequiredArgsConstructor
@@ -91,7 +91,7 @@ public class Mixcr implements Tool<MixcrResult> {
         Context context = new Context();
         context.setVariable("mixcrFields", mixcrFields);
         final String cmd = templateEngine.process(MIXCR_TOOL_TEMPLATE_NAME, context);
-        TASK_TO_CHECK.add("MIXCR detection");
+        TaskContainer.addTasks("MIXCR detection");
         return MixcrResult.builder()
                 .command(BashCommand.withTool(cmd))
                 .fastqResult(fastqResult)

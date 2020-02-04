@@ -23,12 +23,12 @@ import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.RsemOutput;
 import com.epam.fonda.tools.results.RsemResult;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 @AllArgsConstructor
@@ -70,7 +70,7 @@ public class RsemExpression implements Tool<RsemResult> {
         Context context = new Context();
         context.setVariable("rsemExpressionFields", rsemExpressionFields);
         final String cmd = templateEngine.process(RSEM_EXPRESSION_TEMPLATE_NAME, context);
-        TASK_TO_CHECK.add("RSEM");
+        TaskContainer.addTasks("RSEM");
         rsemOutput.setRsemGeneResult(rsemExpressionFields.rsemGeneResult);
         rsemOutput.setRsemIsoformResult(rsemExpressionFields.rsemIsoformResult);
         return RsemResult.builder()

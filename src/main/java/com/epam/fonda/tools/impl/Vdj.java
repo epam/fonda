@@ -25,13 +25,13 @@ import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.tools.results.VdjOutput;
 import com.epam.fonda.utils.CellRangerUtils;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 @RequiredArgsConstructor
@@ -82,7 +82,7 @@ public class Vdj implements Tool<BamResult> {
         context.setVariable("vdjFields", vdjFields);
         context.setVariable("sampleFields", sampleFields);
         final String cmd = templateEngine.process(VDJ_TOOL_TEMPLATE_NAME, context);
-        TASK_TO_CHECK.add("Cellranger vdj analysis");
+        TaskContainer.addTasks("Cellranger vdj analysis");
         VdjOutput vdjOutput = VdjOutput.builder()
                 .vdjBamResult(vdjFields.bam)
                 .vdjOutdir(sampleFields.vdjOutdir)

@@ -23,6 +23,7 @@ import com.epam.fonda.entity.configuration.GlobalConfigFormat;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,6 @@ import org.thymeleaf.context.Context;
 
 import java.util.Arrays;
 
-import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 @RequiredArgsConstructor
@@ -61,7 +61,7 @@ public class PicardRemoveDuplicate implements Tool<BamResult> {
         context.setVariable("mkdupBam", mkdupBam);
         context.setVariable("rmdupBam", rmdupBam);
         final String cmd = templateEngine.process(PICARD_REMOVE_DUPLICATE_TOOL_TEMPLATE_NAME, context);
-        TASK_TO_CHECK.addAll(Arrays.asList("Remove duplicates", "Index rmdup bam"));
+        TaskContainer.addTasks("Remove duplicates", "Index rmdup bam");
         BamOutput bamOutput = bamResult.getBamOutput();
         bamOutput.setBam(rmdupBam);
         bamOutput.setRmdupBam(rmdupBam);

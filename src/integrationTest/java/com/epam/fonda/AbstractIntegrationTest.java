@@ -15,7 +15,7 @@
  */
 package com.epam.fonda;
 
-import com.epam.fonda.utils.PipelineUtils;
+import com.epam.fonda.workflow.TaskContainer;
 import org.junit.jupiter.api.AfterEach;
 
 import java.io.File;
@@ -35,7 +35,7 @@ public abstract class AbstractIntegrationTest {
 
     @AfterEach
     public void cleanup() {
-        PipelineUtils.TASK_TO_CHECK.clear();
+        TaskContainer.getTasks().clear();
     }
 
     /**

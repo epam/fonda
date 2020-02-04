@@ -26,6 +26,7 @@ import com.epam.fonda.tools.results.VariantsVcfOutput;
 import com.epam.fonda.tools.results.VariantsVcfResult;
 import com.epam.fonda.utils.DnaUtils;
 import com.epam.fonda.utils.ToolUtils;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +35,6 @@ import org.thymeleaf.context.Context;
 
 import java.util.Collections;
 
-import static com.epam.fonda.utils.PipelineUtils.TASK_TO_CHECK;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 @RequiredArgsConstructor
@@ -74,7 +74,7 @@ public class Mutect2 implements Tool<VariantsVcfResult> {
         final Context context = new Context();
         context.setVariable("toolFields", toolFields);
         final String cmd = templateEngine.process(MUTECT2_TEMPLATE, context);
-        TASK_TO_CHECK.add("Mutect2 detection");
+        TaskContainer.addTasks("Mutect2 detection");
         final VariantsVcfOutput output = VariantsVcfOutput.builder()
                 .variantsVcf(toolFields.getVcf())
                 .variantsOutputDir(toolFields.getOutDir())
