@@ -162,7 +162,8 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
                                 RNA_EXPRESSION_FASTQ_STAR_WITH_RSEM_SUFFIX)),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_STAR_WITH_RSEM,
-                        String.format("%sRnaExpression_Fastq_rsem_for_smv1_analysis.sh", OUTPUT_SH_FILES_SUFFIX),
+                        String.format("%sRnaExpression_Fastq_rsem_for_smv1_analysis.sh",
+                                OUTPUT_SH_FILES_SUFFIX),
                         String.format("%sRnaExpression_Fastq_rsem_for_smv1_analysis",
                                 RNA_EXPRESSION_FASTQ_STAR_WITH_RSEM_SUFFIX)),
                 Arguments.of(
@@ -192,7 +193,8 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
                                 RNA_EXPRESSION_FASTQ_FEATURE_COUNT_SUFFIX)),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_CUFFLINKS,
-                        OUTPUT_SH_FILES_SUFFIX + "RnaExpression_Fastq_cufflinks_for_smv1_analysis.sh", 
+                        String.format("%sRnaExpression_Fastq_cufflinks_for_smv1_analysis.sh",
+                                OUTPUT_SH_FILES_SUFFIX),
                         RNA_EXPRESSION_FASTQ_CUFFLINKS_SUFFIX + 
                                 "RnaExpression_Fastq_cufflinks_for_smv1_analysis"),
                 Arguments.of(
@@ -203,7 +205,8 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
                                 RNA_EXPRESSION_FASTQ_STRINGTIE_SUFFIX)),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_RSEM_WITHOUT_HISAT2,
-                        String.format("%sRnaExpression_Fastq_rsem_for_smv1_analysis.sh", OUTPUT_SH_FILES_SUFFIX),
+                        String.format("%sRnaExpression_Fastq_rsem_for_smv1_analysis.sh",
+                                OUTPUT_SH_FILES_SUFFIX),
                         String.format("%sRnaExpression_Fastq_rsem_for_smv1_analysis",
                                 RNA_EXPRESSION_FASTQ_RSEM_WITHOUT_HISAT2_SUFFIX)),
                 Arguments.of(
@@ -244,7 +247,7 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
         );
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "{2}-test")
     @MethodSource("initParameters")
     void testRnaExpressionFastq(
             String gConfigPath, String outputShFile, String templatePath) throws IOException, URISyntaxException {
