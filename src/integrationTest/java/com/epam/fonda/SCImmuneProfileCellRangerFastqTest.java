@@ -19,7 +19,6 @@ import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.utils.CellRangerUtils;
 import com.epam.fonda.utils.PipelineUtils;
 import com.epam.fonda.utils.TemplateEngineUtils;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -75,27 +74,24 @@ public class SCImmuneProfileCellRangerFastqTest extends AbstractIntegrationTest 
         startAppWithConfigs(GLOBAL_CONFIG_NAME, STUDY_CONFIG_NAME);
     }
 
-    @AfterEach
-    void cleanUp() throws IOException {
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
-    }
-
     @Test
-    void testCreateSpecificDir() {
+    void testCreateSpecificDir() throws IOException {
         assertAll(
             () -> assertTrue(new File(format("%s%s/sh_files", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
             () -> assertTrue(new File(format("%s%s/log_files", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
             () -> assertTrue(new File(format("%s%s/err_files", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
             () -> assertTrue(new File(format("%s%s/vdj", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists())
         );
+        cleanOutputDirForNextTest(OUTPUT_DIR, false);
     }
 
     @Test
-    void testExtractFastqDirFastq1Fastq2() {
+    void testExtractFastqDirFastq1Fastq2() throws IOException {
         FastqFileSample actualSample = CellRangerUtils.extractFastqDir(expectedSample);
         String fastqDirs = actualSample.getFastqDirs().get(0);
 
         assertTrue(fastqDirs.endsWith(FASTQ_DATA_FOLDER));
+        cleanOutputDirForNextTest(OUTPUT_DIR, false);
     }
 
     @ParameterizedTest
@@ -105,6 +101,7 @@ public class SCImmuneProfileCellRangerFastqTest extends AbstractIntegrationTest 
         final String actualCmd = getCmd(outputFilePath).trim();
 
         assertEquals(expectedCmd, actualCmd);
+        cleanOutputDirForNextTest(OUTPUT_DIR, false);
     }
 
     @SuppressWarnings("PMD")

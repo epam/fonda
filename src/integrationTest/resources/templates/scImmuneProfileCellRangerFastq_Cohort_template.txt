@@ -23,7 +23,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-    str=$(grep -E "(Successful|Error) Step: Cellranger vdj analysis" $logFile;)
+    str=$(grep -E "((Error Step: (Cellranger vdj analysis|Remove temporary directories))|(Successful Step: Cellranger vdj analysis))" $logFile;)
 fi
     echo Waiting for step: Cellranger vdj analysis
     sleep 60
