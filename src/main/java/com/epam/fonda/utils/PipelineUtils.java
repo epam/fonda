@@ -36,6 +36,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static com.epam.fonda.Executor.execute;
 import static java.lang.String.format;
@@ -136,7 +137,7 @@ public final class PipelineUtils {
      * @param fields is the type or {@link List<String>} and contains directories paths to remove.
      * @return resulting script of type {@link String}
      **/
-    public static String cleanUpTmpDir(List<String> fields) {
+    public static String cleanUpTmpDir(Set<String> fields) {
         Context context = new Context();
         context.setVariable("fields", fields);
         TaskContainer.addTasks("Remove temporary directories");

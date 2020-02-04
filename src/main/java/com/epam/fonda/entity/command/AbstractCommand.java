@@ -20,8 +20,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * The abstract <tt>AbstractCommand</tt> class represents tool command for launch
@@ -32,11 +33,11 @@ import java.util.List;
 public abstract class AbstractCommand {
 
     private String toolCommand;
-    private List<String> tempDirs;
+    private Set<String> tempDirs;
 
     AbstractCommand(final String toolCommand) {
         this.toolCommand = toolCommand;
-        this.tempDirs = new ArrayList<>();
+        this.tempDirs = new LinkedHashSet<>();
     }
 
     /**
@@ -44,7 +45,7 @@ public abstract class AbstractCommand {
      * @param temps is paths to resources for deletion
      * @return {@link List} of temporary paths
      */
-    public List<String> setTempDirs(final List<String> temps) {
+    public Set<String> setTempDirs(final List<String> temps) {
         tempDirs.addAll(temps);
         return tempDirs;
     }

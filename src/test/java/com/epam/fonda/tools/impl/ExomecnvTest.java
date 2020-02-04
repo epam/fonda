@@ -29,7 +29,8 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -63,6 +64,7 @@ class ExomecnvTest extends AbstractTest {
         final String format = "%s/exomecnv/%s.sample_interval_summary";
         final String expectedTumorOutput = String.format(format, TEST_DIRECTORY, SAMPLE_NAME);
         final String expectedNormalOutput = String.format(format, TEST_DIRECTORY, CONTROL_SAMPLE_NAME);
+        final Set<String> expectedSet = new LinkedHashSet<>(Arrays.asList(expectedTumorOutput, expectedNormalOutput));
 
         final Configuration configuration = initConfiguration();
         final Exomecnv exomecnv = new Exomecnv(SAMPLE_NAME, CONTROL_SAMPLE_NAME, controlBamOutput, TEST_DIRECTORY);
@@ -70,7 +72,7 @@ class ExomecnvTest extends AbstractTest {
 
         final AbstractCommand command = result.getCommand();
         assertEquals(expectedCmd, command.getToolCommand());
-        assertTmpDirs(Arrays.asList(expectedTumorOutput, expectedNormalOutput), command.getTempDirs());
+        assertTmpDirs(expectedSet, command.getTempDirs());
         assertEquals(expectedNormalOutput, result.getOutput().getControlReadDepthSummary());
         assertEquals(expectedTumorOutput, result.getOutput().getReadDepthSummary());
     }
@@ -155,7 +157,7 @@ class ExomecnvTest extends AbstractTest {
         return configuration;
     }
 
-    private void assertTmpDirs(final List<String> expected, final List<String> actual) {
+    private void assertTmpDirs(final Set<String> expected, final Set<String> actual) {
         assertEquals(expected.size(), actual.size());
         if (!expected.containsAll(actual)) {
             throw new AssertionError(String.format("Expected: [%s] but was: [%s]",

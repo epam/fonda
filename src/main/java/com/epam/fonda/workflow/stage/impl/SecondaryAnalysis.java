@@ -53,11 +53,11 @@ import com.epam.fonda.workflow.stage.Stage;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.collections4.SetUtils;
 import org.thymeleaf.TemplateEngine;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Set;
 
 import static com.epam.fonda.utils.PipelineUtils.addTask;
 import static com.epam.fonda.utils.PipelineUtils.cleanUpTmpDir;
@@ -95,7 +95,7 @@ public class SecondaryAnalysis implements Stage {
                     .build();
         }
         final StringBuilder alignCmd = new StringBuilder();
-        final List<String> tempDirs = bamResult.getCommand().getTempDirs();
+        final Set<String> tempDirs = bamResult.getCommand().getTempDirs();
         featureCount(flag, configuration, templateEngine, alignCmd);
         rsem(flag, configuration, templateEngine, alignCmd, tempDirs);
         cufflinks(flag, configuration, templateEngine, alignCmd, tempDirs);
@@ -115,13 +115,13 @@ public class SecondaryAnalysis implements Stage {
     }
 
     private void contEst(final Flag flag, final Configuration configuration, final TemplateEngine templateEngine,
-                         final StringBuilder alignCmd, final List<String> tempDirs) throws IOException {
+                         final StringBuilder alignCmd, final Set<String> tempDirs) throws IOException {
         if (!(isPaired && flag.isContEst())) {
             return;
         }
         final ContEstResult result = new ContEst(sampleName, sampleOutputDir, bamResult)
                 .generate(configuration, templateEngine);
-        tempDirs.addAll(ListUtils.emptyIfNull(result.getCommand().getTempDirs()));
+        tempDirs.addAll(SetUtils.emptyIfNull(result.getCommand().getTempDirs()));
         createCustomToolShell(configuration, alignCmd, result.getCommand().getToolCommand() +
                 cleanUpTmpDir(result.getCommand().getTempDirs()), "contEst");
     }
@@ -147,19 +147,19 @@ public class SecondaryAnalysis implements Stage {
     }
 
     private void exomecnv(final Flag flag, final Configuration configuration, final TemplateEngine templateEngine,
-                          final StringBuilder alignCmd, final List<String> tempDirs) throws IOException {
+                          final StringBuilder alignCmd, final Set<String> tempDirs) throws IOException {
         if (!(isPaired && flag.isExomecnv())) {
             return;
         }
         final ExomecnvResult result = new Exomecnv(sampleName, controlSampleName, bamResult.getBamOutput(),
                 sampleOutputDir).generate(configuration, templateEngine);
-        tempDirs.addAll(ListUtils.emptyIfNull(result.getCommand().getTempDirs()));
+        tempDirs.addAll(SetUtils.emptyIfNull(result.getCommand().getTempDirs()));
         createCustomToolShell(configuration, alignCmd, result.getCommand().getToolCommand() +
                 cleanUpTmpDir(result.getCommand().getTempDirs()), result.getToolName());
     }
 
     private void sequenza(final Flag flag, final Configuration configuration, final TemplateEngine templateEngine,
-                          final StringBuilder alignCmd, final List<String> tempDirs) throws IOException {
+                          final StringBuilder alignCmd, final Set<String> tempDirs) throws IOException {
         if (!(isPaired && flag.isSequenza())) {
             return;
         }
@@ -167,7 +167,7 @@ public class SecondaryAnalysis implements Stage {
                 .generate(configuration, templateEngine);
         final SequenzaResult result = new Sequenza(sampleName, sampleOutputDir, pileupResult.getPileupOutput())
                 .generate(configuration, templateEngine);
-        tempDirs.addAll(ListUtils.emptyIfNull(result.getCommand().getTempDirs()));
+        tempDirs.addAll(SetUtils.emptyIfNull(result.getCommand().getTempDirs()));
         createCustomToolShell(configuration, alignCmd, pileupResult.getCommand().getToolCommand()
                         + result.getCommand().getToolCommand() + cleanUpTmpDir(result.getCommand().getTempDirs()),
                 result.getToolName());
@@ -229,7 +229,7 @@ public class SecondaryAnalysis implements Stage {
     }
 
     private void stringtie(final Flag flag, final Configuration configuration, final TemplateEngine templateEngine,
-                           final StringBuilder alignCmd, final List<String> tempDirs) throws IOException {
+                           final StringBuilder alignCmd, final Set<String> tempDirs) throws IOException {
         if (!flag.isStringtie()) {
             return;
         }
@@ -240,7 +240,7 @@ public class SecondaryAnalysis implements Stage {
     }
 
     private void cufflinks(final Flag flag, final Configuration configuration, final TemplateEngine templateEngine,
-                           final StringBuilder alignCmd, final List<String> tempDirs) throws IOException {
+                           final StringBuilder alignCmd, final Set<String> tempDirs) throws IOException {
         if (!flag.isCufflinks()) {
             return;
         }
@@ -251,7 +251,7 @@ public class SecondaryAnalysis implements Stage {
     }
 
     private void rsem(final Flag flag, final Configuration configuration, final TemplateEngine templateEngine,
-                      final StringBuilder alignCmd, final List<String> tempDirs) throws IOException {
+                      final StringBuilder alignCmd, final Set<String> tempDirs) throws IOException {
         if (!flag.isRsem()) {
             return;
         }
@@ -290,7 +290,7 @@ public class SecondaryAnalysis implements Stage {
                                     final VcfScnpeffAnnonationResult vcfScnpeffAnnonationResult) throws IOException {
         createCustomToolShell(configuration, alignCmd, vcfToolResult.getAbstractCommand().getToolCommand()
                         + vcfScnpeffAnnonationResult.getCommand().getToolCommand()
-                        + cleanUpTmpDir(ListUtils.emptyIfNull(vcfToolResult.getAbstractCommand().getTempDirs())),
+                        + cleanUpTmpDir(SetUtils.emptyIfNull(vcfToolResult.getAbstractCommand().getTempDirs())),
                 vcfToolResult.getFilteredTool());
     }
 
