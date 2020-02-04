@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.results.FastqOutput;
 import com.epam.fonda.tools.results.FastqResult;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.thymeleaf.TemplateEngine;
@@ -42,6 +43,7 @@ import static java.lang.String.format;
 @Slf4j
 public final class PipelineUtils {
     public static final TemplateEngine TEMPLATE_ENGINE = TemplateEngineUtils.init();
+
     public static final String NA = "NA";
     public static final String CASE = "case";
     public static final String TUMOR = "tumor";
@@ -124,6 +126,7 @@ public final class PipelineUtils {
         Map<String, String> variablesMap = initializeVariablesMap(configuration, sampleName, task);
         Context context = new Context();
         context.setVariable(VARIABLES_MAP, variablesMap);
+        TaskContainer.addTasks(format("Run %s", task));
         return TEMPLATE_ENGINE.process(ADD_TASK_TEMPLATE_NAME, context);
     }
 
@@ -136,6 +139,7 @@ public final class PipelineUtils {
     public static String cleanUpTmpDir(List<String> fields) {
         Context context = new Context();
         context.setVariable("fields", fields);
+        TaskContainer.addTasks("Remove temporary directories");
         return TEMPLATE_ENGINE.process(CLEAN_UP_TMPDIR_TEMPLATE_NAME, context);
     }
 
@@ -168,6 +172,7 @@ public final class PipelineUtils {
         if (configuration.isTestMode()) {
             return;
         }
+
         if (configuration.isLocalMode()) {
             execute(format("sh %s", shellToSubmit));
             return;
@@ -202,6 +207,7 @@ public final class PipelineUtils {
                 context.setVariable(FASTQS_2_NAME, fastqs2);
             }
             cmd = TEMPLATE_ENGINE.process(MERGE_FASTQ_TEMPLATE_NAME, context);
+            TaskContainer.addTasks("Merge fastqs");
         }
         FastqOutput fastqOutput = FastqOutput.builder()
                 .mergedFastq1(mergedFastq1)
@@ -258,6 +264,7 @@ public final class PipelineUtils {
         variablesMap.put("queue", configuration.getGlobalConfig().getQueueParameters().getQueue());
         variablesMap.put("pe", configuration.getGlobalConfig().getQueueParameters().getPe());
         variablesMap.put("outdir", configuration.getCommonOutdir().getRootOutdir());
+        variablesMap.put("sync", String.valueOf(configuration.isSyncMode()));
         return variablesMap;
     }
 

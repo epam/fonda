@@ -22,6 +22,7 @@ import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.entity.configuration.GlobalConfigFormat;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.VariantsVcfResult;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
@@ -53,6 +54,7 @@ public class GatkHaplotypeCallerRnaFilter implements Tool<VariantsVcfResult> {
         AdditionalFields additionalFields = initializeAdditionalFields();
         final Context context = buildContext(toolFields, additionalFields);
         final String cmd = templateEngine.process(GATK_HAPLOTYPE_CALLER_RNA_FILTER_TOOL_TEMPLATE_NAME, context);
+        TaskContainer.addTasks("GATK haplotypecaller filtration");
         AbstractCommand command = BashCommand.withTool(variantsVcfResult.getAbstractCommand().getToolCommand() + cmd);
         variantsVcfResult.setAbstractCommand(command);
         variantsVcfResult.getVariantsVcfOutput().setVariantsVcfFiltered(additionalFields.variantsVcfFiltered);

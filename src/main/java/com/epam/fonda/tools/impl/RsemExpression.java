@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.RsemOutput;
 import com.epam.fonda.tools.results.RsemResult;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.thymeleaf.TemplateEngine;
@@ -69,6 +70,7 @@ public class RsemExpression implements Tool<RsemResult> {
         Context context = new Context();
         context.setVariable("rsemExpressionFields", rsemExpressionFields);
         final String cmd = templateEngine.process(RSEM_EXPRESSION_TEMPLATE_NAME, context);
+        TaskContainer.addTasks("RSEM");
         rsemOutput.setRsemGeneResult(rsemExpressionFields.rsemGeneResult);
         rsemOutput.setRsemIsoformResult(rsemExpressionFields.rsemIsoformResult);
         return RsemResult.builder()

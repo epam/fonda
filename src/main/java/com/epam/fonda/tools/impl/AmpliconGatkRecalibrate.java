@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.utils.AmpliconGatkDatabaseFields;
 import com.epam.fonda.utils.AmpliconGatkToolFields;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -67,6 +68,7 @@ public class AmpliconGatkRecalibrate implements Tool<BamResult> {
         context.setVariable("additionalFields", additionalFields);
         context.setVariable("tmpOutdir", tmpOutdir);
         String cmd = templateEngine.process(AMPLICON_GATK_RECALIBRATE_TOOL_TEMPLATE_NAME, context);
+        TaskContainer.addTasks("GATK recalibration");
         BamOutput bamOutput = bamResult.getBamOutput();
         bamOutput.setBam(additionalFields.recalBam);
         AbstractCommand resultCommand = bamResult.getCommand();

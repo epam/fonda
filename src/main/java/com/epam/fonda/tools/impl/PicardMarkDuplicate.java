@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -78,6 +79,7 @@ public class PicardMarkDuplicate implements Tool<BamResult> {
         context.setVariable("toolFields", initializeToolFields(configuration));
         context.setVariable("bam", bamResult.getBamOutput().getBam());
         final String cmd = templateEngine.process(MKDUP_TOOL_TEMPLATE_NAME, context);
+        TaskContainer.addTasks("Mark duplicates", "Index mkdup bam");
         final boolean amplicon = isAmplicon(configuration);
         BamOutput bamOutput = bamResult.getBamOutput();
         bamOutput.setBam(amplicon ? bamOutput.getBam() : additionalPicardMarkDuplicateFields.mkdupBam);

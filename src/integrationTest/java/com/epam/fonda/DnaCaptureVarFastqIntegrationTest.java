@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,6 +48,7 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
     private static final String VCF_SNPEFF_ANNOTATION = ".*?/usr/bin/python.+?vcf_snpeff_annotation.py.+?(\\n|$)";
     private static final String GUNZIP = "gunzip -c ";
     private static final String TEST_BED = "/ngs/data/test.bed";
+    private static final String MERGE_DNA_QC = "Successful Step: Merge DNA QC";
 
     @Test
     public void testSingleXenomeYesTrimmomaticBwa() throws IOException {
@@ -85,8 +86,7 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
 
         try (BufferedReader reader = new BufferedReader(new FileReader(outputShFromFile))) {
             List<String> lines = reader.lines().collect(Collectors.toList());
-            assertTrue(lines.stream().anyMatch(line -> line.contains("grep -E \"(Successful|Error) Step: " +
-                    "Merge DNA QC\"")));
+            assertTrue(lines.stream().anyMatch(line -> line.contains(MERGE_DNA_QC)));
             assertTrue(lines.stream().anyMatch(line -> line.contains(TEST_OUTPUT + TEST_POSTALIGNMENT_LOG)));
             assertTrue(lines.stream().anyMatch(line -> line.contains("Confirm QC results from GA5")));
             assertTrue(lines.stream().anyMatch(line -> line.matches(
@@ -99,8 +99,7 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
 
         try (BufferedReader reader = new BufferedReader(new FileReader(outputShFromFile))) {
             List<String> lines = reader.lines().collect(Collectors.toList());
-            assertTrue(lines.stream().anyMatch(line -> line.contains("grep -E \"(Successful|Error) Step:" +
-                    " Index bam.\"")));
+            assertTrue(lines.stream().anyMatch(line -> line.contains(MERGE_DNA_QC)));
             assertTrue(lines.stream().anyMatch(line -> line.contains(TEST_OUTPUT +
                     "log_files/DnaCaptureVar_Fastq_alignment_for_GA5_1_analysis.log")));
             assertTrue(lines.stream().anyMatch(line -> line.contains("Begin Step: Merge DNA bams...")));
@@ -111,7 +110,7 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
             assertTrue(lines.stream().anyMatch(line -> line.contains("/opt/samtools/samtools-0.1.19/samtools index " +
                     TEST_OUTPUT + TEST_MERGED_BAM)));
             assertTrue(lines.stream().anyMatch(line -> line.contains(
-                    "grep -E \"(Successful|Error) Step: Index rmdup ")));
+                    "Successful Step: Index rmdup ")));
             assertTrue(lines.stream().anyMatch(line -> line.contains(TEST_OUTPUT + TEST_POSTALIGNMENT_LOG)));
             assertTrue(lines.stream().anyMatch(line -> line.contains(REMOVE_TMP_DIRS)));
             assertTrue(lines.stream().noneMatch(line -> line.contains(NULL)));
@@ -160,8 +159,7 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
 
         try (BufferedReader reader = new BufferedReader(new FileReader(outputShFromFile))) {
             List<String> lines = reader.lines().collect(Collectors.toList());
-            assertTrue(lines.stream().anyMatch(line -> line.contains("grep -E \"(Successful|Error) Step: " +
-                    "Merge DNA QC\"")));
+            assertTrue(lines.stream().anyMatch(line -> line.contains(MERGE_DNA_QC)));
             assertTrue(lines.stream().anyMatch(line -> line.contains(TEST_OUTPUT + TEST_POSTALIGNMENT_LOG)));
             assertTrue(lines.stream().anyMatch(line -> line.contains("Confirm QC results from GA5")));
             assertTrue(lines.stream().anyMatch(line -> line.matches(
@@ -176,7 +174,7 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
             List<String> lines = reader.lines().collect(Collectors.toList());
             assertTrue(lines.stream().anyMatch(line -> line.contains("echo `date` Begin check the existence of " +
                     "the individual sorted bam file...")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains("(Successful|Error) Step: Index bam")));
+            assertTrue(lines.stream().anyMatch(line -> line.contains(MERGE_DNA_QC)));
             assertTrue(lines.stream().anyMatch(line -> line.contains(TEST_OUTPUT +
                     "log_files/DnaCaptureVar_Fastq_alignment_for_GA5_1_analysis.log")));
             assertTrue(lines.stream().anyMatch(line -> line.contains("Begin Step: Merge DNA bams...")));
@@ -186,8 +184,7 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
             assertTrue(lines.stream().anyMatch(line -> line.contains("Begin Step: Index bam...")));
             assertTrue(lines.stream().anyMatch(line -> line.contains("/opt/samtools/samtools-0.1.19/samtools index " +
                     TEST_OUTPUT + TEST_MERGED_BAM)));
-            assertTrue(lines.stream().anyMatch(line -> line.contains("grep -E \"(Successful|Error) Step: Index " +
-                    "rmdup bam\"")));
+            assertTrue(lines.stream().anyMatch(line -> line.contains("Successful Step: Novoalign alignment")));
             assertTrue(lines.stream().anyMatch(line -> line.contains(
                     TEST_OUTPUT + TEST_POSTALIGNMENT_LOG)));
             assertTrue(lines.stream().anyMatch(line -> line.contains(REMOVE_TMP_DIRS)));

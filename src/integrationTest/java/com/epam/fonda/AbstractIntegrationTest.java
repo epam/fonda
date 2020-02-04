@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,9 @@
  */
 package com.epam.fonda;
 
+import com.epam.fonda.workflow.TaskContainer;
+import org.junit.jupiter.api.AfterEach;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -29,6 +32,11 @@ import java.util.Objects;
  * Helper class to provide common functionality of integration tests
  */
 public abstract class AbstractIntegrationTest {
+
+    @AfterEach
+    public void cleanup() {
+        TaskContainer.getTasks().clear();
+    }
 
     /**
      * @param outputDir a path to the directory need to be deleted

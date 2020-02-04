@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.thymeleaf.context.Context;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.epam.fonda.workflow.TaskContainer;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 public final class RnaAnalysisUtils {
@@ -95,6 +96,7 @@ public final class RnaAnalysisUtils {
      */
     public static String dataAnalysis(Configuration configuration, TemplateEngine templateEngine, String toolName) {
         final Context context = buildContext(configuration, toolName);
+        TaskContainer.addTasks("Merge gene expression");
         return templateEngine.process(RNA_ANALYSIS_DATA_ANALYSIS_TEMPLATE, context);
     }
 
@@ -134,6 +136,7 @@ public final class RnaAnalysisUtils {
     public static String dnaRnaMutationAnalysis(final Configuration configuration, final TemplateEngine templateEngine,
                                                 final String task) {
         final Context context = buildContext(configuration, task);
+        TaskContainer.addTasks("Merge mutation annotation");
         return templateEngine.process(MUTATION_ANALYSIS_TEMPLATE, context);
     }
 

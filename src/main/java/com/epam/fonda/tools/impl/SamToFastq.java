@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.tools.results.FastqOutput;
 import com.epam.fonda.tools.results.FastqResult;
 import com.epam.fonda.utils.ToolUtils;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
@@ -78,6 +79,7 @@ public class SamToFastq implements Tool<FastqResult> {
                 : null;
         Context context = buildContext(toolFields, fastq1, fastq2, unpairFastq);
         final String cmd = templateEngine.process(SAM_TO_FASTQ_TOOL_TEMPLATE_NAME, context);
+        TaskContainer.addTasks("Convert bam to fastq");
         return FastqResult.builder()
                 .command(BashCommand.withTool(cmd))
                 .out(buildFastqOutput(fastq1, fastq2, configuration))

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.FastqResult;
 import com.epam.fonda.tools.results.FusionCatcherOutput;
 import com.epam.fonda.tools.results.FusionCatcherResult;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Data;
 import lombok.NonNull;
 import org.thymeleaf.TemplateEngine;
@@ -78,6 +79,7 @@ public class FusionCatcher implements Tool<FusionCatcherResult> {
         Context context = new Context();
         context.setVariable("fusionCatcherFields", fusionCatcherFields);
         final String cmd = templateEngine.process(FUSION_CATCHER_TOOL_TEMPLATE_NAME, context);
+        TaskContainer.addTasks("FusionCatcher");
         AbstractCommand command = BashCommand.withTool(cmd);
         command.setTempDirs(Collections.singletonList(fusionCatcherFields.tmpFusionCatcherOutdir));
         return FusionCatcherResult.builder()

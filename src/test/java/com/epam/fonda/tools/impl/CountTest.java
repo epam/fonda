@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -125,6 +125,8 @@ public class CountTest extends AbstractTest {
         cellrangerConfig.setCellrangerNosecondary("nosecondary");
         cellrangerConfig.setCellrangerR1Length("r1Length");
         cellrangerConfig.setCellrangerR2Length("r2Length");
+        GlobalConfig.QueueParameters queueParameters = expectedConfiguration.getGlobalConfig().getQueueParameters();
+        queueParameters.setNumThreads(3);
         expectedConfiguration.getGlobalConfig().setCellrangerConfig(cellrangerConfig);
     }
 }

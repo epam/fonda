@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package com.epam.fonda.utils;
 
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Builder;
 import lombok.Data;
 import org.thymeleaf.TemplateEngine;
@@ -48,7 +49,7 @@ public final class DnaUtils {
     private static final String CONFIRM_MSG_WITH_SAMPLE = "confirmMsgWithSampleName";
     private static final String ERROR_MSG_WITH_CONTROL_SAMPLE = "errorMsgWithControlSampleName";
     private static final String CONFIRM_MSG_WITH_CONTROL_SAMPLE = "confirmMsgWithControlSampleName";
-    private static final String BAM_INDEX_TAG = "Index bam.";
+    private static final String BAM_INDEX_TAG = "Index bam";
 
     @Data
     @Builder
@@ -101,6 +102,7 @@ public final class DnaUtils {
                         sampleName));
             }
         }
+        TaskContainer.addTasks(tag);
         return getLogFileScanningShellScript(logFileFields, tag, msgMap, period, index);
     }
 
@@ -161,6 +163,7 @@ public final class DnaUtils {
 
     private static Context buildContext(LogFileFields logFileFields, String tag, Map<String, String> msgMap,
                                         Integer period, String index) {
+        TaskContainer.addTasks(tag);
         Context context = new Context();
         String ifScript1 = "if [[ $str == \"*Error Step: ";
         String ifScript2 = "if [[ -f $logFile  ]];";
@@ -168,7 +171,10 @@ public final class DnaUtils {
         context.setVariable("logFileWithSampleName", logFileFields.logFileWithSampleName);
         context.setVariable("logFileWithControlSampleName", logFileFields.logFileWithControlSampleName);
         context.setVariable("logFileWithSampleNameIndex", logFileFields.logFileWithSampleNameIndex);
-        context.setVariable("tag", tag);
+        context.setVariable("tag", TaskContainer.getTasks().stream()
+                .reduce((first, second) -> second)
+                .orElse(null));
+        context.setVariable("steps", String.join("|", TaskContainer.getTasks()));
         context.setVariable(ERROR_MSG_WITH_SAMPLE, msgMap.get(ERROR_MSG_WITH_SAMPLE));
         context.setVariable(CONFIRM_MSG_WITH_SAMPLE, msgMap.get(CONFIRM_MSG_WITH_SAMPLE));
         context.setVariable(ERROR_MSG_WITH_CONTROL_SAMPLE, msgMap.get(ERROR_MSG_WITH_CONTROL_SAMPLE));
