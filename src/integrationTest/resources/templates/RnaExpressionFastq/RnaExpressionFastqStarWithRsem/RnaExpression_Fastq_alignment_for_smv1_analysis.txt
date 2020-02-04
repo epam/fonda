@@ -45,6 +45,7 @@ else
 	exit 1;
 fi
 
+
 echo `date` Begin Step: Run rsem...
 qsub build/resources/integrationTest/output/sh_files/RnaExpression_Fastq_rsem_for_smv1_analysis.sh
 if [ $? -eq 0 ]
