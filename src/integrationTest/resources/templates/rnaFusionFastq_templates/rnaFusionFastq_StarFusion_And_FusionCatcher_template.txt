@@ -44,7 +44,6 @@ else
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
 fi
-
 echo `date` Begin Step: Sort bam...
 /usr/lib/jvm/java-8-openjdk-amd64/bin/java -jar /opt/picard/picard.jar SortSam INPUT=build/resources/integrationTest/output/smv1/bam/smv1.Aligned.out.bam OUTPUT=build/resources/integrationTest/output/smv1/bam/smv1.star.sorted.bam SORT_ORDER=coordinate VALIDATION_STRINGENCY=SILENT
 if [ $? -eq 0 ]
@@ -57,7 +56,6 @@ else
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
 fi
-
 echo `date` Begin Step: Index bam...
 /opt/samtools/samtools-0.1.19/samtools index build/resources/integrationTest/output/smv1/bam/smv1.star.sorted.bam
 if [ $? -eq 0 ]
@@ -70,7 +68,6 @@ else
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
 fi
-
 echo `date` Begin Step: STAR-Fusion detection...
 path/to/starFusion --genome_lib_dir path/to/starFusion/lib -J build/resources/integrationTest/output/smv1/bam/smv1.Chimeric.out.junction --output_dir build/resources/integrationTest/output/smv1/starFusion
 mv build/resources/integrationTest/output/smv1/starFusion/star-fusion.fusion_candidates.final.abridged build/resources/integrationTest/output/smv1/starFusion/smv1.starFusion.fusion.final.abridged
@@ -84,7 +81,6 @@ else
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
 fi
-
 echo `date` Begin Step: FusionCatcher...
 path/to/starfusion --input build/resources/integrationTest/output/smv1/fastq/smv1.merged_R1.fastq.gz,build/resources/integrationTest/output/smv1/fastq/smv1.merged_R2.fastq.gz --output build/resources/integrationTest/output/smv1/fusionCatcher --tmp build/resources/integrationTest/output/smv1/fusionCatcher/tmp --threads 4
 mv build/resources/integrationTest/output/smv1/fusionCatcher/fusionCatcher.fusion_candidates.final.abridged build/resources/integrationTest/output/smv1/fusionCatcher
@@ -98,7 +94,6 @@ else
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
 fi
-
 echo `date` Begin Step: Remove temporary directories...
 rm -rf build/resources/integrationTest/output/smv1/bam/smv1.Aligned.out.bam.bai
 rm -rf build/resources/integrationTest/output/smv1/bam/smv1.star.sorted.bam.bai
@@ -106,6 +101,7 @@ rm -rf build/resources/integrationTest/output/smv1/tmp
 rm -rf build/resources/integrationTest/output/smv1/fusionCatcher/tmp
 rm -rf build/resources/integrationTest/output/smv1/bam/smv1.star.sorted.bam
 rm -rf build/resources/integrationTest/output/smv1/bam/smv1.Aligned.out.bam
+
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Remove temporary directories.
@@ -116,5 +112,4 @@ else
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
 fi
-
 echo `date` Finish the job execution!

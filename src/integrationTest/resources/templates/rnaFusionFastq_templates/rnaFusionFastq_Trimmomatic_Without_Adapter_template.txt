@@ -32,10 +32,10 @@ else
 	exit 1;
 fi
 
-echo `date` the adapter sequence trmming step was skipped since no adapter sequences were provided in the config files.
-
+echo `date` the adapter sequence trimming step was skipped since no adapter sequences were provided in the config files.
 echo `date` Begin Step: Remove temporary directories...
 rm -rf build/resources/integrationTest/output/smv1/tmp
+
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Remove temporary directories.
@@ -46,5 +46,4 @@ else
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
 fi
-
 echo `date` Finish the job execution!
