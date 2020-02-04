@@ -38,17 +38,4 @@ public final class TemplateEngineUtils {
         templateEngine.addTemplateResolver(templateResolver);
         return templateEngine;
     }
-
-    public static TemplateEngine init(String templatePath) {
-        TemplateEngine templateEngine = new TemplateEngine();
-        ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
-        templateResolver.setPrefix(templatePath);
-        templateResolver.setSuffix(".txt");
-        templateResolver.setTemplateMode(TemplateMode.TEXT);
-        templateResolver.setCharacterEncoding("UTF8");
-        templateResolver.setCheckExistence(true);
-        templateResolver.setCacheable(false);
-        templateEngine.addTemplateResolver(templateResolver);
-        return templateEngine;
-    }
 }

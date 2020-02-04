@@ -42,5 +42,6 @@ else
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
 fi
+
 echo `date` Finish the job execution!
 

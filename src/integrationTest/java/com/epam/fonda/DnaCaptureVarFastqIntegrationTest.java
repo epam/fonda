@@ -70,7 +70,7 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
 
         try (BufferedReader reader = new BufferedReader(new FileReader(outputShFromFile))) {
             List<String> lines = reader.lines().collect(Collectors.toList());
-            assertTrue(lines.stream().anyMatch(line -> line.contains("Begin Step:  Xenome classification...")));
+            assertTrue(lines.stream().anyMatch(line -> line.contains("Begin Step: Xenome classification...")));
             assertTrue(lines.stream().anyMatch(line -> line.contains("/usr/bin/xenome classify -T 8 -P " +
                     "/ngs/data/xenomeIdx/xenome.idx --pairs --graft-name human --host-name mouse " +
                     "--output-filename-prefix " +  TEST_OUTPUT + "GA5/tmp/GA5_1 --tmp-dir " +
@@ -139,7 +139,7 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
 
         try (BufferedReader reader = new BufferedReader(new FileReader(outputShFromFile))) {
             List<String> lines = reader.lines().collect(Collectors.toList());
-            assertTrue(lines.stream().anyMatch(line -> line.contains("Begin Step:  Xenome classification...")));
+            assertTrue(lines.stream().anyMatch(line -> line.contains("Begin Step: Xenome classification...")));
             assertTrue(lines.stream().anyMatch(line -> line.contains("/usr/bin/xenome classify -T 8 -P " +
                     "/ngs/data/xenomeIdx/xenome.idx --pairs --graft-name human --host-name mouse " +
                     "--output-filename-prefix " + TEST_OUTPUT + "GA5/tmp/GA5_1 --tmp-dir " +
