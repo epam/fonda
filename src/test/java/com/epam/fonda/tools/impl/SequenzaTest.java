@@ -24,7 +24,6 @@ import com.epam.fonda.tools.results.PileupOutput;
 import com.epam.fonda.tools.results.SequenzaOutput;
 import com.epam.fonda.tools.results.SequenzaResult;
 import com.epam.fonda.utils.TemplateEngineUtils;
-import org.apache.commons.collections4.SetUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.thymeleaf.TemplateEngine;
