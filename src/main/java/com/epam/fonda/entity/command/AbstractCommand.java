@@ -46,7 +46,10 @@ public abstract class AbstractCommand {
      * @return {@link List} of temporary paths
      */
     public Set<String> setTempDirs(final List<String> temps) {
-        tempDirs.addAll(temps);
+        for (String s:temps) {
+            if (s != null)
+                tempDirs.add(s);
+        }
         return tempDirs;
     }
 }
