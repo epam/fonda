@@ -125,14 +125,14 @@ else
 fi
 
 echo `date` Begin Step: Remove temporary directories...
-rm -rf build/resources/integrationTest/output/smv1/qc/smv1.star.sorted.mkdup.metrics
-rm -rf build/resources/integrationTest/output/smv1/bam/smv1.Aligned.out.bam.bai
+rm -rf build/resources/integrationTest/output/smv1/bam/smv1.star.sorted.bam
 rm -rf build/resources/integrationTest/output/smv1/bam/smv1.star.sorted.bam.bai
+rm -rf build/resources/integrationTest/output/smv1/bam/smv1.Aligned.out.bam
+rm -rf build/resources/integrationTest/output/smv1/bam/smv1.Aligned.out.bam.bai
+rm -rf build/resources/integrationTest/output/smv1/qc/smv1.star.sorted.mkdup.metrics
 rm -rf build/resources/integrationTest/output/smv1/tmp
 rm -rf build/resources/integrationTest/output/smv1/qc/smv1.star.sorted.mkdup.gcbias.metrics
 rm -rf build/resources/integrationTest/output/smv1/qc/smv1.star.sorted.mkdup.gc.summary.metrics
-rm -rf build/resources/integrationTest/output/smv1/bam/smv1.star.sorted.bam
-rm -rf build/resources/integrationTest/output/smv1/bam/smv1.Aligned.out.bam
 
 if [ $? -eq 0 ]
 then

@@ -130,27 +130,27 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
     private static Stream<Arguments> initParameters() {
         return Stream.of(
                 Arguments.of(
-                        RNA_EXPRESSION_FASTQ_G_FLAG_XENOME_YES, 
+                        RNA_EXPRESSION_FASTQ_G_FLAG_XENOME_YES,
                         OUTPUT_SH_FILE,
                         RNA_EXPRESSION_FASTQ_ALIGNMENT_FOR_SMV1_ANALYSIS_TEMPLATE_PATH),
                 Arguments.of(
-                        RNA_EXPRESSION_FASTQ_G_SEQPURGE_WITH_ADAPTERS, 
+                        RNA_EXPRESSION_FASTQ_G_SEQPURGE_WITH_ADAPTERS,
                         OUTPUT_SH_FILE,
                         RNA_EXPRESSION_FASTQ_SEQPURGE_WITH_ADAPTERS_TEMPLATE),
                 Arguments.of(
-                        RNA_EXPRESSION_FASTQ_G_SEQPURGE_WITHOUT_ADAPTERS, 
+                        RNA_EXPRESSION_FASTQ_G_SEQPURGE_WITHOUT_ADAPTERS,
                         OUTPUT_SH_FILE,
                         RNA_EXPRESSION_FASTQ_SEQPURGE_WITHOUT_ADAPTERS_TEMPLATE),
                 Arguments.of(
-                        RNA_EXPRESSION_FASTQ_G_TRIMMOMATIC_WITH_ADAPTER, 
+                        RNA_EXPRESSION_FASTQ_G_TRIMMOMATIC_WITH_ADAPTER,
                         OUTPUT_SH_FILE,
                         RNA_EXPRESSION_FASTQ_TRIMMOMATIC_WITH_ADAPTER_TEMPLATE),
                 Arguments.of(
-                        RNA_EXPRESSION_FASTQ_G_TRIMMOMATIC_WITHOUT_ADAPTER, 
+                        RNA_EXPRESSION_FASTQ_G_TRIMMOMATIC_WITHOUT_ADAPTER,
                         OUTPUT_SH_FILE,
                         RNA_EXPRESSION_FASTQ_TRIMMOMATIC_WITHOUT_ADAPTER_TEMPLATE),
                 Arguments.of(
-                        RNA_EXPRESSION_FASTQ_G_STAR_WITH_RSEM, 
+                        RNA_EXPRESSION_FASTQ_G_STAR_WITH_RSEM,
                         OUTPUT_SH_FILE,
                         String.format("%sRnaExpression_Fastq_alignment_for_smv1_analysis",
                                 RNA_EXPRESSION_FASTQ_STAR_WITH_RSEM_SUFFIX)),
@@ -167,7 +167,7 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
                         String.format("%sRnaExpression_Fastq_rsem_for_smv1_analysis",
                                 RNA_EXPRESSION_FASTQ_STAR_WITH_RSEM_SUFFIX)),
                 Arguments.of(
-                        RNA_EXPRESSION_FASTQ_G_STAR_WITHOUT_RSEM, 
+                        RNA_EXPRESSION_FASTQ_G_STAR_WITHOUT_RSEM,
                         OUTPUT_SH_FILE,
                         String.format("%sRnaExpression_Fastq_alignment_for_smv1_analysis",
                                 RNA_EXPRESSION_FASTQ_STAR_WITHOUT_RSEM_SUFFIX)),
@@ -178,11 +178,11 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
                         String.format("%sRnaExpression_Fastq_qcsummary_for_cohort_analysis",
                                 RNA_EXPRESSION_FASTQ_STAR_WITHOUT_RSEM_SUFFIX)),
                 Arguments.of(
-                        RNA_EXPRESSION_FASTQ_G_HISAT2, 
+                        RNA_EXPRESSION_FASTQ_G_HISAT2,
                         OUTPUT_SH_FILE,
                         RNA_EXPRESSION_FASTQ_HISAT2_TEMPLATE),
                 Arguments.of(
-                        RNA_EXPRESSION_FASTQ_G_SALMON, 
+                        RNA_EXPRESSION_FASTQ_G_SALMON,
                         OUTPUT_SH_FILE,
                         RNA_EXPRESSION_FASTQ_SALMON_TEMPLATE),
                 Arguments.of(
@@ -195,7 +195,7 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
                         RNA_EXPRESSION_FASTQ_G_CUFFLINKS,
                         String.format("%sRnaExpression_Fastq_cufflinks_for_smv1_analysis.sh",
                                 OUTPUT_SH_FILES_SUFFIX),
-                        RNA_EXPRESSION_FASTQ_CUFFLINKS_SUFFIX + 
+                        RNA_EXPRESSION_FASTQ_CUFFLINKS_SUFFIX +
                                 "RnaExpression_Fastq_cufflinks_for_smv1_analysis"),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_STRINGTIE,
@@ -210,7 +210,7 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
                         String.format("%sRnaExpression_Fastq_rsem_for_smv1_analysis",
                                 RNA_EXPRESSION_FASTQ_RSEM_WITHOUT_HISAT2_SUFFIX)),
                 Arguments.of(
-                        RNA_EXPRESSION_FASTQ_G_RSEM_WITHOUT_HISAT2, 
+                        RNA_EXPRESSION_FASTQ_G_RSEM_WITHOUT_HISAT2,
                         OUTPUT_SH_FILE,
                         String.format("%sRnaExpression_Fastq_alignment_for_smv1_analysis",
                                 RNA_EXPRESSION_FASTQ_RSEM_WITHOUT_HISAT2_SUFFIX)),
@@ -221,27 +221,27 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
                         String.format("%sRnaExpression_Fastq_qcsummary_for_cohort_analysis",
                                 RNA_EXPRESSION_FASTQ_RSEM_WITHOUT_HISAT2_SUFFIX)),
                 Arguments.of(
-                        RNA_EXPRESSION_FASTQ_G_NON_FLAG_XENOME, 
+                        RNA_EXPRESSION_FASTQ_G_NON_FLAG_XENOME,
                         OUTPUT_SH_FILE,
                         RNA_EXPRESSION_FASTQ_NON_FLAG_XENOME_TEMPLATE),
                 Arguments.of(
-                        RNA_EXPRESSION_FASTQ_G_NON_SEQPURGE, 
+                        RNA_EXPRESSION_FASTQ_G_NON_SEQPURGE,
                         OUTPUT_SH_FILE,
                         RNA_EXPRESSION_FASTQ_NON_SEQPURGE_TEMPLATE),
                 Arguments.of(
-                        RNA_EXPRESSION_FASTQ_G_NON_TRIMMOMATIC, 
+                        RNA_EXPRESSION_FASTQ_G_NON_TRIMMOMATIC,
                         OUTPUT_SH_FILE,
                         RNA_EXPRESSION_FASTQ_NON_TRIMMOMATIC_TEMPLATE),
                 Arguments.of(
-                        RNA_EXPRESSION_FASTQ_G_NON_STAR, 
+                        RNA_EXPRESSION_FASTQ_G_NON_STAR,
                         OUTPUT_SH_FILE,
                         RNA_EXPRESSION_FASTQ_NON_STAR_TEMPLATE),
                 Arguments.of(
-                        RNA_EXPRESSION_FASTQ_G_NON_HISAT2, 
+                        RNA_EXPRESSION_FASTQ_G_NON_HISAT2,
                         OUTPUT_SH_FILE,
                         RNA_EXPRESSION_FASTQ_NON_HISAT2_TEMPLATE),
                 Arguments.of(
-                        RNA_EXPRESSION_FASTQ_G_NON_SALMON, 
+                        RNA_EXPRESSION_FASTQ_G_NON_SALMON,
                         OUTPUT_SH_FILE,
                         RNA_EXPRESSION_FASTQ_NON_SALMON_TEMPLATE)
         );
