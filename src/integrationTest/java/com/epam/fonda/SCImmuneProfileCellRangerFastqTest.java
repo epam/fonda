@@ -43,9 +43,9 @@ public class SCImmuneProfileCellRangerFastqTest extends AbstractIntegrationTest 
     private static final String OUTPUT_DIR_ROOT = "build/resources/integrationTest/";
     private static final String OUTPUT_DIR = "output";
     private static final String SCIMMUNE_PROFILE_CELLRANGER_FASTQ_PBMC4K_TEST_TEMPLATE =
-            "scImmuneProfileCellRangerFastq_VdjQc_template";
+            "scImmuneProfileCellRangerFastq/scImmuneProfileCellRangerFastq_VdjQc_template.txt";
     public static final String SCIMMUNE_PROFILE_CELL_RANGER_FASTQ_COHORT_TEST_TEMPLATE =
-            "scImmuneProfileCellRangerFastq_Cohort_template";
+            "scImmuneProfileCellRangerFastq/scImmuneProfileCellRangerFastq_Cohort_template.txt";
     private static final String GLOBAL_CONFIG_NAME = "SCImmuneProfileCellRangerFastq/vdj.txt";
     private static final String STUDY_CONFIG_NAME =
             "SCImmuneProfileCellRangerFastq/SCImmuneProfileCellRangerFastq.txt";
