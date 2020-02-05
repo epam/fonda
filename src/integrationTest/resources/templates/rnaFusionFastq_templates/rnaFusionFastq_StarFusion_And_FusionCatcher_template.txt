@@ -86,21 +86,21 @@ path/to/starfusion --input build/resources/integrationTest/output/smv1/fastq/smv
 mv build/resources/integrationTest/output/smv1/fusionCatcher/fusionCatcher.fusion_candidates.final.abridged build/resources/integrationTest/output/smv1/fusionCatcher
 if [ $? -eq 0 ]
 then
-	echo `date` Successful Step: FusionCatcher.
-	sleep 8
+    echo `date` Successful Step: FusionCatcher.
+    sleep 8
 else
-	echo `date` Error Step: FusionCatcher.
+    echo `date` Error Step: FusionCatcher.
 
-	echo `date` The job was aborted due to ERRORS found.
-	exit 1;
+    echo `date` The job was aborted due to ERRORS found.
+    exit 1;
 fi
 echo `date` Begin Step: Remove temporary directories...
+rm -rf build/resources/integrationTest/output/smv1/bam/smv1.Aligned.out.bam
 rm -rf build/resources/integrationTest/output/smv1/bam/smv1.Aligned.out.bam.bai
 rm -rf build/resources/integrationTest/output/smv1/bam/smv1.star.sorted.bam.bai
+rm -rf build/resources/integrationTest/output/smv1/bam/smv1.star.sorted.bam
 rm -rf build/resources/integrationTest/output/smv1/tmp
 rm -rf build/resources/integrationTest/output/smv1/fusionCatcher/tmp
-rm -rf build/resources/integrationTest/output/smv1/bam/smv1.star.sorted.bam
-rm -rf build/resources/integrationTest/output/smv1/bam/smv1.Aligned.out.bam
 
 if [ $? -eq 0 ]
 then

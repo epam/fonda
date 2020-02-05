@@ -28,7 +28,10 @@ import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RnaFusionFastqIntegrationTest extends AbstractIntegrationTest {
     private static final String OUTPUT_SH_FILE = "output/sh_files/RnaFusion_Fastq_fusion_for_smv1_analysis.sh";
@@ -57,6 +60,7 @@ public class RnaFusionFastqIntegrationTest extends AbstractIntegrationTest {
             String.format("%s/rnaFusionFastq_Trimmomatic_With_Adapter_template.txt", TEMPLATE_FOLDER);
     private static final String RNA_FUSION_TRIMMOMATIC_WITHOUT_ADAPTER =
             String.format("%s/rnaFusionFastq_Trimmomatic_Without_Adapter_template.txt", TEMPLATE_FOLDER);
+    public static final String RNA_FUSION_FASTQ_G_STAR_FUSION_AND_FUSION_CATCHER_TXT = "RnaFusionFastq/gStarFusionAndFusionCatcher.txt";
 
     @ParameterizedTest
     @MethodSource("initGlobalConfigAndTemplatePath")
@@ -75,24 +79,20 @@ public class RnaFusionFastqIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void testCreateRnaFusionFastqSpecificDirFusionCatcherStarFusionToolset() throws IOException {
-        startAppWithConfigs(RNA_FUSION_STARFUSION_FUSION_CATCHER, S_CONFIG_PATH);
-        assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "sh_files").exists());
-        assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "log_files").exists());
-        assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "err_files").exists());
-        assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + SAMPLE_NAME).exists());
-        assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + SAMPLE_NAME + "tmp")
-                .exists());
-        assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + SAMPLE_NAME + "fastq")
-                .exists());
-        assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + SAMPLE_NAME + "bam")
-                .exists());
-        assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + SAMPLE_NAME + "qc")
-                .exists());
-        assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + SAMPLE_NAME + "starFusion")
-                .exists());
-        assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + SAMPLE_NAME + "fusionCatcher")
-                .exists());
-        assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + SAMPLE_NAME + "fusionCatcher/tmp").exists());
+        startAppWithConfigs(RNA_FUSION_FASTQ_G_STAR_FUSION_AND_FUSION_CATCHER_TXT, S_CONFIG_PATH);
+        assertAll(
+            () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "sh_files").exists()),
+            () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "log_files").exists()),
+            () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "err_files").exists()),
+            () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + SAMPLE_NAME).exists()),
+            () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + SAMPLE_NAME + "tmp").exists()),
+            () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + SAMPLE_NAME + "fastq").exists()),
+            () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + SAMPLE_NAME + "bam").exists()),
+            () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + SAMPLE_NAME + "qc").exists()),
+            () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + SAMPLE_NAME + "starFusion").exists()),
+            () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + SAMPLE_NAME + "fusionCatcher").exists()),
+            () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + SAMPLE_NAME + "fusionCatcher/tmp").exists())
+        );
         cleanOutputDirForNextTest(OUTPUT_DIR, true);
     }
 
@@ -107,7 +107,7 @@ public class RnaFusionFastqIntegrationTest extends AbstractIntegrationTest {
                 Arguments.of("RnaFusionFastq/gNonTrimmomatic.txt", RNA_FUSION_NON_TRIMMOMATIC),
                 Arguments.of("RnaFusionFastq/gSeqpurgeWithAdapters.txt", RNA_FUSION_SEQPURGE_WITH_ADAPTERS),
                 Arguments.of("RnaFusionFastq/gSeqpurgeWithoutAdapters.txt", RNA_FUSION_SEQPURGE_WITHOUT_ADAPTERS),
-                Arguments.of("RnaFusionFastq/gStarFusionAndFusionCatcher.txt", RNA_FUSION_STARFUSION_FUSION_CATCHER),
+                Arguments.of(RNA_FUSION_FASTQ_G_STAR_FUSION_AND_FUSION_CATCHER_TXT, RNA_FUSION_STARFUSION_FUSION_CATCHER),
                 Arguments.of("RnaFusionFastq/gTrimmomaticWithAdapter.txt", RNA_FUSION_TRIMMOMATIC_WITH_ADAPTER),
                 Arguments.of("RnaFusionFastq/gTrimmomaticWithoutAdapter.txt", RNA_FUSION_TRIMMOMATIC_WITHOUT_ADAPTER)
         );
