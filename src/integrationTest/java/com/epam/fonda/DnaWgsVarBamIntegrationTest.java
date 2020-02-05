@@ -15,250 +15,321 @@
  */
 package com.epam.fonda;
 
-import com.tngtech.java.junit.dataprovider.DataProvider;
-import com.tngtech.java.junit.dataprovider.DataProviderRunner;
-import com.tngtech.java.junit.dataprovider.UseDataProvider;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import com.epam.fonda.utils.TemplateEngineUtils;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static org.junit.Assert.assertTrue;
+import static com.epam.fonda.utils.PipelineUtils.getExecutionPath;
+import static java.lang.String.format;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(DataProviderRunner.class)
 public class DnaWgsVarBamIntegrationTest extends AbstractIntegrationTest {
 
     private static final String OUTPUT_DIR = "output";
-    private static final String QSUB = "qsub ";
-    private static final String NULL = "null";
-    private static final String SH_FILES = "build/resources/integrationTest/output/sh_files/";
-    private static final String PYTHON_VCF_SNPEFF_ANNOTATION =
-            ".*?/usr/bin/python.+?vcf_snpeff_annotation.py.+?(\\n|$)";
+    private static final String OUTPUT_DIR_ROOT = "build/resources/integrationTest/";
 
-    @Test
-    @UseDataProvider("controlSampleNAAllTasks")
-    public void testControlSampleAllTasks(String task, String[] expectedStrings, String[] expectedPatterns)
-            throws IOException {
-        startAppWithConfigs(
-                "DnaWgsVarBam/gAllTasksSampleNA.txt", "DnaWgsVarBam/sSingle.txt");
+    private static final String FIRST_PART_OF_THE_PATH_OF_THE_TEST_SHELL_SCRIPT = "output/sh_files/DnaWgsVar_Bam_";
 
-        //tests for toolsets
-        String filePath = "output/sh_files/DnaWgsVar_Bam_" + task + "_for_GA5_analysis.sh";
-        File outputShFile = new File(this.getClass().getClassLoader().getResource(filePath).getPath());
+    private static final String DNA_WGS_VAR_BAM_G_ALL_TASKS_SAMPLE_NA_TXT_GLOBAL_CONFIG_PATH =
+        "DnaWgsVarBam/gAllTasksSampleNA.txt";
+    private static final String DNA_WGS_VAR_BAM_S_SINGLE_TXT_SAMPLE_STUDY_CONFIG_PATH =
+        "DnaWgsVarBam/sSingle.txt";
+    private static final String DNA_WGS_VAR_BAM_VARIANT_DETECTION_FOR_GA5_ANALYSIS_TEMPLATE_PATH =
+        "DnaWgsVarBam/forGA5/DnaWgsVar_Bam_variantDetection_for_GA5_analysis_template.txt";
+    private static final String DNA_WGS_VAR_BAM_STRELKA2_FOR_GA5_ANALYSIS_TEMPLATE_PATH =
+        "DnaWgsVarBam/forGA5/DnaWgsVar_Bam_strelka2_for_GA5_analysis_template.txt";
+    private static final String DNA_WGS_VAR_BAM_FREEBAYES_FOR_GA5_ANALYSIS_TEMPLATE_PATH =
+        "DnaWgsVarBam/forGA5/DnaWgsVar_Bam_freebayes_for_GA5_analysis_template.txt";
+    private static final String DNA_WGS_VAR_BAM_GATK_HAPLOTYPE_CALLER_FOR_GA5_ANALYSIS_TEMPLATE_PATH =
+        "DnaWgsVarBam/forGA5/DnaWgsVar_Bam_gatkHaplotypeCaller_for_GA5_analysis_template.txt";
+    private static final String DNA_WGS_VAR_BAM_LOFREQ_FOR_GA5_ANALYSIS_TEMPLATE_PATH =
+        "DnaWgsVarBam/forGA5/DnaWgsVar_Bam_lofreq_for_GA5_analysis_template.txt";
+    private static final String TEST_SHELL_SCRIPT_PATH_VARIANT_DETECTION_FOR_GA5 =
+        "output/sh_files/DnaWgsVar_Bam_variantDetection_for_GA5_analysis.sh";
+    private static final String SUFFIX_FOR_GA5_TEST_SHELL_SCRIPT_PATH = "_for_GA5_analysis.sh";
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(outputShFile))) {
-            List<String> lines = reader.lines().collect(Collectors.toList());
-            for (String expectedString : expectedStrings) {
-                assertTrue(lines.stream().anyMatch(line -> line.contains(expectedString)));
-            }
-            for (String expectedPattern : expectedPatterns) {
-                assertTrue(lines.stream().anyMatch(line -> line.matches(expectedPattern)));
-            }
-            assertTrue(lines.stream().noneMatch(line -> line.contains(NULL)));
-        }
+    private static final String DNA_WGS_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA_GLOBAL_CONFIG_PATH =
+        "DnaWgsVarBam/gAllTasksSampleNotNA.txt";
+    private static final String DNA_WGS_VAR_BAM_S_CONTROL_SAMPLE_NOT_NA_STUDY_CONFIG =
+        "DnaWgsVarBam/sControlSampleNotNA.txt";
 
-        //tests for variant detection
-        filePath = "output/sh_files/DnaWgsVar_Bam_variantDetection_for_GA5_analysis.sh";
-        outputShFile = new File(this.getClass().getClassLoader().getResource(filePath).getPath());
+    private static final String DNA_WGS_VAR_BAM_VARIANT_DETECTION_FOR_GA51_ANALYSIS_TEMPLATE_PATH =
+        "DnaWgsVarBam/forGA51/DnaWgsVar_Bam_variantDetection_for_GA51_analysis_template.txt";
+    private static final String DNA_WGS_VAR_BAM_CONTEST_FOR_GA51_ANALYSIS_TEMPLATE_PATH =
+        "DnaWgsVarBam/forGA51/DnaWgsVar_Bam_contEst_for_GA51_analysis_template.txt";
+    private static final String DNA_WGS_VAR_BAM_LOFREQ_FOR_GA51_ANALYSIS_TEMPLATE_PATH =
+        "DnaWgsVarBam/forGA51/DnaWgsVar_Bam_lofreq_for_GA51_analysis_template.txt";
+    private static final String DNA_WGS_VAR_BAM_MUTEC2_FOR_GA51_ANALYSIS_TEMPLATE_PATH =
+        "DnaWgsVarBam/forGA51/DnaWgsVar_Bam_mutect2_for_GA51_analysis_template.txt";
+    private static final String DNA_WGS_VAR_BAM_STRELKA2_FOR_GA51_ANALYSIS_TEMPLATE_PATH =
+        "DnaWgsVarBam/forGA51/DnaWgsVar_Bam_strelka2_for_GA51_analysis_template.txt";
+    private static final String TEST_SHELL_SCRIPT_PATH_VARIANT_DETECTION_FOR_GA51 =
+        "output/sh_files/DnaWgsVar_Bam_variantDetection_for_GA51_analysis.sh";
+    private static final String SUFFIX_FOR_GA51_TEST_SHELL_SCRIPT_PATH = "_for_GA51_analysis.sh";
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(outputShFile))) {
-            List<String> lines = reader.lines().collect(Collectors.toList());
-            assertTrue(lines.stream().anyMatch(line -> line.contains(
-                    QSUB + SH_FILES + "DnaWgsVar_Bam_gatkHaplotypeCaller_for_GA5_analysis.sh")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains(
-                    QSUB + SH_FILES + "DnaWgsVar_Bam_strelka2_for_GA5_analysis.sh")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains(
-                    QSUB + SH_FILES + "DnaWgsVar_Bam_lofreq_for_GA5_analysis.sh")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains(
-                    QSUB + SH_FILES + "DnaWgsVar_Bam_freebayes_for_GA5_analysis.sh")));
-            assertTrue(lines.stream().noneMatch(line -> line.contains(NULL)));
-        }
+    private static final String DNA_WGS_VAR_BAM_VARIANT_DETECTION_FOR_GA52_ANALYSIS_TEMPLATE_PATH =
+        "DnaWgsVarBam/forGA52/DnaWgsVar_Bam_variantDetection_for_GA52_analysis_template.txt";
+    private static final String DNA_WGS_VAR_BAM_CONTEST_FOR_GA52_ANALYSIS_TEMPLATE_PATH =
+        "DnaWgsVarBam/forGA52/DnaWgsVar_Bam_contEst_for_GA52_analysis_template.txt";
+    private static final String DNA_WGS_VAR_BAM_LOFREQ_FOR_GA52_ANALYSIS_TEMPLATE_PATH =
+        "DnaWgsVarBam/forGA52/DnaWgsVar_Bam_lofreq_for_GA52_analysis_template.txt";
+    private static final String DNA_WGS_VAR_BAM_MUTEC2_FOR_GA52_ANALYSIS_TEMPLATE_PATH =
+        "DnaWgsVarBam/forGA52/DnaWgsVar_Bam_mutect2_for_GA52_analysis_template.txt";
+    private static final String DNA_WGS_VAR_BAM_STRELKA2_FOR_GA52_ANALYSIS_TEMPLATE_PATH =
+        "DnaWgsVarBam/forGA52/DnaWgsVar_Bam_strelka2_for_GA52_analysis_template.txt";
+    private static final String TEST_SHELL_SCRIPT_PATH_VARIANT_DETECTION_FOR_GA52 =
+        "output/sh_files/DnaWgsVar_Bam_variantDetection_for_GA52_analysis.sh";
+    private static final String SUFFIX_FOR_GA52_TEST_SHELL_SCRIPT_PATH = "_for_GA52_analysis.sh";
+
+    private static final String STRELKA2_TASK_NAME = "strelka2";
+    private static final String FREEBAYES_TASK_NAME = "freebayes";
+    private static final String GATK_HAPLOTYPE_CALLER_TASK_NAME = "gatkHaplotypeCaller";
+    private static final String LOFREQ_TASK_NAME = "lofreq";
+    private static final String CONTEST_TASK_NAME = "contEst";
+    private static final String MUTECT_2_TASK_NAME = "mutect2";
+
+    private static final String TEST_SHELL_SCRIPT_PATH_MERGE_MUTATION =
+        "build/resources/integrationTest/output/sh_files/DnaWgsVar_Bam_mergeMutation_for_cohort_analysis.sh";
+
+    private TemplateEngine expectedTemplateEngine = TemplateEngineUtils.init();
+    private Context context = new Context();
+
+    @BeforeEach
+    void setUp() {
+        context.setVariable("jarPath", getExecutionPath());
+    }
+
+    @ParameterizedTest
+    @MethodSource("initParameters")
+    void testControlSample(String globalConfigPath, String studyConfigPath, String taskName,
+        String suffixForFilePath, String templatePath, String variantDetectionTemplatePath,
+        String variantDetectionFilePath) throws IOException, URISyntaxException {
+        startAppWithConfigs(globalConfigPath, studyConfigPath);
+
+        String filePath = format("%s%s%s", FIRST_PART_OF_THE_PATH_OF_THE_TEST_SHELL_SCRIPT, taskName,
+            suffixForFilePath);
+        String expectedCmd = expectedTemplateEngine.process(templatePath, context);
+        assertEquals(expectedCmd.trim(), getCmd(filePath).trim());
+
+        expectedCmd = expectedTemplateEngine.process(variantDetectionTemplatePath, context);
+        assertEquals(expectedCmd.trim(), getCmd(variantDetectionFilePath).trim());
+        assertTrue(new File(TEST_SHELL_SCRIPT_PATH_MERGE_MUTATION).exists());
 
         cleanOutputDirForNextTest(OUTPUT_DIR, false);
     }
 
-    @DataProvider
-    public static Object[][] controlSampleNAAllTasks() {
-        return new Object[][] {
-            {"strelka2",
-                new String[] {
-                    "Begin Step: Strelka2 detection...",
-                    "/usr/bin/python /usr/bin/strelka2/configureStrelkaGermlineWorkflow.py",
-                    "--referenceFasta=/ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa",
-                    "/usr/bin/python build/resources/integrationTest/output/GA5/strelka2/runWorkflow.py -m local -j 8",
-                    "--runDir=build/resources/integrationTest/output/GA5/strelka2 --callMemMb=10240",
-                    "zcat build/resources/integrationTest/output/GA5/strelka2/results/variants/variants.vcf.gz",
-                    "-r hg19 --snpsift /usr/bin/snpsift --snpsift_db /ngs/data/SnpEff/snpEff_v4.3p/snpEff/db --dbnsfp"},
-                new String[] {
-                    PYTHON_VCF_SNPEFF_ANNOTATION}},
+    @SuppressWarnings("PMD")
+    private static Stream<Arguments> initParameters() {
+        Stream<Arguments> concatNAAndNotNASamples = Stream.concat(streamOfGA5argumentsNASample(),
+            streamOfGA51argumentsNotNASample());
+        return Stream.concat(concatNAAndNotNASamples, streamOfGA52argumentsNotNASample());
+    }
 
-            {"freebayes",
-                new String[] {
-                    "Begin Step: Freebayes detection...",
-                    "/usr/bin/freebayes -f /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -F 0.05",
-                    "-m 20 /ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_003.bam > " +
-                            "build/resources/integrationTest/output/GA5/freebayes/GA5.freebayes.variants.vcf",
-                    "python/vcf_snpeff_annotation.py -s GA5 " +
-                            "-i build/resources/integrationTest/output/GA5/freebayes/GA5.freebayes.variants.vcf",
-                    "--transvar /usr/bin/transvar -r hg19 --snpsift /usr/bin/snpsift " +
-                            "--snpsift_db /ngs/data/SnpEff/snpEff_v4.3p/snpEff/db",
-                    "-t freebayes --canonical /ngs/data/reference_genome/GRCh37/Annotation/" +
-                            "prefer_ensembl_transcript.txt",
-                    "-o build/resources/integrationTest/output/GA5/freebayes/" +
-                            "GA5.freebayes.variants.pass.annotation.tsv"},
-                new String[] {
-                    PYTHON_VCF_SNPEFF_ANNOTATION}},
+    private static Stream<Arguments> streamOfGA5argumentsNASample() {
+        return Stream.of(
+            Arguments.of(
+                DNA_WGS_VAR_BAM_G_ALL_TASKS_SAMPLE_NA_TXT_GLOBAL_CONFIG_PATH,
+                DNA_WGS_VAR_BAM_S_SINGLE_TXT_SAMPLE_STUDY_CONFIG_PATH,
+                STRELKA2_TASK_NAME,
+                SUFFIX_FOR_GA5_TEST_SHELL_SCRIPT_PATH,
+                DNA_WGS_VAR_BAM_STRELKA2_FOR_GA5_ANALYSIS_TEMPLATE_PATH,
+                DNA_WGS_VAR_BAM_VARIANT_DETECTION_FOR_GA5_ANALYSIS_TEMPLATE_PATH,
+                TEST_SHELL_SCRIPT_PATH_VARIANT_DETECTION_FOR_GA5
+            ),
+            Arguments.of(
+                DNA_WGS_VAR_BAM_G_ALL_TASKS_SAMPLE_NA_TXT_GLOBAL_CONFIG_PATH,
+                DNA_WGS_VAR_BAM_S_SINGLE_TXT_SAMPLE_STUDY_CONFIG_PATH,
+                FREEBAYES_TASK_NAME,
+                SUFFIX_FOR_GA5_TEST_SHELL_SCRIPT_PATH,
+                DNA_WGS_VAR_BAM_FREEBAYES_FOR_GA5_ANALYSIS_TEMPLATE_PATH,
+                DNA_WGS_VAR_BAM_VARIANT_DETECTION_FOR_GA5_ANALYSIS_TEMPLATE_PATH,
+                TEST_SHELL_SCRIPT_PATH_VARIANT_DETECTION_FOR_GA5
+            ),
+            Arguments.of(
+                DNA_WGS_VAR_BAM_G_ALL_TASKS_SAMPLE_NA_TXT_GLOBAL_CONFIG_PATH,
+                DNA_WGS_VAR_BAM_S_SINGLE_TXT_SAMPLE_STUDY_CONFIG_PATH,
+                GATK_HAPLOTYPE_CALLER_TASK_NAME,
+                SUFFIX_FOR_GA5_TEST_SHELL_SCRIPT_PATH,
+                DNA_WGS_VAR_BAM_GATK_HAPLOTYPE_CALLER_FOR_GA5_ANALYSIS_TEMPLATE_PATH,
+                DNA_WGS_VAR_BAM_VARIANT_DETECTION_FOR_GA5_ANALYSIS_TEMPLATE_PATH,
+                TEST_SHELL_SCRIPT_PATH_VARIANT_DETECTION_FOR_GA5
+            ),
+            Arguments.of(
+                DNA_WGS_VAR_BAM_G_ALL_TASKS_SAMPLE_NA_TXT_GLOBAL_CONFIG_PATH,
+                DNA_WGS_VAR_BAM_S_SINGLE_TXT_SAMPLE_STUDY_CONFIG_PATH,
+                LOFREQ_TASK_NAME,
+                SUFFIX_FOR_GA5_TEST_SHELL_SCRIPT_PATH,
+                DNA_WGS_VAR_BAM_LOFREQ_FOR_GA5_ANALYSIS_TEMPLATE_PATH,
+                DNA_WGS_VAR_BAM_VARIANT_DETECTION_FOR_GA5_ANALYSIS_TEMPLATE_PATH,
+                TEST_SHELL_SCRIPT_PATH_VARIANT_DETECTION_FOR_GA5
+            )
+        );
+    }
 
-            {"gatkHaplotypeCaller",
-                new String[] {
-                    "Begin Step: GATK haplotypecaller detection...",
-                    "/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g " +
-                            "-Djava.io.tmpdir=build/resources/integrationTest/output/GA5/gatkHaplotypeCaller/tmp",
-                    "-jar /usr/bin/gatk -T HaplotypeCaller " +
-                            "-R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -mmq 20",
-                    "--input_file /ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_003.bam",
-                    "--out build/resources/integrationTest/output/GA5/gatkHaplotypeCaller/" +
-                            "GA5.gatkHaplotypeCaller.variants.vcf --validation_strictness SILENT",
-                    "-i build/resources/integrationTest/output/GA5/gatkHaplotypeCaller/" +
-                            "GA5.gatkHaplotypeCaller.variants.vcf",
-                    "-t gatkHaplotypeCaller --canonical /ngs/data/reference_genome/GRCh37/Annotation/" +
-                            "prefer_ensembl_transcript.txt",
-                    "-r hg19 --snpsift /usr/bin/snpsift --snpsift_db /ngs/data/SnpEff/snpEff_v4.3p/snpEff/db --dbnsfp"},
-                new String[] {
-                    PYTHON_VCF_SNPEFF_ANNOTATION}},
+    private static Stream<Arguments> streamOfGA51argumentsNotNASample() {
+        return Stream.of(
+            Arguments.of(
+                DNA_WGS_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA_GLOBAL_CONFIG_PATH,
+                DNA_WGS_VAR_BAM_S_CONTROL_SAMPLE_NOT_NA_STUDY_CONFIG,
+                CONTEST_TASK_NAME,
+                SUFFIX_FOR_GA51_TEST_SHELL_SCRIPT_PATH,
+                DNA_WGS_VAR_BAM_CONTEST_FOR_GA51_ANALYSIS_TEMPLATE_PATH,
+                DNA_WGS_VAR_BAM_VARIANT_DETECTION_FOR_GA51_ANALYSIS_TEMPLATE_PATH,
+                TEST_SHELL_SCRIPT_PATH_VARIANT_DETECTION_FOR_GA51
+            ),
+            Arguments.of(
+                DNA_WGS_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA_GLOBAL_CONFIG_PATH,
+                DNA_WGS_VAR_BAM_S_CONTROL_SAMPLE_NOT_NA_STUDY_CONFIG,
+                MUTECT_2_TASK_NAME,
+                SUFFIX_FOR_GA51_TEST_SHELL_SCRIPT_PATH,
+                DNA_WGS_VAR_BAM_MUTEC2_FOR_GA51_ANALYSIS_TEMPLATE_PATH,
+                DNA_WGS_VAR_BAM_VARIANT_DETECTION_FOR_GA51_ANALYSIS_TEMPLATE_PATH,
+                TEST_SHELL_SCRIPT_PATH_VARIANT_DETECTION_FOR_GA51
+            ),
+            Arguments.of(
+                DNA_WGS_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA_GLOBAL_CONFIG_PATH,
+                DNA_WGS_VAR_BAM_S_CONTROL_SAMPLE_NOT_NA_STUDY_CONFIG,
+                STRELKA2_TASK_NAME,
+                SUFFIX_FOR_GA51_TEST_SHELL_SCRIPT_PATH,
+                DNA_WGS_VAR_BAM_STRELKA2_FOR_GA51_ANALYSIS_TEMPLATE_PATH,
+                DNA_WGS_VAR_BAM_VARIANT_DETECTION_FOR_GA51_ANALYSIS_TEMPLATE_PATH,
+                TEST_SHELL_SCRIPT_PATH_VARIANT_DETECTION_FOR_GA51
+            ),
+            Arguments.of(
+                DNA_WGS_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA_GLOBAL_CONFIG_PATH,
+                DNA_WGS_VAR_BAM_S_CONTROL_SAMPLE_NOT_NA_STUDY_CONFIG,
+                LOFREQ_TASK_NAME,
+                SUFFIX_FOR_GA51_TEST_SHELL_SCRIPT_PATH,
+                DNA_WGS_VAR_BAM_LOFREQ_FOR_GA51_ANALYSIS_TEMPLATE_PATH,
+                DNA_WGS_VAR_BAM_VARIANT_DETECTION_FOR_GA51_ANALYSIS_TEMPLATE_PATH,
+                TEST_SHELL_SCRIPT_PATH_VARIANT_DETECTION_FOR_GA51
+            )
 
-            {"lofreq",
-                new String[] {
-                    "Begin Step: Lofreq detection...",
-                    "/usr/bin/lofreq call -f /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa",
-                    "--sig 0.05 --call-indels " +
-                            "-o build/resources/integrationTest/output/GA5/lofreq/GA5.lofreq.variants.vcf",
-                    "GA5 -i build/resources/integrationTest/output/GA5/lofreq/GA5.lofreq.variants.vcf",
-                    "-t lofreq --canonical /ngs/data/reference_genome/GRCh37/Annotation/prefer_ensembl_transcript.txt",
-                    "-o build/resources/integrationTest/output/GA5/lofreq/GA5.lofreq.variants.pass.annotation.tsv " +
-                            "-t lofreq"},
-                new String[] {
-                    PYTHON_VCF_SNPEFF_ANNOTATION}},
-        };
+        );
+    }
+
+    private static Stream<Arguments> streamOfGA52argumentsNotNASample() {
+        return Stream.of(
+            Arguments.of(
+                DNA_WGS_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA_GLOBAL_CONFIG_PATH,
+                DNA_WGS_VAR_BAM_S_CONTROL_SAMPLE_NOT_NA_STUDY_CONFIG,
+                CONTEST_TASK_NAME,
+                SUFFIX_FOR_GA52_TEST_SHELL_SCRIPT_PATH,
+                DNA_WGS_VAR_BAM_CONTEST_FOR_GA52_ANALYSIS_TEMPLATE_PATH,
+                DNA_WGS_VAR_BAM_VARIANT_DETECTION_FOR_GA52_ANALYSIS_TEMPLATE_PATH,
+                TEST_SHELL_SCRIPT_PATH_VARIANT_DETECTION_FOR_GA52
+            ),
+            Arguments.of(
+                DNA_WGS_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA_GLOBAL_CONFIG_PATH,
+                DNA_WGS_VAR_BAM_S_CONTROL_SAMPLE_NOT_NA_STUDY_CONFIG,
+                MUTECT_2_TASK_NAME,
+                SUFFIX_FOR_GA52_TEST_SHELL_SCRIPT_PATH,
+                DNA_WGS_VAR_BAM_MUTEC2_FOR_GA52_ANALYSIS_TEMPLATE_PATH,
+                DNA_WGS_VAR_BAM_VARIANT_DETECTION_FOR_GA52_ANALYSIS_TEMPLATE_PATH,
+                TEST_SHELL_SCRIPT_PATH_VARIANT_DETECTION_FOR_GA52
+            ),
+            Arguments.of(
+                DNA_WGS_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA_GLOBAL_CONFIG_PATH,
+                DNA_WGS_VAR_BAM_S_CONTROL_SAMPLE_NOT_NA_STUDY_CONFIG,
+                STRELKA2_TASK_NAME,
+                SUFFIX_FOR_GA52_TEST_SHELL_SCRIPT_PATH,
+                DNA_WGS_VAR_BAM_STRELKA2_FOR_GA52_ANALYSIS_TEMPLATE_PATH,
+                DNA_WGS_VAR_BAM_VARIANT_DETECTION_FOR_GA52_ANALYSIS_TEMPLATE_PATH,
+                TEST_SHELL_SCRIPT_PATH_VARIANT_DETECTION_FOR_GA52
+            ),
+            Arguments.of(
+                DNA_WGS_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA_GLOBAL_CONFIG_PATH,
+                DNA_WGS_VAR_BAM_S_CONTROL_SAMPLE_NOT_NA_STUDY_CONFIG,
+                LOFREQ_TASK_NAME,
+                SUFFIX_FOR_GA52_TEST_SHELL_SCRIPT_PATH,
+                DNA_WGS_VAR_BAM_LOFREQ_FOR_GA52_ANALYSIS_TEMPLATE_PATH,
+                DNA_WGS_VAR_BAM_VARIANT_DETECTION_FOR_GA52_ANALYSIS_TEMPLATE_PATH,
+                TEST_SHELL_SCRIPT_PATH_VARIANT_DETECTION_FOR_GA52
+            )
+        );
     }
 
     @Test
-    @UseDataProvider("controlSampleNotNAAllTasks")
-    public void testControlSampleNotNATasks(String task, String[] expectedStrings, String[] expectedPatterns)
-            throws IOException {
-        startAppWithConfigs("DnaWgsVarBam/gAllTasksSampleNotNA.txt",
-                "DnaWgsVarBam/sControlSampleNotNA.txt");
-
-        //tests for toolsets
-        String filePath = "output/sh_files/DnaWgsVar_Bam_" + task + "_for_GA51_analysis.sh";
-        File outputShFile = new File(this.getClass().getClassLoader().getResource(filePath).getPath());
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(outputShFile))) {
-            List<String> lines = reader.lines().collect(Collectors.toList());
-            for (String expectedString : expectedStrings) {
-                assertTrue(lines.stream().anyMatch(line -> line.contains(expectedString)));
-            }
-            for (String expectedPattern : expectedPatterns) {
-                assertTrue(lines.stream().anyMatch(line -> line.matches(expectedPattern)));
-            }
-            assertTrue(lines.stream().noneMatch(line -> line.contains(NULL)));
-        }
-
-        //tests for variant detection
-        filePath = "output/sh_files/DnaWgsVar_Bam_variantDetection_for_GA51_analysis.sh";
-        outputShFile = new File(this.getClass().getClassLoader().getResource(filePath).getPath());
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(outputShFile))) {
-            List<String> lines = reader.lines().collect(Collectors.toList());
-            assertTrue(lines.stream().anyMatch(line -> line.contains(
-                    QSUB + SH_FILES + "DnaWgsVar_Bam_contEst_for_GA51_analysis.sh")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains(
-                    QSUB + SH_FILES + "DnaWgsVar_Bam_mutect2_for_GA51_analysis.sh")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains(
-                    QSUB + SH_FILES + "DnaWgsVar_Bam_strelka2_for_GA51_analysis.sh")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains(
-                    QSUB + SH_FILES + "DnaWgsVar_Bam_lofreq_for_GA51_analysis.sh")));
-            assertTrue(lines.stream().noneMatch(line -> line.contains(NULL)));
-        }
-
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
-    }
-
-    @DataProvider
-    public static Object[][] controlSampleNotNAAllTasks() {
-        return new Object[][] {
-            {"contEst",
-                new String[] {
-                    "Begin Step: Contamination estimation...",
-                    "/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g " +
-                        "-Djava.io.tmpdir=build/resources/integrationTest/output/GA51/contEst/tmp",
-                    "-T ContEst -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -I:eval " +
-                        "/ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_003.bam -I:genotype " +
-                        "/ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_003.bam -pf 100 " +
-                        "-pc 0.01 -o build/resources/integrationTest/output/GA51/contEst/GA51.contEst.result -isr " +
-                        "INTERSECTION --min_mapq 20 -U ALLOW_SEQ_DICT_INCOMPATIBILITY --validation_strictness SILENT"},
-                new String[] {""}},
-
-            {"mutect2",
-                new String[] {
-                    "Begin Step: Mutect2 detection...",
-                    "/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -Djava.io.tmpdir=",
-                    "-jar /usr/bin/gatk -T MuTect2",
-                    "--out build/resources/integrationTest/output/GA51/mutect2/GA51.mutect2.somatic.variants.vcf",
-                    "Begin Step: Remove temporary directories..."},
-                new String[] {
-                    PYTHON_VCF_SNPEFF_ANNOTATION}},
-
-            {"strelka2",
-                new String[] {
-                    "Begin Step: Strelka2 detection...",
-                    "/usr/bin/python /usr/bin/strelka2/configureStrelkaSomaticWorkflow.py",
-                    "--referenceFasta=/ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa",
-                    "/usr/bin/python build/resources/integrationTest/output/GA51/strelka2/runWorkflow.py -m local -j 8",
-                    "gunzip -c build/resources/integrationTest/output/GA51/strelka2/results/variants/" +
-                            "somatic.snvs.vcf.gz",
-                    "rm build/resources/integrationTest/output/GA51/strelka2/results/variants/somatic.snvs.vcf",
-                    "rm build/resources/integrationTest/output/GA51/strelka2/results/variants/somatic.indels.vcf",
-                    "gunzip -c build/resources/integrationTest/output/GA51/strelka2/results/variants/" +
-                            "somatic.indels.vcf.gz"},
-                new String[] {
-                    PYTHON_VCF_SNPEFF_ANNOTATION}},
-
-            {"lofreq",
-                new String[] {
-                    "Begin Step: Lofreq detection...",
-                    "/usr/bin/lofreq somatic -f /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa",
-                    "--threads 4 -o build/resources/integrationTest/output/GA51/lofreq/GA51.",
-                    "gunzip -c build/resources/integrationTest/output/GA51/lofreq/GA51.somatic_final.snvs.vcf.gz",
-                    "gunzip -c build/resources/integrationTest/output/GA51/lofreq/GA51.somatic_final.indels.vcf.gz",
-                    "grep -v \"^#\" build/resources/integrationTest/output/GA51/lofreq/GA51.somatic_final.indels.vcf"},
-                new String[] {
-                    PYTHON_VCF_SNPEFF_ANNOTATION}},
-        };
-    }
-
-    @Test
-    public void testNoTumorOrCase() throws IOException {
+    void testNoTumorOrCase() throws IOException, URISyntaxException {
         startAppWithConfigs("DnaWgsVarBam/gAllTasksSampleNA.txt",
-                "DnaWgsVarBam/sSingleNotTumorOrCase.txt");
-
-        List<File> outputFiles = Files.walk(Paths.get(
-                this.getClass().getClassLoader().getResource(OUTPUT_DIR).getPath()),
-                FileVisitOption.FOLLOW_LINKS)
-                .map(Path::toFile)
-                .sorted(Comparator.reverseOrder())
-                .filter(File::isFile)
-                .collect(Collectors.toList());
+            "DnaWgsVarBam/sSingleNotTumorOrCase.txt");
+        List<File> outputFiles = Files.walk(
+            Paths.get(Objects.requireNonNull(this.getClass().getClassLoader().getResource(OUTPUT_DIR)).toURI()),
+            FileVisitOption.FOLLOW_LINKS)
+            .map(Path::toFile)
+            .sorted(Comparator.reverseOrder())
+            .filter(File::isFile)
+            .collect(Collectors.toList());
         assertTrue(outputFiles.isEmpty());
+    }
+
+    @Test
+    void testDirTreeNotNASample() throws IOException {
+        startAppWithConfigs(DNA_WGS_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA_GLOBAL_CONFIG_PATH,
+            DNA_WGS_VAR_BAM_S_CONTROL_SAMPLE_NOT_NA_STUDY_CONFIG);
+        assertAll(
+            () -> assertTrue(new File(format("%s%s/sh_files", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/log_files", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/err_files", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/GA51", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/GA52", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/GA51/contEst", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/GA51/contEst/tmp", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/GA51/lofreq", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/GA51/mutect2", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/GA51/mutect2/tmp", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/GA51/strelka2", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/GA51/tmp", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/GA52/contEst", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/GA52/contEst/tmp", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/GA52/lofreq", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/GA52/mutect2", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/GA52/mutect2/tmp", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/GA52/strelka2", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/GA52/tmp", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists())
+        );
+        cleanOutputDirForNextTest(OUTPUT_DIR, false);
+    }
+
+    @Test
+    void testDirTreeNASample() throws IOException {
+        startAppWithConfigs(DNA_WGS_VAR_BAM_G_ALL_TASKS_SAMPLE_NA_TXT_GLOBAL_CONFIG_PATH,
+            DNA_WGS_VAR_BAM_S_SINGLE_TXT_SAMPLE_STUDY_CONFIG_PATH);
+        assertAll(
+            () -> assertTrue(new File(format("%s%s/sh_files", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/log_files", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/err_files", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/GA5", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+
+            () -> assertTrue(new File(format("%s%s/GA5/freebayes", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(
+                new File(format("%s%s/GA5/gatkHaplotypeCaller", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(
+                new File(format("%s%s/GA5/gatkHaplotypeCaller/tmp", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/GA5/lofreq", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/GA5/strelka2", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/GA5/tmp", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists())
+        );
+        cleanOutputDirForNextTest(OUTPUT_DIR, false);
     }
 }
