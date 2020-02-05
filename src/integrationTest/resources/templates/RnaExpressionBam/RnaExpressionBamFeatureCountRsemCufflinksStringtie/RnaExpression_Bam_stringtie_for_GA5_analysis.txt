@@ -31,6 +31,7 @@ else
 fi
 
 echo `date` Begin Step: Remove temporary directories...
+rm -rf build/resources/integrationTest/output/GA5/tmp
 
 if [ $? -eq 0 ]
 then
