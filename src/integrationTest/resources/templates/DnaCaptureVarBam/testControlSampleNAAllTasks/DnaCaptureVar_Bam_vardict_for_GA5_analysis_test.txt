@@ -1,0 +1,57 @@
+#!/bin/bash -x
+
+# --- SGE options --- #
+
+#$ -wd build/resources/integrationTest/output
+#$ -N DnaCaptureVar_Bam_vardict_for_GA5_analysis
+#$ -o build/resources/integrationTest/output/log_files/DnaCaptureVar_Bam_vardict_for_GA5_analysis.log
+#$ -e build/resources/integrationTest/output/err_files/DnaCaptureVar_Bam_vardict_for_GA5_analysis.err
+#$ -q main.q
+#$ -R y
+#$ -pe threaded 4
+#$ -m a
+
+# --- The commands to be executed --- #
+
+cd build/resources/integrationTest/output
+
+echo `date` Begin the job execution...
+
+echo `date` Begin Step: Vardict detection...
+/usr/bin/vardict/build/install/VarDict/bin/VarDict -G /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -f 0.05 -r 3 -Q 20 -N GA5 -b /ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_003.bam -z 1 -c 1 -S 2 -E 3 /ngs/data/S03723314_Padded.bed | /usr/bin/vardict/VarDict/teststrandbias.R | /usr/bin/vardict/VarDict/var2vcf_valid.pl -N GA5 -E -f 0.05 > build/resources/integrationTest/output/GA5/vardict/GA5.vardict.variants.vcf
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Vardict detection.
+	sleep 8
+else
+	echo `date` Error Step: Vardict detection.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+echo `date` Begin Step: SnpEff annotation...
+/usr/bin/python [(${jarPath})]/src/python/vcf_snpeff_annotation.py -s GA5 -i build/resources/integrationTest/output/GA5/vardict/GA5.vardict.variants.vcf -o build/resources/integrationTest/output/GA5/vardict/GA5.vardict.variants.pass.annotation.tsv -t vardict --canonical /ngs/data/reference_genome/GRCh37/Annotation/prefer_ensembl_transcript.txt --transvar /usr/bin/transvar -r hg19 --snpsift /usr/bin/snpsift --snpsift_db /ngs/data/SnpEff/snpEff_v4.3p/snpEff/db --dbnsfp --dbsnp --coding_only --pass_only
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: SnpEff annotation.
+	sleep 8
+else
+	echo `date` Error Step: SnpEff annotation.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Remove temporary directories...
+
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Remove temporary directories.
+	sleep 8
+else
+	echo `date` Error Step: Remove temporary directories.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+echo `date` Finish the job execution!
