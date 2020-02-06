@@ -32,6 +32,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,6 +76,8 @@ public class QcSummary implements PostProcessTool {
     }
 
     private QcSummaryFields constructFields(final Configuration configuration, String sample) {
+        TaskContainer.addTasks("Merge RNA QC");
+        final List<String> tasks = new ArrayList<>(TaskContainer.getTasks());
         final QcSummaryFields qcSummaryFields = QcSummaryFields.builder()
                 .workflow(configuration.getGlobalConfig().getPipelineInfo().getWorkflow())
                 .outDir(validate(configuration.getStudyConfig().getDirOut(), StudyConfigFormat.DIR_OUT))
@@ -87,6 +90,7 @@ public class QcSummary implements PostProcessTool {
                 .task("QC summary analysis")
                 .jarPath(PipelineUtils.getExecutionPath())
                 .steps(String.join("|", TaskContainer.getTasks()))
+                .successPattern(tasks.get(tasks.size() - 1))
                 .build();
         String workflow = qcSummaryFields.getWorkflow();
         final String tag = getValueForSpecificVar(workflow, Variable.TAG);
@@ -97,7 +101,6 @@ public class QcSummary implements PostProcessTool {
 
         qcSummaryFields.setTag(tag);
         qcSummaryFields.setLogFile(logFile);
-        TaskContainer.addTasks("QC summary analysis");
 
         return qcSummaryFields;
     }
@@ -170,5 +173,6 @@ public class QcSummary implements PostProcessTool {
         private String jarPath;
         private String task;
         private String steps;
+        private String successPattern;
     }
 }
