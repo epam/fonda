@@ -30,10 +30,13 @@ import com.epam.fonda.workflow.impl.Flag;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.epam.fonda.utils.ToolUtils.validate;
 import static java.lang.String.format;
@@ -113,8 +116,11 @@ public class Star implements Tool<BamResult> {
             TaskContainer.addTasks("STAR alignment", "Sort bam", "Index bam");
         }
         AbstractCommand resultCommand = BashCommand.withTool(cmd);
-        resultCommand.setTempDirs(Arrays.asList(bamOutput.getSortedBam(), bamOutput.getSortedBamIndex(),
-                bamOutput.getUnsortedBam(), bamOutput.getUnsortedBamIndex()));
+        final List<String> tempDirs = Stream.of(bamOutput.getSortedBam(), bamOutput.getSortedBamIndex(),
+                bamOutput.getUnsortedBam(), bamOutput.getUnsortedBamIndex())
+                .filter(StringUtils::isNotBlank)
+                .collect(Collectors.toList());
+        resultCommand.setTempDirs(tempDirs);
         return BamResult.builder()
                 .bamOutput(bamOutput)
                 .command(resultCommand)
