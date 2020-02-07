@@ -30,7 +30,6 @@ else
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
 fi
-
 echo `date` Begin Step: Sequenza detection...
 /usr/bin/python /usr/bin/sequenza/sequenza-utils.py pileup2seqz -gc 10 -n build/resources/integrationTest/output/GA51/pileup/GA52.pileup.gz -t build/resources/integrationTest/output/GA51/pileup/GA51.pileup.gz | gzip > build/resources/integrationTest/output/GA51/sequenza/GA51.seqz.gz
 /usr/bin/python /usr/bin/sequenza/sequenza-utils.py seqz-binning -w 50 -s build/resources/integrationTest/output/GA51/sequenza/GA51.seqz.gz | gzip > build/resources/integrationTest/output/GA51/sequenza/GA51_small.seqz.gz
@@ -45,9 +44,9 @@ else
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
 fi
-
 echo `date` Begin Step: Remove temporary directories...
 rm -rf build/resources/integrationTest/output/GA51/sequenza/GA51.seqz.gz
+
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Remove temporary directories.
@@ -58,5 +57,4 @@ else
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
 fi
-
 echo `date` Finish the job execution!

@@ -31,10 +31,10 @@ else
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
 fi
-
 echo `date` Begin Step: Remove temporary directories...
-rm -rf build/resources/integrationTest/output/GA51/exomecnv/GA51.sample_interval_summary
 rm -rf build/resources/integrationTest/output/GA51/exomecnv/GA52.sample_interval_summary
+rm -rf build/resources/integrationTest/output/GA51/exomecnv/GA51.sample_interval_summary
+
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Remove temporary directories.
@@ -45,5 +45,4 @@ else
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
 fi
-
 echo `date` Finish the job execution!
