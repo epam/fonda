@@ -23,7 +23,6 @@ import lombok.Data;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -165,7 +164,6 @@ public final class DnaUtils {
     private static Context buildContext(LogFileFields logFileFields, String tag, Map<String, String> msgMap,
                                         Integer period, String index) {
         TaskContainer.addTasks(tag);
-        final List<String> tasks = new ArrayList<>(TaskContainer.getTasks());
         Context context = new Context();
         String ifScript1 = "if [[ $str == \"*Error Step: ";
         String ifScript2 = "if [[ -f $logFile  ]];";
@@ -186,7 +184,6 @@ public final class DnaUtils {
         context.setVariable("ifScript1", ifScript1);
         context.setVariable("ifScript2", ifScript2);
         context.setVariable("whileScript", whileScript);
-        context.setVariable("successPattern", tasks.get(tasks.size() - 1));
         return context;
     }
 
