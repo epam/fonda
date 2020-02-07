@@ -76,7 +76,8 @@ public class QcSummary implements PostProcessTool {
     }
 
     private QcSummaryFields constructFields(final Configuration configuration, String sample) {
-        final String tag = getValueForSpecificVar(configuration.getGlobalConfig().getPipelineInfo().getWorkflow(), Variable.TAG);
+        final String tag = getValueForSpecificVar(configuration.getGlobalConfig().getPipelineInfo().getWorkflow(),
+                Variable.TAG);
         TaskContainer.addTasks(tag);
         final List<String> tasks = new ArrayList<>(TaskContainer.getTasks());
         final QcSummaryFields qcSummaryFields = QcSummaryFields.builder()
