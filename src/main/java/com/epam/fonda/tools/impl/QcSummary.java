@@ -32,7 +32,6 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,7 +78,6 @@ public class QcSummary implements PostProcessTool {
         final String tag = getValueForSpecificVar(configuration.getGlobalConfig().getPipelineInfo().getWorkflow(),
                 Variable.TAG);
         TaskContainer.addTasks(tag);
-        final List<String> tasks = new ArrayList<>(TaskContainer.getTasks());
         final QcSummaryFields qcSummaryFields = QcSummaryFields.builder()
                 .workflow(configuration.getGlobalConfig().getPipelineInfo().getWorkflow())
                 .outDir(validate(configuration.getStudyConfig().getDirOut(), StudyConfigFormat.DIR_OUT))
@@ -92,7 +90,9 @@ public class QcSummary implements PostProcessTool {
                 .task("QC summary analysis")
                 .jarPath(PipelineUtils.getExecutionPath())
                 .steps(String.join("|", TaskContainer.getTasks()))
-                .successPattern(tasks.get(tasks.size() - 1))
+                .successPattern(TaskContainer.getTasks().stream()
+                        .reduce((first, second) -> second)
+                        .orElse(null))
                 .build();
         String workflow = qcSummaryFields.getWorkflow();
         final String task = getValueForSpecificVar(workflow, Variable.TASK);
