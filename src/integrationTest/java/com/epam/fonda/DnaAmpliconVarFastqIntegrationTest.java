@@ -15,9 +15,11 @@
  */
 package com.epam.fonda;
 
+import com.epam.fonda.workflow.TaskContainer;
 import com.tngtech.java.junit.dataprovider.DataProvider;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
 import com.tngtech.java.junit.dataprovider.UseDataProvider;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -45,6 +47,11 @@ public class DnaAmpliconVarFastqIntegrationTest extends AbstractIntegrationTest 
     private static final String PAIRED_STUDY_CONFIG = "DnaAmpliconVarFastq/sPaired.txt";
     private static final String ALIGNMENT_OUTPUT_SH =
             "output/sh_files/DnaAmpliconVar_Fastq_alignment_for_GA5_1_analysis.sh";
+
+    @After
+    public void cleanup() {
+        TaskContainer.getTasks().clear();
+    }
 
     @Test
     public void testSingleXenomeYesTrimmomaticBwa() throws IOException {

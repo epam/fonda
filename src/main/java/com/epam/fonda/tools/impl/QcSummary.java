@@ -76,7 +76,8 @@ public class QcSummary implements PostProcessTool {
     }
 
     private QcSummaryFields constructFields(final Configuration configuration, String sample) {
-        TaskContainer.addTasks("Merge RNA QC");
+        final String tag = getValueForSpecificVar(configuration.getGlobalConfig().getPipelineInfo().getWorkflow(), Variable.TAG);
+        TaskContainer.addTasks(tag);
         final List<String> tasks = new ArrayList<>(TaskContainer.getTasks());
         final QcSummaryFields qcSummaryFields = QcSummaryFields.builder()
                 .workflow(configuration.getGlobalConfig().getPipelineInfo().getWorkflow())
@@ -93,7 +94,6 @@ public class QcSummary implements PostProcessTool {
                 .successPattern(tasks.get(tasks.size() - 1))
                 .build();
         String workflow = qcSummaryFields.getWorkflow();
-        final String tag = getValueForSpecificVar(workflow, Variable.TAG);
         final String task = getValueForSpecificVar(workflow, Variable.TASK);
         final String fileName = qcSummaryFields.getWorkflow() + "_" + task + "_for_" + sample + "_analysis";
         final String logOutDir = qcSummaryFields.getOutDir() + "/log_files";
