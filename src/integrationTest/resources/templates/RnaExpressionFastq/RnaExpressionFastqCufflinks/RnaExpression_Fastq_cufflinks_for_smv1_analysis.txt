@@ -23,10 +23,10 @@ mv build/resources/integrationTest/output/smv1/cufflinks/genes.fpkm_tracking bui
 mv build/resources/integrationTest/output/smv1/cufflinks/isoforms.fpkm_tracking build/resources/integrationTest/output/smv1/cufflinks/smv1.cufflinks.isoform.expression.results
 if [ $? -eq 0 ]
 then
-	echo `date` Successful Step: Cufflinks.
+	echo `date` Successful Step: cufflinks
 	sleep 8
 else
-	echo `date` Error Step: Cufflinks.
+	echo `date` Error Step: cufflinks
 
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
@@ -48,6 +48,5 @@ else
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
 fi
-
 echo `date` Finish the job execution!
 
