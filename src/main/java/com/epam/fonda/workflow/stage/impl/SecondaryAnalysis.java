@@ -102,26 +102,25 @@ public class SecondaryAnalysis implements Stage {
         stringtie(flag, configuration, templateEngine, alignCmd, tempDirs);
         vardict(flag, configuration, templateEngine, alignCmd);
         gatkHaplotypeCaller(flag, configuration, templateEngine, alignCmd);
-        contEst(flag, configuration, templateEngine, alignCmd, tempDirs);
+        contEst(flag, configuration, templateEngine, alignCmd);
         strelka2(flag, configuration, templateEngine, alignCmd);
         mutect1(flag, configuration, templateEngine, alignCmd);
         mutect2(flag, configuration, templateEngine, alignCmd);
         scalpel(flag, configuration, templateEngine, alignCmd);
         lofreq(flag, configuration, templateEngine, alignCmd);
-        sequenza(flag, configuration, templateEngine, alignCmd, tempDirs);
-        exomecnv(flag, configuration, templateEngine, alignCmd, tempDirs);
+        sequenza(flag, configuration, templateEngine, alignCmd);
+        exomecnv(flag, configuration, templateEngine, alignCmd);
         freebayes(flag, configuration, templateEngine, alignCmd);
         return alignCmd.toString();
     }
 
     private void contEst(final Flag flag, final Configuration configuration, final TemplateEngine templateEngine,
-                         final StringBuilder alignCmd, final Set<String> tempDirs) throws IOException {
+                         final StringBuilder alignCmd) throws IOException {
         if (!(isPaired && flag.isContEst())) {
             return;
         }
         final ContEstResult result = new ContEst(sampleName, sampleOutputDir, bamResult)
                 .generate(configuration, templateEngine);
-        tempDirs.addAll(SetUtils.emptyIfNull(result.getCommand().getTempDirs()));
         createCustomToolShell(configuration, alignCmd, result.getCommand().getToolCommand() +
                 cleanUpTmpDir(result.getCommand().getTempDirs()), "contEst");
     }
@@ -147,19 +146,18 @@ public class SecondaryAnalysis implements Stage {
     }
 
     private void exomecnv(final Flag flag, final Configuration configuration, final TemplateEngine templateEngine,
-                          final StringBuilder alignCmd, final Set<String> tempDirs) throws IOException {
+                          final StringBuilder alignCmd) throws IOException {
         if (!(isPaired && flag.isExomecnv())) {
             return;
         }
         final ExomecnvResult result = new Exomecnv(sampleName, controlSampleName, bamResult.getBamOutput(),
                 sampleOutputDir).generate(configuration, templateEngine);
-        tempDirs.addAll(SetUtils.emptyIfNull(result.getCommand().getTempDirs()));
         createCustomToolShell(configuration, alignCmd, result.getCommand().getToolCommand() +
                 cleanUpTmpDir(result.getCommand().getTempDirs()), result.getToolName());
     }
 
     private void sequenza(final Flag flag, final Configuration configuration, final TemplateEngine templateEngine,
-                          final StringBuilder alignCmd, final Set<String> tempDirs) throws IOException {
+                          final StringBuilder alignCmd) throws IOException {
         if (!(isPaired && flag.isSequenza())) {
             return;
         }
@@ -167,7 +165,6 @@ public class SecondaryAnalysis implements Stage {
                 .generate(configuration, templateEngine);
         final SequenzaResult result = new Sequenza(sampleName, sampleOutputDir, pileupResult.getPileupOutput())
                 .generate(configuration, templateEngine);
-        tempDirs.addAll(SetUtils.emptyIfNull(result.getCommand().getTempDirs()));
         createCustomToolShell(configuration, alignCmd, pileupResult.getCommand().getToolCommand()
                         + result.getCommand().getToolCommand() + cleanUpTmpDir(result.getCommand().getTempDirs()),
                 result.getToolName());
