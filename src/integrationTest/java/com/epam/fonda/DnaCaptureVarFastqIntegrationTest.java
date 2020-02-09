@@ -15,9 +15,11 @@
  */
 package com.epam.fonda;
 
+import com.epam.fonda.workflow.TaskContainer;
 import com.tngtech.java.junit.dataprovider.DataProvider;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
 import com.tngtech.java.junit.dataprovider.UseDataProvider;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -49,6 +51,12 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
     private static final String GUNZIP = "gunzip -c ";
     private static final String TEST_BED = "/ngs/data/test.bed";
     private static final String MERGE_DNA_QC = "Successful Step: Merge DNA QC";
+    private static final String REMOVE_TEMP_DIRS = "Successful Step: Remove temporary directories";
+
+    @After
+    public void cleanup() {
+        TaskContainer.getTasks().clear();
+    }
 
     @Test
     public void testSingleXenomeYesTrimmomaticBwa() throws IOException {
@@ -86,7 +94,7 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
 
         try (BufferedReader reader = new BufferedReader(new FileReader(outputShFromFile))) {
             List<String> lines = reader.lines().collect(Collectors.toList());
-            assertTrue(lines.stream().anyMatch(line -> line.contains(MERGE_DNA_QC)));
+            assertTrue(lines.stream().anyMatch(line -> line.contains(REMOVE_TEMP_DIRS)));
             assertTrue(lines.stream().anyMatch(line -> line.contains(TEST_OUTPUT + TEST_POSTALIGNMENT_LOG)));
             assertTrue(lines.stream().anyMatch(line -> line.contains("Confirm QC results from GA5")));
             assertTrue(lines.stream().anyMatch(line -> line.matches(
@@ -99,7 +107,7 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
 
         try (BufferedReader reader = new BufferedReader(new FileReader(outputShFromFile))) {
             List<String> lines = reader.lines().collect(Collectors.toList());
-            assertTrue(lines.stream().anyMatch(line -> line.contains(MERGE_DNA_QC)));
+            assertTrue(lines.stream().anyMatch(line -> line.contains("Successful Step: Index bam")));
             assertTrue(lines.stream().anyMatch(line -> line.contains(TEST_OUTPUT +
                     "log_files/DnaCaptureVar_Fastq_alignment_for_GA5_1_analysis.log")));
             assertTrue(lines.stream().anyMatch(line -> line.contains("Begin Step: Merge DNA bams...")));
@@ -159,7 +167,7 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
 
         try (BufferedReader reader = new BufferedReader(new FileReader(outputShFromFile))) {
             List<String> lines = reader.lines().collect(Collectors.toList());
-            assertTrue(lines.stream().anyMatch(line -> line.contains(MERGE_DNA_QC)));
+            assertTrue(lines.stream().anyMatch(line -> line.contains(REMOVE_TEMP_DIRS)));
             assertTrue(lines.stream().anyMatch(line -> line.contains(TEST_OUTPUT + TEST_POSTALIGNMENT_LOG)));
             assertTrue(lines.stream().anyMatch(line -> line.contains("Confirm QC results from GA5")));
             assertTrue(lines.stream().anyMatch(line -> line.matches(
@@ -184,7 +192,7 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
             assertTrue(lines.stream().anyMatch(line -> line.contains("Begin Step: Index bam...")));
             assertTrue(lines.stream().anyMatch(line -> line.contains("/opt/samtools/samtools-0.1.19/samtools index " +
                     TEST_OUTPUT + TEST_MERGED_BAM)));
-            assertTrue(lines.stream().anyMatch(line -> line.contains("Successful Step: Novoalign alignment")));
+            assertTrue(lines.stream().anyMatch(line -> line.contains(MERGE_DNA_QC)));
             assertTrue(lines.stream().anyMatch(line -> line.contains(
                     TEST_OUTPUT + TEST_POSTALIGNMENT_LOG)));
             assertTrue(lines.stream().anyMatch(line -> line.contains(REMOVE_TMP_DIRS)));

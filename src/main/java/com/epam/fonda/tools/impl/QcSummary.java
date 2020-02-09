@@ -75,8 +75,11 @@ public class QcSummary implements PostProcessTool {
     }
 
     private QcSummaryFields constructFields(final Configuration configuration, String sample) {
+        final String workflowName = configuration.getGlobalConfig().getPipelineInfo().getWorkflow();
+        final String tag = getValueForSpecificVar(workflowName, Variable.TAG);
+        TaskContainer.addTasks(tag);
         final QcSummaryFields qcSummaryFields = QcSummaryFields.builder()
-                .workflow(configuration.getGlobalConfig().getPipelineInfo().getWorkflow())
+                .workflow(workflowName)
                 .outDir(validate(configuration.getStudyConfig().getDirOut(), StudyConfigFormat.DIR_OUT))
                 .rScript(validate(configuration.getGlobalConfig().getToolConfig().getRScript(),
                         GlobalConfigFormat.R_SCRIPT))
@@ -87,10 +90,11 @@ public class QcSummary implements PostProcessTool {
                 .task("QC summary analysis")
                 .jarPath(PipelineUtils.getExecutionPath())
                 .steps(String.join("|", TaskContainer.getTasks()))
+                .successPattern(TaskContainer.getTasks().stream()
+                        .reduce((first, second) -> second)
+                        .orElse(null))
                 .build();
-        String workflow = qcSummaryFields.getWorkflow();
-        final String tag = getValueForSpecificVar(workflow, Variable.TAG);
-        final String task = getValueForSpecificVar(workflow, Variable.TASK);
+        final String task = getValueForSpecificVar(workflowName, Variable.TASK);
         final String fileName = qcSummaryFields.getWorkflow() + "_" + task + "_for_" + sample + "_analysis";
         final String logOutDir = qcSummaryFields.getOutDir() + "/log_files";
         final String logFile = logOutDir + "/" + fileName + ".log";
@@ -170,5 +174,6 @@ public class QcSummary implements PostProcessTool {
         private String jarPath;
         private String task;
         private String steps;
+        private String successPattern;
     }
 }
