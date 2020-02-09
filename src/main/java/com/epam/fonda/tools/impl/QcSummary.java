@@ -75,11 +75,11 @@ public class QcSummary implements PostProcessTool {
     }
 
     private QcSummaryFields constructFields(final Configuration configuration, String sample) {
-        final String tag = getValueForSpecificVar(configuration.getGlobalConfig().getPipelineInfo().getWorkflow(),
-                Variable.TAG);
+        final String workflowName = configuration.getGlobalConfig().getPipelineInfo().getWorkflow();
+        final String tag = getValueForSpecificVar(workflowName, Variable.TAG);
         TaskContainer.addTasks(tag);
         final QcSummaryFields qcSummaryFields = QcSummaryFields.builder()
-                .workflow(configuration.getGlobalConfig().getPipelineInfo().getWorkflow())
+                .workflow(workflowName)
                 .outDir(validate(configuration.getStudyConfig().getDirOut(), StudyConfigFormat.DIR_OUT))
                 .rScript(validate(configuration.getGlobalConfig().getToolConfig().getRScript(),
                         GlobalConfigFormat.R_SCRIPT))
@@ -94,14 +94,14 @@ public class QcSummary implements PostProcessTool {
                         .reduce((first, second) -> second)
                         .orElse(null))
                 .build();
-        String workflow = qcSummaryFields.getWorkflow();
-        final String task = getValueForSpecificVar(workflow, Variable.TASK);
+        final String task = getValueForSpecificVar(workflowName, Variable.TASK);
         final String fileName = qcSummaryFields.getWorkflow() + "_" + task + "_for_" + sample + "_analysis";
         final String logOutDir = qcSummaryFields.getOutDir() + "/log_files";
         final String logFile = logOutDir + "/" + fileName + ".log";
 
         qcSummaryFields.setTag(tag);
         qcSummaryFields.setLogFile(logFile);
+        TaskContainer.addTasks("QC summary analysis");
 
         return qcSummaryFields;
     }
