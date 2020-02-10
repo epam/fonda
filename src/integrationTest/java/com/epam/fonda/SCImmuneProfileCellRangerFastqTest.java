@@ -19,6 +19,7 @@ import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.utils.CellRangerUtils;
 import com.epam.fonda.utils.PipelineUtils;
 import com.epam.fonda.utils.TemplateEngineUtils;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -34,8 +35,8 @@ import java.util.Collections;
 import java.util.stream.Stream;
 
 import static java.lang.String.format;
-import static junit.framework.TestCase.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SCImmuneProfileCellRangerFastqTest extends AbstractIntegrationTest {
@@ -44,7 +45,7 @@ public class SCImmuneProfileCellRangerFastqTest extends AbstractIntegrationTest 
     private static final String OUTPUT_DIR = "output";
     private static final String SCIMMUNE_PROFILE_CELLRANGER_FASTQ_PBMC4K_TEST_TEMPLATE =
             "scImmuneProfileCellRangerFastq/scImmuneProfileCellRangerFastq_VdjQc_template.txt";
-    public static final String SCIMMUNE_PROFILE_CELL_RANGER_FASTQ_COHORT_TEST_TEMPLATE =
+    private static final String SCIMMUNE_PROFILE_CELL_RANGER_FASTQ_COHORT_TEST_TEMPLATE =
             "scImmuneProfileCellRangerFastq/scImmuneProfileCellRangerFastq_Cohort_template.txt";
     private static final String GLOBAL_CONFIG_NAME = "SCImmuneProfileCellRangerFastq/vdj.txt";
     private static final String STUDY_CONFIG_NAME =
@@ -74,24 +75,27 @@ public class SCImmuneProfileCellRangerFastqTest extends AbstractIntegrationTest 
         startAppWithConfigs(GLOBAL_CONFIG_NAME, STUDY_CONFIG_NAME);
     }
 
+    @AfterEach
+    void cleanWorkDirs() throws IOException {
+        cleanOutputDirForNextTest(OUTPUT_DIR, false);
+    }
+
     @Test
-    void testCreateSpecificDir() throws IOException {
+    void testCreateSpecificDir() {
         assertAll(
             () -> assertTrue(new File(format("%s%s/sh_files", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
             () -> assertTrue(new File(format("%s%s/log_files", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
             () -> assertTrue(new File(format("%s%s/err_files", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
             () -> assertTrue(new File(format("%s%s/vdj", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists())
         );
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
     }
 
     @Test
-    void testExtractFastqDirFastq1Fastq2() throws IOException {
+    void testExtractFastqDirFastq1Fastq2() {
         FastqFileSample actualSample = CellRangerUtils.extractFastqDir(expectedSample);
         String fastqDirs = actualSample.getFastqDirs().get(0);
 
         assertTrue(fastqDirs.endsWith(FASTQ_DATA_FOLDER));
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
     }
 
     @ParameterizedTest
@@ -101,7 +105,6 @@ public class SCImmuneProfileCellRangerFastqTest extends AbstractIntegrationTest 
         final String actualCmd = getCmd(outputFilePath).trim();
 
         assertEquals(expectedCmd, actualCmd);
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
     }
 
     @SuppressWarnings("PMD")
@@ -112,4 +115,3 @@ public class SCImmuneProfileCellRangerFastqTest extends AbstractIntegrationTest 
         );
     }
 }
-
