@@ -52,6 +52,7 @@ else
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
 fi
+
 echo `date` Begin Step: Seqpurge trimming...
 /opt/ngs_bits/ngs-bits/bin/SeqPurge -threads 4 -in1 build/resources/integrationTest/output/smv1/fastq/smv1_classified_R1.fq.gz -in2 build/resources/integrationTest/output/smv1/fastq/smv1_classified_R2.fq.gz -out1 build/resources/integrationTest/output/smv1/fastq/smv1.trimmed.R1.fastq.gz -out2 build/resources/integrationTest/output/smv1/fastq/smv1.trimmed.R2.fastq.gz -qcut 20 -a1 AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC -a2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT
 if [ $? -eq 0 ]
