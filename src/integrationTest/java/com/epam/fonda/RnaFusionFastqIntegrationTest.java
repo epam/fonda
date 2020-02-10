@@ -15,17 +15,18 @@
  */
 package com.epam.fonda;
 
+import com.epam.fonda.utils.TemplateEngineUtils;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Objects;
+import java.net.URISyntaxException;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -39,7 +40,7 @@ public class RnaFusionFastqIntegrationTest extends AbstractIntegrationTest {
     private static final String OUTPUT_DIR_ROOT = "build/resources/integrationTest/";
     private static final String S_CONFIG_PATH = "RnaFusionFastq/sRnaFusionFastq.txt";
     private static final String SAMPLE_NAME = "smv1/";
-    private static final String TEMPLATE_FOLDER = "templates/rnaFusionFastq_templates";
+    private static final String TEMPLATE_FOLDER = "rnaFusionFastq_templates";
     private static final String RNA_FUSION_XENOME_YES =
             String.format("%s/rnaFusionFastq_Flag_Xenome_Yes_template.txt", TEMPLATE_FOLDER);
     private static final String RNA_FUSION_NON_FLAG_XENOME =
@@ -60,25 +61,33 @@ public class RnaFusionFastqIntegrationTest extends AbstractIntegrationTest {
             String.format("%s/rnaFusionFastq_Trimmomatic_With_Adapter_template.txt", TEMPLATE_FOLDER);
     private static final String RNA_FUSION_TRIMMOMATIC_WITHOUT_ADAPTER =
             String.format("%s/rnaFusionFastq_Trimmomatic_Without_Adapter_template.txt", TEMPLATE_FOLDER);
-    public static final String RNA_FUSION_FASTQ_G_STAR_FUSION_AND_FUSION_CATCHER_TXT = "RnaFusionFastq/gStarFusionAndFusionCatcher.txt";
+    private static final String RNA_FUSION_FASTQ_G_STAR_FUSION_AND_FUSION_CATCHER_TXT =
+            "RnaFusionFastq/gStarFusionAndFusionCatcher.txt";
+    private static final String NULL = "null";
 
-    @ParameterizedTest
-    @MethodSource("initGlobalConfigAndTemplatePath")
-    public void testWorkflowOutput(String globalConfigPath, String templatePath) throws IOException {
-        startAppWithConfigs(globalConfigPath, S_CONFIG_PATH);
+    private TemplateEngine templateEngine = TemplateEngineUtils.init();
+    private Context context = new Context();
 
-        File expectedFile = new File(
-                Objects.requireNonNull(this.getClass().getClassLoader().getResource(templatePath)).getPath());
-        File outputShFile = new File(
-                Objects.requireNonNull(this.getClass().getClassLoader().getResource(OUTPUT_SH_FILE)).getPath());
-
-        assertEquals(getFileContent(expectedFile).trim(), getFileContent(outputShFile).trim());
-        assertFalse(getFileContent(expectedFile).contains("null"));
+    @AfterEach
+    void cleanWorkDirs() throws IOException {
         cleanOutputDirForNextTest(OUTPUT_DIR, false);
     }
 
+    @ParameterizedTest
+    @MethodSource("initGlobalConfigAndTemplatePath")
+    public void testWorkflowOutput(String globalConfigPath, String templatePath)
+            throws IOException, URISyntaxException {
+        startAppWithConfigs(globalConfigPath, S_CONFIG_PATH);
+
+        String expectedCmd = templateEngine.process(templatePath, context);
+        String actualCmd = getCmd(OUTPUT_SH_FILE);
+
+        assertEquals(expectedCmd.trim(), actualCmd.trim());
+        assertFalse(getCmd(OUTPUT_SH_FILE).contains(NULL));
+    }
+
     @Test
-    public void testCreateRnaFusionFastqSpecificDirFusionCatcherStarFusionToolset() throws IOException {
+    public void testCreateRnaFusionFastqSpecificDirFusionCatcherStarFusionToolset() {
         startAppWithConfigs(RNA_FUSION_FASTQ_G_STAR_FUSION_AND_FUSION_CATCHER_TXT, S_CONFIG_PATH);
         assertAll(
             () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "sh_files").exists()),
@@ -91,9 +100,9 @@ public class RnaFusionFastqIntegrationTest extends AbstractIntegrationTest {
             () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + SAMPLE_NAME + "qc").exists()),
             () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + SAMPLE_NAME + "starFusion").exists()),
             () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + SAMPLE_NAME + "fusionCatcher").exists()),
-            () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + SAMPLE_NAME + "fusionCatcher/tmp").exists())
+            () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + SAMPLE_NAME + "fusionCatcher/tmp")
+                    .exists())
         );
-        cleanOutputDirForNextTest(OUTPUT_DIR, true);
     }
 
     @SuppressWarnings("PMD")
@@ -107,17 +116,9 @@ public class RnaFusionFastqIntegrationTest extends AbstractIntegrationTest {
                 Arguments.of("RnaFusionFastq/gNonTrimmomatic.txt", RNA_FUSION_NON_TRIMMOMATIC),
                 Arguments.of("RnaFusionFastq/gSeqpurgeWithAdapters.txt", RNA_FUSION_SEQPURGE_WITH_ADAPTERS),
                 Arguments.of("RnaFusionFastq/gSeqpurgeWithoutAdapters.txt", RNA_FUSION_SEQPURGE_WITHOUT_ADAPTERS),
-                Arguments.of(RNA_FUSION_FASTQ_G_STAR_FUSION_AND_FUSION_CATCHER_TXT, RNA_FUSION_STARFUSION_FUSION_CATCHER),
+                Arguments.of("RnaFusionFastq/gStarFusionAndFusionCatcher.txt", RNA_FUSION_STARFUSION_FUSION_CATCHER),
                 Arguments.of("RnaFusionFastq/gTrimmomaticWithAdapter.txt", RNA_FUSION_TRIMMOMATIC_WITH_ADAPTER),
                 Arguments.of("RnaFusionFastq/gTrimmomaticWithoutAdapter.txt", RNA_FUSION_TRIMMOMATIC_WITHOUT_ADAPTER)
         );
-    }
-
-    private String getFileContent(File file) throws IOException {
-        StringBuilder builder = new StringBuilder();
-        try (Stream<String> stream = Files.lines(Paths.get(file.getAbsolutePath()), StandardCharsets.UTF_8)) {
-            stream.forEach(s -> builder.append(s).append("\n"));
-        }
-        return builder.toString();
     }
 }
