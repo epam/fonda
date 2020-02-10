@@ -31,6 +31,7 @@ else
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
 fi
+
 echo `date` Begin Step: RSEM annotation...
 /usr/bin/python [(${jarPath})]/src/python/rna_gene_annotation.py -t rsem -i build/resources/integrationTest/output/smv1/rsem/smv1.rsem.gene.expression.results -o build/resources/integrationTest/output/smv1/rsem/smv1.rsem.annotate.gene.expression.results -a /common/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.annotation.saf
 mv build/resources/integrationTest/output/smv1/rsem/smv1.rsem.annotate.gene.expression.results build/resources/integrationTest/output/smv1/rsem/smv1.rsem.gene.expression.results
@@ -44,6 +45,7 @@ else
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
 fi
+
 echo `date` Begin Step: Remove temporary directories...
 rm -rf build/resources/integrationTest/output/smv1/tmp
 
