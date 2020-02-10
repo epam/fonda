@@ -73,7 +73,7 @@ class GatkHaplotypeCallerTest extends AbstractTest {
     void shouldGenerateForGatkHaplotypeCallerUnpairedForDna() {
         expectedCmd = expectedTemplateEngine.process(GATK_HAPLOTYPE_CALLER_DNA_TOOL_TEST_TEMPLATE_NAME, context);
         variantsVcfResult = gatkHaplotypeCaller.generate(expectedConfiguration, expectedTemplateEngine);
-        assertEquals(expectedCmd, variantsVcfResult.getAbstractCommand().getToolCommand());
+        assertEquals(expectedCmd.trim(), variantsVcfResult.getAbstractCommand().getToolCommand().trim());
     }
 
     @Test
@@ -83,7 +83,7 @@ class GatkHaplotypeCallerTest extends AbstractTest {
         context.setVariable("isWgs", true);
         expectedCmd = expectedTemplateEngine.process(GATK_HAPLOTYPE_CALLER_DNA_TOOL_TEST_TEMPLATE_NAME, context);
         variantsVcfResult = gatkHaplotypeCaller.generate(expectedConfiguration, expectedTemplateEngine);
-        assertEquals(expectedCmd, variantsVcfResult.getAbstractCommand().getToolCommand());
+        assertEquals(expectedCmd.trim(), variantsVcfResult.getAbstractCommand().getToolCommand().trim());
     }
 
     private void buildConfiguration() {
