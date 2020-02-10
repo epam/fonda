@@ -15,9 +15,11 @@
  */
 package com.epam.fonda;
 
+import com.epam.fonda.workflow.TaskContainer;
 import com.tngtech.java.junit.dataprovider.DataProvider;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
 import com.tngtech.java.junit.dataprovider.UseDataProvider;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -44,6 +46,11 @@ public class DnaCaptureVarBamIntegrationTest extends AbstractIntegrationTest {
     private static final String SH_FILES = "build/resources/integrationTest/output/sh_files/";
     private static final String PYTHON_VCF_SNPEFF_ANNOTATION =
             ".*?/usr/bin/python.+?vcf_snpeff_annotation.py.+?(\\n|$)";
+
+    @After
+    public void clean() {
+        TaskContainer.getTasks().clear();
+    }
 
     @Test
     @UseDataProvider("controlSampleNAAllTasks")
