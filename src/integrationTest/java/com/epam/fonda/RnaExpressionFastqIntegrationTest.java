@@ -16,6 +16,7 @@
 package com.epam.fonda;
 
 import com.epam.fonda.utils.TemplateEngineUtils;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -28,7 +29,7 @@ import java.net.URISyntaxException;
 import java.util.stream.Stream;
 
 import static com.epam.fonda.utils.PipelineUtils.getExecutionPath;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
 
@@ -124,6 +125,11 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
     public void setup() {
         context = new Context();
         context.setVariable("jarPath", getExecutionPath());
+    }
+
+    @AfterEach
+    public void cleanupDir() throws IOException {
+        cleanOutputDirForNextTest(OUTPUT_DIR, false);
     }
 
     @SuppressWarnings("PMD")
@@ -249,11 +255,10 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
 
     @ParameterizedTest(name = "{2}-test")
     @MethodSource("initParameters")
-    void testRnaExpressionFastq(
-            String gConfigPath, String outputShFile, String templatePath) throws IOException, URISyntaxException {
+    void testRnaExpressionFastq(final String gConfigPath, final String outputShFile, final String templatePath)
+            throws IOException, URISyntaxException {
         startAppWithConfigs(gConfigPath, S_CONFIG_PATH);
-        String expectedCmd = templateEngine.process(templatePath, context);
+        final String expectedCmd = templateEngine.process(templatePath, context);
         assertEquals(expectedCmd.trim(), getCmd(outputShFile).trim());
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
     }
 }

@@ -71,6 +71,7 @@ public class QcSummary implements PostProcessTool {
             cmd.append(templateEngine.process(QC_SUMMARY_STATUS_CHECK_TEMPLATE, context));
         }
         cmd.append(templateEngine.process(QC_SUMMARY_ANALYSIS_TEMPLATE, context));
+        TaskContainer.addTasks("QC summary analysis");
         PipelineUtils.printShell(configuration, cmd.toString(), "", null);
     }
 
@@ -101,7 +102,6 @@ public class QcSummary implements PostProcessTool {
 
         qcSummaryFields.setTag(tag);
         qcSummaryFields.setLogFile(logFile);
-        TaskContainer.addTasks("QC summary analysis");
 
         return qcSummaryFields;
     }
