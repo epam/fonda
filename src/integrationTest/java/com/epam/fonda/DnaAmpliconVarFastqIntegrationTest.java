@@ -448,7 +448,7 @@ public class DnaAmpliconVarFastqIntegrationTest extends AbstractIntegrationTest 
     }
 
     private void assertXenome(List<String> lines) {
-        assertTrue(lines.stream().anyMatch(line -> line.contains("Begin Step:  Xenome classification...")));
+        assertTrue(lines.stream().anyMatch(line -> line.contains("Begin Step: Xenome classification...")));
         assertTrue(lines.stream().anyMatch(line -> line.contains("/usr/bin/xenome classify -T 8 -P ")));
         assertTrue(lines.stream().anyMatch(line -> line.contains("/ngs/data/xenomeIdx/xenome.idx " +
                 "--pairs --graft-name human --host-name mouse ")));
