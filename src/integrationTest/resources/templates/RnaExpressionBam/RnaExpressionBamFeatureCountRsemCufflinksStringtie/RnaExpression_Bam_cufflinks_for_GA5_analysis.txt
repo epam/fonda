@@ -1,0 +1,48 @@
+#!/bin/bash -x
+
+# --- SGE options --- #
+
+#$ -wd build/resources/integrationTest/output
+#$ -N RnaExpression_Bam_cufflinks_for_GA5_analysis
+#$ -o build/resources/integrationTest/output/log_files/RnaExpression_Bam_cufflinks_for_GA5_analysis.log
+#$ -e build/resources/integrationTest/output/err_files/RnaExpression_Bam_cufflinks_for_GA5_analysis.err
+#$ -q main.q
+#$ -R y
+#$ PE 4
+#$ -m a
+
+# --- The commands to be executed --- #
+
+cd build/resources/integrationTest/output
+
+echo `date` Begin the job execution...
+
+echo `date` Begin Step: Cufflinks...
+/opt/cufflinks/cufflinks-2.2.1.Linux_x86_64/cufflinks --library-type fr-unstranded --num-threads 4 -b /common/reference_genome/GRCh38/Sequence/GRCh38.genome.fa --GTF /common/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.annotation.gtf --output-dir build/resources/integrationTest/output/GA5/cufflinks /ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_003.bam
+mv build/resources/integrationTest/output/GA5/cufflinks/genes.fpkm_tracking build/resources/integrationTest/output/GA5/cufflinks/GA5.cufflinks.gene.expression.results
+mv build/resources/integrationTest/output/GA5/cufflinks/isoforms.fpkm_tracking build/resources/integrationTest/output/GA5/cufflinks/GA5.cufflinks.isoform.expression.results
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: cufflinks
+	sleep 8
+else
+	echo `date` Error Step: cufflinks
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Remove temporary directories...
+rm -rf build/resources/integrationTest/output/GA5/tmp
+
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Remove temporary directories.
+	sleep 8
+else
+	echo `date` Error Step: Remove temporary directories.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+echo `date` Finish the job execution!
