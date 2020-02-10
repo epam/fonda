@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,11 @@
  */
 package com.epam.fonda;
 
+import com.epam.fonda.workflow.TaskContainer;
 import com.tngtech.java.junit.dataprovider.DataProvider;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
 import com.tngtech.java.junit.dataprovider.UseDataProvider;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -45,6 +47,11 @@ public class DnaAmpliconVarFastqIntegrationTest extends AbstractIntegrationTest 
     private static final String PAIRED_STUDY_CONFIG = "DnaAmpliconVarFastq/sPaired.txt";
     private static final String ALIGNMENT_OUTPUT_SH =
             "output/sh_files/DnaAmpliconVar_Fastq_alignment_for_GA5_1_analysis.sh";
+
+    @After
+    public void cleanup() {
+        TaskContainer.getTasks().clear();
+    }
 
     @Test
     public void testSingleXenomeYesTrimmomaticBwa() throws IOException {
@@ -441,7 +448,7 @@ public class DnaAmpliconVarFastqIntegrationTest extends AbstractIntegrationTest 
     }
 
     private void assertXenome(List<String> lines) {
-        assertTrue(lines.stream().anyMatch(line -> line.contains("Begin Step:  Xenome classification...")));
+        assertTrue(lines.stream().anyMatch(line -> line.contains("Begin Step: Xenome classification...")));
         assertTrue(lines.stream().anyMatch(line -> line.contains("/usr/bin/xenome classify -T 8 -P ")));
         assertTrue(lines.stream().anyMatch(line -> line.contains("/ngs/data/xenomeIdx/xenome.idx " +
                 "--pairs --graft-name human --host-name mouse ")));
@@ -503,7 +510,7 @@ public class DnaAmpliconVarFastqIntegrationTest extends AbstractIntegrationTest 
     }
 
     private void commonQcSummary(List<String> lines) {
-        assertTrue(lines.stream().anyMatch(line -> line.contains("grep -E \"(Successful|Error) Step: Merge DNA QC\"")));
+        assertTrue(lines.stream().anyMatch(line -> line.contains("(Successful Step: Merge DNA QC)")));
         assertTrue(lines.stream().anyMatch(line -> line.contains(
                 "build/resources/integrationTest/output/log_files/" +
                         "DnaAmpliconVar_Fastq_postalignment_for_GA5_analysis.log")));
@@ -514,7 +521,6 @@ public class DnaAmpliconVarFastqIntegrationTest extends AbstractIntegrationTest 
     }
 
     private void commonPostalignment(List<String> lines) {
-        assertTrue(lines.stream().anyMatch(line -> line.contains("grep -E \"(Successful|Error) Step: Index bam.\" ")));
         assertTrue(lines.stream().anyMatch(line -> line.contains(
                 "build/resources/integrationTest/output/log_files/" +
                         "DnaAmpliconVar_Fastq_alignment_for_GA5_1_analysis.log")));
@@ -525,7 +531,7 @@ public class DnaAmpliconVarFastqIntegrationTest extends AbstractIntegrationTest 
         assertTrue(lines.stream().anyMatch(line -> line.contains("Begin Step: Index bam...")));
         assertTrue(lines.stream().anyMatch(line -> line.contains("/opt/samtools/samtools-0.1.19/samtools index " +
                 "build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam")));
-        assertTrue(lines.stream().anyMatch(line -> line.contains("grep -E \"(Successful|Error) Step: Index mkdup ")));
+        assertTrue(lines.stream().anyMatch(line -> line.contains("Successful Step: Index bam")));
         assertTrue(lines.stream().anyMatch(line -> line.contains("build/resources/integrationTest/output/log_files/" +
                 "DnaAmpliconVar_Fastq_postalignment_for_GA5_analysis.log")));
         assertTrue(lines.stream().anyMatch(line -> line.contains(REMOVE_TEMP_DIRS_STEP)));

@@ -70,7 +70,7 @@ class SequenzaTest extends AbstractTest {
 
         final AbstractCommand actualCommand = result.getCommand();
         assertEquals(expectedCmd, actualCommand.getToolCommand());
-        assertEquals(Collections.singletonList(expectedSeqz), actualCommand.getTempDirs());
+        assertEquals(Collections.singleton(expectedSeqz), actualCommand.getTempDirs());
         final SequenzaOutput sequenzaOutput = result.getSequenzaOutput();
         assertEquals(expectedSeqz, sequenzaOutput.getSequenzaSeqzOutput());
         assertEquals(expectedSeqzReduce, sequenzaOutput.getSequenzaSeqzReduceOutput());

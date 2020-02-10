@@ -10,7 +10,8 @@
 #$ -R y
 #$ [(${variablesMap.get('pe')})] [(${variablesMap.get('numThreads')})]
 #$ -m a
-
+[# th:if = "${variablesMap.get('sync').equals('true')}"]#$ -sync y
+[/]
 [/][# th:unless = "${variablesMap.get('local').equals('false')}"]# --- Local machine options --- #
 
 exec 1> [(${variablesMap.get('outdir')})]/log_files/[(${variablesMap.get('fileName')})].log

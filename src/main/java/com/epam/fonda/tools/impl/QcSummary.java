@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import com.epam.fonda.entity.configuration.StudyConfigFormat;
 import com.epam.fonda.tools.PostProcessTool;
 import com.epam.fonda.utils.PipelineUtils;
 import com.epam.fonda.workflow.PipelineType;
+import com.epam.fonda.workflow.TaskContainer;
 import com.epam.fonda.workflow.impl.Flag;
 import lombok.Builder;
 import lombok.Data;
@@ -70,12 +71,16 @@ public class QcSummary implements PostProcessTool {
             cmd.append(templateEngine.process(QC_SUMMARY_STATUS_CHECK_TEMPLATE, context));
         }
         cmd.append(templateEngine.process(QC_SUMMARY_ANALYSIS_TEMPLATE, context));
+        TaskContainer.addTasks("QC summary analysis");
         PipelineUtils.printShell(configuration, cmd.toString(), "", null);
     }
 
     private QcSummaryFields constructFields(final Configuration configuration, String sample) {
+        final String workflowName = configuration.getGlobalConfig().getPipelineInfo().getWorkflow();
+        final String tag = getValueForSpecificVar(workflowName, Variable.TAG);
+        TaskContainer.addTasks(tag);
         final QcSummaryFields qcSummaryFields = QcSummaryFields.builder()
-                .workflow(configuration.getGlobalConfig().getPipelineInfo().getWorkflow())
+                .workflow(workflowName)
                 .outDir(validate(configuration.getStudyConfig().getDirOut(), StudyConfigFormat.DIR_OUT))
                 .rScript(validate(configuration.getGlobalConfig().getToolConfig().getRScript(),
                         GlobalConfigFormat.R_SCRIPT))
@@ -85,10 +90,12 @@ public class QcSummary implements PostProcessTool {
                 .successMessage("Confirm QC results from " + sample)
                 .task("QC summary analysis")
                 .jarPath(PipelineUtils.getExecutionPath())
+                .steps(String.join("|", TaskContainer.getTasks()))
+                .successPattern(TaskContainer.getTasks().stream()
+                        .reduce((first, second) -> second)
+                        .orElse(null))
                 .build();
-        String workflow = qcSummaryFields.getWorkflow();
-        final String tag = getValueForSpecificVar(workflow, Variable.TAG);
-        final String task = getValueForSpecificVar(workflow, Variable.TASK);
+        final String task = getValueForSpecificVar(workflowName, Variable.TASK);
         final String fileName = qcSummaryFields.getWorkflow() + "_" + task + "_for_" + sample + "_analysis";
         final String logOutDir = qcSummaryFields.getOutDir() + "/log_files";
         final String logFile = logOutDir + "/" + fileName + ".log";
@@ -166,5 +173,7 @@ public class QcSummary implements PostProcessTool {
         private String fastqList;
         private String jarPath;
         private String task;
+        private String steps;
+        private String successPattern;
     }
 }

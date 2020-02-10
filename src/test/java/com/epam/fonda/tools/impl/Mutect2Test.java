@@ -68,7 +68,7 @@ class Mutect2Test extends AbstractTest {
 
         final AbstractCommand command = result.getAbstractCommand();
         assertEquals(expectedCmd, command.getToolCommand());
-        assertEquals(Collections.singletonList(expectedTmpOutput), command.getTempDirs());
+        assertEquals(Collections.singleton(expectedTmpOutput), command.getTempDirs());
         assertEquals(result.getVariantsVcfOutput().getVariantsOutputDir(), expectedOutput);
         assertEquals(result.getVariantsVcfOutput().getVariantsTmpOutputDir(), expectedTmpOutput);
         assertEquals(result.getVariantsVcfOutput().getVariantsVcf(), expectedVcf);

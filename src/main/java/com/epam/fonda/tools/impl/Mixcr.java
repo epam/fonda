@@ -26,6 +26,7 @@ import com.epam.fonda.tools.results.FastqResult;
 import com.epam.fonda.tools.results.MixcrOutput;
 import com.epam.fonda.tools.results.MixcrResult;
 import com.epam.fonda.utils.ToolUtils;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
@@ -90,6 +91,7 @@ public class Mixcr implements Tool<MixcrResult> {
         Context context = new Context();
         context.setVariable("mixcrFields", mixcrFields);
         final String cmd = templateEngine.process(MIXCR_TOOL_TEMPLATE_NAME, context);
+        TaskContainer.addTasks("MIXCR detection");
         return MixcrResult.builder()
                 .command(BashCommand.withTool(cmd))
                 .fastqResult(fastqResult)
@@ -110,9 +112,9 @@ public class Mixcr implements Tool<MixcrResult> {
                 GlobalConfigFormat.SPECIES);
         String sampleName = validate(sample.getName(), ToolUtils.SAMPLE_NAME);
         String spe = "";
-        if (species.equals("human")) {
+        if ("human".equals(species)) {
             spe = "hsa";
-        } else if (species.equals("mouse")) {
+        } else if ("mouse".equals(species)) {
             spe = "mmu";
         }
         return MixcrFields.builder()

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.tools.results.ContEstOutput;
 import com.epam.fonda.tools.results.ContEstResult;
 import com.epam.fonda.utils.DnaUtils;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
@@ -90,6 +91,7 @@ public class ContEst implements Tool<ContEstResult> {
                 .build();
         contEstOutput.createDirectory();
         String cmd = templateEngine.process(CONT_EST_TOOL_TEMPLATE_NAME, context);
+        TaskContainer.addTasks("Contamination estimation");
         final BashCommand command = BashCommand.withTool(cmd);
         command.setTempDirs(Collections.singletonList(additionalFields.tmpContEstOutDir));
         return ContEstResult.builder()

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.workflow.PipelineType;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
@@ -64,6 +65,7 @@ public class NovoalignSort implements Tool<BamResult> {
         context.setVariable("fastq1", fastq1);
         context.setVariable("fastq2", fastq2);
         final String cmd = templateEngine.process(NOVOALIGN_SORT_TOOL_TEMPLATE_NAME, context);
+        TaskContainer.addTasks("Novoalign alignment", "Index bam");
         BamOutput bamOutput = BamOutput.builder()
                 .sortedBam(novoalignSortFields.sortedBam)
                 .sortedBamIndex(novoalignSortFields.sortedBamIndex)

@@ -1,6 +1,3 @@
-echo `date` Begin the job execution...
-
-
 echo `date` Begin Step: SALMON...
 gunzip -c merged_fastq1.gz > merged_fastq1
 gunzip -c merged_fastq2.gz > merged_fastq2
@@ -19,5 +16,4 @@ else
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
 fi
-
 

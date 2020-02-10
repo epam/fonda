@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.FastqOutput;
 import com.epam.fonda.tools.results.StarFusionOutput;
 import com.epam.fonda.tools.results.StarFusionResult;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Data;
 import lombok.NonNull;
 import org.thymeleaf.TemplateEngine;
@@ -93,6 +94,7 @@ public class StarFusion implements Tool<StarFusionResult> {
         context.setVariable("bam", star4fusionBam);
         context.setVariable("starFusionResult", starFusionResult);
         String cmd = templateEngine.process(STAR_FUSION_TOOL_TEMPLATE_NAME, context);
+        TaskContainer.addTasks("STAR4FUSION alignment", "Sort bam", "Index bam", "STAR-Fusion detection");
         StarFusionOutput starFusionOutput = StarFusionOutput.builder()
                 .starFusionResult(starFusionResult)
                 .starFusionOutdir(additionalStarFusionFields.starFusionOutdir)

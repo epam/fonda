@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.MetricsOutput;
 import com.epam.fonda.tools.results.MetricsResult;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -108,6 +109,7 @@ public class RNASeQC implements Tool<MetricsResult> {
         context.setVariable("metricFields", metricFields);
         context.setVariable("mkdupBam", bamOutput.getMkdupBam());
         final String cmd = templateEngine.process(RNASEQC_TOOL_TEMPLATE_NAME, context);
+        TaskContainer.addTasks("RNA QC metrics", "Merge RNA QC");
         final MetricsOutput metricsOutput = MetricsOutput.builder().build();
         metricsOutput.setRnaMetrics(metricFields.rnaMetrics);
         metricsOutput.setMergedQcMetrics(metricFields.mergedQcMetrics);

@@ -1,5 +1,3 @@
-echo `date` Begin the job execution...
-
 echo `date` Begin Step: RSEM...
 rsem/rsem-calculate-expression -p 1 --no-bam-output --paired-end --bam --estimate-rspd --seed 12345 sampleName.toolName.sorted.bam index output/rsem/sampleName
 mv output/rsem/sampleName.genes.results output/rsem/sampleName.rsem.gene.expression.results
@@ -14,3 +12,4 @@ else
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
 fi
+

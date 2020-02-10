@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.VariantsVcfOutput;
 import com.epam.fonda.tools.results.VariantsVcfResult;
 import com.epam.fonda.utils.ToolUtils;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -72,6 +73,7 @@ public class Vardict implements Tool<VariantsVcfResult> {
         final Context context = new Context();
         context.setVariable("toolFields", toolFields);
         final String cmd = templateEngine.process(VARDICT_TOOL_TEMPLATE_NAME, context);
+        TaskContainer.addTasks("Vardict detection");
         final VariantsVcfOutput output = VariantsVcfOutput.builder()
                 .variantsVcf(toolFields.getVcf())
                 .variantsOutputDir(toolFields.getOutDir())

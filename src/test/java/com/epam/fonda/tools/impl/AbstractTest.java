@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package com.epam.fonda.tools.impl;
 
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Data;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
@@ -31,6 +32,7 @@ public abstract class AbstractTest {
     @AfterEach
     public void deleteTestDirectory() throws IOException {
         FileUtils.deleteDirectory(new File(TEST_DIRECTORY));
+        TaskContainer.getTasks().clear();
     }
 
     String readFile(Path path) throws IOException {

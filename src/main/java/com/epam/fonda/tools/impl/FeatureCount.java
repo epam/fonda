@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.tools.results.FeatureCountOutput;
 import com.epam.fonda.tools.results.FeatureCountResult;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.thymeleaf.TemplateEngine;
@@ -99,6 +100,7 @@ public class FeatureCount implements Tool<FeatureCountResult> {
         context.setVariable("queueParametersFields", initializeQueueParametersFields(configuration));
         context.setVariable("directoryFields", initializeDirectoryFields(configuration, featureOutdir));
         String cmd = templateEngine.process(FEATURECOUNT_TOOL_TEMPLATE_NAME, context);
+        TaskContainer.addTasks("Feautrecounts");
         featureCountOutput.setFeatureCountGeneCount(additionalFeatureCountFields.featureCountGeneCount);
         return FeatureCountResult.builder()
                 .featureCountOutput(featureCountOutput)

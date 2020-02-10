@@ -35,6 +35,7 @@ import org.thymeleaf.TemplateEngine;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.epam.fonda.utils.PipelineUtils.cleanUpTmpDir;
@@ -62,7 +63,7 @@ public class RnaFusionFastqWorkflow implements FastqWorkflow {
         FastqResult fastqResult = PipelineUtils.mergeFastq(sample);
         fastqResult = new PreAlignment(fastqResult).process(flag, sample, configuration, TEMPLATE_ENGINE);
         BamResult bamResult = new Alignment(fastqResult).mapping(flag, sample, configuration, TEMPLATE_ENGINE);
-        List<String> tmpDir = bamResult.getCommand().getTempDirs();
+        Set<String> tmpDir = bamResult.getCommand().getTempDirs();
         StringBuilder cmd = new StringBuilder(bamResult.getCommand().getToolCommand());
         if (flag.isFusionCatcher()) {
             FusionCatcherResult fusionCatcherResult = new FusionCatcher(sample, fastqResult)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.FastqOutput;
 import com.epam.fonda.tools.results.FastqResult;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -77,6 +78,7 @@ public class Trimmomatic implements Tool<FastqResult> {
         Context context = new Context();
         context.setVariable("trimmomaticFields", trimmomaticFields);
         final String cmd = templateEngine.process(TRIMMOMATIC_TOOL_TEMPLATE_NAME, context);
+        TaskContainer.addTasks("Trimmomatic trimming");
         final FastqOutput fastqOutput = result.getOut();
         if (StringUtils.isNoneBlank(trimmomaticFields.adapterSEQ)) {
             fastqOutput.setMergedFastq1(trimmomaticFields.trimmedFastq1);

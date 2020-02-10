@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.tools.results.VdjOutput;
 import com.epam.fonda.utils.CellRangerUtils;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -40,12 +41,12 @@ public class Vdj implements Tool<BamResult> {
     private class VdjFields {
         private String genome;
         private String cellRanger;
-        private String chain;
         private String forcedCells;
         private String denovo;
         private String lanes;
         private String indices;
         private String bam;
+        private int numThreads;
     }
 
     @Data
@@ -81,6 +82,7 @@ public class Vdj implements Tool<BamResult> {
         context.setVariable("vdjFields", vdjFields);
         context.setVariable("sampleFields", sampleFields);
         final String cmd = templateEngine.process(VDJ_TOOL_TEMPLATE_NAME, context);
+        TaskContainer.addTasks("Cellranger vdj analysis");
         VdjOutput vdjOutput = VdjOutput.builder()
                 .vdjBamResult(vdjFields.bam)
                 .vdjOutdir(sampleFields.vdjOutdir)
@@ -118,8 +120,6 @@ public class Vdj implements Tool<BamResult> {
                 sampleFields.getSampleName());
         vdjFields.cellRanger = validate(configuration.getGlobalConfig().getToolConfig().getCellranger(),
                 GlobalConfigFormat.CELLRANGER);
-        vdjFields.chain = validate(configuration.getGlobalConfig().getCellrangerConfig().getCellrangerChain(),
-                GlobalConfigFormat.CELLRANGER_CHAIN);
         vdjFields.denovo = configuration.getGlobalConfig().getCellrangerConfig().getCellrangerDenovo();
         vdjFields.forcedCells = validate(
                 configuration.getGlobalConfig().getCellrangerConfig().getCellrangerForcedCells(),
@@ -128,5 +128,6 @@ public class Vdj implements Tool<BamResult> {
         vdjFields.lanes = configuration.getGlobalConfig().getCellrangerConfig().getCellrangerLanes();
         vdjFields.genome = validate(configuration.getGlobalConfig().getDatabaseConfig().getGenome(),
                 GlobalConfigFormat.GENOME);
+        vdjFields.numThreads = configuration.getGlobalConfig().getQueueParameters().getNumThreads();
     }
 }

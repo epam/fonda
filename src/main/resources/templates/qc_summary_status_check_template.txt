@@ -4,7 +4,7 @@ while [# th:inline="none"][[[/] $str = "" ]]
 do
 if [# th:inline="none"][[[/] -f $logFile  ]];
 then
-    str=$(grep -E "(Successful|Error) Step: [(${QcSummaryFields.tag})]" $logFile;)
+    str=$(grep -E "((Error Step: ([(${QcSummaryFields.steps})]))|(Successful Step: [(${QcSummaryFields.successPattern})]))" $logFile;)
 fi
     echo Waiting for step: [(${QcSummaryFields.tag})]
     sleep [(${QcSummaryFields.statusCheckPeriod})]

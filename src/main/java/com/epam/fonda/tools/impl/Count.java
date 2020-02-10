@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.utils.CellRangerUtils;
 import com.epam.fonda.utils.PipelineUtils;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -64,6 +65,7 @@ public class Count implements Tool<BamResult> {
         private String indices;
         private String bam;
         private String matrixInfo;
+        private int numThreads;
     }
 
     @Override
@@ -72,6 +74,10 @@ public class Count implements Tool<BamResult> {
         Context context = new Context();
         context.setVariable("countFields", countFields);
         final String cmd = templateEngine.process(COUNT_TEMPLATE, context);
+        TaskContainer.addTasks("Cellranger count", "Generate gene-barcode matrix");
+        if (countFields.genomeBuild.split("\\s*,\\s*").length == 2) {
+            TaskContainer.addTasks("Merge gene-barcode matrix");
+        }
         bamResult.setCommand(BashCommand.withTool(cmd));
         bamResult.setBamOutput(BamOutput.builder().bam(countFields.bam).build());
         return bamResult;
@@ -108,6 +114,7 @@ public class Count implements Tool<BamResult> {
         countFields.bam = String.format("%s/%s/possorted_genome_bam.bam", samplePath, CELLRANGER_OUTPUT_FOLDER);
         countFields.matrixInfo = String.format("%s/%s/filtered_feature_bc_matrix", samplePath,
                 CELLRANGER_OUTPUT_FOLDER);
+        countFields.numThreads = configuration.getGlobalConfig().getQueueParameters().getNumThreads();
         return countFields;
     }
 

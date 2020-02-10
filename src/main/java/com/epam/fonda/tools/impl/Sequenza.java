@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.PileupOutput;
 import com.epam.fonda.tools.results.SequenzaOutput;
 import com.epam.fonda.tools.results.SequenzaResult;
+import com.epam.fonda.workflow.TaskContainer;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -71,6 +72,7 @@ public class Sequenza implements Tool<SequenzaResult> {
         final Context context = new Context();
         context.setVariable("toolFields", toolFields);
         final String cmd = templateEngine.process(SEQUENZA_TOOL_TEMPLATE, context);
+        TaskContainer.addTasks("Sequenza detection");
         final SequenzaOutput output = SequenzaOutput.builder()
                 .sequenzaSegOutput(toolFields.getSequenzaSeg())
                 .sequenzaInforOutput(toolFields.getSequenzaInfor())

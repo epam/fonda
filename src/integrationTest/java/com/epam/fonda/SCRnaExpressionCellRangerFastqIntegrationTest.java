@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,11 +44,11 @@ class SCRnaExpressionCellRangerFastqIntegrationTest extends AbstractIntegrationT
     private static final String OUTPUT_DIR = "output";
     private static final String OUTPUT_DIR_ROOT = "build/resources/integrationTest/";
     private static final String SCRNA_ANALYSIS_COUNT_QC_DOUBLET_DETECTION_TEST_TEMPLATE_PATH =
-            "scRnaExpressionCellRangerFastq_CountDoubletDetectionQC_template";
+            "scRnaExpressionCellRangerFastq/scRnaExpressionCellRangerFastq_CountDoubletDetectionQC_template.txt";
     private static final String SCRNA_ANALYSIS_COUNT_QC_TEST_TEMPLATE_PATH =
-            "scRnaExpressionCellRangerFast_CountQC_template";
+            "scRnaExpressionCellRangerFastq/scRnaExpressionCellRangerFast_CountQC_template.txt";
     private static final String SCRNA_ANALYSIS_COUNT_QC_SCRUBLET_TEST_TEMPLATE_PATH =
-            "scRnaExpressionCellRangerFast_CountScrubletQC_template";
+            "scRnaExpressionCellRangerFastq/scRnaExpressionCellRangerFast_CountScrubletQC_template.txt";
     private static final String SCRNA_EXPRESSION_FASTQ_STUDY_CONFIG =
             "scRnaExpressionCellRangerFastq/sscRnaExpressionCellRangerFastq.txt";
     private static final String TEST_SHELL_SCRIPT_TEMPLATE_PATH =
