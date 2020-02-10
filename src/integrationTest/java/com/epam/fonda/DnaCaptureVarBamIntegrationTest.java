@@ -40,10 +40,10 @@ import java.util.stream.Stream;
 
 import static com.epam.fonda.utils.PipelineUtils.getExecutionPath;
 import static java.lang.String.format;
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DnaCaptureVarBamIntegrationTest extends AbstractIntegrationTest {
 
@@ -116,7 +116,7 @@ public class DnaCaptureVarBamIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void testControlSampleNAAllTasksOutputDir() throws IOException {
+    public void testControlSampleNAAllTasksOutputDir() {
         startAppWithConfigs("DnaCaptureVarBam/gSingleAllTasks.txt", "DnaCaptureVarBam/sSingle.txt");
 
         assertAll(
@@ -141,7 +141,7 @@ public class DnaCaptureVarBamIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void testControlSampleNotNAAllTasksOutputDir() throws IOException {
+    public void testControlSampleNotNAAllTasksOutputDir() {
         startAppWithConfigs("DnaCaptureVarBam/gAllTasksSampleNotNA.txt", "DnaCaptureVarBam/sControlSampleNotNA.txt");
 
         assertAll(
