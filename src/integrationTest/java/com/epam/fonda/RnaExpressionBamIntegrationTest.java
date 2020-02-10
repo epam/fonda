@@ -33,35 +33,35 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class RnaExpressionBamIntegrationTest extends AbstractIntegrationTest {
 
     private static final String OUTPUT_DIR = "output";
-    public static final String RNA_EXPRESSION_BAM_G_FEATURE_COUNT_RSEM_CUFFLINKS_STRINGTIE =
+    private static final String RNA_EXPRESSION_BAM_G_FEATURE_COUNT_RSEM_CUFFLINKS_STRINGTIE =
             "RnaExpressionBam/gFeatureCountRsemCufflinksStringtie.txt";
-    public static final String RNA_EXPRESSION_BAM_S_RNA_EXPRESSION_BAM =
+    private static final String RNA_EXPRESSION_BAM_S_RNA_EXPRESSION_BAM =
             "RnaExpressionBam/sRnaExpressionBam.txt";
-    public static final String OUTPUT_SH_FILES_RNA_EXPRESSION_BAM_FEATURE_COUNT_FOR_GA_5_ANALYSIS =
+    private static final String OUTPUT_SH_FILES_RNA_EXPRESSION_BAM_FEATURE_COUNT_FOR_GA_5_ANALYSIS =
             "output/sh_files/RnaExpression_Bam_featureCount_for_GA5_analysis.sh";
-    public static final String OUTPUT_SH_FILES_RNA_EXPRESSION_BAM_CUFFLINKS_FOR_GA_5_ANALYSIS =
+    private static final String OUTPUT_SH_FILES_RNA_EXPRESSION_BAM_CUFFLINKS_FOR_GA_5_ANALYSIS =
             "output/sh_files/RnaExpression_Bam_cufflinks_for_GA5_analysis.sh";
-    public static final String OUTPUT_SH_FILES_RNA_EXPRESSION_BAM_RSEM_FOR_GA_5_ANALYSIS =
+    private static final String OUTPUT_SH_FILES_RNA_EXPRESSION_BAM_RSEM_FOR_GA_5_ANALYSIS =
             "output/sh_files/RnaExpression_Bam_rsem_for_GA5_analysis.sh";
-    public static final String OUTPUT_SH_FILES_RNA_EXPRESSION_BAM_STRINGTIE_FOR_GA_5_ANALYSIS =
+    private static final String OUTPUT_SH_FILES_RNA_EXPRESSION_BAM_STRINGTIE_FOR_GA_5_ANALYSIS =
             "output/sh_files/RnaExpression_Bam_stringtie_for_GA5_analysis.sh";
-    public static final String OUTPUT_SH_FILES_RNA_EXPRESSION_BAM_EXPRESSION_ESTIMATION_FOR_GA_5_ANALYSIS =
+    private static final String OUTPUT_SH_FILES_RNA_EXPRESSION_BAM_EXPRESSION_ESTIMATION_FOR_GA_5_ANALYSIS =
             "output/sh_files/RnaExpression_Bam_ExpressionEstimation_for_GA5_analysis.sh";
-    public static final String RNA_EXPRESSION_BAM_FEATURE_COUNT_RSEM_CUFFLINKS_STRINGTIE_SUFFIX =
+    private static final String RNA_EXPRESSION_BAM_FEATURE_COUNT_RSEM_CUFFLINKS_STRINGTIE_SUFFIX =
             "RnaExpressionBam/RnaExpressionBamFeatureCountRsemCufflinksStringtie";
-    public static final String RNA_EXPRESSION_BAM_FEATURE_COUNT_FOR_GA_5_ANALYSIS_TEMPLATE_PATH =
+    private static final String RNA_EXPRESSION_BAM_FEATURE_COUNT_FOR_GA_5_ANALYSIS_TEMPLATE_PATH =
             String.format("%s/RnaExpression_Bam_featureCount_for_GA5_analysis",
                     RNA_EXPRESSION_BAM_FEATURE_COUNT_RSEM_CUFFLINKS_STRINGTIE_SUFFIX);
-    public static final String RNA_EXPRESSION_BAM_CUFFLINKS_FOR_GA_5_ANALYSIS_TEMPLATE_PATH =
+    private static final String RNA_EXPRESSION_BAM_CUFFLINKS_FOR_GA_5_ANALYSIS_TEMPLATE_PATH =
             String.format("%s/RnaExpression_Bam_cufflinks_for_GA5_analysis",
                     RNA_EXPRESSION_BAM_FEATURE_COUNT_RSEM_CUFFLINKS_STRINGTIE_SUFFIX);
-    public static final String RNA_EXPRESSION_BAM_RSEM_FOR_GA_5_ANALYSIS_TEMPLATE_PATH =
+    private static final String RNA_EXPRESSION_BAM_RSEM_FOR_GA_5_ANALYSIS_TEMPLATE_PATH =
             String.format("%s/RnaExpression_Bam_rsem_for_GA5_analysis",
                     RNA_EXPRESSION_BAM_FEATURE_COUNT_RSEM_CUFFLINKS_STRINGTIE_SUFFIX);
-    public static final String RNA_EXPRESSION_BAM_STRINGTIE_FOR_GA_5_ANALYSIS_TEMPLATE_PATH =
+    private static final String RNA_EXPRESSION_BAM_STRINGTIE_FOR_GA_5_ANALYSIS_TEMPLATE_PATH =
             String.format("%s/RnaExpression_Bam_stringtie_for_GA5_analysis",
                     RNA_EXPRESSION_BAM_FEATURE_COUNT_RSEM_CUFFLINKS_STRINGTIE_SUFFIX);
-    public static final String RNA_EXPRESSION_BAM_EXPRESSION_ESTIMATION_FOR_GA_5_ANALYSIS_TEMPLATE_PATH =
+    private static final String RNA_EXPRESSION_BAM_EXPRESSION_ESTIMATION_FOR_GA_5_ANALYSIS_TEMPLATE_PATH =
             String.format("%s/RnaExpression_Bam_ExpressionEstimation_for_GA5_analysis",
                     RNA_EXPRESSION_BAM_FEATURE_COUNT_RSEM_CUFFLINKS_STRINGTIE_SUFFIX);
     private TemplateEngine templateEngine = TemplateEngineUtils.init();
@@ -96,8 +96,8 @@ public class RnaExpressionBamIntegrationTest extends AbstractIntegrationTest {
 
     @ParameterizedTest(name = "{0}-test")
     @MethodSource("initParameters")
-    public void testFeatureCountRsemCufflinksStringtie(
-            String outputShFile, String templatePath) throws IOException, URISyntaxException {
+    public void testFeatureCountRsemCufflinksStringtie(String outputShFile, String templatePath)
+            throws IOException, URISyntaxException {
         startAppWithConfigs(
                 RNA_EXPRESSION_BAM_G_FEATURE_COUNT_RSEM_CUFFLINKS_STRINGTIE,
                 RNA_EXPRESSION_BAM_S_RNA_EXPRESSION_BAM);
