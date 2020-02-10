@@ -4,10 +4,10 @@ mv output/fusionCatcher/fusionCatcher.fusion_candidates.final.abridged output/fu
 if [ $? -eq 0 ]
 then
     echo `date` Successful Step: FusionCatcher.
- 	sleep 8
+    sleep 8
 else
- 	echo `date` Error Step: FusionCatcher.
+    echo `date` Error Step: FusionCatcher.
 
- 	echo `date` The job was aborted due to ERRORS found.
- 	exit 1;
+    echo `date` The job was aborted due to ERRORS found.
+    exit 1;
 fi
