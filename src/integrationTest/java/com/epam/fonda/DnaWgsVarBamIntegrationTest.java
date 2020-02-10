@@ -15,6 +15,7 @@
  */
 package com.epam.fonda;
 
+import com.epam.fonda.entity.configuration.GlobalConfigFormat;
 import com.epam.fonda.utils.TemplateEngineUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -103,10 +104,10 @@ public class DnaWgsVarBamIntegrationTest extends AbstractIntegrationTest {
         "output/sh_files/DnaWgsVar_Bam_variantDetection_for_GA52_analysis.sh";
     private static final String SUFFIX_FOR_GA52_TEST_SHELL_SCRIPT_PATH = "_for_GA52_analysis.sh";
 
-    private static final String STRELKA2_TASK_NAME = "strelka2";
-    private static final String FREEBAYES_TASK_NAME = "freebayes";
+    private static final String STRELKA2_TASK_NAME = GlobalConfigFormat.STRELKA2;
+    private static final String FREEBAYES_TASK_NAME = GlobalConfigFormat.FREEBAYES;
     private static final String GATK_HAPLOTYPE_CALLER_TASK_NAME = "gatkHaplotypeCaller";
-    private static final String LOFREQ_TASK_NAME = "lofreq";
+    private static final String LOFREQ_TASK_NAME = GlobalConfigFormat.LOFREQ;
     private static final String CONTEST_TASK_NAME = "contEst";
     private static final String MUTECT_2_TASK_NAME = "mutect2";
 
