@@ -51,42 +51,42 @@ public class DnaCaptureVarBamIntegrationTest extends AbstractIntegrationTest {
     private static final String OUTPUT_DIR_ROOT = "build/resources/integrationTest/";
     private static final String NULL = "null";
 
-    public static final String NA_ALL_TASKS_FOLDER = "DnaCaptureVarBam/testControlSampleNAAllTasks";
-    public static final String NA_VARDICT_FOR_GA_5_ANALYSIS_TEST = format(
+    private static final String NA_ALL_TASKS_FOLDER = "DnaCaptureVarBam/testControlSampleNAAllTasks";
+    private static final String NA_VARDICT_FOR_GA_5_ANALYSIS_TEST = format(
             "%s/DnaCaptureVar_Bam_vardict_for_GA5_analysis_test", NA_ALL_TASKS_FOLDER);
-    public static final String NA_MUTECT_1_FOR_GA_5_ANALYSIS_TEST = format(
+    private static final String NA_MUTECT_1_FOR_GA_5_ANALYSIS_TEST = format(
             "%s/DnaCaptureVar_Bam_mutect1_for_GA5_analysis_test", NA_ALL_TASKS_FOLDER);
-    public static final String NA_STRELKA_2_FOR_GA_5_ANALYSIS_TEST = format(
+    private static final String NA_STRELKA_2_FOR_GA_5_ANALYSIS_TEST = format(
             "%s/DnaCaptureVar_Bam_strelka2_for_GA5_analysis_test", NA_ALL_TASKS_FOLDER);
-    public static final String NA_SCALPEL_FOR_GA_5_ANALYSIS_TEST = format(
+    private static final String NA_SCALPEL_FOR_GA_5_ANALYSIS_TEST = format(
             "%s/DnaCaptureVar_Bam_scalpel_for_GA5_analysis_test", NA_ALL_TASKS_FOLDER);
-    public static final String NA_FREEBAYES_FOR_GA_5_ANALYSIS_TEST = format(
+    private static final String NA_FREEBAYES_FOR_GA_5_ANALYSIS_TEST = format(
             "%s/DnaCaptureVar_Bam_freebayes_for_GA5_analysis_test", NA_ALL_TASKS_FOLDER);
-    public static final String NA_GATK_HAPLOTYPE_CALLER_FOR_GA_5_ANALYSIS_TEST = format(
+    private static final String NA_GATK_HAPLOTYPE_CALLER_FOR_GA_5_ANALYSIS_TEST = format(
             "%s/DnaCaptureVar_Bam_gatkHaplotypeCaller_for_GA5_analysis_test", NA_ALL_TASKS_FOLDER);
-    public static final String NA_LOFREQ_FOR_GA_5_ANALYSIS_TEST = format(
+    private static final String NA_LOFREQ_FOR_GA_5_ANALYSIS_TEST = format(
             "%s/DnaCaptureVar_Bam_lofreq_for_GA5_analysis_test", NA_ALL_TASKS_FOLDER);
-    public static final String NA_VARIANT_DETECTION_FOR_GA_5_ANALYSIS_TEST = format(
+    private static final String NA_VARIANT_DETECTION_FOR_GA_5_ANALYSIS_TEST = format(
             "%s/DnaCaptureVar_Bam_variantDetection_for_GA5_analysis_test", NA_ALL_TASKS_FOLDER);
 
-    public static final String NOT_NA_ALL_TASKS_FOLDER = "DnaCaptureVarBam/testControlSampleNotNAAllTasks";
-    public static final String CONT_EST_FOR_GA_51_ANALYSIS_TEST = format(
+    private static final String NOT_NA_ALL_TASKS_FOLDER = "DnaCaptureVarBam/testControlSampleNotNAAllTasks";
+    private static final String CONT_EST_FOR_GA_51_ANALYSIS_TEST = format(
             "%s/DnaCaptureVar_Bam_contEst_for_GA51_analysis_test", NOT_NA_ALL_TASKS_FOLDER);
-    public static final String EXOMECNV_FOR_GA_51_ANALYSIS_TEST = format(
+    private static final String EXOMECNV_FOR_GA_51_ANALYSIS_TEST = format(
             "%s/DnaCaptureVar_Bam_exomecnv_for_GA51_analysis_test", NOT_NA_ALL_TASKS_FOLDER);
-    public static final String LOFREQ_FOR_GA_51_ANALYSIS_TEST = format(
+    private static final String LOFREQ_FOR_GA_51_ANALYSIS_TEST = format(
             "%s/DnaCaptureVar_Bam_lofreq_for_GA51_analysis_test", NOT_NA_ALL_TASKS_FOLDER);
-    public static final String MUTECT_2_FOR_GA_51_ANALYSIS_TEST = format(
+    private static final String MUTECT_2_FOR_GA_51_ANALYSIS_TEST = format(
             "%s/DnaCaptureVar_Bam_mutect2_for_GA51_analysis_test", NOT_NA_ALL_TASKS_FOLDER);
-    public static final String SCALPEL_FOR_GA_51_ANALYSIS_TEST = format(
+    private static final String SCALPEL_FOR_GA_51_ANALYSIS_TEST = format(
             "%s/DnaCaptureVar_Bam_scalpel_for_GA51_analysis_test", NOT_NA_ALL_TASKS_FOLDER);
-    public static final String SEQUENZA_FOR_GA_51_ANALYSIS_TEST = format(
+    private static final String SEQUENZA_FOR_GA_51_ANALYSIS_TEST = format(
             "%s/DnaCaptureVar_Bam_sequenza_for_GA51_analysis_test", NOT_NA_ALL_TASKS_FOLDER);
-    public static final String STRELKA_2_FOR_GA_51_ANALYSIS_TEST = format(
+    private static final String STRELKA_2_FOR_GA_51_ANALYSIS_TEST = format(
             "%s/DnaCaptureVar_Bam_strelka2_for_GA51_analysis_test", NOT_NA_ALL_TASKS_FOLDER);
-    public static final String VARDICT_FOR_GA_51_ANALYSIS_TEST = format(
+    private static final String VARDICT_FOR_GA_51_ANALYSIS_TEST = format(
             "%s/DnaCaptureVar_Bam_vardict_for_GA51_analysis_test", NOT_NA_ALL_TASKS_FOLDER);
-    public static final String VARIANT_DETECTION_FOR_GA_51_ANALYSIS_TEST = format(
+    private static final String VARIANT_DETECTION_FOR_GA_51_ANALYSIS_TEST = format(
             "%s/DnaCaptureVar_Bam_variantDetection_for_GA51_analysis_test", NOT_NA_ALL_TASKS_FOLDER);
     private static Context context;
     private TemplateEngine templateEngine = TemplateEngineUtils.init();
