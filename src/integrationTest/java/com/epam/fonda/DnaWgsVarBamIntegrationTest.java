@@ -16,6 +16,7 @@
 package com.epam.fonda;
 
 import com.epam.fonda.utils.TemplateEngineUtils;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -124,6 +125,11 @@ public class DnaWgsVarBamIntegrationTest extends AbstractIntegrationTest {
         context.setVariable("jarPath", getExecutionPath());
     }
 
+    @AfterEach
+    void cleanUp() throws IOException {
+        cleanOutputDirForNextTest(OUTPUT_DIR, false);
+    }
+
     @ParameterizedTest
     @MethodSource("initParameters")
     void testControlSample(String globalConfigPath, String studyConfigPath, String taskName,
@@ -141,14 +147,12 @@ public class DnaWgsVarBamIntegrationTest extends AbstractIntegrationTest {
         expectedCmd = expectedTemplateEngine.process(mergeMutationTemplatePath, context);
         assertEquals(expectedCmd.trim(), getCmd(TEST_SHELL_SCRIPT_PATH_MERGE_MUTATION).trim());
 
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
     }
 
     @SuppressWarnings("PMD")
     private static Stream<Arguments> initParameters() {
-        Stream<Arguments> concatNAAndNotNASamples = Stream.concat(streamOfGA5argumentsNASample(),
-            streamOfGA51argumentsNotNASample());
-        return Stream.concat(concatNAAndNotNASamples, streamOfGA52argumentsNotNASample());
+        return Stream.of(streamOfGA5argumentsNASample(), streamOfGA51argumentsNotNASample(),
+            streamOfGA52argumentsNotNASample()).flatMap(s -> s);
     }
 
     private static Stream<Arguments> streamOfGA5argumentsNASample() {
@@ -302,7 +306,7 @@ public class DnaWgsVarBamIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    void testDirTreeNotNASample() throws IOException {
+    void testDirTreeNotNASample() {
         startAppWithConfigs(DNA_WGS_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA_GLOBAL_CONFIG_PATH,
             DNA_WGS_VAR_BAM_S_CONTROL_SAMPLE_NOT_NA_STUDY_CONFIG);
         assertAll(
@@ -326,11 +330,10 @@ public class DnaWgsVarBamIntegrationTest extends AbstractIntegrationTest {
             () -> assertTrue(new File(format("%s%s/GA52/strelka2", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
             () -> assertTrue(new File(format("%s%s/GA52/tmp", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists())
         );
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
     }
 
     @Test
-    void testDirTreeNASample() throws IOException {
+    void testDirTreeNASample() {
         startAppWithConfigs(DNA_WGS_VAR_BAM_G_ALL_TASKS_SAMPLE_NA_TXT_GLOBAL_CONFIG_PATH,
             DNA_WGS_VAR_BAM_S_SINGLE_TXT_SAMPLE_STUDY_CONFIG_PATH);
         assertAll(
@@ -347,6 +350,5 @@ public class DnaWgsVarBamIntegrationTest extends AbstractIntegrationTest {
             () -> assertTrue(new File(format("%s%s/GA5/strelka2", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
             () -> assertTrue(new File(format("%s%s/GA5/tmp", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists())
         );
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
     }
 }
