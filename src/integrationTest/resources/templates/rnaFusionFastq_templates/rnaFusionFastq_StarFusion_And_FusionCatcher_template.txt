@@ -1,0 +1,115 @@
+#!/bin/bash -x
+
+# --- SGE options --- #
+
+#$ -wd build/resources/integrationTest/output
+#$ -N RnaFusion_Fastq_fusion_for_smv1_analysis
+#$ -o build/resources/integrationTest/output/log_files/RnaFusion_Fastq_fusion_for_smv1_analysis.log
+#$ -e build/resources/integrationTest/output/err_files/RnaFusion_Fastq_fusion_for_smv1_analysis.err
+#$ -q main.q
+#$ -R y
+#$ PE 4
+#$ -m a
+
+# --- The commands to be executed --- #
+
+cd build/resources/integrationTest/output
+
+echo `date` Begin the job execution...
+
+echo `date` Begin Step: Merge fastqs...
+zcat /ngs/data/demo/test/fastq/smv1_GTGTTCTA_L004_R1_001.fastq.gz /ngs/data/demo/test/fastq/smv1_GTGTTCTA_L005_R1_001.fastq.gz /ngs/data/demo/test/fastq/smv1_GTGTTCTA_L006_R1_001.fastq.gz /ngs/data/demo/test/fastq/smv1_GTGTTCTA_L007_R1_001.fastq.gz | gzip -c > build/resources/integrationTest/output/smv1/fastq/smv1.merged_R1.fastq.gz
+zcat /ngs/data/demo/test/fastq/smv1_GTGTTCTA_L004_R2_001.fastq.gz /ngs/data/demo/test/fastq/smv1_GTGTTCTA_L005_R2_001.fastq.gz /ngs/data/demo/test/fastq/smv1_GTGTTCTA_L006_R2_001.fastq.gz /ngs/data/demo/test/fastq/smv1_GTGTTCTA_L007_R2_001.fastq.gz | gzip -c > build/resources/integrationTest/output/smv1/fastq/smv1.merged_R2.fastq.gz
+
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Merge fastqs.
+	sleep 8
+else
+	echo `date` Error Step: Merge fastqs.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: STAR4FUSION alignment...
+path/to/star --genomeDir /common/reference_genome/GRCh38/Index/STAR_g26 --twopassMode Basic --genomeLoad NoSharedMemory --readFilesIn build/resources/integrationTest/output/smv1/fastq/smv1.merged_R1.fastq.gz build/resources/integrationTest/output/smv1/fastq/smv1.merged_R2.fastq.gz --outFileNamePrefix build/resources/integrationTest/output/smv1/bam/smv1. --outReadsUnmapped None --chimSegmentMin 12 --chimJunctionOverhangMin 12 --alignSJDBoverhangMin 10 --alignMatesGapMax 200000 --alignIntronMax 200000 --chimSegmentReadGapMax parameter 3 --alignSJstitchMismatchNmax 5 -1 5 5 --runThreadN 4 --outSAMtype BAM Unsorted --outSAMattrRGline ID:smv1 SM:smv1 LB:RNA PL:Illumina CN:cr --readFilesCommand zcat
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: STAR4FUSION alignment.
+	sleep 8
+else
+	echo `date` Error Step: STAR4FUSION alignment.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+echo `date` Begin Step: Sort bam...
+/usr/lib/jvm/java-8-openjdk-amd64/bin/java -jar /opt/picard/picard.jar SortSam INPUT=build/resources/integrationTest/output/smv1/bam/smv1.Aligned.out.bam OUTPUT=build/resources/integrationTest/output/smv1/bam/smv1.star.sorted.bam SORT_ORDER=coordinate VALIDATION_STRINGENCY=SILENT
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Sort bam.
+	sleep 8
+else
+	echo `date` Error Step: Sort bam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+echo `date` Begin Step: Index bam...
+/opt/samtools/samtools-0.1.19/samtools index build/resources/integrationTest/output/smv1/bam/smv1.star.sorted.bam
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Index bam.
+	sleep 8
+else
+	echo `date` Error Step: Index bam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+echo `date` Begin Step: STAR-Fusion detection...
+path/to/starFusion --genome_lib_dir path/to/starFusion/lib -J build/resources/integrationTest/output/smv1/bam/smv1.Chimeric.out.junction --output_dir build/resources/integrationTest/output/smv1/starFusion
+mv build/resources/integrationTest/output/smv1/starFusion/star-fusion.fusion_candidates.final.abridged build/resources/integrationTest/output/smv1/starFusion/smv1.starFusion.fusion.final.abridged
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: STAR-Fusion detection.
+	sleep 8
+else
+	echo `date` Error Step: STAR-Fusion detection.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+echo `date` Begin Step: FusionCatcher...
+path/to/starfusion --input build/resources/integrationTest/output/smv1/fastq/smv1.merged_R1.fastq.gz,build/resources/integrationTest/output/smv1/fastq/smv1.merged_R2.fastq.gz --output build/resources/integrationTest/output/smv1/fusionCatcher --tmp build/resources/integrationTest/output/smv1/fusionCatcher/tmp --threads 4
+mv build/resources/integrationTest/output/smv1/fusionCatcher/fusionCatcher.fusion_candidates.final.abridged build/resources/integrationTest/output/smv1/fusionCatcher
+if [ $? -eq 0 ]
+then
+    echo `date` Successful Step: FusionCatcher.
+    sleep 8
+else
+    echo `date` Error Step: FusionCatcher.
+
+    echo `date` The job was aborted due to ERRORS found.
+    exit 1;
+fi
+echo `date` Begin Step: Remove temporary directories...
+rm -rf build/resources/integrationTest/output/smv1/bam/smv1.Aligned.out.bam
+rm -rf build/resources/integrationTest/output/smv1/bam/smv1.Aligned.out.bam.bai
+rm -rf build/resources/integrationTest/output/smv1/bam/smv1.star.sorted.bam.bai
+rm -rf build/resources/integrationTest/output/smv1/bam/smv1.star.sorted.bam
+rm -rf build/resources/integrationTest/output/smv1/tmp
+rm -rf build/resources/integrationTest/output/smv1/fusionCatcher/tmp
+
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Remove temporary directories.
+	sleep 8
+else
+	echo `date` Error Step: Remove temporary directories.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+echo `date` Finish the job execution!
