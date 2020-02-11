@@ -77,7 +77,7 @@ public class Strelka2 implements Tool<VariantsVcfResult> {
         final Context context = new Context();
         context.setVariable("toolFields", toolFields);
         final String cmd = templateEngine.process(STRELKA2_TOOL_TEMPLATE_NAME, context);
-        TaskContainer.addTasks("Stelka2 detection");
+        TaskContainer.addTasks("Strelka2 detection");
         final VariantsVcfOutput output = VariantsVcfOutput.builder()
                 .variantsVcf(toolFields.getVcf())
                 .variantsOutputDir(toolFields.getOutDir())
