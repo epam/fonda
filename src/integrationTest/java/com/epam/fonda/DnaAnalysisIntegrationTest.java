@@ -15,119 +15,215 @@
  */
 package com.epam.fonda;
 
-import com.tngtech.java.junit.dataprovider.DataProvider;
-import com.tngtech.java.junit.dataprovider.DataProviderRunner;
-import com.tngtech.java.junit.dataprovider.UseDataProvider;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import com.epam.fonda.utils.TemplateEngineUtils;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.net.URISyntaxException;
+import java.util.stream.Stream;
 
-import static org.junit.Assert.assertTrue;
+import static com.epam.fonda.utils.PipelineUtils.getExecutionPath;
+import static java.lang.String.format;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(DataProviderRunner.class)
 public class DnaAnalysisIntegrationTest extends AbstractIntegrationTest {
+
     private static final String OUTPUT_DIR = "output";
+    private static final String OUTPUT_DIR_ROOT = "build/resources/integrationTest/";
     private static final String AMPLICON = "Amplicon";
     private static final String CAPTURE = "Capture";
-    private static final String LOG_FILE_AMPLICON_FORMAT =
-            "logFile=build/resources/integrationTest/output/log_files/DnaAmpliconVar_Fastq_%s_for_GA5_analysis.log";
-    private static final String LOG_FILE_CAPTURE_FORMAT =
-            "logFile=build/resources/integrationTest/output/log_files/DnaCaptureVar_Fastq_%s_for_GA5_analysis.log";
-    private static final String ERROR_MESSAGE = "An error occurred with task %s. Expected: %s";
-    private static final String VARDICT = "vardict";
-    private static final String MUTECT1 = "mutect1";
-    private static final String MUTECT2 = "mutect2";
-    private static final String LOFREQ = "lofreq";
-    private static final String STRELKA2 = "strelka2";
-    private static final String GATK_HAPLOTYPE_CALLER = "gatkHaplotypeCaller";
-    private static final String SCALPEL = "scalpel";
 
-    @Test
-    @UseDataProvider("periodicDnaMutationStatusAllTasks")
-    public void testPeriodicDnaMutationStatusCheck(String workflow, String task, String[] expectedStrings)
-            throws IOException {
-        startAppWithConfigs("DnaAnalysis/gSingleDna" + workflow + ".txt",
-                "DnaAnalysis/sSingle.txt");
+    private static final String VARDICT = "vardict_for_GA5";
+    private static final String MUTECT1 = "mutect1_for_GA5";
+    private static final String LOFREQ = "lofreq_for_GA5";
+    private static final String STRELKA2 = "strelka2_for_GA5";
+    private static final String GATK_HAPLOTYPE_CALLER = "gatkHaplotypeCaller_for_GA5";
+    private static final String SCALPEL = "scalpel_for_GA5";
+    private static final String POSTALIGMENT = "postalignment_for_GA5";
+    private static final String ALIGNMENT = "alignment_for_GA5_1";
 
-        String outputShFilePath = "output/sh_files/Dna" + workflow + "Var_Fastq_mergeMutation_for_cohort_analysis.sh";
-        File outputShFile = new File(this.getClass().getClassLoader().getResource(outputShFilePath).getPath());
+    private static final String DNA_ANALYSIS_S_SINGLE_STUDY_CONFIG = "DnaAnalysis/sSingle.txt";
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(outputShFile))) {
-            List<String> lines = reader.lines().collect(Collectors.toList());
-            assertTrue(lines.stream()
-                    .anyMatch(line -> line.contains("echo $(date) Error DNA mutation results from GA5:")));
-            assertTrue(lines.stream()
-                    .anyMatch(line -> line.contains("echo $(date) Confirm DNA mutation results from GA5")));
+    private static final String FIRST_PART_OF_THE_PATH_TO_DNA_SHELL_SCRIPT = "output/sh_files/Dna";
+    private static final String THIRD_PART_OF_THE_PATH_TO_DNA_SHELL_SCRIPT = "Var_Fastq_";
+    private static final String LAST_PART_OF_THE_PATH_TO_DNA_SHELL_SCRIPT = "_analysis.sh";
 
-            for (String expectedString : expectedStrings) {
-                assertTrue(String.format(ERROR_MESSAGE, task, expectedString),
-                        lines.stream().anyMatch(line -> line.contains(expectedString)));
-                assertTrue(String.format(ERROR_MESSAGE, task, expectedString),
-                        lines.stream().anyMatch(line -> line.contains(task)));
-            }
-            assertTrue(lines.stream().noneMatch(line -> line.contains("null")));
-        }
+    private static final String G_SINGLE_DNA_AMPLICON_GLOBAL_CONFIG_PATH = "DnaAnalysis/gSingleDnaAmplicon.txt";
+    private static final String G_SINGLE_DNA_CAPTURE_GLOBAL_CONFIG_PATH = "DnaAnalysis/gSingleDnaCapture.txt";
+
+    private static final String DNA_AMPLICON_VAR_FASTQ_ALIGNMENT_FOR_GA5_1_ANALYSIS_TEMPLATE_PATH =
+        "DnaAnalyses/gSingleDnaAmplicon/DnaAmpliconVar_Fastq_alignment_for_GA5_1_analysis_template.txt";
+    private static final String DNA_AMPLICON_VAR_FASTQ_GATK_HAPLOTYPE_CALLER_FOR_GA5_ANALYSIS_TEMPLATE_PATH =
+        "DnaAnalyses/gSingleDnaAmplicon/DnaAmpliconVar_Fastq_gatkHaplotypeCaller_for_GA5_analysis_template.txt";
+    private static final String DNA_AMPLICON_VAR_FASTQ_LOFREQ_FOR_GA5_ANALYSIS_TEMPLATE_PATH =
+        "DnaAnalyses/gSingleDnaAmplicon/DnaAmpliconVar_Fastq_lofreq_for_GA5_analysis_template.txt";
+    private static final String DNA_AMPLICON_VAR_FASTQ_MUTEC_1_FOR_GA5_ANALYSIS_TEMPLATE_PATH =
+        "DnaAnalyses/gSingleDnaAmplicon/DnaAmpliconVar_Fastq_mutect1_for_GA5_analysis_template.txt";
+    private static final String DNA_AMPLICON_VAR_FASTQ_POSTALIGNMENT_FOR_GA5_ANALYSIS_TEMPLATE_PATH =
+        "DnaAnalyses/gSingleDnaAmplicon/DnaAmpliconVar_Fastq_postalignment_for_GA5_analysis_template.txt";
+    private static final String DNA_AMPLICON_VAR_FASTQ_SCALPEL_FOR_GA5_ANALYSIS_TEMPLATE_PATH =
+        "DnaAnalyses/gSingleDnaAmplicon/DnaAmpliconVar_Fastq_scalpel_for_GA5_analysis_template.txt";
+    private static final String DNA_AMPLICON_VAR_FASTQ_STRELKA2_FOR_GA5_ANALYSIS_TEMPLATE_PATH =
+        "DnaAnalyses/gSingleDnaAmplicon/DnaAmpliconVar_Fastq_strelka2_for_GA5_analysis_template.txt";
+    private static final String DNA_AMPLICON_VAR_FASTQ_VARDICT_FOR_GA5_ANALYSIS_TEMPLATE_PATH =
+        "DnaAnalyses/gSingleDnaAmplicon/DnaAmpliconVar_Fastq_vardict_for_GA5_analysis_template.txt";
+    private static final String DNA_AMPLICON_VAR_FASTQ_MERGE_MUTATION_FOR_COHORT_ANALYSIS_TEMPLATE_PATH =
+        "DnaAnalyses/gSingleDnaAmplicon/DnaAmpliconVar_Fastq_mergeMutation_for_cohort_analysis_template.txt";
+
+    private static final String DNA_CAPTURE_VAR_FASTQ_ALIGNMENT_FOR_GA5_1_ANALYSIS_TEMPLATE_PATH =
+        "DnaAnalyses/gSingleDnaCapture/DnaCaptureVar_Fastq_alignment_for_GA5_1_analysis_template.txt";
+    private static final String DNA_CAPTURE_VAR_FASTQ_GATK_HAPLOTYPE_CALLER_FOR_GA5_ANALYSIS_TEMPLATE_PATH =
+        "DnaAnalyses/gSingleDnaCapture/DnaCaptureVar_Fastq_gatkHaplotypeCaller_for_GA5_analysis_template.txt";
+    private static final String DNA_CAPTURE_VAR_FASTQ_LOFREQ_FOR_GA5_ANALYSIS_TEMPLATE_PATH =
+        "DnaAnalyses/gSingleDnaCapture/DnaCaptureVar_Fastq_lofreq_for_GA5_analysis_template.txt";
+    private static final String DNA_CAPTURE_VAR_FASTQ_MUTEC_1_FOR_GA5_ANALYSIS_TEMPLATE_PATH =
+        "DnaAnalyses/gSingleDnaCapture/DnaCaptureVar_Fastq_mutect1_for_GA5_analysis_template.txt";
+    private static final String DNA_CAPTURE_VAR_FASTQ_POSTALIGNMENT_FOR_GA5_ANALYSIS_TEMPLATE_PATH =
+        "DnaAnalyses/gSingleDnaCapture/DnaCaptureVar_Fastq_postalignment_for_GA5_analysis_template.txt";
+    private static final String DNA_CAPTURE_VAR_FASTQ_SCALPEL_FOR_GA5_ANALYSIS_TEMPLATE_PATH =
+        "DnaAnalyses/gSingleDnaCapture/DnaCaptureVar_Fastq_scalpel_for_GA5_analysis_template.txt";
+    private static final String DNA_CAPTURE_VAR_FASTQ_STRELKA2_FOR_GA5_ANALYSIS_TEMPLATE_PATH =
+        "DnaAnalyses/gSingleDnaCapture/DnaCaptureVar_Fastq_strelka2_for_GA5_analysis_template.txt";
+    private static final String DNA_CAPTURE_VAR_FASTQ_VARDICT_FOR_GA5_ANALYSIS_TEMPLATE_PATH =
+        "DnaAnalyses/gSingleDnaCapture/DnaCaptureVar_Fastq_vardict_for_GA5_analysis_template.txt";
+    private static final String DNA_CAPTURE_VAR_FASTQ_MERGE_MUTATION_FOR_COHORT_ANALYSIS_TEMPLATE_PATH =
+        "DnaAnalyses/gSingleDnaCapture/DnaCaptureVar_Fastq_mergeMutation_for_cohort_analysis_template.txt";
+
+    private static final String FIRST_PART_TO_THE_PATH_OF_MERGE_MUTATION_SH = "output/sh_files/Dna";
+    private static final String LAST_PART_TO_THE_PATH_OF_MERGE_MUTATION_SH =
+        "Var_Fastq_mergeMutation_for_cohort_analysis.sh";
+
+    private final TemplateEngine expectedTemplateEngine = TemplateEngineUtils.init();
+    private Context context;
+
+    @BeforeEach
+    void setup() {
+        context = new Context();
+        context.setVariable("jarPath", getExecutionPath());
+    }
+
+    @AfterEach
+    void cleanUp() throws IOException {
         cleanOutputDirForNextTest(OUTPUT_DIR, false);
     }
 
-    @DataProvider
-    public static Object[][] periodicDnaMutationStatusAllTasks() {
-        return new Object[][]{
-            {AMPLICON, VARDICT, new String[]{ String.format(LOG_FILE_AMPLICON_FORMAT, VARDICT)}},
-            {AMPLICON, MUTECT1, new String[]{ String.format(LOG_FILE_AMPLICON_FORMAT, MUTECT1)}},
-            {AMPLICON, MUTECT2, new String[]{ String.format(LOG_FILE_AMPLICON_FORMAT, MUTECT2)}},
-            {AMPLICON, LOFREQ, new String[]{ String.format(LOG_FILE_AMPLICON_FORMAT, LOFREQ)}},
-            {AMPLICON, STRELKA2, new String[]{ String.format(LOG_FILE_AMPLICON_FORMAT, STRELKA2)}},
-            {AMPLICON, GATK_HAPLOTYPE_CALLER, new String[]{ String.format(LOG_FILE_AMPLICON_FORMAT,
-                    GATK_HAPLOTYPE_CALLER)}},
-            {AMPLICON, SCALPEL, new String[]{ String.format(LOG_FILE_AMPLICON_FORMAT, SCALPEL)}},
-            {CAPTURE, VARDICT, new String [] { String.format(LOG_FILE_CAPTURE_FORMAT, VARDICT)}},
-            {CAPTURE, MUTECT1, new String [] { String.format(LOG_FILE_CAPTURE_FORMAT, MUTECT1)}},
-            {CAPTURE, MUTECT2, new String [] { String.format(LOG_FILE_CAPTURE_FORMAT, MUTECT2)}},
-            {CAPTURE, LOFREQ, new String [] { String.format(LOG_FILE_CAPTURE_FORMAT, LOFREQ)}},
-            {CAPTURE, STRELKA2, new String [] { String.format(LOG_FILE_CAPTURE_FORMAT, STRELKA2)}},
-            {CAPTURE, GATK_HAPLOTYPE_CALLER, new String [] { String.format(LOG_FILE_CAPTURE_FORMAT,
-                    GATK_HAPLOTYPE_CALLER)}},
-            {CAPTURE, SCALPEL, new String [] { String.format(LOG_FILE_CAPTURE_FORMAT, SCALPEL)}},
-        };
+    @ParameterizedTest
+    @MethodSource("initParameters")
+    public void testPeriodicDnaMutationStatusCheck(String globalConfigPath, String templatePath, String taskName,
+        String workflow, String mergeMutationTemplatePath) throws IOException, URISyntaxException {
+        startAppWithConfigs(globalConfigPath, DNA_ANALYSIS_S_SINGLE_STUDY_CONFIG);
+
+        String expectedCmd = expectedTemplateEngine.process(templatePath, context);
+        String filePath = FIRST_PART_OF_THE_PATH_TO_DNA_SHELL_SCRIPT + workflow +
+            THIRD_PART_OF_THE_PATH_TO_DNA_SHELL_SCRIPT + taskName + LAST_PART_OF_THE_PATH_TO_DNA_SHELL_SCRIPT;
+        assertEquals(expectedCmd.trim(), getCmd(filePath).trim());
+
+        expectedCmd = expectedTemplateEngine.process(mergeMutationTemplatePath, context);
+        filePath = FIRST_PART_TO_THE_PATH_OF_MERGE_MUTATION_SH + workflow + LAST_PART_TO_THE_PATH_OF_MERGE_MUTATION_SH;
+        assertEquals(expectedCmd.trim(), getCmd(filePath).trim());
     }
 
-    @Test
-    @UseDataProvider("workflows")
-    public void testDnaMutationDataAnalysis(String workflow) throws IOException {
-        startAppWithConfigs(
-                "DnaAnalysis/gSingleDna" + workflow + ".txt", "DnaAnalysis/sSingle.txt");
-
-        String outputShFilePath = "output/sh_files/Dna" + workflow + "Var_Fastq_mergeMutation_for_cohort_analysis.sh";
-        File outputShFile = new File(this.getClass().getClassLoader().getResource(outputShFilePath).getPath());
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(outputShFile))) {
-            List<String> lines = reader.lines().collect(Collectors.toList());
-            assertTrue(lines.stream().anyMatch(line -> line.contains("Begin Step: Merge mutation annotation...")));
-            assertTrue(lines.stream()
-                    .anyMatch(line -> line.matches("/usr/bin/Rscript.+?dna_rna_mutation_data_analysis.R -i.+?")));
-            assertTrue(lines.stream()
-                    .anyMatch(line -> line.contains("build/resources/integrationTest/fastqSingle.tsv " +
-                            "-d build/resources/integrationTest/output -t "
-                            + "bwa+vardict+mutect1+mutect2+strelka2+gatkHaplotypeCaller+scalpel+lofreq")));
-            assertTrue(lines.stream()
-                    .anyMatch(line -> line.contains("\techo `date` Successful Step: Merge mutation annotation.")));
-            assertTrue(lines.stream().noneMatch(line -> line.contains("null")));
-        }
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
+    @SuppressWarnings("PMD")
+    private static Stream<Arguments> initParameters() {
+        return Stream.concat(gSingleDnaAmpliconArguments(), gSingleDnaCaptureArguments());
     }
 
-    @DataProvider
-    public static Object[][] workflows() {
-        return new Object[][]{
-                {AMPLICON},
-                {CAPTURE}
-        };
+    private static Stream<Arguments> gSingleDnaAmpliconArguments() {
+        return Stream.of(
+            Arguments.of(G_SINGLE_DNA_AMPLICON_GLOBAL_CONFIG_PATH,
+                DNA_AMPLICON_VAR_FASTQ_ALIGNMENT_FOR_GA5_1_ANALYSIS_TEMPLATE_PATH, ALIGNMENT, AMPLICON,
+                DNA_AMPLICON_VAR_FASTQ_MERGE_MUTATION_FOR_COHORT_ANALYSIS_TEMPLATE_PATH),
+            Arguments.of(G_SINGLE_DNA_AMPLICON_GLOBAL_CONFIG_PATH,
+                DNA_AMPLICON_VAR_FASTQ_GATK_HAPLOTYPE_CALLER_FOR_GA5_ANALYSIS_TEMPLATE_PATH, GATK_HAPLOTYPE_CALLER,
+                AMPLICON, DNA_AMPLICON_VAR_FASTQ_MERGE_MUTATION_FOR_COHORT_ANALYSIS_TEMPLATE_PATH),
+            Arguments.of(G_SINGLE_DNA_AMPLICON_GLOBAL_CONFIG_PATH,
+                DNA_AMPLICON_VAR_FASTQ_LOFREQ_FOR_GA5_ANALYSIS_TEMPLATE_PATH, LOFREQ, AMPLICON,
+                DNA_AMPLICON_VAR_FASTQ_MERGE_MUTATION_FOR_COHORT_ANALYSIS_TEMPLATE_PATH),
+            Arguments.of(G_SINGLE_DNA_AMPLICON_GLOBAL_CONFIG_PATH,
+                DNA_AMPLICON_VAR_FASTQ_MUTEC_1_FOR_GA5_ANALYSIS_TEMPLATE_PATH, MUTECT1, AMPLICON,
+                DNA_AMPLICON_VAR_FASTQ_MERGE_MUTATION_FOR_COHORT_ANALYSIS_TEMPLATE_PATH),
+            Arguments.of(G_SINGLE_DNA_AMPLICON_GLOBAL_CONFIG_PATH,
+                DNA_AMPLICON_VAR_FASTQ_POSTALIGNMENT_FOR_GA5_ANALYSIS_TEMPLATE_PATH, POSTALIGMENT, AMPLICON,
+                DNA_AMPLICON_VAR_FASTQ_MERGE_MUTATION_FOR_COHORT_ANALYSIS_TEMPLATE_PATH),
+            Arguments.of(G_SINGLE_DNA_AMPLICON_GLOBAL_CONFIG_PATH,
+                DNA_AMPLICON_VAR_FASTQ_SCALPEL_FOR_GA5_ANALYSIS_TEMPLATE_PATH, SCALPEL, AMPLICON,
+                DNA_AMPLICON_VAR_FASTQ_MERGE_MUTATION_FOR_COHORT_ANALYSIS_TEMPLATE_PATH),
+            Arguments.of(G_SINGLE_DNA_AMPLICON_GLOBAL_CONFIG_PATH,
+                DNA_AMPLICON_VAR_FASTQ_STRELKA2_FOR_GA5_ANALYSIS_TEMPLATE_PATH, STRELKA2, AMPLICON,
+                DNA_AMPLICON_VAR_FASTQ_MERGE_MUTATION_FOR_COHORT_ANALYSIS_TEMPLATE_PATH),
+            Arguments.of(G_SINGLE_DNA_AMPLICON_GLOBAL_CONFIG_PATH,
+                DNA_AMPLICON_VAR_FASTQ_VARDICT_FOR_GA5_ANALYSIS_TEMPLATE_PATH, VARDICT, AMPLICON,
+                DNA_AMPLICON_VAR_FASTQ_MERGE_MUTATION_FOR_COHORT_ANALYSIS_TEMPLATE_PATH)
+        );
+    }
+
+    private static Stream<Arguments> gSingleDnaCaptureArguments() {
+        return Stream.of(
+            Arguments.of(G_SINGLE_DNA_CAPTURE_GLOBAL_CONFIG_PATH,
+                DNA_CAPTURE_VAR_FASTQ_ALIGNMENT_FOR_GA5_1_ANALYSIS_TEMPLATE_PATH, ALIGNMENT, CAPTURE,
+                DNA_CAPTURE_VAR_FASTQ_MERGE_MUTATION_FOR_COHORT_ANALYSIS_TEMPLATE_PATH),
+            Arguments.of(G_SINGLE_DNA_CAPTURE_GLOBAL_CONFIG_PATH,
+                DNA_CAPTURE_VAR_FASTQ_GATK_HAPLOTYPE_CALLER_FOR_GA5_ANALYSIS_TEMPLATE_PATH, GATK_HAPLOTYPE_CALLER,
+                CAPTURE, DNA_CAPTURE_VAR_FASTQ_MERGE_MUTATION_FOR_COHORT_ANALYSIS_TEMPLATE_PATH),
+            Arguments.of(G_SINGLE_DNA_CAPTURE_GLOBAL_CONFIG_PATH,
+                DNA_CAPTURE_VAR_FASTQ_LOFREQ_FOR_GA5_ANALYSIS_TEMPLATE_PATH, LOFREQ, CAPTURE,
+                DNA_CAPTURE_VAR_FASTQ_MERGE_MUTATION_FOR_COHORT_ANALYSIS_TEMPLATE_PATH),
+            Arguments.of(G_SINGLE_DNA_CAPTURE_GLOBAL_CONFIG_PATH,
+                DNA_CAPTURE_VAR_FASTQ_MUTEC_1_FOR_GA5_ANALYSIS_TEMPLATE_PATH, MUTECT1, CAPTURE,
+                DNA_CAPTURE_VAR_FASTQ_MERGE_MUTATION_FOR_COHORT_ANALYSIS_TEMPLATE_PATH),
+            Arguments.of(G_SINGLE_DNA_CAPTURE_GLOBAL_CONFIG_PATH,
+                DNA_CAPTURE_VAR_FASTQ_POSTALIGNMENT_FOR_GA5_ANALYSIS_TEMPLATE_PATH, POSTALIGMENT, CAPTURE,
+                DNA_CAPTURE_VAR_FASTQ_MERGE_MUTATION_FOR_COHORT_ANALYSIS_TEMPLATE_PATH),
+            Arguments.of(G_SINGLE_DNA_CAPTURE_GLOBAL_CONFIG_PATH,
+                DNA_CAPTURE_VAR_FASTQ_SCALPEL_FOR_GA5_ANALYSIS_TEMPLATE_PATH, SCALPEL, CAPTURE,
+                DNA_CAPTURE_VAR_FASTQ_MERGE_MUTATION_FOR_COHORT_ANALYSIS_TEMPLATE_PATH),
+            Arguments.of(G_SINGLE_DNA_CAPTURE_GLOBAL_CONFIG_PATH,
+                DNA_CAPTURE_VAR_FASTQ_STRELKA2_FOR_GA5_ANALYSIS_TEMPLATE_PATH, STRELKA2, CAPTURE,
+                DNA_CAPTURE_VAR_FASTQ_MERGE_MUTATION_FOR_COHORT_ANALYSIS_TEMPLATE_PATH),
+            Arguments.of(G_SINGLE_DNA_CAPTURE_GLOBAL_CONFIG_PATH,
+                DNA_CAPTURE_VAR_FASTQ_VARDICT_FOR_GA5_ANALYSIS_TEMPLATE_PATH, VARDICT, CAPTURE,
+                DNA_CAPTURE_VAR_FASTQ_MERGE_MUTATION_FOR_COHORT_ANALYSIS_TEMPLATE_PATH)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("initParametersForDirTesting")
+    void testDirTreeDnaAmpliconVar(String globalConfigPath) {
+        startAppWithConfigs(globalConfigPath, DNA_ANALYSIS_S_SINGLE_STUDY_CONFIG);
+        assertAll(
+            () -> assertTrue(new File(format("%s%s/sh_files", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/log_files", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/err_files", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/GA5", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/GA5/bam", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/GA5/gatkHaplotypeCaller", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(
+                new File(format("%s%s/GA5/gatkHaplotypeCaller/tmp", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/GA5/lofreq", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/GA5/mutect1", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/GA5/mutect1/tmp", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/GA5/qc", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/GA5/scalpel", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/GA5/strelka2", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/GA5/tmp", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
+            () -> assertTrue(new File(format("%s%s/GA5/vardict", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists())
+        );
+    }
+
+    @SuppressWarnings("PMD")
+    private static Stream<Arguments> initParametersForDirTesting() {
+        return Stream.of(
+            Arguments.of(G_SINGLE_DNA_AMPLICON_GLOBAL_CONFIG_PATH),
+            Arguments.of(G_SINGLE_DNA_CAPTURE_GLOBAL_CONFIG_PATH)
+        );
     }
 }
