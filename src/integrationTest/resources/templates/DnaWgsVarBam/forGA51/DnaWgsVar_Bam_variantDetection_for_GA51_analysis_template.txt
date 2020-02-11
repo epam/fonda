@@ -71,7 +71,6 @@ fi
 
 echo `date` Begin Step: Remove temporary directories...
 rm -rf build/resources/integrationTest/output/GA51/tmp
-rm -rf build/resources/integrationTest/output/GA51/contEst/tmp
 
 if [ $? -eq 0 ]
 then
