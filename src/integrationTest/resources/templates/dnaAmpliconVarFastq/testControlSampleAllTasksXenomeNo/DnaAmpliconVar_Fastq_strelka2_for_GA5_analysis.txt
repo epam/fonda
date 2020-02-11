@@ -1,0 +1,60 @@
+#!/bin/bash -x
+
+# --- SGE options --- #
+
+#$ -wd build/resources/integrationTest/output
+#$ -N DnaAmpliconVar_Fastq_strelka2_for_GA5_analysis
+#$ -o build/resources/integrationTest/output/log_files/DnaAmpliconVar_Fastq_strelka2_for_GA5_analysis.log
+#$ -e build/resources/integrationTest/output/err_files/DnaAmpliconVar_Fastq_strelka2_for_GA5_analysis.err
+#$ -q main.q
+#$ -R y
+#$ -pe threaded 4
+#$ -m a
+
+# --- The commands to be executed --- #
+
+cd build/resources/integrationTest/output
+
+echo `date` Begin the job execution...
+
+echo `date` Begin Step: Strelka2 detection...
+/usr/bin/python /usr/bin/strelka2/configureStrelkaGermlineWorkflow.py --referenceFasta=/ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa --bam=build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.realign.recal.bam --callRegions=/ngs/data/S03723314_Padded.bed --runDir=build/resources/integrationTest/output/GA5/strelka2 --callMemMb=2048 --exome
+/usr/bin/python build/resources/integrationTest/output/GA5/strelka2/runWorkflow.py -m local -j 8
+zcat build/resources/integrationTest/output/GA5/strelka2/results/variants/variants.vcf.gz > build/resources/integrationTest/output/GA5/strelka2/GA5.strelka2.variants.vcf
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Strelka2 detection.
+	sleep 8
+else
+	echo `date` Error Step: Strelka2 detection.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: SnpEff annotation...
+/usr/bin/python [(${jarPath})]/src/python/vcf_snpeff_annotation.py -s GA5 -i build/resources/integrationTest/output/GA5/strelka2/GA5.strelka2.variants.vcf -o build/resources/integrationTest/output/GA5/strelka2/GA5.strelka2.variants.pass.annotation.tsv -t strelka2 --canonical /ngs/data/reference_genome/GRCh37/Annotation/prefer_ensembl_transcript.txt --transvar /usr/bin/transvar -r hg19 --snpsift /usr/bin/snpsift --snpsift_db /ngs/data/tools/SnpEff/snpEff_v4.3p/snpEff/db --dbnsfp --dbsnp --coding_only --pass_only
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: SnpEff annotation.
+	sleep 8
+else
+	echo `date` Error Step: SnpEff annotation.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Remove temporary directories...
+
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Remove temporary directories.
+	sleep 8
+else
+	echo `date` Error Step: Remove temporary directories.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+echo `date` Finish the job execution!
