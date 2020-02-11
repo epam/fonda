@@ -21,68 +21,85 @@ import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.entity.configuration.GlobalConfig;
 import com.epam.fonda.tools.results.VariantsVcfResult;
 import com.epam.fonda.utils.TemplateEngineUtils;
+import com.epam.fonda.workflow.PipelineType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
+import java.util.Objects;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 class GatkHaplotypeCallerTest extends AbstractTest {
-    private static final String GATK_HAPLOTYPE_CALLER_TOOL_TEST_TEMPLATE_NAME =
-            "gatk_haplotype_caller_tool_test_output_data";
+    private static final String GATK_HAPLOTYPE_CALLER_DNA_TOOL_TEST_TEMPLATE_NAME =
+            "gatk_haplotype_caller_dna_tool_test_output_data";
+    private static final String GATK_HAPLOTYPE_CALLER_RNA_TOOL_TEST_TEMPLATE_NAME =
+            "templates/gatk_haplotype_caller_rna_tool_test_output_data.txt";
     private Configuration expectedConfiguration;
-    private GlobalConfig expectedGlobalConfig;
-    private GlobalConfig.DatabaseConfig expectedDatabaseConfig;
-    private TemplateEngine expectedTemplateEngine = TemplateEngineUtils.init();
     private VariantsVcfResult variantsVcfResult;
+    private String sampleName = "samplename";
+    private String bam = "sbamOutdir/sampleName.toolName.sorted.file.bam";
+    private TemplateEngine expectedTemplateEngine = TemplateEngineUtils.init();
+    private Context context;
+    private String expectedCmd;
+    private GatkHaplotypeCaller gatkHaplotypeCaller;
 
     @BeforeEach
     void setup() {
-        expectedConfiguration = new Configuration();
-        expectedGlobalConfig = new GlobalConfig();
-        constructConfigs(expectedGlobalConfig);
-        expectedConfiguration.setGlobalConfig(expectedGlobalConfig);
+        context = new Context();
+        buildConfiguration();
         final CommonOutdir commonOutdir = new CommonOutdir(TEST_DIRECTORY);
+        gatkHaplotypeCaller = new GatkHaplotypeCaller(sampleName, bam, TEST_DIRECTORY, false);
         commonOutdir.createDirectory();
     }
 
     @Test
-    void shouldGenerateForGatkHaplotypeCallerUnpaired() {
-        GatkHaplotypeCaller gatkHaplotypeCaller = new GatkHaplotypeCaller("samplename",
-                "sbamOutdir/sampleName.toolName.sorted.file.bam", TEST_DIRECTORY);
-        expectedDatabaseConfig.setBed("bed");
-        Context context = new Context();
-        context.setVariable("bed", expectedGlobalConfig.getDatabaseConfig().getBed());
-        String expectedCmd = expectedTemplateEngine.process(GATK_HAPLOTYPE_CALLER_TOOL_TEST_TEMPLATE_NAME, context);
-        variantsVcfResult = gatkHaplotypeCaller.generate(expectedConfiguration, expectedTemplateEngine);
-        assertEquals(expectedCmd, variantsVcfResult.getAbstractCommand().getToolCommand());
+    void shouldGenerateForGatkHaplotypeCallerUnpairedForRna() throws URISyntaxException, IOException {
+        expectedConfiguration.getGlobalConfig().getPipelineInfo()
+                .setWorkflow(PipelineType.RNA_CAPTURE_VAR_FASTQ.getName());
+        expectedCmd = readFile(Paths.get(Objects.requireNonNull(this.getClass().getClassLoader()
+                .getResource(GATK_HAPLOTYPE_CALLER_RNA_TOOL_TEST_TEMPLATE_NAME)).toURI()));
+        String actualCmd = new GatkHaplotypeCaller(sampleName, bam, TEST_DIRECTORY, true)
+                .generate(expectedConfiguration, expectedTemplateEngine).getAbstractCommand().getToolCommand();
+        assertEquals(expectedCmd, actualCmd);
     }
 
     @Test
-    void shouldGenerateForWgsGatkHaplotypeCallerUnpaired() {
-        GatkHaplotypeCaller gatkHaplotypeCaller = new GatkHaplotypeCaller("samplename",
-                "sbamOutdir/sampleName.toolName.sorted.file.bam", TEST_DIRECTORY);
-        expectedGlobalConfig.setDatabaseConfig(expectedDatabaseConfig);
-        expectedConfiguration.getGlobalConfig().getPipelineInfo().setWorkflow("DnaWgsVar_Bam");
-        Context context = new Context();
-        context.setVariable("isWgs", true);
-        String expectedCmd = expectedTemplateEngine.process(GATK_HAPLOTYPE_CALLER_TOOL_TEST_TEMPLATE_NAME, context);
+    void shouldGenerateForGatkHaplotypeCallerUnpairedForDna() {
+        expectedCmd = expectedTemplateEngine.process(GATK_HAPLOTYPE_CALLER_DNA_TOOL_TEST_TEMPLATE_NAME, context);
         variantsVcfResult = gatkHaplotypeCaller.generate(expectedConfiguration, expectedTemplateEngine);
-        assertEquals(expectedCmd, variantsVcfResult.getAbstractCommand().getToolCommand());
+        assertEquals(expectedCmd.trim(), variantsVcfResult.getAbstractCommand().getToolCommand().trim());
     }
 
-    private void constructConfigs(GlobalConfig expectedGlobalConfig) {
+    @Test
+    void shouldGenerateForWgsGatkHaplotypeCallerUnpairedForDna() {
+        expectedConfiguration.getGlobalConfig().getPipelineInfo().setWorkflow(PipelineType.DNA_WGS_VAR_BAM.getName());
+        expectedConfiguration.getGlobalConfig().getDatabaseConfig().setBed(null);
+        context.setVariable("isWgs", true);
+        expectedCmd = expectedTemplateEngine.process(GATK_HAPLOTYPE_CALLER_DNA_TOOL_TEST_TEMPLATE_NAME, context);
+        variantsVcfResult = gatkHaplotypeCaller.generate(expectedConfiguration, expectedTemplateEngine);
+        assertEquals(expectedCmd.trim(), variantsVcfResult.getAbstractCommand().getToolCommand().trim());
+    }
+
+    private void buildConfiguration() {
+        expectedConfiguration = new Configuration();
         GlobalConfig.ToolConfig expectedToolConfig = new GlobalConfig.ToolConfig();
         expectedToolConfig.setJava("java");
         expectedToolConfig.setGatk("gatk");
-        expectedDatabaseConfig = new GlobalConfig.DatabaseConfig();
+        GlobalConfig.DatabaseConfig expectedDatabaseConfig = new GlobalConfig.DatabaseConfig();
         expectedDatabaseConfig.setGenome("genome");
+        expectedDatabaseConfig.setBed("bed");
+        GlobalConfig.PipelineInfo pipelineInfo = new GlobalConfig.PipelineInfo();
+        pipelineInfo.setWorkflow(PipelineType.DNA_CAPTURE_VAR_BAM.getName());
+        GlobalConfig expectedGlobalConfig = new GlobalConfig();
         expectedGlobalConfig.setToolConfig(expectedToolConfig);
         expectedGlobalConfig.setDatabaseConfig(expectedDatabaseConfig);
-        final GlobalConfig.PipelineInfo pipelineInfo = new GlobalConfig.PipelineInfo();
-        pipelineInfo.setWorkflow("DnaCaptureVar_Bam");
         expectedGlobalConfig.setPipelineInfo(pipelineInfo);
+        expectedConfiguration.setGlobalConfig(expectedGlobalConfig);
     }
 }

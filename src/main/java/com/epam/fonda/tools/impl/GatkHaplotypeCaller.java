@@ -24,6 +24,7 @@ import com.epam.fonda.tools.results.VariantsVcfOutput;
 import com.epam.fonda.tools.results.VariantsVcfResult;
 import com.epam.fonda.utils.DnaUtils;
 import com.epam.fonda.workflow.TaskContainer;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -37,26 +38,29 @@ import static java.lang.String.format;
 
 @RequiredArgsConstructor
 public class GatkHaplotypeCaller implements Tool<VariantsVcfResult> {
-
     private static final String AMPLICON_GATK_HAPLOTYPE_TOOL_TEMPLATE_NAME = "amplicon_gatk_haplotype_tool_template";
+    private static final String GATK_HAPLOTYPE_RNA_TOOL_TEMPLATE_NAME = "gatk_haplotype_rna_tool_template";
 
     @Data
-    private class ToolFields {
+    @Builder
+    private static class ToolFields {
         private String java;
         private String gatk;
     }
 
     @Data
-    private class DatabaseFields {
+    @Builder
+    private static class DatabaseFields {
         private String genome;
         private String bed;
     }
 
     @Data
-    private class AdditionalFields {
+    @Builder
+    private static class AdditionalFields {
         private String gatkHapOutdir;
-        private String gatkHapVariants;
         private String tmpGatkHapOutdir;
+        private String variantsVcf;
         private boolean isWgs;
     }
 
@@ -66,6 +70,8 @@ public class GatkHaplotypeCaller implements Tool<VariantsVcfResult> {
     private String bam;
     @NonNull
     private String outDir;
+    @NonNull
+    private Boolean isRnaCaptureRnaWorkflow;
 
     /**
      * This method generates bash script for GatkHaplotypeCaller tool
@@ -77,13 +83,15 @@ public class GatkHaplotypeCaller implements Tool<VariantsVcfResult> {
     @Override
     public VariantsVcfResult generate(Configuration configuration, TemplateEngine templateEngine) {
         final AdditionalFields additionalFields = initializeAdditionalFields(configuration);
-        final String cmd = templateEngine.process(AMPLICON_GATK_HAPLOTYPE_TOOL_TEMPLATE_NAME,
-                buildContext(configuration, additionalFields));
+        Context context = buildContext(configuration, additionalFields);
+        final String cmd = isRnaCaptureRnaWorkflow
+                ? templateEngine.process(GATK_HAPLOTYPE_RNA_TOOL_TEMPLATE_NAME, context)
+                : templateEngine.process(AMPLICON_GATK_HAPLOTYPE_TOOL_TEMPLATE_NAME, context);
         TaskContainer.addTasks("GATK haplotypecaller detection");
         VariantsVcfOutput variantsVcfOutput = VariantsVcfOutput.builder()
-                .variantsVcf(additionalFields.gatkHapVariants)
                 .variantsTmpOutputDir(additionalFields.tmpGatkHapOutdir)
                 .variantsOutputDir(additionalFields.gatkHapOutdir)
+                .variantsVcf(additionalFields.variantsVcf)
                 .build();
         variantsVcfOutput.createDirectory();
         VariantsVcfResult variantsVcfResult = VariantsVcfResult.builder()
@@ -97,29 +105,32 @@ public class GatkHaplotypeCaller implements Tool<VariantsVcfResult> {
     }
 
     private ToolFields initializeToolFields(Configuration configuration) {
-        ToolFields toolFields = new ToolFields();
-        toolFields.java = validate(configuration.getGlobalConfig().getToolConfig().getJava(), GlobalConfigFormat.JAVA);
-        toolFields.gatk = validate(configuration.getGlobalConfig().getToolConfig().getGatk(), GlobalConfigFormat.GATK);
-        return toolFields;
+        return ToolFields.builder()
+                .java(validate(configuration.getGlobalConfig().getToolConfig().getJava(), GlobalConfigFormat.JAVA))
+                .gatk(validate(configuration.getGlobalConfig().getToolConfig().getGatk(), GlobalConfigFormat.GATK))
+                .build();
     }
 
     private DatabaseFields initializeDatabaseFields(Configuration configuration) {
-        DatabaseFields databaseFields = new DatabaseFields();
-        databaseFields.genome = validate(configuration.getGlobalConfig().getDatabaseConfig().getGenome(),
-                GlobalConfigFormat.GENOME);
-        databaseFields.bed = DnaUtils.isWgsWorkflow(configuration) ? null
-                : validate(configuration.getGlobalConfig().getDatabaseConfig().getBed(), GlobalConfigFormat.BED);
-        return databaseFields;
+        return DatabaseFields.builder()
+                .genome(validate(configuration.getGlobalConfig().getDatabaseConfig().getGenome(),
+                        GlobalConfigFormat.GENOME))
+                .bed(DnaUtils.isWgsWorkflow(configuration) ? null
+                        : validate(configuration.getGlobalConfig().getDatabaseConfig().getBed(),
+                        GlobalConfigFormat.BED))
+                .build();
     }
 
     private AdditionalFields initializeAdditionalFields(Configuration configuration) {
-        AdditionalFields additionalFields = new AdditionalFields();
-        additionalFields.gatkHapOutdir = format("%s/gatkHaplotypeCaller", outDir);
-        additionalFields.gatkHapVariants = format("%s/%s.gatkHaplotypeCaller.variants.vcf", additionalFields
-                        .gatkHapOutdir, sampleName);
-        additionalFields.tmpGatkHapOutdir = format("%s/tmp", additionalFields.gatkHapOutdir);
-        additionalFields.isWgs = DnaUtils.isWgsWorkflow(configuration);
-        return additionalFields;
+        final String gatkHapOutdir = format("%s/gatkHaplotypeCaller", outDir);
+        return AdditionalFields.builder()
+                .gatkHapOutdir(gatkHapOutdir)
+                .tmpGatkHapOutdir(format("%s/tmp", gatkHapOutdir))
+                .isWgs(DnaUtils.isWgsWorkflow(configuration))
+                .variantsVcf(isRnaCaptureRnaWorkflow
+                        ? format("%s/%s.gatkHaplotypeCaller.raw.vcf", gatkHapOutdir, sampleName)
+                        : format("%s/%s.gatkHaplotypeCaller.variants.vcf", gatkHapOutdir, sampleName))
+                .build();
     }
 
     private Context buildContext(Configuration configuration, AdditionalFields additionalFields) {

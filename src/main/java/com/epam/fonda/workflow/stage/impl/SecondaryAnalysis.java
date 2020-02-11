@@ -48,6 +48,7 @@ import com.epam.fonda.tools.results.SequenzaResult;
 import com.epam.fonda.tools.results.StringtieResult;
 import com.epam.fonda.tools.results.VariantsVcfResult;
 import com.epam.fonda.tools.results.VcfScnpeffAnnonationResult;
+import com.epam.fonda.workflow.PipelineType;
 import com.epam.fonda.workflow.impl.Flag;
 import com.epam.fonda.workflow.stage.Stage;
 import lombok.AllArgsConstructor;
@@ -140,8 +141,10 @@ public class SecondaryAnalysis implements Stage {
         if (isPaired || !flag.isGatkHaplotypeCaller()) {
             return;
         }
+        boolean isRnaCaptureRnaWorkflow = PipelineType.RNA_CAPTURE_VAR_FASTQ.getName()
+                .equalsIgnoreCase(configuration.getGlobalConfig().getPipelineInfo().getWorkflow());
         final GatkHaplotypeCaller gatkHaplotypeCaller = new GatkHaplotypeCaller(sampleName,
-                bamResult.getBamOutput().getBam(), sampleOutputDir);
+                bamResult.getBamOutput().getBam(), sampleOutputDir, isRnaCaptureRnaWorkflow);
         processVcfTool(configuration, templateEngine, alignCmd, gatkHaplotypeCaller);
     }
 
