@@ -23,7 +23,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "(Successful|Error) Step: Successful Step: SnpEff annotation" $logFile;)
+	str=$(grep -E "((Error Step: (GATK haplotypecaller detection|SnpEff annotation|Remove temporary directories|Run gatkHaplotypeCaller|Strelka2 detection|Run strelka2|Lofreq detection|Run lofreq|Freebayes detection|Run freebayes))|(Successful Step: Run freebayes))" $logFile;)
 fi
 	echo Waiting for step: Successful Step: SnpEff annotation
 	sleep 60
@@ -43,7 +43,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "(Successful|Error) Step: SnpEff annotation" $logFile;)
+	str=$(grep -E "((Error Step: (GATK haplotypecaller detection|SnpEff annotation|Remove temporary directories|Run gatkHaplotypeCaller|Strelka2 detection|Run strelka2|Lofreq detection|Run lofreq|Freebayes detection|Run freebayes))|(Successful Step: Run freebayes))" $logFile;)
 fi
 	echo Waiting for step: SnpEff annotation
 	sleep 60
@@ -63,7 +63,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "(Successful|Error) Step: SnpEff annotation" $logFile;)
+	str=$(grep -E "((Error Step: (GATK haplotypecaller detection|SnpEff annotation|Remove temporary directories|Run gatkHaplotypeCaller|Strelka2 detection|Run strelka2|Lofreq detection|Run lofreq|Freebayes detection|Run freebayes))|(Successful Step: Run freebayes))" $logFile;)
 fi
 	echo Waiting for step: SnpEff annotation
 	sleep 60

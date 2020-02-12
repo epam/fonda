@@ -15,9 +15,11 @@
  */
 package com.epam.fonda;
 
+import com.epam.fonda.workflow.TaskContainer;
 import com.tngtech.java.junit.dataprovider.DataProvider;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
 import com.tngtech.java.junit.dataprovider.UseDataProvider;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -40,6 +42,11 @@ public class DnaAmpliconVarBamIntegrationTest extends AbstractIntegrationTest {
     private static final String BEGIN_STEP_REMOVE_DIRECTORIES = "Begin Step: Remove temporary directories...";
     private static final String PYTHON_VCF_SNPEFF_ANNOTATION =
             ".*?/usr/bin/python.+?vcf_snpeff_annotation.py.+?(\\n|$)";
+
+    @After
+    public void cleanup() {
+        TaskContainer.getTasks().clear();
+    }
 
     @Test
     @UseDataProvider("controlSampleNAAllTasks")
