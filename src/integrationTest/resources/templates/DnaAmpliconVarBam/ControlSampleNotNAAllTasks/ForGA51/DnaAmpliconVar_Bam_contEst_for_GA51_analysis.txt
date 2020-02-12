@@ -31,7 +31,6 @@ else
 fi
 
 echo `date` Begin Step: Remove temporary directories...
-
 rm -rf build/resources/integrationTest/output/GA51/contEst/tmp
 rm -rf build/resources/integrationTest/output/GA51/tmp
 rm -rf build/resources/integrationTest/output/GA51/mutect2/tmp

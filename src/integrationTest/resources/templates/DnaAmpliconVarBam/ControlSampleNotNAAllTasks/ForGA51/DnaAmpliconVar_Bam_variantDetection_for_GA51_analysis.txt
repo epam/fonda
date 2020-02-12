@@ -3,9 +3,9 @@
 # --- SGE options --- #
 
 #$ -wd build/resources/integrationTest/output
-#$ -N DnaAmpliconVar_Bam_variantDedection_for_GA51_analysis
-#$ -o build/resources/integrationTest/output/log_files/DnaAmpliconVar_Bam_variantDedection_for_GA51_analysis.log
-#$ -e build/resources/integrationTest/output/err_files/DnaAmpliconVar_Bam_variantDedection_for_GA51_analysis.err
+#$ -N DnaAmpliconVar_Bam_variantDetection_for_GA51_analysis
+#$ -o build/resources/integrationTest/output/log_files/DnaAmpliconVar_Bam_variantDetection_for_GA51_analysis.log
+#$ -e build/resources/integrationTest/output/err_files/DnaAmpliconVar_Bam_variantDetection_for_GA51_analysis.err
 #$ -q main.q
 #$ -R y
 #$ -pe threaded 4
@@ -17,19 +17,6 @@ cd build/resources/integrationTest/output
 
 echo `date` Begin the job execution...
 
-echo `date` Begin Step: Run contEst...
-qsub build/resources/integrationTest/output/sh_files/DnaAmpliconVar_Bam_contEst_for_GA51_analysis.sh
-if [ $? -eq 0 ]
-then
-	echo `date` Successful Step: Run contEst.
-	sleep 8
-else
-	echo `date` Error Step: Run contEst.
-
-	echo `date` The job was aborted due to ERRORS found.
-	exit 1;
-fi
-
 echo `date` Begin Step: Run vardict...
 qsub build/resources/integrationTest/output/sh_files/DnaAmpliconVar_Bam_vardict_for_GA51_analysis.sh
 if [ $? -eq 0 ]
@@ -38,6 +25,19 @@ then
 	sleep 8
 else
 	echo `date` Error Step: Run vardict.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Run contEst...
+qsub build/resources/integrationTest/output/sh_files/DnaAmpliconVar_Bam_contEst_for_GA51_analysis.sh
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Run contEst.
+	sleep 8
+else
+	echo `date` Error Step: Run contEst.
 
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
@@ -122,9 +122,8 @@ else
 fi
 
 echo `date` Begin Step: Remove temporary directories...
-
-rm -rf build/resources/integrationTest/output/GA51/contEst/tmp
 rm -rf build/resources/integrationTest/output/GA51/tmp
+rm -rf build/resources/integrationTest/output/GA51/contEst/tmp
 rm -rf build/resources/integrationTest/output/GA51/mutect2/tmp
 if [ $? -eq 0 ]
 then
@@ -137,4 +136,4 @@ else
 	exit 1;
 fi
 
-echo `date` the job execution!
+echo `date` Finish the job execution!

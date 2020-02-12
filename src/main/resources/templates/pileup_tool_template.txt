@@ -3,11 +3,12 @@ echo `date` Begin Step: bam pileup...
 [(${toolFields.samtools})] mpileup -q 10 -B -d 100000 -f [(${additionalFields.genome})] -l [(${additionalFields.bed})] [(${additionalFields.bam})] | gzip > [(${pileup})]
 if [ $? -eq 0 ]
 then
-    echo `date` Successful Step: bam pileup.
-    sleep 8
+	echo `date` Successful Step: bam pileup.
+	sleep 8
 else
-    echo `date` Error Step: bam pileup.
+	echo `date` Error Step: bam pileup.
 
-    echo `date` The job was aborted due to ERRORS found.
-    exit 1;
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
 fi
+

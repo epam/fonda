@@ -38,6 +38,8 @@ public class DnaAmpliconVarBamIntegrationTest extends AbstractIntegrationTest {
     private static final String BAM_AMPLICON_VAR_BAM_SUFFIX = "DnaAmpliconVarBam/";
     private static final String CONTROL_SAMPLE_NAALL_TASKS_SUFFIX =
             String.format("%sControlSampleNAAllTasks/", BAM_AMPLICON_VAR_BAM_SUFFIX);
+    private static final String CONTROL_SAMPLE_NOT_NAALL_TASKS_SUFFIX =
+            String.format("%sControlSampleNotNAAllTasks/", BAM_AMPLICON_VAR_BAM_SUFFIX);
     private static final String CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA51_SUFFIX =
             String.format("%sControlSampleNotNAAllTasks/ForGA51/", BAM_AMPLICON_VAR_BAM_SUFFIX);
     private static final String CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA52_SUFFIX =
@@ -45,9 +47,11 @@ public class DnaAmpliconVarBamIntegrationTest extends AbstractIntegrationTest {
     private static final String FOR_GA_5_SH_SUFFIX = "for_GA5_analysis.sh";
     private static final String FOR_GA_51_SH_SUFFIX = "for_GA51_analysis.sh";
     private static final String FOR_GA_52_SH_SUFFIX = "for_GA52_analysis.sh";
+    private static final String FOR_COHORT_ANALYSIS_SH_SUFFIX = "for_cohort_analysis.sh";
     private static final String FOR_GA_5_TEMPLATE_SUFFIX = "for_GA5_analysis.txt";
     private static final String FOR_GA_51_TEMPLATE_SUFFIX = "for_GA51_analysis.txt";
     private static final String FOR_GA_52_TEMPLATE_SUFFIX = "for_GA52_analysis.txt";
+    private static final String FOR_COHORT_ANALYSIS_TEMPLATE_SUFFIX = "for_cohort_analysis.txt";
     public static final String DNA_AMPLICON_VAR_BAM_FREEBAYES =
             "DnaAmpliconVar_Bam_freebayes_";
     public static final String DNA_AMPLICON_VAR_BAM_GATK_HAPLOTYPE_CALLER =
@@ -62,7 +66,7 @@ public class DnaAmpliconVarBamIntegrationTest extends AbstractIntegrationTest {
             "DnaAmpliconVar_Bam_strelka2_";
     public static final String DNA_AMPLICON_VAR_BAM_VARDICT =
             "DnaAmpliconVar_Bam_vardict_";
-    public static final String DNA_AMPLICON_VAR_BAM_VARIANT_DEDECTION =
+    public static final String DNA_AMPLICON_VAR_BAM_VARIANT_DETECTION =
             "DnaAmpliconVar_Bam_variantDetection_";
     public static final String DNA_AMPLICON_VAR_BAM_CONTEST =
             "DnaAmpliconVar_Bam_contEst_";
@@ -72,10 +76,16 @@ public class DnaAmpliconVarBamIntegrationTest extends AbstractIntegrationTest {
             "DnaAmpliconVar_Bam_mutect2_";
     public static final String DNA_AMPLICON_VAR_BAM_SEQUENZA =
             "DnaAmpliconVar_Bam_sequenza_";
-    public static final String DNA_AMPLICON_VAR_BAM_G_SINGLE_ALL_TASKS = "DnaAmpliconVarBam/gSingleAllTasks.txt";
-    public static final String DNA_AMPLICON_VAR_BAM_S_SINGLE = "DnaAmpliconVarBam/sSingle.txt";
-    public static final String DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA = "DnaAmpliconVarBam/gAllTasksSampleNotNA.txt";
-    public static final String DNA_AMPLICON_VAR_BAM_S_CONTROL_SAMPLE_NOT_NA = "DnaAmpliconVarBam/sControlSampleNotNA.txt";
+    private static final String DNA_AMPLICON_VAR_BAM_MERGE_MUTATION =
+            "DnaAmpliconVar_Bam_mergeMutation_";
+    public static final String DNA_AMPLICON_VAR_BAM_G_SINGLE_ALL_TASKS =
+            "DnaAmpliconVarBam/gSingleAllTasks.txt";
+    public static final String DNA_AMPLICON_VAR_BAM_S_SINGLE =
+            "DnaAmpliconVarBam/sSingle.txt";
+    public static final String DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA =
+            "DnaAmpliconVarBam/gAllTasksSampleNotNA.txt";
+    public static final String DNA_AMPLICON_VAR_BAM_S_CONTROL_SAMPLE_NOT_NA =
+            "DnaAmpliconVarBam/sControlSampleNotNA.txt";
     private TemplateEngine templateEngine = TemplateEngineUtils.init();
     private Context context = new Context();
 
@@ -90,7 +100,7 @@ public class DnaAmpliconVarBamIntegrationTest extends AbstractIntegrationTest {
         cleanOutputDirForNextTest(OUTPUT_DIR, false);
     }
 
-    @ParameterizedTest(name = "{2}-test")
+    @ParameterizedTest(name = "{3}-test")
     @MethodSource("initParameters")
     void testRnaExpressionFastq(final String gConfigPath, final String sConfigPath, final String outputShFile,
                                 final String templatePath) throws IOException, URISyntaxException {
@@ -190,14 +200,26 @@ public class DnaAmpliconVarBamIntegrationTest extends AbstractIntegrationTest {
                         DNA_AMPLICON_VAR_BAM_S_SINGLE,
                         String.format("%s%s%s",
                                 OUTPUT_SH_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_VARIANT_DEDECTION,
+                                DNA_AMPLICON_VAR_BAM_VARIANT_DETECTION,
                                 FOR_GA_5_SH_SUFFIX),
                         String.format("%s%s%s",
                                 CONTROL_SAMPLE_NAALL_TASKS_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_VARIANT_DEDECTION,
+                                DNA_AMPLICON_VAR_BAM_VARIANT_DETECTION,
                                 FOR_GA_5_TEMPLATE_SUFFIX
                         )
                 ),
+                Arguments.of(DNA_AMPLICON_VAR_BAM_G_SINGLE_ALL_TASKS,
+                        DNA_AMPLICON_VAR_BAM_S_SINGLE,
+                        String.format("%s%s%s",
+                                OUTPUT_SH_SUFFIX,
+                                DNA_AMPLICON_VAR_BAM_MERGE_MUTATION,
+                                FOR_COHORT_ANALYSIS_SH_SUFFIX),
+                        String.format("%s%s%s",
+                                CONTROL_SAMPLE_NAALL_TASKS_SUFFIX,
+                                DNA_AMPLICON_VAR_BAM_MERGE_MUTATION,
+                                FOR_COHORT_ANALYSIS_TEMPLATE_SUFFIX
+                        )
+                ),
                 Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA,
                         DNA_AMPLICON_VAR_BAM_S_CONTROL_SAMPLE_NOT_NA,
                         String.format("%s%s%s",
@@ -298,11 +320,11 @@ public class DnaAmpliconVarBamIntegrationTest extends AbstractIntegrationTest {
                         DNA_AMPLICON_VAR_BAM_S_CONTROL_SAMPLE_NOT_NA,
                         String.format("%s%s%s",
                                 OUTPUT_SH_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_VARIANT_DEDECTION,
+                                DNA_AMPLICON_VAR_BAM_VARIANT_DETECTION,
                                 FOR_GA_51_SH_SUFFIX),
                         String.format("%s%s%s",
                                 CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA51_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_VARIANT_DEDECTION,
+                                DNA_AMPLICON_VAR_BAM_VARIANT_DETECTION,
                                 FOR_GA_51_TEMPLATE_SUFFIX
                         )
                 ),
@@ -406,12 +428,24 @@ public class DnaAmpliconVarBamIntegrationTest extends AbstractIntegrationTest {
                         DNA_AMPLICON_VAR_BAM_S_CONTROL_SAMPLE_NOT_NA,
                         String.format("%s%s%s",
                                 OUTPUT_SH_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_VARIANT_DEDECTION,
+                                DNA_AMPLICON_VAR_BAM_VARIANT_DETECTION,
                                 FOR_GA_52_SH_SUFFIX),
                         String.format("%s%s%s",
                                 CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA52_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_VARIANT_DEDECTION,
+                                DNA_AMPLICON_VAR_BAM_VARIANT_DETECTION,
                                 FOR_GA_52_TEMPLATE_SUFFIX
+                        )
+                ),
+                Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA,
+                        DNA_AMPLICON_VAR_BAM_S_CONTROL_SAMPLE_NOT_NA,
+                        String.format("%s%s%s",
+                                OUTPUT_SH_SUFFIX,
+                                DNA_AMPLICON_VAR_BAM_MERGE_MUTATION,
+                                FOR_COHORT_ANALYSIS_SH_SUFFIX),
+                        String.format("%s%s%s",
+                                CONTROL_SAMPLE_NOT_NAALL_TASKS_SUFFIX,
+                                DNA_AMPLICON_VAR_BAM_MERGE_MUTATION,
+                                FOR_COHORT_ANALYSIS_TEMPLATE_SUFFIX
                         )
                 )
         );

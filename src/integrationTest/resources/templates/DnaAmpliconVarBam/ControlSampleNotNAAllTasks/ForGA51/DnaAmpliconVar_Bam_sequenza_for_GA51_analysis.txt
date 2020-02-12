@@ -47,8 +47,8 @@ else
 fi
 
 echo `date` Begin Step: Remove temporary directories...
-
 rm -rf build/resources/integrationTest/output/GA51/sequenza/GA51.seqz.gz
+
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Remove temporary directories.
