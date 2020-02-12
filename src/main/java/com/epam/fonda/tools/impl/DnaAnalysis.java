@@ -22,6 +22,7 @@ import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.PostProcessTool;
 import com.epam.fonda.utils.PipelineUtils;
 import com.epam.fonda.utils.RnaAnalysisUtils;
+import com.epam.fonda.workflow.TaskContainer;
 import com.epam.fonda.workflow.impl.Flag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -59,6 +60,8 @@ public class DnaAnalysis implements PostProcessTool {
         private String logFile;
         private String errorMessage;
         private String successMessage;
+        private String successPattern;
+        private String steps;
     }
 
     private final List<FastqFileSample> fastqSamples;
@@ -147,6 +150,10 @@ public class DnaAnalysis implements PostProcessTool {
         final String fileName = String.format("%s_%s_for_%s_analysis",
                 configuration.getGlobalConfig().getPipelineInfo().getWorkflow(), task, sampleName);
         dnaAnalysisFields.toolName = getStringTag(task);
+        dnaAnalysisFields.steps = String.join("|", TaskContainer.getTasks());
+        dnaAnalysisFields.successPattern = TaskContainer.getTasks().stream()
+                .reduce((first, second) -> second)
+                .orElse(null);
         dnaAnalysisFields.logFile = String.format("%s/%s.log",
                 configuration.getCommonOutdir().getLogOutdir(), fileName);
         dnaAnalysisFields.period = defaultOrSpecifiedPeriod(configuration);
