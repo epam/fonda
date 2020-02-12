@@ -45,9 +45,6 @@ fi
 
 echo `date` Begin Step: Remove temporary directories...
 
-rm -rf build/resources/integrationTest/output/GA5/gatkHaplotypeCaller/tmp
-rm -rf build/resources/integrationTest/output/GA5/tmp
-rm -rf build/resources/integrationTest/output/GA5/mutect1/tmp
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Remove temporary directories.
