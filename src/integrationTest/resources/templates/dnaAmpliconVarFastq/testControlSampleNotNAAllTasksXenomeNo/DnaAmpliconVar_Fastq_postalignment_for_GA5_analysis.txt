@@ -20,17 +20,17 @@ echo `date` Begin the job execution...
 echo `date` Begin check the existence of the individual sorted bam file...
 logFile=build/resources/integrationTest/output/log_files/DnaAmpliconVar_Fastq_alignment_for_GA5_1_analysis.log
 str=""
-while [[ $str = "" ]]
+while [[('[')]][ $str = "" ]]
 do
-if [[ -f $logFile  ]];
+if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Index bam.))|(Successful Step: Index bam.))" $logFile;)
+	str=$(grep -E "((Error Step: (BWA alignment|Index bam))|(Successful Step: Index bam))" $logFile;)
 fi 
 	echo Waiting for step: Index bam. 
 	sleep 60
 done
 
-if [[ $str == "*Error Step: Index bam.*" ]];
+if [[('[')]][ $str == "*Error Step: Index bam*" ]];
 then
 	echo $(date) Error bam from GA5_1:
 	echo $str
@@ -136,17 +136,17 @@ fi
 
 logFile=build/resources/integrationTest/output/log_files/DnaAmpliconVar_Fastq_postalignment_for_GA5_analysis.log
 str=""
-while [[ $str = "" ]]
+while [[('[')]][ $str = "" ]]
 do
-if [[ -f $logFile  ]];
+if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Index bam.|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration))|(Successful Step: GATK recalibration))" $logFile;)
+	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration))|(Successful Step: GATK recalibration))" $logFile;)
 fi 
 	echo Waiting for step: Index mkdup bam 
 	sleep 60
 done
 
-if [[ $str == "*Error Step: Index mkdup bam*" ]];
+if [[('[')]][ $str == "*Error Step: Index mkdup bam*" ]];
 then
 	echo $(date) Error bam from GA5:
 	echo $str
@@ -156,9 +156,9 @@ fi
 
 logFile=build/resources/integrationTest/output/log_files/DnaAmpliconVar_Fastq_postalignment_for_N_analysis.log
 str=""
-while [[ $str = "" ]]
+while [[('[')]][ $str = "" ]]
 do
-if [[ -f $logFile  ]];
+if [[('[')]][ -f $logFile  ]];
 then
 	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Index bam.|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration))|(Successful Step: GATK recalibration))" $logFile;)
 fi 
@@ -166,10 +166,10 @@ fi
 	sleep 60
 done
 
-if [[ $str == "*Error Step: Index mkdup bam*" ]];
+if [[('[')]][ $str == "*Error Step: Index mkdup bam*" ]];
 then
-	echo $(date) Error bam from GA5.:
-	echo $str
+  echo $(date) Error bam from GA5.:
+  echo $str
 else
 	echo $(date) Confirm bam from GA5.
 fi

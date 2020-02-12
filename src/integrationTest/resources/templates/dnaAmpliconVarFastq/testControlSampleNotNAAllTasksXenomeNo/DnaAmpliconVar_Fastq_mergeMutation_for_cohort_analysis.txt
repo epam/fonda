@@ -61,7 +61,7 @@ logFile=build/resources/integrationTest/output/log_files/DnaAmpliconVar_Fastq_lo
 str=""
 while [[('[')]][ $str = "" ]]
 do
-if [[ -f $logFile  ]];
+if [[('[')]][ -f $logFile  ]];
 then
 	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Index bam.|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration|Contamination estimation|Remove temporary directories|Run contEst|Vardict detection|SnpEff annotation|Run vardict|Stelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: Run exomecnv))" $logFile;)
 fi 

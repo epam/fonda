@@ -24,19 +24,20 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-  str=$(grep -E "((Error Step: (BWA alignment|Index bam|Index bam.))|(Successful Step: Index bam.))" $logFile;)
+	str=$(grep -E "((Error Step: (BWA alignment|Index bam))|(Successful Step: Index bam))" $logFile;)
 fi
-  echo Waiting for step: Index bam.
-  sleep 60
+	echo Waiting for step: Index bam
+	sleep 60
 done
 
-if [[('[')]][ $str == "*Error Step: Index bam.*" ]];
+if [[('[')]][ $str == "*Error Step: Index bam*" ]];
 then
 	echo $(date) Error bam from GA5_1:
 	echo $str
 else
-	echo $(date) Confirm bam from GA5_1
+	echo $(date) Confirm bam from GA5_1:
 fi
+
 
 echo `date` Finish check the existence of the individual sorted bam file.
 
@@ -140,7 +141,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Index bam.|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration))|(Successful Step: GATK recalibration))" $logFile;)
+	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration))|(Successful Step: GATK recalibration))" $logFile;)
 fi 
 	echo Waiting for step: Index mkdup bam 
 	sleep 60
@@ -270,5 +271,4 @@ else
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
 fi
-
 echo `date` Finish the job execution!
