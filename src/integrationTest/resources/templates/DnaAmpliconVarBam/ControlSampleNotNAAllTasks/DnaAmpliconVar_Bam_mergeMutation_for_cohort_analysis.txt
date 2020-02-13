@@ -17,19 +17,39 @@ cd build/resources/integrationTest/output
 
 echo `date` Begin the job execution...
 
-logFile=build/resources/integrationTest/output/log_files/DnaAmpliconVar_Bam_vardict_for_GA52_analysis.log
+logFile=build/resources/integrationTest/output/log_files/DnaAmpliconVar_Bam_strelka2_for_GA51_analysis.log
 str=""
 while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (Contamination estimation|Remove temporary directories|Run contEst|Vardict detection|SnpEff annotation|Run vardict|Stelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: Run exomecnv))" $logFile;)
+	str=$(grep -E "((Error Step: (Contamination estimation|Remove temporary directories|Run contEst|Vardict detection|SnpEff annotation|Run vardict|Stelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv|Successful Step: SnpEff annotation))|(Successful Step: Successful Step: SnpEff annotation))" $logFile;)
 fi
-	echo Waiting for step: SnpEff annotation
+	echo Waiting for step: Successful Step: SnpEff annotation
 	sleep 60
 done
 
-if [[('[')]][ $str == "*Error Step: SnpEff annotation*" ]];
+if [[('[')]][ $str == "*Error Step: Successful Step: SnpEff annotation*" ]];
+then
+	echo $(date) Error DNA mutation results from GA51:
+	echo $str
+else
+	echo $(date) Confirm DNA mutation results from GA51
+fi
+
+logFile=build/resources/integrationTest/output/log_files/DnaAmpliconVar_Bam_strelka2_for_GA52_analysis.log
+str=""
+while [[('[')]][ $str = "" ]]
+do
+if [[('[')]][ -f $logFile  ]];
+then
+	str=$(grep -E "((Error Step: (Contamination estimation|Remove temporary directories|Run contEst|Vardict detection|SnpEff annotation|Run vardict|Stelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv|Successful Step: SnpEff annotation))|(Successful Step: Successful Step: SnpEff annotation))" $logFile;)
+fi
+	echo Waiting for step: Successful Step: SnpEff annotation
+	sleep 60
+done
+
+if [[('[')]][ $str == "*Error Step: Successful Step: SnpEff annotation*" ]];
 then
 	echo $(date) Error DNA mutation results from GA52:
 	echo $str
@@ -57,7 +77,7 @@ else
 	echo $(date) Confirm DNA mutation results from GA51
 fi
 
-logFile=build/resources/integrationTest/output/log_files/DnaAmpliconVar_Bam_mutect2_for_GA52_analysis.log
+logFile=build/resources/integrationTest/output/log_files/DnaAmpliconVar_Bam_vardict_for_GA52_analysis.log
 str=""
 while [[('[')]][ $str = "" ]]
 do
@@ -97,13 +117,53 @@ else
 	echo $(date) Confirm DNA mutation results from GA51
 fi
 
-logFile=build/resources/integrationTest/output/log_files/DnaAmpliconVar_Bam_lofreq_for_GA52_analysis.log
+logFile=build/resources/integrationTest/output/log_files/DnaAmpliconVar_Bam_mutect2_for_GA52_analysis.log
 str=""
 while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
 	str=$(grep -E "((Error Step: (Contamination estimation|Remove temporary directories|Run contEst|Vardict detection|SnpEff annotation|Run vardict|Stelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: Run exomecnv))" $logFile;)
+fi
+	echo Waiting for step: SnpEff annotation
+	sleep 60
+done
+
+if [[('[')]][ $str == "*Error Step: SnpEff annotation*" ]];
+then
+	echo $(date) Error DNA mutation results from GA52:
+	echo $str
+else
+	echo $(date) Confirm DNA mutation results from GA52
+fi
+
+logFile=build/resources/integrationTest/output/log_files/DnaAmpliconVar_Bam_scalpel_for_GA51_analysis.log
+str=""
+while [[('[')]][ $str = "" ]]
+do
+if [[('[')]][ -f $logFile  ]];
+then
+	str=$(grep -E "((Error Step: (Contamination estimation|Remove temporary directories|Run contEst|Vardict detection|SnpEff annotation|Run vardict|Stelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv|Successful Step: SnpEff annotation))|(Successful Step: Successful Step: SnpEff annotation))" $logFile;)
+fi
+	echo Waiting for step: SnpEff annotation
+	sleep 60
+done
+
+if [[('[')]][ $str == "*Error Step: SnpEff annotation*" ]];
+then
+	echo $(date) Error DNA mutation results from GA51:
+	echo $str
+else
+	echo $(date) Confirm DNA mutation results from GA51
+fi
+
+logFile=build/resources/integrationTest/output/log_files/DnaAmpliconVar_Bam_scalpel_for_GA52_analysis.log
+str=""
+while [[('[')]][ $str = "" ]]
+do
+if [[('[')]][ -f $logFile  ]];
+then
+	str=$(grep -E "((Error Step: (Contamination estimation|Remove temporary directories|Run contEst|Vardict detection|SnpEff annotation|Run vardict|Stelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv|Successful Step: SnpEff annotation))|(Successful Step: Successful Step: SnpEff annotation))" $logFile;)
 fi
 	echo Waiting for step: SnpEff annotation
 	sleep 60
@@ -137,53 +197,13 @@ else
 	echo $(date) Confirm DNA mutation results from GA51
 fi
 
-logFile=build/resources/integrationTest/output/log_files/DnaAmpliconVar_Bam_strelka2_for_GA52_analysis.log
+logFile=build/resources/integrationTest/output/log_files/DnaAmpliconVar_Bam_lofreq_for_GA52_analysis.log
 str=""
 while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (Contamination estimation|Remove temporary directories|Run contEst|Vardict detection|SnpEff annotation|Run vardict|Stelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv|Successful Step: SnpEff annotation))|(Successful Step: Successful Step: SnpEff annotation))" $logFile;)
-fi
-	echo Waiting for step: Successful Step: SnpEff annotation
-	sleep 60
-done
-
-if [[('[')]][ $str == "*Error Step: Successful Step: SnpEff annotation*" ]];
-then
-	echo $(date) Error DNA mutation results from GA52:
-	echo $str
-else
-	echo $(date) Confirm DNA mutation results from GA52
-fi
-
-logFile=build/resources/integrationTest/output/log_files/DnaAmpliconVar_Bam_strelka2_for_GA51_analysis.log
-str=""
-while [[('[')]][ $str = "" ]]
-do
-if [[('[')]][ -f $logFile  ]];
-then
-	str=$(grep -E "((Error Step: (Contamination estimation|Remove temporary directories|Run contEst|Vardict detection|SnpEff annotation|Run vardict|Stelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv|Successful Step: SnpEff annotation))|(Successful Step: Successful Step: SnpEff annotation))" $logFile;)
-fi
-	echo Waiting for step: Successful Step: SnpEff annotation
-	sleep 60
-done
-
-if [[('[')]][ $str == "*Error Step: Successful Step: SnpEff annotation*" ]];
-then
-	echo $(date) Error DNA mutation results from GA51:
-	echo $str
-else
-	echo $(date) Confirm DNA mutation results from GA51
-fi
-
-logFile=build/resources/integrationTest/output/log_files/DnaAmpliconVar_Bam_scalpel_for_GA52_analysis.log
-str=""
-while [[('[')]][ $str = "" ]]
-do
-if [[('[')]][ -f $logFile  ]];
-then
-	str=$(grep -E "((Error Step: (Contamination estimation|Remove temporary directories|Run contEst|Vardict detection|SnpEff annotation|Run vardict|Stelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv|Successful Step: SnpEff annotation))|(Successful Step: Successful Step: SnpEff annotation))" $logFile;)
+	str=$(grep -E "((Error Step: (Contamination estimation|Remove temporary directories|Run contEst|Vardict detection|SnpEff annotation|Run vardict|Stelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: Run exomecnv))" $logFile;)
 fi
 	echo Waiting for step: SnpEff annotation
 	sleep 60
@@ -195,26 +215,6 @@ then
 	echo $str
 else
 	echo $(date) Confirm DNA mutation results from GA52
-fi
-
-logFile=build/resources/integrationTest/output/log_files/DnaAmpliconVar_Bam_scalpel_for_GA51_analysis.log
-str=""
-while [[('[')]][ $str = "" ]]
-do
-if [[('[')]][ -f $logFile  ]];
-then
-	str=$(grep -E "((Error Step: (Contamination estimation|Remove temporary directories|Run contEst|Vardict detection|SnpEff annotation|Run vardict|Stelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv|Successful Step: SnpEff annotation))|(Successful Step: Successful Step: SnpEff annotation))" $logFile;)
-fi
-	echo Waiting for step: SnpEff annotation
-	sleep 60
-done
-
-if [[('[')]][ $str == "*Error Step: SnpEff annotation*" ]];
-then
-	echo $(date) Error DNA mutation results from GA51:
-	echo $str
-else
-	echo $(date) Confirm DNA mutation results from GA51
 fi
 
 echo `date` Begin Step: Merge mutation annotation...
