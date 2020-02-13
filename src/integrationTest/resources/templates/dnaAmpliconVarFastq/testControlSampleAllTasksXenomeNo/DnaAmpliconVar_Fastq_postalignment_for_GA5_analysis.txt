@@ -142,8 +142,8 @@ do
 if [[('[')]][ -f $logFile  ]];
 then
 	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration))|(Successful Step: GATK recalibration))" $logFile;)
-fi 
-	echo Waiting for step: Index mkdup bam 
+fi
+	echo Waiting for step: Index mkdup bam
 	sleep 60
 done
 
@@ -152,7 +152,7 @@ then
 	echo $(date) Error bam from GA5:
 	echo $str
 else
-	echo $(date) Confirm bam from GA5
+	echo $(date) Confirm bam from GA5:
 fi
 
 echo `date` Begin Step: Run vardict...
@@ -247,20 +247,19 @@ else
 fi
 
 echo `date` Begin Step: Remove temporary directories...
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.realign.recal.table
-rm -rf build/resources/integrationTest/output/GA5/gatkHaplotypeCaller/tmp
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.mkdup.bam.bai
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.realign.bam.bai
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5_1.bwa.sorted.bam.bai
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.mkdup.bam
-rm -rf build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.mkdup.metrics
 rm -rf build/resources/integrationTest/output/GA5/bam/GA5_1.bwa.sorted.bam
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.realign_interval.list
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5_1.bwa.sorted.bam.bai
 rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam
 rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam.bai
-rm -rf build/resources/integrationTest/output/GA5/tmp
-rm -rf build/resources/integrationTest/output/GA5/mutect1/tmp
+rm -rf build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.mkdup.metrics
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.mkdup.bam
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.mkdup.bam.bai
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.realign_interval.list
 rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.realign.bam
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.realign.bam.bai
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.realign.recal.table
+rm -rf build/resources/integrationTest/output/GA5/tmp
+
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Remove temporary directories.

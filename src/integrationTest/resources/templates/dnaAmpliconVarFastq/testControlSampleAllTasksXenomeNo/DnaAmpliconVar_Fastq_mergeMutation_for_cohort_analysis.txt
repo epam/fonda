@@ -23,9 +23,9 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Index bam.|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration|Vardict detection|SnpEff annotation|Remove temporary directories|Run vardict|Mutect1 detection|Run mutect1|Stelka2 detection|Run strelka2|GATK haplotypecaller detection|Run gatkHaplotypeCaller|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|Freebayes detection|Run freebayes))|(Successful Step: Run freebayes))" $logFile;)
-fi 
-	echo Waiting for step: SnpEff annotation 
+	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration|Vardict detection|SnpEff annotation|Remove temporary directories|Run vardict|Mutect1 detection|Run mutect1|Stelka2 detection|Run strelka2|GATK haplotypecaller detection|Run gatkHaplotypeCaller|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|Freebayes detection|Run freebayes))|(Successful Step: Run freebayes))" $logFile;)
+fi
+	echo Waiting for step: SnpEff annotation
 	sleep 60
 done
 
@@ -43,9 +43,9 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Index bam.|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration|Vardict detection|SnpEff annotation|Remove temporary directories|Run vardict|Mutect1 detection|Run mutect1|Stelka2 detection|Run strelka2|GATK haplotypecaller detection|Run gatkHaplotypeCaller|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|Freebayes detection|Run freebayes))|(Successful Step: Run freebayes))" $logFile;)
-fi 
-	echo Waiting for step: SnpEff annotation 
+	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration|Vardict detection|SnpEff annotation|Remove temporary directories|Run vardict|Mutect1 detection|Run mutect1|Stelka2 detection|Run strelka2|GATK haplotypecaller detection|Run gatkHaplotypeCaller|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|Freebayes detection|Run freebayes))|(Successful Step: Run freebayes))" $logFile;)
+fi
+	echo Waiting for step: SnpEff annotation
 	sleep 60
 done
 
@@ -63,9 +63,9 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Index bam.|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration|Vardict detection|SnpEff annotation|Remove temporary directories|Run vardict|Mutect1 detection|Run mutect1|Stelka2 detection|Run strelka2|GATK haplotypecaller detection|Run gatkHaplotypeCaller|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|Freebayes detection|Run freebayes))|(Successful Step: Run freebayes))" $logFile;)
-fi 
-	echo Waiting for step: SnpEff annotation 
+	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration|Vardict detection|SnpEff annotation|Remove temporary directories|Run vardict|Mutect1 detection|Run mutect1|Stelka2 detection|Run strelka2|GATK haplotypecaller detection|Run gatkHaplotypeCaller|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|Freebayes detection|Run freebayes))|(Successful Step: Run freebayes))" $logFile;)
+fi
+	echo Waiting for step: SnpEff annotation
 	sleep 60
 done
 
@@ -83,9 +83,9 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Index bam.|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration|Vardict detection|SnpEff annotation|Remove temporary directories|Run vardict|Mutect1 detection|Run mutect1|Stelka2 detection|Run strelka2|GATK haplotypecaller detection|Run gatkHaplotypeCaller|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|Freebayes detection|Run freebayes|Successful Step: SnpEff annotation))|(Successful Step: Successful Step: SnpEff annotation))" $logFile;)
-fi 
-	echo Waiting for step: Successful Step: SnpEff annotation 
+	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration|Vardict detection|SnpEff annotation|Remove temporary directories|Run vardict|Mutect1 detection|Run mutect1|Stelka2 detection|Run strelka2|GATK haplotypecaller detection|Run gatkHaplotypeCaller|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|Freebayes detection|Run freebayes|Successful Step: SnpEff annotation))|(Successful Step: Successful Step: SnpEff annotation))" $logFile;)
+fi
+	echo Waiting for step: SnpEff annotation
 	sleep 60
 done
 
@@ -103,8 +103,8 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Index bam.|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration|Vardict detection|SnpEff annotation|Remove temporary directories|Run vardict|Mutect1 detection|Run mutect1|Stelka2 detection|Run strelka2|GATK haplotypecaller detection|Run gatkHaplotypeCaller|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|Freebayes detection|Run freebayes|Successful Step: SnpEff annotation))|(Successful Step: Successful Step: SnpEff annotation))" $logFile;)
-fi 
+	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration|Vardict detection|SnpEff annotation|Remove temporary directories|Run vardict|Mutect1 detection|Run mutect1|Stelka2 detection|Run strelka2|GATK haplotypecaller detection|Run gatkHaplotypeCaller|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|Freebayes detection|Run freebayes|Successful Step: SnpEff annotation))|(Successful Step: Successful Step: SnpEff annotation))" $logFile;)
+fi
 	echo Waiting for step: SnpEff annotation 
 	sleep 60
 done
@@ -123,9 +123,9 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Index bam.|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration|Vardict detection|SnpEff annotation|Remove temporary directories|Run vardict|Mutect1 detection|Run mutect1|Stelka2 detection|Run strelka2|GATK haplotypecaller detection|Run gatkHaplotypeCaller|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|Freebayes detection|Run freebayes|Successful Step: SnpEff annotation))|(Successful Step: Successful Step: SnpEff annotation))" $logFile;)
-fi 
-	echo Waiting for step: SnpEff annotation 
+	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration|Vardict detection|SnpEff annotation|Remove temporary directories|Run vardict|Mutect1 detection|Run mutect1|Stelka2 detection|Run strelka2|GATK haplotypecaller detection|Run gatkHaplotypeCaller|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|Freebayes detection|Run freebayes|Successful Step: SnpEff annotation))|(Successful Step: Successful Step: SnpEff annotation))" $logFile;)
+fi
+	echo Waiting for step: SnpEff annotation
 	sleep 60
 done
 
@@ -138,7 +138,7 @@ else
 fi
 
 echo `date` Begin Step: Merge mutation annotation...
-/usr/bin/Rscript [(${jarPath})]/src/R/dna_rna_mutation_data_analysis.R -i example/sample_manifest/fastqSingle.tsv -d build/resources/integrationTest/output -t bwa+abra_realign+gatk_realign+picard+vardict+mutect1+strelka2+gatkHaplotypeCaller+scalpel+lofreq+freebayes
+/usr/bin/Rscript [(${jarPath})]/src/R/dna_rna_mutation_data_analysis.R -i build/resources/integrationTest/fastqSingle.tsv -d build/resources/integrationTest/output -t bwa+abra_realign+gatk_realign+picard+vardict+mutect1+strelka2+gatkHaplotypeCaller+scalpel+lofreq+freebayes
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Merge mutation annotation.

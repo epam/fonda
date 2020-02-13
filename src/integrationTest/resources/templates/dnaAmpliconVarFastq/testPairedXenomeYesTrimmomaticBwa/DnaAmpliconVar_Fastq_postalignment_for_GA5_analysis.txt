@@ -20,23 +20,24 @@ echo `date` Begin the job execution...
 echo `date` Begin check the existence of the individual sorted bam file...
 logFile=build/resources/integrationTest/output/log_files/DnaAmpliconVar_Fastq_alignment_for_GA5_1_analysis.log
 str=""
-while [[ $str = "" ]]
+while [[('[')]][ $str = "" ]]
 do
-if [[ -f $logFile  ]];
+if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (Xenome classification|Trimmomatic trimming|BWA alignment|Index bam|Index bam.))|(Successful Step: Index bam.))" $logFile;)
-fi 
-	echo Waiting for step: Index bam. 
+	str=$(grep -E "((Error Step: (Xenome classification|Trimmomatic trimming|BWA alignment|Index bam))|(Successful Step: Index bam))" $logFile;)
+fi
+	echo Waiting for step: Index bam
 	sleep 60
 done
 
-if [[ $str == "*Error Step: Index bam.*" ]];
+if [[('[')]][ $str == "*Error Step: Index bam*" ]];
 then
 	echo $(date) Error bam from GA5_1:
 	echo $str
 else
-	echo $(date) Confirm bam from GA5_1
+	echo $(date) Confirm bam from GA5_1:
 fi
+
 
 echo `date` Finish check the existence of the individual sorted bam file.
 
@@ -68,30 +69,31 @@ fi
 
 logFile=build/resources/integrationTest/output/log_files/DnaAmpliconVar_Fastq_postalignment_for_GA5_analysis.log
 str=""
-while [[ $str = "" ]]
+while [[('[')]][ $str = "" ]]
 do
-if [[ -f $logFile  ]];
+if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (Xenome classification|Trimmomatic trimming|BWA alignment|Index bam|Index bam.|Merge DNA bams|Index mkdup bam))|(Successful Step: Index mkdup bam))" $logFile;)
-fi 
-	echo Waiting for step: Index mkdup bam 
+	str=$(grep -E "((Error Step: (Xenome classification|Trimmomatic trimming|BWA alignment|Index bam|Merge DNA bams|Index mkdup bam))|(Successful Step: Index mkdup bam))" $logFile;)
+fi
+	echo Waiting for step: Index mkdup bam
 	sleep 60
 done
 
-if [[ $str == "*Error Step: Index mkdup bam*" ]];
+if [[('[')]][ $str == "*Error Step: Index mkdup bam*" ]];
 then
 	echo $(date) Error bam from GA5:
 	echo $str
 else
-	echo $(date) Confirm bam from GA5
+	echo $(date) Confirm bam from GA5:
 fi
 
 echo `date` Begin Step: Remove temporary directories...
 rm -rf build/resources/integrationTest/output/GA5/bam/GA5_1.bwa.sorted.bam
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5_1.bwa.sorted.bam.bai
 rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam
 rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam.bai
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5_1.bwa.sorted.bam.bai
 rm -rf build/resources/integrationTest/output/GA5/tmp
+
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Remove temporary directories.
@@ -102,5 +104,4 @@ else
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
 fi
-
 echo `date` Finish the job execution!

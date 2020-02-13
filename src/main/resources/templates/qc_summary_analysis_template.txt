@@ -2,12 +2,12 @@ echo `date` Begin Step: QC summary analysis...
 [(${QcSummaryFields.rScript})] [(${QcSummaryFields.jarPath})]/src/R/QC_summary_analysis.R -i [(${QcSummaryFields.fastqList})] -d [(${QcSummaryFields.outDir})] -w [(${QcSummaryFields.workflow})]
 if [ $? -eq 0 ]
 then
-    echo `date` Successful Step: [(${QcSummaryFields.task})].
-    sleep 8
+	echo `date` Successful Step: [(${QcSummaryFields.task})].
+	sleep 8
 else
-    echo `date` Error Step: [(${QcSummaryFields.task})].
+	echo `date` Error Step: [(${QcSummaryFields.task})].
 
-    echo `date` The job was aborted due to ERRORS found.
-    exit 1;
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
 fi
 

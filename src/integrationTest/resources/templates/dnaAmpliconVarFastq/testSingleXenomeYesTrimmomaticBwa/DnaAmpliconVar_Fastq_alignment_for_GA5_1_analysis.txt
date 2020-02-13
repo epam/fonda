@@ -18,7 +18,7 @@ cd build/resources/integrationTest/output
 echo `date` Begin the job execution...
 
 echo `date` Begin Step: Xenome classification...
-/usr/bin/xenome classify -T 8 -P /ngs/data/xenomeIdx/xenome.idx --pairs --graft-name human --host-name mouse --output-filename-prefix build/resources/integrationTest/output/GA5/tmp/GA5_1 --tmp-dir build/resources/integrationTest/output/GA5/tmp -i /ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_001.fastq.gz -i null
+/usr/bin/xenome classify -T 8 -P /ngs/data/xenomeIdx/xenome.idx --pairs --graft-name human --host-name mouse --output-filename-prefix build/resources/integrationTest/output/GA5/tmp/GA5_1 --tmp-dir build/resources/integrationTest/output/GA5/tmp -i /ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_001.fastq.gz -i 
 awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' build/resources/integrationTest/output/GA5/tmp/GA5_1_human_1.fastq > build/resources/integrationTest/output/GA5/tmp/GA5_1_convert_human_1.fastq
 awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' build/resources/integrationTest/output/GA5/tmp/GA5_1_human_2.fastq > build/resources/integrationTest/output/GA5/tmp/GA5_1_convert_human_2.fastq
 awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' build/resources/integrationTest/output/GA5/tmp/GA5_1_both_1.fastq > build/resources/integrationTest/output/GA5/tmp/GA5_1_convert_both_1.fastq
@@ -78,5 +78,4 @@ else
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
 fi
-
 echo `date` Finish the job execution!

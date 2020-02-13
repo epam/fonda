@@ -25,8 +25,8 @@ do
 if [[('[')]][ -f $logFile  ]];
 then
 	str=$(grep -E "((Error Step: (BWA alignment|Index bam))|(Successful Step: Index bam))" $logFile;)
-fi 
-	echo Waiting for step: Index bam. 
+fi
+	echo Waiting for step: Index bam
 	sleep 60
 done
 
@@ -35,8 +35,9 @@ then
 	echo $(date) Error bam from GA5_1:
 	echo $str
 else
-	echo $(date) Confirm bam from GA5_1
+	echo $(date) Confirm bam from GA5_1:
 fi
+
 
 echo `date` Finish check the existence of the individual sorted bam file.
 
@@ -141,8 +142,8 @@ do
 if [[('[')]][ -f $logFile  ]];
 then
 	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration))|(Successful Step: GATK recalibration))" $logFile;)
-fi 
-	echo Waiting for step: Index mkdup bam 
+fi
+	echo Waiting for step: Index mkdup bam
 	sleep 60
 done
 
@@ -151,7 +152,7 @@ then
 	echo $(date) Error bam from GA5:
 	echo $str
 else
-	echo $(date) Confirm bam from GA5
+	echo $(date) Confirm bam from GA5:
 fi
 
 logFile=build/resources/integrationTest/output/log_files/DnaAmpliconVar_Fastq_postalignment_for_N_analysis.log
@@ -160,9 +161,9 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Index bam.|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration))|(Successful Step: GATK recalibration))" $logFile;)
-fi 
-	echo Waiting for step: Index mkdup bam 
+	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration))|(Successful Step: GATK recalibration))" $logFile;)
+fi
+	echo Waiting for step: Index mkdup bam
 	sleep 60
 done
 
@@ -279,20 +280,19 @@ else
 fi
 
 echo `date` Begin Step: Remove temporary directories...
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.realign.recal.table
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.mkdup.bam.bai
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.realign.bam.bai
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5_1.bwa.sorted.bam.bai
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.mkdup.bam
-rm -rf build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.mkdup.metrics
 rm -rf build/resources/integrationTest/output/GA5/bam/GA5_1.bwa.sorted.bam
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.realign_interval.list
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5_1.bwa.sorted.bam.bai
 rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam
 rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam.bai
-rm -rf build/resources/integrationTest/output/GA5/contEst/tmp
-rm -rf build/resources/integrationTest/output/GA5/tmp
-rm -rf build/resources/integrationTest/output/GA5/mutect2/tmp
+rm -rf build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.mkdup.metrics
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.mkdup.bam
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.mkdup.bam.bai
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.realign_interval.list
 rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.realign.bam
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.realign.bam.bai
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.realign.recal.table
+rm -rf build/resources/integrationTest/output/GA5/tmp
+
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Remove temporary directories.
@@ -303,5 +303,4 @@ else
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
 fi
-
 echo `date` Finish the job execution!

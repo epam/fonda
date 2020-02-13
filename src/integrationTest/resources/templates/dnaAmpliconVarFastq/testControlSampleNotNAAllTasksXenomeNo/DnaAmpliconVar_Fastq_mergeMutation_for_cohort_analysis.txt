@@ -23,8 +23,8 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Index bam.|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration|Contamination estimation|Remove temporary directories|Run contEst|Vardict detection|SnpEff annotation|Run vardict|Stelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: Run exomecnv))" $logFile;)
-fi 
+	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration|Contamination estimation|Remove temporary directories|Run contEst|Vardict detection|SnpEff annotation|Run vardict|Stelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: Run exomecnv))" $logFile;)
+fi
 	echo Waiting for step: SnpEff annotation 
 	sleep 60
 done
@@ -43,8 +43,8 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Index bam.|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration|Contamination estimation|Remove temporary directories|Run contEst|Vardict detection|SnpEff annotation|Run vardict|Stelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: Run exomecnv))" $logFile;)
-fi 
+	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration|Contamination estimation|Remove temporary directories|Run contEst|Vardict detection|SnpEff annotation|Run vardict|Stelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: Run exomecnv))" $logFile;)
+fi
 	echo Waiting for step: SnpEff annotation 
 	sleep 60
 done
@@ -63,8 +63,8 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Index bam.|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration|Contamination estimation|Remove temporary directories|Run contEst|Vardict detection|SnpEff annotation|Run vardict|Stelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: Run exomecnv))" $logFile;)
-fi 
+	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration|Contamination estimation|Remove temporary directories|Run contEst|Vardict detection|SnpEff annotation|Run vardict|Stelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: Run exomecnv))" $logFile;)
+fi
 	echo Waiting for step: SnpEff annotation 
 	sleep 60
 done
@@ -83,8 +83,8 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Index bam.|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration|Contamination estimation|Remove temporary directories|Run contEst|Vardict detection|SnpEff annotation|Run vardict|Stelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv|Successful Step: SnpEff annotation))|(Successful Step: Successful Step: SnpEff annotation))" $logFile;)
-fi 
+	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration|Contamination estimation|Remove temporary directories|Run contEst|Vardict detection|SnpEff annotation|Run vardict|Stelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv|Successful Step: SnpEff annotation))|(Successful Step: Successful Step: SnpEff annotation))" $logFile;)
+fi
 	echo Waiting for step: Successful Step: SnpEff annotation 
 	sleep 60
 done
@@ -103,8 +103,8 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Index bam.|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration|Contamination estimation|Remove temporary directories|Run contEst|Vardict detection|SnpEff annotation|Run vardict|Stelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv|Successful Step: SnpEff annotation))|(Successful Step: Successful Step: SnpEff annotation))" $logFile;)
-fi 
+	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration|Contamination estimation|Remove temporary directories|Run contEst|Vardict detection|SnpEff annotation|Run vardict|Stelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv|Successful Step: SnpEff annotation))|(Successful Step: Successful Step: SnpEff annotation))" $logFile;)
+fi
 	echo Waiting for step: SnpEff annotation 
 	sleep 60
 done
@@ -118,7 +118,7 @@ else
 fi
 
 echo `date` Begin Step: Merge mutation annotation...
-/usr/bin/Rscript [(${jarPath})]/src/R/dna_rna_mutation_data_analysis.R -i example/sample_manifest/fastqPairedControlSampleNotNA.tsv -d build/resources/integrationTest/output -t bwa+abra_realign+gatk_realign+picard+vardict+mutect2+strelka2+contEst+scalpel+lofreq+sequenza+exomecnv
+/usr/bin/Rscript [(${jarPath})]/src/R/dna_rna_mutation_data_analysis.R -i build/resources/integrationTest/fastqPairedControlSampleNotNA.tsv -d build/resources/integrationTest/output -t bwa+abra_realign+gatk_realign+picard+vardict+mutect2+strelka2+contEst+scalpel+lofreq+sequenza+exomecnv
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Merge mutation annotation.
