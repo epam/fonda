@@ -90,6 +90,7 @@ public class Mixcr implements Tool<MixcrResult> {
         mixcrOutput.createDirectory();
         Context context = new Context();
         context.setVariable("mixcrFields", mixcrFields);
+        context.setVariable("isLibraryTypeRna", mixcrFields.getLibraryType().contains("RNA"));
         final String cmd = templateEngine.process(MIXCR_TOOL_TEMPLATE_NAME, context);
         TaskContainer.addTasks("MIXCR detection");
         return MixcrResult.builder()
