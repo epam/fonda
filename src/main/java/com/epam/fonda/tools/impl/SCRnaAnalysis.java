@@ -63,6 +63,8 @@ public class SCRnaAnalysis implements PostProcessTool {
         private String sampleList;
         private String genomeBuild;
         private int period;
+        private String successPattern;
+        private String steps;
     }
 
     @Override
@@ -116,6 +118,10 @@ public class SCRnaAnalysis implements PostProcessTool {
         scRnaAnalysisFields.logFile = String.format("%s/%s.log", logDir, fileName);
         scRnaAnalysisFields.period = PERIOD;
         scRnaAnalysisFields.toolName = TOOL_STEP;
+        scRnaAnalysisFields.steps = String.join("|", TaskContainer.getTasks());
+        scRnaAnalysisFields.successPattern = TaskContainer.getTasks().stream()
+                .reduce((first, second) -> second)
+                .orElse(null);
         Context context = new Context();
         context.setVariable("fields", scRnaAnalysisFields);
         return templateEngine.process(SCRNA_ANALYSIS_LOG_FILE_TEMPLATE, context);

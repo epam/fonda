@@ -4,7 +4,7 @@ while [[ $str = "" ]]
 do
 if [[ -f $logFile  ]];
 then
-	str=$(grep -E "(Successful|Error) Step: RSEM" $logFile;)
+	str=$(grep -E "((Error Step: ())|(Successful Step: ))" $logFile;)
 fi
 	echo Waiting for step: RSEM
 	sleep 60
