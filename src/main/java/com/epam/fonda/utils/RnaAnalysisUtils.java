@@ -51,7 +51,6 @@ public final class RnaAnalysisUtils {
         private String sampleList;
         private String task;
         private int period;
-        private String successPattern;
         private String steps;
     }
 
@@ -123,9 +122,6 @@ public final class RnaAnalysisUtils {
         rnaAnalysisFields.period = PERIOD;
         rnaAnalysisFields.toolName = toolName;
         rnaAnalysisFields.steps = String.join("|", TaskContainer.getTasks());
-        rnaAnalysisFields.successPattern = TaskContainer.getTasks().stream()
-                .reduce((first, second) -> second)
-                .orElse(null);
         Context context = new Context();
         context.setVariable("fields", rnaAnalysisFields);
         return templateEngine.process(RNA_ANALYSIS_LOG_FILE_TEMPLATE, context);
