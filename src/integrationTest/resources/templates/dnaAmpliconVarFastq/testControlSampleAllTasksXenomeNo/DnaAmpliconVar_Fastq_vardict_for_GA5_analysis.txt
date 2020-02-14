@@ -29,7 +29,6 @@ else
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
 fi
-
 echo `date` Begin Step: SnpEff annotation...
 /usr/bin/python [(${jarPath})]/src/python/vcf_snpeff_annotation.py -s GA5 -i build/resources/integrationTest/output/GA5/vardict/GA5.vardict.variants.vcf -o build/resources/integrationTest/output/GA5/vardict/GA5.vardict.variants.pass.annotation.tsv -t vardict --canonical /ngs/data/reference_genome/GRCh37/Annotation/prefer_ensembl_transcript.txt --transvar /usr/bin/transvar -r hg19 --snpsift /usr/bin/snpsift --snpsift_db /ngs/data/tools/SnpEff/snpEff_v4.3p/snpEff/db --dbnsfp --dbsnp --coding_only --pass_only
 if [ $? -eq 0 ]
@@ -44,20 +43,7 @@ else
 fi
 
 echo `date` Begin Step: Remove temporary directories...
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.realign.recal.table
-rm -rf build/resources/integrationTest/output/GA5/gatkHaplotypeCaller/tmp
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.mkdup.bam.bai
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.realign.bam.bai
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5_1.bwa.sorted.bam.bai
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.mkdup.bam
-rm -rf build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.mkdup.metrics
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5_1.bwa.sorted.bam
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.realign_interval.list
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam.bai
-rm -rf build/resources/integrationTest/output/GA5/tmp
-rm -rf build/resources/integrationTest/output/GA5/mutect1/tmp
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.realign.bam
+
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Remove temporary directories.
@@ -68,5 +54,4 @@ else
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
 fi
-
 echo `date` Finish the job execution!

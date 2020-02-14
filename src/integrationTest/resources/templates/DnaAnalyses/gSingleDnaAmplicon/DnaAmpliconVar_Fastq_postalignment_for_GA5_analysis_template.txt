@@ -24,18 +24,18 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
- str=$(grep -E "((Error Step: (BWA alignment|Index bam))|(Successful Step: Index bam))" $logFile;)
+	str=$(grep -E "((Error Step: (BWA alignment|Index bam))|(Successful Step: Index bam))" $logFile;)
 fi
- echo Waiting for step: Index bam
- sleep 60
+	echo Waiting for step: Index bam
+	sleep 60
 done
 
 if [[('[')]][ $str == "*Error Step: Index bam*" ]];
 then
- echo $(date) Error bam from GA5_1:
- echo $str
+	echo $(date) Error bam from GA5_1:
+	echo $str
 else
-echo $(date) Confirm bam from GA5_1:
+	echo $(date) Confirm bam from GA5_1:
 fi
 
 
@@ -73,18 +73,18 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
- str=$(grep -E "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Index mkdup bam))|(Successful Step: Index mkdup bam))" $logFile;)
+	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Index mkdup bam))|(Successful Step: Index mkdup bam))" $logFile;)
 fi
- echo Waiting for step: Index mkdup bam
- sleep 60
+	echo Waiting for step: Index mkdup bam
+	sleep 60
 done
 
 if [[('[')]][ $str == "*Error Step: Index mkdup bam*" ]];
 then
- echo $(date) Error bam from GA5:
- echo $str
+	echo $(date) Error bam from GA5:
+	echo $str
 else
-echo $(date) Confirm bam from GA5:
+	echo $(date) Confirm bam from GA5:
 fi
 
 echo `date` Begin Step: Run vardict...
