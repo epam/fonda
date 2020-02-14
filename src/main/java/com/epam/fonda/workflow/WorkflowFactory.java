@@ -17,7 +17,16 @@
 package com.epam.fonda.workflow;
 
 import com.epam.fonda.entity.configuration.Configuration;
-import com.epam.fonda.workflow.impl.*;
+import com.epam.fonda.workflow.impl.Bam2FastqWorkflow;
+import com.epam.fonda.workflow.impl.DnaVarBamWorkflow;
+import com.epam.fonda.workflow.impl.DnaVarFastqWorkflow;
+import com.epam.fonda.workflow.impl.Flag;
+import com.epam.fonda.workflow.impl.RnaExpressionBamWorkflow;
+import com.epam.fonda.workflow.impl.RnaExpressionFastqWorkflow;
+import com.epam.fonda.workflow.impl.RnaFusionFastqWorkflow;
+import com.epam.fonda.workflow.impl.SCImmuneProfileCellRangerFastqWorkflow;
+import com.epam.fonda.workflow.impl.SCRnaExpressionCellRangerFastqWorkflow;
+import com.epam.fonda.workflow.impl.TcrRepertoireFastqWorkflow;
 
 /**
  * The <tt>WorkflowFactory</tt> class provides workflow to launch
