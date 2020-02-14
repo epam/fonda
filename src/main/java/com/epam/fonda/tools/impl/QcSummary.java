@@ -91,9 +91,7 @@ public class QcSummary implements PostProcessTool {
                 .task("QC summary analysis")
                 .jarPath(PipelineUtils.getExecutionPath())
                 .steps(String.join("|", TaskContainer.getTasks()))
-                .successPattern(TaskContainer.getTasks().stream()
-                        .reduce((first, second) -> second)
-                        .orElse(null))
+                .successPattern(tag)
                 .build();
         final String task = getValueForSpecificVar(workflowName, Variable.TASK);
         final String fileName = qcSummaryFields.getWorkflow() + "_" + task + "_for_" + sample + "_analysis";

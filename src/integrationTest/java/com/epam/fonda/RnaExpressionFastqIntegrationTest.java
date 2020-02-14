@@ -34,15 +34,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
 
     private static final String OUTPUT_DIR = "output";
-    private static final String RNA_EXPRESSION_FASTQ_TEMPLATES_SUFFIX = "RnaExpressionFastq/";
+    private static final String RNA_EXPRESSION_FASTQ_SUFFIX = "RnaExpressionFastq/";
     private static final String OUTPUT_SH_FILE = 
             "output/sh_files/RnaExpression_Fastq_alignment_for_smv1_analysis.sh";
-    private static final String RNA_EXPRESSION_FASTQ_SUFFIX = "RnaExpressionFastq/";
     private static final String S_CONFIG_PATH =
             String.format("%ssRnaExpressionFastq.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_ALIGNMENT_FOR_SMV1_ANALYSIS_TEMPLATE_PATH =
             String.format("%srnaExpression_Fastq_alignment_flag_Xenome_yes_template",
-                    RNA_EXPRESSION_FASTQ_TEMPLATES_SUFFIX);
+                    RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_G_FLAG_XENOME_YES =
             String.format("%sgFlagXenomeYes.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_G_SEQPURGE_WITH_ADAPTERS =
@@ -83,41 +82,41 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
             String.format("%sgNonSalmon.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String OUTPUT_SH_FILES_SUFFIX = "output/sh_files/";
     private static final String RNA_EXPRESSION_FASTQ_SEQPURGE_WITH_ADAPTERS_TEMPLATE =
-            String.format("%srnaExpression_Fastq_Seqpurge_with_Adapters", RNA_EXPRESSION_FASTQ_TEMPLATES_SUFFIX);
+            String.format("%srnaExpression_Fastq_Seqpurge_with_Adapters", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_SEQPURGE_WITHOUT_ADAPTERS_TEMPLATE =
-            String.format("%srnaExpression_Fastq_Seqpurge_without_Adapters", RNA_EXPRESSION_FASTQ_TEMPLATES_SUFFIX);
+            String.format("%srnaExpression_Fastq_Seqpurge_without_Adapters", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_TRIMMOMATIC_WITH_ADAPTER_TEMPLATE =
-            String.format("%srnaExpression_Fastq_Trimmomatic_with_adapter", RNA_EXPRESSION_FASTQ_TEMPLATES_SUFFIX);
+            String.format("%srnaExpression_Fastq_Trimmomatic_with_adapter", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_TRIMMOMATIC_WITHOUT_ADAPTER_TEMPLATE =
-            String.format("%srnaExpression_Fastq_Trimmomatic_without_adapter", RNA_EXPRESSION_FASTQ_TEMPLATES_SUFFIX);
+            String.format("%srnaExpression_Fastq_Trimmomatic_without_adapter", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_CUFFLINKS_SUFFIX =
-            String.format("%sRnaExpressionFastqCufflinks/", RNA_EXPRESSION_FASTQ_TEMPLATES_SUFFIX);
+            String.format("%sRnaExpressionFastqCufflinks/", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_FEATURE_COUNT_SUFFIX =
-            String.format("%sRnaExpressionFastqFeatureCount/", RNA_EXPRESSION_FASTQ_TEMPLATES_SUFFIX);
+            String.format("%sRnaExpressionFastqFeatureCount/", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_STAR_WITH_RSEM_SUFFIX =
-            String.format("%sRnaExpressionFastqStarWithRsem/", RNA_EXPRESSION_FASTQ_TEMPLATES_SUFFIX);
+            String.format("%sRnaExpressionFastqStarWithRsem/", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_STRINGTIE_SUFFIX =
-            String.format("%sRnaExpressionFastqStringtie/", RNA_EXPRESSION_FASTQ_TEMPLATES_SUFFIX);
+            String.format("%sRnaExpressionFastqStringtie/", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_STAR_WITHOUT_RSEM_SUFFIX =
-            String.format("%sRnaExpressionFastqStarWithoutRsem/", RNA_EXPRESSION_FASTQ_TEMPLATES_SUFFIX);
+            String.format("%sRnaExpressionFastqStarWithoutRsem/", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_RSEM_WITHOUT_HISAT2_SUFFIX =
-            String.format("%sRnaExpressionFastqRsemWithoutHisat2/", RNA_EXPRESSION_FASTQ_TEMPLATES_SUFFIX);
+            String.format("%sRnaExpressionFastqRsemWithoutHisat2/", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_HISAT2_TEMPLATE =
-            String.format("%srnaExpression_Fastq_Hisat2", RNA_EXPRESSION_FASTQ_TEMPLATES_SUFFIX);
+            String.format("%srnaExpression_Fastq_Hisat2", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_SALMON_TEMPLATE =
-            String.format("%srnaExpression_Fastq_Salmon", RNA_EXPRESSION_FASTQ_TEMPLATES_SUFFIX);
+            String.format("%srnaExpression_Fastq_Salmon", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_NON_FLAG_XENOME_TEMPLATE =
-            String.format("%srnaExpression_Fastq_non_flag_Xenome", RNA_EXPRESSION_FASTQ_TEMPLATES_SUFFIX);
+            String.format("%srnaExpression_Fastq_non_flag_Xenome", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_NON_SEQPURGE_TEMPLATE =
-            String.format("%srnaExpression_Fastq_non_Seqpurge", RNA_EXPRESSION_FASTQ_TEMPLATES_SUFFIX);
+            String.format("%srnaExpression_Fastq_non_Seqpurge", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_NON_TRIMMOMATIC_TEMPLATE =
-            String.format("%srnaExpression_Fastq_non_Trimmomatic", RNA_EXPRESSION_FASTQ_TEMPLATES_SUFFIX);
+            String.format("%srnaExpression_Fastq_non_Trimmomatic", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_NON_STAR_TEMPLATE =
-            String.format("%srnaExpression_Fastq_non_Star", RNA_EXPRESSION_FASTQ_TEMPLATES_SUFFIX);
+            String.format("%srnaExpression_Fastq_non_Star", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_NON_HISAT2_TEMPLATE =
-            String.format("%srnaExpression_Fastq_non_Hisat2", RNA_EXPRESSION_FASTQ_TEMPLATES_SUFFIX);
+            String.format("%srnaExpression_Fastq_non_Hisat2", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_NON_SALMON_TEMPLATE =
-            String.format("%srnaExpression_Fastq_non_Salmon", RNA_EXPRESSION_FASTQ_TEMPLATES_SUFFIX);
+            String.format("%srnaExpression_Fastq_non_Salmon", RNA_EXPRESSION_FASTQ_SUFFIX);
     private TemplateEngine templateEngine = TemplateEngineUtils.init();
     private Context context = new Context();
 

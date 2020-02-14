@@ -23,13 +23,13 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "(Successful|Error) Step: Successful Step: SnpEff annotation" $logFile;)
+	str=$(grep -E "((Error Step: (Contamination estimation|Remove temporary directories|Run contEst|Strelka2 detection|SnpEff annotation|Run strelka2|Mutect2 detection|Run mutect2|Lofreq detection|Run lofreq))|(Successful Step: SnpEff annotation))" $logFile;)
 fi
-	echo Waiting for step: Successful Step: SnpEff annotation
+	echo Waiting for step: SnpEff annotation
 	sleep 60
 done
 
-if [[('[')]][ $str == "*Error Step: Successful Step: SnpEff annotation*" ]];
+if [[('[')]][ $str == "*Error Step: SnpEff annotation*" ]];
 then
 	echo $(date) Error DNA mutation results from GA51:
 	echo $str
@@ -43,13 +43,13 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "(Successful|Error) Step: Successful Step: SnpEff annotation" $logFile;)
+	str=$(grep -E "((Error Step: (Contamination estimation|Remove temporary directories|Run contEst|Strelka2 detection|SnpEff annotation|Run strelka2|Mutect2 detection|Run mutect2|Lofreq detection|Run lofreq))|(Successful Step: SnpEff annotation))" $logFile;)
 fi
-	echo Waiting for step: Successful Step: SnpEff annotation
+	echo Waiting for step: SnpEff annotation
 	sleep 60
 done
 
-if [[('[')]][ $str == "*Error Step: Successful Step: SnpEff annotation*" ]];
+if [[('[')]][ $str == "*Error Step: SnpEff annotation*" ]];
 then
 	echo $(date) Error DNA mutation results from GA52:
 	echo $str
@@ -63,7 +63,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "(Successful|Error) Step: SnpEff annotation" $logFile;)
+	str=$(grep -E "((Error Step: (Contamination estimation|Remove temporary directories|Run contEst|Strelka2 detection|SnpEff annotation|Run strelka2|Mutect2 detection|Run mutect2|Lofreq detection|Run lofreq))|(Successful Step: SnpEff annotation))" $logFile;)
 fi
 	echo Waiting for step: SnpEff annotation
 	sleep 60
@@ -83,7 +83,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "(Successful|Error) Step: SnpEff annotation" $logFile;)
+	str=$(grep -E "((Error Step: (Contamination estimation|Remove temporary directories|Run contEst|Strelka2 detection|SnpEff annotation|Run strelka2|Mutect2 detection|Run mutect2|Lofreq detection|Run lofreq))|(Successful Step: SnpEff annotation))" $logFile;)
 fi
 	echo Waiting for step: SnpEff annotation
 	sleep 60
@@ -103,7 +103,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "(Successful|Error) Step: SnpEff annotation" $logFile;)
+	str=$(grep -E "((Error Step: (Contamination estimation|Remove temporary directories|Run contEst|Strelka2 detection|SnpEff annotation|Run strelka2|Mutect2 detection|Run mutect2|Lofreq detection|Run lofreq))|(Successful Step: SnpEff annotation))" $logFile;)
 fi
 	echo Waiting for step: SnpEff annotation
 	sleep 60
@@ -123,7 +123,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "(Successful|Error) Step: SnpEff annotation" $logFile;)
+	str=$(grep -E "((Error Step: (Contamination estimation|Remove temporary directories|Run contEst|Strelka2 detection|SnpEff annotation|Run strelka2|Mutect2 detection|Run mutect2|Lofreq detection|Run lofreq))|(Successful Step: SnpEff annotation))" $logFile;)
 fi
 	echo Waiting for step: SnpEff annotation
 	sleep 60

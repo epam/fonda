@@ -4,7 +4,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "(Successful|Error) Step: [(${fields.toolName})]" $logFile;)
+	str=$(grep -E "((Error Step: ([(${fields.steps})]))|(Successful Step: [(${fields.toolName})]))" $logFile;)
 fi
 	echo Waiting for step: [(${fields.toolName})]
 	sleep [(${fields.period})]

@@ -171,9 +171,7 @@ public final class DnaUtils {
         context.setVariable("logFileWithSampleName", logFileFields.logFileWithSampleName);
         context.setVariable("logFileWithControlSampleName", logFileFields.logFileWithControlSampleName);
         context.setVariable("logFileWithSampleNameIndex", logFileFields.logFileWithSampleNameIndex);
-        context.setVariable("tag", TaskContainer.getTasks().stream()
-                .reduce((first, second) -> second)
-                .orElse(null));
+        context.setVariable("tag", tag);
         context.setVariable("steps", String.join("|", TaskContainer.getTasks()));
         context.setVariable(ERROR_MSG_WITH_SAMPLE, msgMap.get(ERROR_MSG_WITH_SAMPLE));
         context.setVariable(CONFIRM_MSG_WITH_SAMPLE, msgMap.get(CONFIRM_MSG_WITH_SAMPLE));

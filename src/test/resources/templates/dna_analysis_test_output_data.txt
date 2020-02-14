@@ -23,7 +23,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "(Successful|Error) Step: SnpEff annotation" $logFile;)
+	str=$(grep -E "((Error Step: ())|(Successful Step: SnpEff annotation))" $logFile;)
 fi
 	echo Waiting for step: SnpEff annotation
 	sleep 60
