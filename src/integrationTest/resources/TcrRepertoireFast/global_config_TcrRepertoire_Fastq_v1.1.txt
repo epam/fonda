@@ -1,0 +1,34 @@
+[Queue_Parameters]
+NUMTHREADS = 4
+MAXMEM = 24g
+QUEUE = all.q
+PE = -pe threaded
+
+[Databases]
+SPECIES = human
+GENOME_BUILD = GRCh38
+ANNOTGENE = /ngs/data/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.annotation.gtf
+GENOME = /ngs/data/reference_genome/GRCh38/Sequence/GRCh38.genome.fa
+TRANSCRIPTOME = /ngs/data/reference_genome/GRCh38/Sequence/GRCh38.gencode.fa
+STARINDEX = /ngs/data/reference_genome/GRCh38/Index/STAR_gc26
+BOWTIEINDEX = /ngs/data/reference_genome/GRCh38/Index/Bowtie
+STARFUSIONLIB = /ngs/data/reference_genome/GRCh38/Index/CTAT_lib_gc24
+ANNOTGENESAF = /ngs/data/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.annotation.saf
+ADAPTER_FWD = AGATCGGAAGAGCGGTTCAGCAGGAATGCCGAGACCGATCTCGTATGCCGTCTTCTGCTTG
+ADAPTER_REV = AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT
+
+[all_tools]
+star = /ngs/data/tools/STAR/v2.4.0h1/bin/Linux_x86_64/STAR
+seqpurge = /ngs/data/app/ngs-bits/v1.0/bin/SeqPurge
+bowtie2 = /ngs/data/tools/bowtie/v2.2.9/bowtie2
+mixcr = /ngs/data/tools/MiXCR/v2.1.3/mixcr
+samtools = /ngs/data/tools/samtools/v0.1.19/samtools
+python = /ngs/data/app/python/v2.7.2/bin/python
+Rscript = /ngs/data/app/R/v3.5.0/bin/Rscript
+doubletdetection_python = /ngs/data/py/versions/3.5.2/bin/python
+
+[Pipeline_Info]
+workflow = TcrRepertoire_Fastq
+toolset = seqpurge+mixcr
+flag_xenome = no
+read_type = paired

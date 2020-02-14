@@ -1,0 +1,78 @@
+#!/bin/bash -x
+
+# --- SGE options --- #
+
+#$ -wd build/resources/integrationTest/output
+#$ -N TcrRepertoire_Fastq_TCR_detection_for_smv3_analysis
+#$ -o build/resources/integrationTest/output/log_files/TcrRepertoire_Fastq_TCR_detection_for_smv3_analysis.log
+#$ -e build/resources/integrationTest/output/err_files/TcrRepertoire_Fastq_TCR_detection_for_smv3_analysis.err
+#$ -q all.q
+#$ -R y
+#$ -pe threaded 4
+#$ -m a
+
+# --- The commands to be executed --- #
+
+cd build/resources/integrationTest/output
+
+echo `date` Begin the job execution...
+
+echo `date` Begin Step: Merge fastqs...
+zcat /ngs/data/demo/test/fastq/smv3_GTGTTCTA_L006_R1_001.fastq.gz /ngs/data/demo/test/fastq/smv3_GTGTTCTA_L007_R1_001.fastq.gz | gzip -c > build/resources/integrationTest/output/smv3/fastq/smv3.merged_R1.fastq.gz
+zcat /ngs/data/demo/test/fastq/smv3_GTGTTCTA_L006_R2_001.fastq.gz /ngs/data/demo/test/fastq/smv3_GTGTTCTA_L007_R2_001.fastq.gz | gzip -c > build/resources/integrationTest/output/smv3/fastq/smv3.merged_R2.fastq.gz
+
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Merge fastqs.
+	sleep 8
+else
+	echo `date` Error Step: Merge fastqs.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Seqpurge trimming...
+/ngs/data/app/ngs-bits/v1.0/bin/SeqPurge -threads 4 -in1 build/resources/integrationTest/output/smv3/fastq/smv3.merged_R1.fastq.gz -in2 build/resources/integrationTest/output/smv3/fastq/smv3.merged_R2.fastq.gz -out1 build/resources/integrationTest/output/smv3/fastq/smv3.trimmed.R1.fastq.gz -out2 build/resources/integrationTest/output/smv3/fastq/smv3.trimmed.R2.fastq.gz -qcut 20 -a1 AGATCGGAAGAGCGGTTCAGCAGGAATGCCGAGACCGATCTCGTATGCCGTCTTCTGCTTG -a2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Seqpurge trimming.
+	sleep 8
+else
+	echo `date` Error Step: Seqpurge trimming.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: MIXCR detection...
+/ngs/data/tools/MiXCR/v2.1.3/mixcr align -p rna-seq -s hsa -t 4 -OallowPartialAlignments=true build/resources/integrationTest/output/smv3/fastq/smv3.trimmed.R1.fastq.gz  build/resources/integrationTest/output/smv3/fastq/smv3.trimmed.R2.fastq.gz  build/resources/integrationTest/output/smv3/mixcr/smv3.mixcr.alignment.vdjca
+/ngs/data/tools/MiXCR/v2.1.3/mixcr assemblePartial -f build/resources/integrationTest/output/smv3/mixcr/smv3.mixcr.alignment.vdjca build/resources/integrationTest/output/smv3/mixcr/smv3.mixcr.alignment.contig.vdjca
+/ngs/data/tools/MiXCR/v2.1.3/mixcr assemble -f -t 4 build/resources/integrationTest/output/smv3/mixcr/smv3.mixcr.alignment.contig.vdjca build/resources/integrationTest/output/smv3/mixcr/smv3.mixcr.clones.clns
+/ngs/data/tools/MiXCR/v2.1.3/mixcr exportClones -f build/resources/integrationTest/output/smv3/mixcr/smv3.mixcr.clones.clns build/resources/integrationTest/output/smv3/mixcr/smv3.mixcr.clones.txt
+
+if [ $? -eq 0 ]
+then
+ 	echo `date` Successful Step: MIXCR detection.
+ 	sleep 8
+else
+ 	echo `date` Error Step: MIXCR detection.
+
+ 	echo `date` The job was aborted due to ERRORS found;
+ 	exit 1;
+fi
+echo `date` Begin Step: Remove temporary directories...
+rm -rf build/resources/integrationTest/output/smv3/tmp
+
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Remove temporary directories.
+	sleep 8
+else
+	echo `date` Error Step: Remove temporary directories.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+echo `date` Finish the job execution!
+
