@@ -51,7 +51,6 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
     private static final String GUNZIP = "gunzip -c ";
     private static final String TEST_BED = "/ngs/data/test.bed";
     private static final String MERGE_DNA_QC = "Successful Step: Merge DNA QC";
-    private static final String REMOVE_TEMP_DIRS = "Successful Step: Remove temporary directories";
 
     @After
     public void cleanup() {
@@ -94,7 +93,7 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
 
         try (BufferedReader reader = new BufferedReader(new FileReader(outputShFromFile))) {
             List<String> lines = reader.lines().collect(Collectors.toList());
-            assertTrue(lines.stream().anyMatch(line -> line.contains(REMOVE_TEMP_DIRS)));
+            assertTrue(lines.stream().anyMatch(line -> line.contains(MERGE_DNA_QC)));
             assertTrue(lines.stream().anyMatch(line -> line.contains(TEST_OUTPUT + TEST_POSTALIGNMENT_LOG)));
             assertTrue(lines.stream().anyMatch(line -> line.contains("Confirm QC results from GA5")));
             assertTrue(lines.stream().anyMatch(line -> line.matches(
@@ -167,7 +166,7 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
 
         try (BufferedReader reader = new BufferedReader(new FileReader(outputShFromFile))) {
             List<String> lines = reader.lines().collect(Collectors.toList());
-            assertTrue(lines.stream().anyMatch(line -> line.contains(REMOVE_TEMP_DIRS)));
+            assertTrue(lines.stream().anyMatch(line -> line.contains(MERGE_DNA_QC)));
             assertTrue(lines.stream().anyMatch(line -> line.contains(TEST_OUTPUT + TEST_POSTALIGNMENT_LOG)));
             assertTrue(lines.stream().anyMatch(line -> line.contains("Confirm QC results from GA5")));
             assertTrue(lines.stream().anyMatch(line -> line.matches(
