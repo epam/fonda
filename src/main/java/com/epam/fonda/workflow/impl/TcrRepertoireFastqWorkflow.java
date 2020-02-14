@@ -4,13 +4,11 @@ import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.impl.Mixcr;
 import com.epam.fonda.tools.impl.QcSummary;
-import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.tools.results.FastqResult;
 import com.epam.fonda.tools.results.MixcrResult;
 import com.epam.fonda.utils.PipelineUtils;
 import com.epam.fonda.utils.TemplateEngineUtils;
 import com.epam.fonda.workflow.FastqWorkflow;
-import com.epam.fonda.workflow.stage.impl.Alignment;
 import com.epam.fonda.workflow.stage.impl.PreAlignment;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -36,16 +34,21 @@ public class TcrRepertoireFastqWorkflow implements FastqWorkflow {
 
     @Override
     public void run(Configuration configuration, FastqFileSample sample) throws IOException {
+        if (!sample.getType().getType().equals("paired") || sample.getFastq1().size() != sample.getFastq2().size()) {
+            throw new IllegalArgumentException(
+                ("Error Step: Fastqs_1 and Fastqs_2 have different number of individual fastq files, please check!"));
+        }
         sample.createDirectory();
         configuration.setCustTask("TCR_detection");
         FastqResult fastqResult = PipelineUtils.mergeFastq(sample);
         fastqResult = new PreAlignment(fastqResult).process(flag, sample, configuration, TEMPLATE_ENGINE);
-        BamResult bamResult = new Alignment(fastqResult).mapping(flag, sample, configuration, TEMPLATE_ENGINE);
-        Set<String> tmpDir = bamResult.getCommand().getTempDirs();
-        StringBuilder cmd = new StringBuilder(bamResult.getCommand().getToolCommand());
-        MixcrResult generate = new Mixcr(sample, fastqResult).generate(configuration, TEMPLATE_ENGINE);
-        cmd.append(generate.getCommand().getToolCommand()).append(cleanUpTmpDir(tmpDir));
-
+        Set<String> tmpDir = fastqResult.getCommand().getTempDirs();
+        StringBuilder cmd = new StringBuilder(fastqResult.getCommand().getToolCommand());
+        if (flag.isMixcr()) {
+            MixcrResult generate = new Mixcr(sample, fastqResult).generate(configuration, TEMPLATE_ENGINE);
+            cmd.append(generate.getCommand().getToolCommand());
+        }
+        cmd.append(cleanUpTmpDir(tmpDir));
         printShell(configuration, cmd.toString(), sample.getName(), null);
         log.debug(String.format("Successful step: the %s sample was processed.", sample.getName()));
     }

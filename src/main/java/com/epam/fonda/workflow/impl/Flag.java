@@ -62,6 +62,7 @@ public class Flag {
     private boolean abraRealign;
     private boolean gatkRealign;
     private boolean contEst;
+    private boolean mixcr;
 
     public static Flag buildFlags(final Configuration configuration) {
         final Set tasks = configuration.getGlobalConfig().getPipelineInfo().getToolset();
@@ -102,6 +103,7 @@ public class Flag {
                 .abraRealign(tasks.contains("abra_realign"))
                 .gatkRealign(tasks.contains("gatk_realign"))
                 .contEst(tasks.contains("contEst"))
+                .mixcr(tasks.contains("mixcr"))
                 .build();
     }
 }
