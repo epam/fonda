@@ -86,6 +86,8 @@ public class OptiType implements Tool<OptiTypeResult> {
         optiTypeOutput.createDirectory();
         Context context = new Context();
         context.setVariable("optiTypeFields", optiTypeFields);
+        context.setVariable("isLibraryTypeRna", optiTypeFields.getLibraryType().contains("RNA"));
+        context.setVariable("isLibraryTypeDna", optiTypeFields.getLibraryType().contains("DNA"));
         final String cmd = templateEngine.process(OPTY_TIPE_TOOL_TEMPLATE_NAME, context);
         TaskContainer.addTasks("OptiType HLA typing");
         return OptiTypeResult.builder()
