@@ -29,6 +29,7 @@ else
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
 fi
+
 echo `date` Begin Step: Remove temporary directories...
 rm -rf build/resources/integrationTest/output/GA51/contEst/tmp
 

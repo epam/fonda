@@ -82,9 +82,9 @@ public class DnaAmpliconVarBamIntegrationTest extends AbstractIntegrationTest {
             "DnaAmpliconVarBam/gSingleAllTasks.txt";
     public static final String DNA_AMPLICON_VAR_BAM_S_SINGLE =
             "DnaAmpliconVarBam/sSingle.txt";
-    public static final String DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA =
+    public static final String DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA =
             "DnaAmpliconVarBam/gAllTasksSampleNotNA.txt";
-    public static final String DNA_AMPLICON_VAR_BAM_S_CONTROL_SAMPLE_NOT_NA =
+    public static final String DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA =
             "DnaAmpliconVarBam/sControlSampleNotNA.txt";
     private TemplateEngine templateEngine = TemplateEngineUtils.init();
     private Context context = new Context();
@@ -101,353 +101,200 @@ public class DnaAmpliconVarBamIntegrationTest extends AbstractIntegrationTest {
     }
 
     @ParameterizedTest(name = "{3}-test")
-    @MethodSource("initParameters")
-    void testRnaExpressionFastq(final String gConfigPath, final String sConfigPath, final String outputShFile,
-                                final String templatePath) throws IOException, URISyntaxException {
+    @MethodSource("initParametersNAAll")
+    void testDnaAmpliconVarBamNAAll(final String gConfigPath, final String sConfigPath, final String outputShFile,
+                                    final String templatePath) throws IOException, URISyntaxException {
+        startAppWithConfigs(gConfigPath, sConfigPath);
+        final String expectedCmd = templateEngine.process(templatePath, context);
+        assertEquals(expectedCmd.trim(), getCmd(outputShFile).trim());
+    }
+
+    @ParameterizedTest(name = "{3}-test")
+    @MethodSource("initParametersNotNAAll")
+    void testDnaAmpliconVarBamNotNAAll(final String gConfigPath, final String sConfigPath, final String outputShFile,
+                                       final String templatePath) throws IOException, URISyntaxException {
         startAppWithConfigs(gConfigPath, sConfigPath);
         final String expectedCmd = templateEngine.process(templatePath, context);
         assertEquals(expectedCmd.trim(), getCmd(outputShFile).trim());
     }
 
     @SuppressWarnings("PMD")
-    private static Stream<Arguments> initParameters() {
+    private static Stream<Arguments> initParametersNAAll() {
         return Stream.of(
-                Arguments.of(DNA_AMPLICON_VAR_BAM_G_SINGLE_ALL_TASKS,
-                        DNA_AMPLICON_VAR_BAM_S_SINGLE,
+                Arguments.of(DNA_AMPLICON_VAR_BAM_G_SINGLE_ALL_TASKS, DNA_AMPLICON_VAR_BAM_S_SINGLE,
                         String.format("%s%s%s",
-                                OUTPUT_SH_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_FREEBAYES,
-                                FOR_GA_5_SH_SUFFIX),
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_FREEBAYES, FOR_GA_5_SH_SUFFIX),
                         String.format("%s%s%s",
-                                CONTROL_SAMPLE_NAALL_TASKS_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_FREEBAYES,
-                                FOR_GA_5_TEMPLATE_SUFFIX
-                        )
-                ),
-                Arguments.of(DNA_AMPLICON_VAR_BAM_G_SINGLE_ALL_TASKS,
-                        DNA_AMPLICON_VAR_BAM_S_SINGLE,
+                                CONTROL_SAMPLE_NAALL_TASKS_SUFFIX, DNA_AMPLICON_VAR_BAM_FREEBAYES,
+                                FOR_GA_5_TEMPLATE_SUFFIX)),
+                Arguments.of(DNA_AMPLICON_VAR_BAM_G_SINGLE_ALL_TASKS, DNA_AMPLICON_VAR_BAM_S_SINGLE,
                         String.format("%s%s%s",
-                                OUTPUT_SH_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_GATK_HAPLOTYPE_CALLER,
-                                FOR_GA_5_SH_SUFFIX),
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_GATK_HAPLOTYPE_CALLER, FOR_GA_5_SH_SUFFIX),
                         String.format("%s%s%s",
-                                CONTROL_SAMPLE_NAALL_TASKS_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_GATK_HAPLOTYPE_CALLER,
-                                FOR_GA_5_TEMPLATE_SUFFIX
-                        )
-                ),
-                Arguments.of(DNA_AMPLICON_VAR_BAM_G_SINGLE_ALL_TASKS,
-                        DNA_AMPLICON_VAR_BAM_S_SINGLE,
+                                CONTROL_SAMPLE_NAALL_TASKS_SUFFIX, DNA_AMPLICON_VAR_BAM_GATK_HAPLOTYPE_CALLER,
+                                FOR_GA_5_TEMPLATE_SUFFIX)),
+                Arguments.of(DNA_AMPLICON_VAR_BAM_G_SINGLE_ALL_TASKS, DNA_AMPLICON_VAR_BAM_S_SINGLE,
                         String.format("%s%s%s",
-                                OUTPUT_SH_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_LOFREQ,
-                                FOR_GA_5_SH_SUFFIX),
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_LOFREQ, FOR_GA_5_SH_SUFFIX),
                         String.format("%s%s%s",
-                                CONTROL_SAMPLE_NAALL_TASKS_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_LOFREQ,
-                                FOR_GA_5_TEMPLATE_SUFFIX
-                        )
-                ),
-                Arguments.of(DNA_AMPLICON_VAR_BAM_G_SINGLE_ALL_TASKS,
-                        DNA_AMPLICON_VAR_BAM_S_SINGLE,
+                                CONTROL_SAMPLE_NAALL_TASKS_SUFFIX, DNA_AMPLICON_VAR_BAM_LOFREQ,
+                                FOR_GA_5_TEMPLATE_SUFFIX)),
+                Arguments.of(DNA_AMPLICON_VAR_BAM_G_SINGLE_ALL_TASKS, DNA_AMPLICON_VAR_BAM_S_SINGLE,
                         String.format("%s%s%s",
-                                OUTPUT_SH_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_MUTECT_1,
-                                FOR_GA_5_SH_SUFFIX),
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_MUTECT_1, FOR_GA_5_SH_SUFFIX),
                         String.format("%s%s%s",
-                                CONTROL_SAMPLE_NAALL_TASKS_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_MUTECT_1,
-                                FOR_GA_5_TEMPLATE_SUFFIX
-                        )
-                ),
-                Arguments.of(DNA_AMPLICON_VAR_BAM_G_SINGLE_ALL_TASKS,
-                        DNA_AMPLICON_VAR_BAM_S_SINGLE,
+                                CONTROL_SAMPLE_NAALL_TASKS_SUFFIX, DNA_AMPLICON_VAR_BAM_MUTECT_1,
+                                FOR_GA_5_TEMPLATE_SUFFIX)),
+                Arguments.of(DNA_AMPLICON_VAR_BAM_G_SINGLE_ALL_TASKS, DNA_AMPLICON_VAR_BAM_S_SINGLE,
                         String.format("%s%s%s",
-                                OUTPUT_SH_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_SCALPEL,
-                                FOR_GA_5_SH_SUFFIX),
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_SCALPEL, FOR_GA_5_SH_SUFFIX),
                         String.format("%s%s%s",
-                                CONTROL_SAMPLE_NAALL_TASKS_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_SCALPEL,
-                                FOR_GA_5_TEMPLATE_SUFFIX
-                        )
-                ),
-                Arguments.of(DNA_AMPLICON_VAR_BAM_G_SINGLE_ALL_TASKS,
-                        DNA_AMPLICON_VAR_BAM_S_SINGLE,
+                                CONTROL_SAMPLE_NAALL_TASKS_SUFFIX, DNA_AMPLICON_VAR_BAM_SCALPEL,
+                                FOR_GA_5_TEMPLATE_SUFFIX)),
+                Arguments.of(DNA_AMPLICON_VAR_BAM_G_SINGLE_ALL_TASKS, DNA_AMPLICON_VAR_BAM_S_SINGLE,
                         String.format("%s%s%s",
-                                OUTPUT_SH_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_STRELKA_2,
-                                FOR_GA_5_SH_SUFFIX),
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_STRELKA_2, FOR_GA_5_SH_SUFFIX),
                         String.format("%s%s%s",
-                                CONTROL_SAMPLE_NAALL_TASKS_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_STRELKA_2,
-                                FOR_GA_5_TEMPLATE_SUFFIX
-                        )
-                ),
-                Arguments.of(DNA_AMPLICON_VAR_BAM_G_SINGLE_ALL_TASKS,
-                        DNA_AMPLICON_VAR_BAM_S_SINGLE,
+                                CONTROL_SAMPLE_NAALL_TASKS_SUFFIX, DNA_AMPLICON_VAR_BAM_STRELKA_2,
+                                FOR_GA_5_TEMPLATE_SUFFIX)),
+                Arguments.of(DNA_AMPLICON_VAR_BAM_G_SINGLE_ALL_TASKS, DNA_AMPLICON_VAR_BAM_S_SINGLE,
                         String.format("%s%s%s",
-                                OUTPUT_SH_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_VARDICT,
-                                FOR_GA_5_SH_SUFFIX),
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_VARDICT, FOR_GA_5_SH_SUFFIX),
                         String.format("%s%s%s",
-                                CONTROL_SAMPLE_NAALL_TASKS_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_VARDICT,
-                                FOR_GA_5_TEMPLATE_SUFFIX
-                        )
-                ),
-                Arguments.of(DNA_AMPLICON_VAR_BAM_G_SINGLE_ALL_TASKS,
-                        DNA_AMPLICON_VAR_BAM_S_SINGLE,
+                                CONTROL_SAMPLE_NAALL_TASKS_SUFFIX, DNA_AMPLICON_VAR_BAM_VARDICT,
+                                FOR_GA_5_TEMPLATE_SUFFIX)),
+                Arguments.of(DNA_AMPLICON_VAR_BAM_G_SINGLE_ALL_TASKS, DNA_AMPLICON_VAR_BAM_S_SINGLE,
                         String.format("%s%s%s",
-                                OUTPUT_SH_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_VARIANT_DETECTION,
-                                FOR_GA_5_SH_SUFFIX),
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_VARIANT_DETECTION, FOR_GA_5_SH_SUFFIX),
                         String.format("%s%s%s",
-                                CONTROL_SAMPLE_NAALL_TASKS_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_VARIANT_DETECTION,
-                                FOR_GA_5_TEMPLATE_SUFFIX
-                        )
-                ),
-                Arguments.of(DNA_AMPLICON_VAR_BAM_G_SINGLE_ALL_TASKS,
-                        DNA_AMPLICON_VAR_BAM_S_SINGLE,
+                                CONTROL_SAMPLE_NAALL_TASKS_SUFFIX, DNA_AMPLICON_VAR_BAM_VARIANT_DETECTION,
+                                FOR_GA_5_TEMPLATE_SUFFIX)),
+                Arguments.of(DNA_AMPLICON_VAR_BAM_G_SINGLE_ALL_TASKS, DNA_AMPLICON_VAR_BAM_S_SINGLE,
                         String.format("%s%s%s",
-                                OUTPUT_SH_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_MERGE_MUTATION,
-                                FOR_COHORT_ANALYSIS_SH_SUFFIX),
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_MERGE_MUTATION, FOR_COHORT_ANALYSIS_SH_SUFFIX),
                         String.format("%s%s%s",
-                                CONTROL_SAMPLE_NAALL_TASKS_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_MERGE_MUTATION,
-                                FOR_COHORT_ANALYSIS_TEMPLATE_SUFFIX
-                        )
-                ),
-                Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA,
-                        DNA_AMPLICON_VAR_BAM_S_CONTROL_SAMPLE_NOT_NA,
+                                CONTROL_SAMPLE_NAALL_TASKS_SUFFIX, DNA_AMPLICON_VAR_BAM_MERGE_MUTATION,
+                                FOR_COHORT_ANALYSIS_TEMPLATE_SUFFIX))
+        );
+    }
+
+    @SuppressWarnings("PMD")
+    private static Stream<Arguments> initParametersNotNAAll() {
+        return Stream.of(
+                Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA, DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA,
                         String.format("%s%s%s",
-                                OUTPUT_SH_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_CONTEST,
-                                FOR_GA_51_SH_SUFFIX),
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_CONTEST, FOR_GA_51_SH_SUFFIX),
                         String.format("%s%s%s",
-                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA51_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_CONTEST,
-                                FOR_GA_51_TEMPLATE_SUFFIX
-                        )
-                ),
-                Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA,
-                        DNA_AMPLICON_VAR_BAM_S_CONTROL_SAMPLE_NOT_NA,
+                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA51_SUFFIX, DNA_AMPLICON_VAR_BAM_CONTEST,
+                                FOR_GA_51_TEMPLATE_SUFFIX)),
+                Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA, DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA,
                         String.format("%s%s%s",
-                                OUTPUT_SH_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_EXOMECNV,
-                                FOR_GA_51_SH_SUFFIX),
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_EXOMECNV, FOR_GA_51_SH_SUFFIX),
                         String.format("%s%s%s",
-                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA51_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_EXOMECNV,
-                                FOR_GA_51_TEMPLATE_SUFFIX
-                        )
-                ),
-                Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA,
-                        DNA_AMPLICON_VAR_BAM_S_CONTROL_SAMPLE_NOT_NA,
+                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA51_SUFFIX, DNA_AMPLICON_VAR_BAM_EXOMECNV,
+                                FOR_GA_51_TEMPLATE_SUFFIX)),
+                Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA, DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA,
                         String.format("%s%s%s",
-                                OUTPUT_SH_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_LOFREQ,
-                                FOR_GA_51_SH_SUFFIX),
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_LOFREQ, FOR_GA_51_SH_SUFFIX),
                         String.format("%s%s%s",
-                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA51_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_LOFREQ,
-                                FOR_GA_51_TEMPLATE_SUFFIX
-                        )
-                ),
-                Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA,
-                        DNA_AMPLICON_VAR_BAM_S_CONTROL_SAMPLE_NOT_NA,
+                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA51_SUFFIX, DNA_AMPLICON_VAR_BAM_LOFREQ,
+                                FOR_GA_51_TEMPLATE_SUFFIX)),
+                Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA, DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA,
                         String.format("%s%s%s",
-                                OUTPUT_SH_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_MUTECT_2,
-                                FOR_GA_51_SH_SUFFIX),
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_MUTECT_2, FOR_GA_51_SH_SUFFIX),
                         String.format("%s%s%s",
-                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA51_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_MUTECT_2,
-                                FOR_GA_51_TEMPLATE_SUFFIX
-                        )
-                ),
-                Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA,
-                        DNA_AMPLICON_VAR_BAM_S_CONTROL_SAMPLE_NOT_NA,
+                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA51_SUFFIX, DNA_AMPLICON_VAR_BAM_MUTECT_2,
+                                FOR_GA_51_TEMPLATE_SUFFIX)),
+                Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA, DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA,
                         String.format("%s%s%s",
-                                OUTPUT_SH_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_SCALPEL,
-                                FOR_GA_51_SH_SUFFIX),
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_SCALPEL, FOR_GA_51_SH_SUFFIX),
                         String.format("%s%s%s",
-                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA51_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_SCALPEL,
-                                FOR_GA_51_TEMPLATE_SUFFIX
-                        )
-                ),
-                Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA,
-                        DNA_AMPLICON_VAR_BAM_S_CONTROL_SAMPLE_NOT_NA,
+                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA51_SUFFIX, DNA_AMPLICON_VAR_BAM_SCALPEL,
+                                FOR_GA_51_TEMPLATE_SUFFIX)),
+                Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA, DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA,
                         String.format("%s%s%s",
-                                OUTPUT_SH_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_SEQUENZA,
-                                FOR_GA_51_SH_SUFFIX),
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_SEQUENZA, FOR_GA_51_SH_SUFFIX),
                         String.format("%s%s%s",
-                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA51_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_SEQUENZA,
-                                FOR_GA_51_TEMPLATE_SUFFIX
-                        )
-                ),
-                Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA,
-                        DNA_AMPLICON_VAR_BAM_S_CONTROL_SAMPLE_NOT_NA,
+                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA51_SUFFIX, DNA_AMPLICON_VAR_BAM_SEQUENZA,
+                                FOR_GA_51_TEMPLATE_SUFFIX)),
+                Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA, DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA,
                         String.format("%s%s%s",
-                                OUTPUT_SH_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_STRELKA_2,
-                                FOR_GA_51_SH_SUFFIX),
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_STRELKA_2, FOR_GA_51_SH_SUFFIX),
                         String.format("%s%s%s",
-                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA51_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_STRELKA_2,
-                                FOR_GA_51_TEMPLATE_SUFFIX
-                        )
-                ),
-                Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA,
-                        DNA_AMPLICON_VAR_BAM_S_CONTROL_SAMPLE_NOT_NA,
+                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA51_SUFFIX, DNA_AMPLICON_VAR_BAM_STRELKA_2,
+                                FOR_GA_51_TEMPLATE_SUFFIX)),
+                Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA, DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA,
                         String.format("%s%s%s",
-                                OUTPUT_SH_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_VARDICT,
-                                FOR_GA_51_SH_SUFFIX),
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_VARDICT, FOR_GA_51_SH_SUFFIX),
                         String.format("%s%s%s",
-                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA51_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_VARDICT,
-                                FOR_GA_51_TEMPLATE_SUFFIX
-                        )
-                ),
-                Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA,
-                        DNA_AMPLICON_VAR_BAM_S_CONTROL_SAMPLE_NOT_NA,
+                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA51_SUFFIX, DNA_AMPLICON_VAR_BAM_VARDICT,
+                                FOR_GA_51_TEMPLATE_SUFFIX)),
+                Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA, DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA,
                         String.format("%s%s%s",
-                                OUTPUT_SH_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_VARIANT_DETECTION,
-                                FOR_GA_51_SH_SUFFIX),
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_VARIANT_DETECTION, FOR_GA_51_SH_SUFFIX),
                         String.format("%s%s%s",
-                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA51_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_VARIANT_DETECTION,
-                                FOR_GA_51_TEMPLATE_SUFFIX
-                        )
-                ),
-                Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA,
-                        DNA_AMPLICON_VAR_BAM_S_CONTROL_SAMPLE_NOT_NA,
+                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA51_SUFFIX, DNA_AMPLICON_VAR_BAM_VARIANT_DETECTION,
+                                FOR_GA_51_TEMPLATE_SUFFIX)),
+                Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA, DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA,
                         String.format("%s%s%s",
-                                OUTPUT_SH_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_CONTEST,
-                                FOR_GA_52_SH_SUFFIX),
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_CONTEST, FOR_GA_52_SH_SUFFIX),
                         String.format("%s%s%s",
-                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA52_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_CONTEST,
-                                FOR_GA_52_TEMPLATE_SUFFIX
-                        )
-                ),
-                Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA,
-                        DNA_AMPLICON_VAR_BAM_S_CONTROL_SAMPLE_NOT_NA,
+                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA52_SUFFIX, DNA_AMPLICON_VAR_BAM_CONTEST,
+                                FOR_GA_52_TEMPLATE_SUFFIX)),
+                Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA, DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA,
                         String.format("%s%s%s",
-                                OUTPUT_SH_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_EXOMECNV,
-                                FOR_GA_52_SH_SUFFIX),
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_EXOMECNV, FOR_GA_52_SH_SUFFIX),
                         String.format("%s%s%s",
-                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA52_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_EXOMECNV,
-                                FOR_GA_52_TEMPLATE_SUFFIX
-                        )
-                ),
-                Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA,
-                        DNA_AMPLICON_VAR_BAM_S_CONTROL_SAMPLE_NOT_NA,
+                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA52_SUFFIX, DNA_AMPLICON_VAR_BAM_EXOMECNV,
+                                FOR_GA_52_TEMPLATE_SUFFIX)),
+                Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA, DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA,
                         String.format("%s%s%s",
-                                OUTPUT_SH_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_LOFREQ,
-                                FOR_GA_52_SH_SUFFIX),
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_LOFREQ, FOR_GA_52_SH_SUFFIX),
                         String.format("%s%s%s",
-                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA52_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_LOFREQ,
-                                FOR_GA_52_TEMPLATE_SUFFIX
-                        )
-                ),
-                Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA,
-                        DNA_AMPLICON_VAR_BAM_S_CONTROL_SAMPLE_NOT_NA,
+                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA52_SUFFIX, DNA_AMPLICON_VAR_BAM_LOFREQ,
+                                FOR_GA_52_TEMPLATE_SUFFIX)),
+                Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA, DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA,
                         String.format("%s%s%s",
-                                OUTPUT_SH_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_MUTECT_2,
-                                FOR_GA_52_SH_SUFFIX),
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_MUTECT_2, FOR_GA_52_SH_SUFFIX),
                         String.format("%s%s%s",
-                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA52_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_MUTECT_2,
-                                FOR_GA_52_TEMPLATE_SUFFIX
-                        )
-                ),
-                Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA,
-                        DNA_AMPLICON_VAR_BAM_S_CONTROL_SAMPLE_NOT_NA,
+                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA52_SUFFIX, DNA_AMPLICON_VAR_BAM_MUTECT_2,
+                                FOR_GA_52_TEMPLATE_SUFFIX)),
+                Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA, DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA,
                         String.format("%s%s%s",
-                                OUTPUT_SH_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_SCALPEL,
-                                FOR_GA_52_SH_SUFFIX),
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_SCALPEL, FOR_GA_52_SH_SUFFIX),
                         String.format("%s%s%s",
-                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA52_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_SCALPEL,
-                                FOR_GA_52_TEMPLATE_SUFFIX
-                        )
-                ),
-                Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA,
-                        DNA_AMPLICON_VAR_BAM_S_CONTROL_SAMPLE_NOT_NA,
+                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA52_SUFFIX, DNA_AMPLICON_VAR_BAM_SCALPEL,
+                                FOR_GA_52_TEMPLATE_SUFFIX)),
+                Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA, DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA,
                         String.format("%s%s%s",
-                                OUTPUT_SH_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_SEQUENZA,
-                                FOR_GA_52_SH_SUFFIX),
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_SEQUENZA, FOR_GA_52_SH_SUFFIX),
                         String.format("%s%s%s",
-                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA52_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_SEQUENZA,
-                                FOR_GA_52_TEMPLATE_SUFFIX
-                        )
-                ),
-                Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA,
-                        DNA_AMPLICON_VAR_BAM_S_CONTROL_SAMPLE_NOT_NA,
+                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA52_SUFFIX, DNA_AMPLICON_VAR_BAM_SEQUENZA,
+                                FOR_GA_52_TEMPLATE_SUFFIX)),
+                Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA, DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA,
                         String.format("%s%s%s",
-                                OUTPUT_SH_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_STRELKA_2,
-                                FOR_GA_52_SH_SUFFIX),
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_STRELKA_2, FOR_GA_52_SH_SUFFIX),
                         String.format("%s%s%s",
-                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA52_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_STRELKA_2,
-                                FOR_GA_52_TEMPLATE_SUFFIX
-                        )
-                ),
-                Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA,
-                        DNA_AMPLICON_VAR_BAM_S_CONTROL_SAMPLE_NOT_NA,
+                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA52_SUFFIX, DNA_AMPLICON_VAR_BAM_STRELKA_2,
+                                FOR_GA_52_TEMPLATE_SUFFIX)),
+                Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA, DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA,
                         String.format("%s%s%s",
-                                OUTPUT_SH_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_VARDICT,
-                                FOR_GA_52_SH_SUFFIX),
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_VARDICT, FOR_GA_52_SH_SUFFIX),
                         String.format("%s%s%s",
-                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA52_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_VARDICT,
-                                FOR_GA_52_TEMPLATE_SUFFIX
-                        )
-                ),
-                Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA,
-                        DNA_AMPLICON_VAR_BAM_S_CONTROL_SAMPLE_NOT_NA,
+                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA52_SUFFIX, DNA_AMPLICON_VAR_BAM_VARDICT,
+                                FOR_GA_52_TEMPLATE_SUFFIX)),
+                Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA, DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA,
                         String.format("%s%s%s",
-                                OUTPUT_SH_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_VARIANT_DETECTION,
-                                FOR_GA_52_SH_SUFFIX),
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_VARIANT_DETECTION, FOR_GA_52_SH_SUFFIX),
                         String.format("%s%s%s",
-                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA52_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_VARIANT_DETECTION,
-                                FOR_GA_52_TEMPLATE_SUFFIX
-                        )
-                ),
-                Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA,
-                        DNA_AMPLICON_VAR_BAM_S_CONTROL_SAMPLE_NOT_NA,
+                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA52_SUFFIX, DNA_AMPLICON_VAR_BAM_VARIANT_DETECTION,
+                                FOR_GA_52_TEMPLATE_SUFFIX)),
+                Arguments.of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA, DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA,
                         String.format("%s%s%s",
-                                OUTPUT_SH_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_MERGE_MUTATION,
-                                FOR_COHORT_ANALYSIS_SH_SUFFIX),
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_MERGE_MUTATION, FOR_COHORT_ANALYSIS_SH_SUFFIX),
                         String.format("%s%s%s",
-                                CONTROL_SAMPLE_NOT_NAALL_TASKS_SUFFIX,
-                                DNA_AMPLICON_VAR_BAM_MERGE_MUTATION,
-                                FOR_COHORT_ANALYSIS_TEMPLATE_SUFFIX
-                        )
-                )
+                                CONTROL_SAMPLE_NOT_NAALL_TASKS_SUFFIX, DNA_AMPLICON_VAR_BAM_MERGE_MUTATION,
+                                FOR_COHORT_ANALYSIS_TEMPLATE_SUFFIX))
         );
     }
 }

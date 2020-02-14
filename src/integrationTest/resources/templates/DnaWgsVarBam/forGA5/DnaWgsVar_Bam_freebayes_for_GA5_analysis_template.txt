@@ -29,6 +29,7 @@ else
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
 fi
+
 echo `date` Begin Step: SnpEff annotation...
 /usr/bin/python [(${jarPath})]/src/python/vcf_snpeff_annotation.py -s GA5 -i build/resources/integrationTest/output/GA5/freebayes/GA5.freebayes.variants.vcf -o build/resources/integrationTest/output/GA5/freebayes/GA5.freebayes.variants.pass.annotation.tsv -t freebayes --canonical /ngs/data/reference_genome/GRCh37/Annotation/prefer_ensembl_transcript.txt --transvar /usr/bin/transvar -r hg19 --snpsift /usr/bin/snpsift --snpsift_db /ngs/data/SnpEff/snpEff_v4.3p/snpEff/db --dbnsfp --dbsnp --coding_only --pass_only
 if [ $? -eq 0 ]
