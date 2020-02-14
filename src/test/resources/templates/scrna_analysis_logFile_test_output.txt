@@ -4,7 +4,7 @@ while [[ $str = "" ]]
 do
 if [[ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: ())|(Successful Step: ))" $logFile;)
+	str=$(grep -E "((Error Step: ())|(Successful Step: Generate gene-barcode matrix))" $logFile;)
 fi
 	echo Waiting for step: Generate gene-barcode matrix
 	sleep 60

@@ -60,7 +60,6 @@ public class DnaAnalysis implements PostProcessTool {
         private String logFile;
         private String errorMessage;
         private String successMessage;
-        private String successPattern;
         private String steps;
     }
 
@@ -149,9 +148,8 @@ public class DnaAnalysis implements PostProcessTool {
         final DnaAnalysisFields dnaAnalysisFields = new DnaAnalysisFields();
         final String fileName = String.format("%s_%s_for_%s_analysis",
                 configuration.getGlobalConfig().getPipelineInfo().getWorkflow(), task, sampleName);
-        dnaAnalysisFields.toolName = getStringTag(task);
+        dnaAnalysisFields.toolName = SNPEFF_ANNOTATION;
         dnaAnalysisFields.steps = String.join("|", TaskContainer.getTasks());
-        dnaAnalysisFields.successPattern = SNPEFF_ANNOTATION;
         dnaAnalysisFields.logFile = String.format("%s/%s.log",
                 configuration.getCommonOutdir().getLogOutdir(), fileName);
         dnaAnalysisFields.period = defaultOrSpecifiedPeriod(configuration);
@@ -206,9 +204,5 @@ public class DnaAnalysis implements PostProcessTool {
     private boolean checkToolset(final Flag flag) {
         return flag.isVardict() || flag.isMutect1() || flag.isMutect2() || flag.isLofreq() ||
                 flag.isGatkHaplotypeCaller() || flag.isStrelka2() || flag.isScalpel();
-    }
-
-    private String getStringTag(final String task) {
-        return STRELKA2.equalsIgnoreCase(task) ? "SnpEff annotation" : SNPEFF_ANNOTATION;
     }
 }
