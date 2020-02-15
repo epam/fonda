@@ -54,21 +54,19 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
     private static Stream<Arguments> initParameters() {
         return Stream.of(
                 Arguments.of(
-                        String.format("%s/gAbraGatkPicardPaired.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        String.format("%s/gXenomSeqpurgeTrimmomaticBwaNovoalignPaired.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
                         String.format("%s/sPaired.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
-                        String.format("%s/DnaCaptureVar_Fastq_alignment_for_GA5_1_analysis.sh", OUTPUT_SH_FILES_DIR),
-                        "dnaCaptureVar_Fastq_alignment_for_GA5_1_analysis_template"));
-//                Arguments.of(
-//                        String.format("%s/gAbraGatkPicardPaired.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
-//                        String.format("%s/sPaired.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
-//                        String.format("%s/DnaCaptureVar_Fastq_postalignment_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
-//                        "dnaCaptureVar_Fastq_postalignment_for_GA5_analysis_template"));
+                        String.format("%s/DnaCaptureVar_Fastq_alignment_for_GA5_1_analysis.sh",
+                                OUTPUT_SH_FILES_DIR),
+                        String.format("%s/XenomSeqpurgeTrimmomaticBwaNovoalignPaired/dnaCaptureVar_Fastq_alignment_for_GA5_1_analysis_template",
+                                DNA_CAPTURE_VAR_FASTQ_DIR)
+                ));
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "{2}-test")
     @MethodSource("initParameters")
-    void testRnaExpressionFastq(
-            String gConfigPath, String sConfigPath, String outputShFile, String templatePath) throws IOException, URISyntaxException {
+    void testDnaCaptureVarFastq(String gConfigPath, String sConfigPath, String outputShFile, String templatePath)
+            throws IOException, URISyntaxException {
         startAppWithConfigs(gConfigPath, sConfigPath);
         String expectedCmd = templateEngine.process(templatePath, context);
         assertEquals(expectedCmd.trim(), getCmd(outputShFile).trim());
