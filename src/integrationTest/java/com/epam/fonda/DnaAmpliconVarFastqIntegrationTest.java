@@ -17,6 +17,7 @@ package com.epam.fonda;
 
 import com.epam.fonda.utils.PipelineUtils;
 import com.epam.fonda.utils.TemplateEngineUtils;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -48,7 +49,9 @@ public class DnaAmpliconVarFastqIntegrationTest extends AbstractIntegrationTest 
             "output/sh_files/DnaAmpliconVar_Fastq_alignment_for_GA5_1_analysis.sh";
     private static final String QC_SUMMARY_SH_FILE =
             "output/sh_files/DnaAmpliconVar_Fastq_qcsummary_for_cohort_analysis.sh";
-
+    private static final String MERGE_MUTATION_SH_FILE =
+            "output/sh_files/DnaAmpliconVar_Fastq_mergeMutation_for_cohort_analysis.sh";
+    
     private static final String NULL = "null";
     private static final String SINGLE_STUDY_CONFIG = "DnaAmpliconVarFastq/sSingle.txt";
     private static final String PAIRED_STUDY_CONFIG = "DnaAmpliconVarFastq/sPaired.txt";
@@ -71,7 +74,10 @@ public class DnaAmpliconVarFastqIntegrationTest extends AbstractIntegrationTest 
     private static final String ALIGNMENT_TEMPLATE = "DnaAmpliconVar_Fastq_alignment_for_GA5_1_analysis.txt";
     private static final String POST_ALIGNMENT_TEMPLATE =
             "DnaAmpliconVar_Fastq_postalignment_for_GA5_analysis";
+    private static final String MERGE_MUTATION_TEMPLATE =
+            "DnaAmpliconVar_Fastq_mergeMutation_for_cohort_analysis.txt";
     private static final String QC_SUMMARY_TEMPLATE = "DnaAmpliconVar_Fastq_qcsummary_for_cohort_analysis";
+
     private static final String G_PAIRED_ALL_TASKS = "DnaAmpliconVarFastq/gPairedAllTasks.txt";
     private static final String S_CONTROL_SAMPLE_NOT_NA = "DnaAmpliconVarFastq/sControlSampleNotNA.txt";
     private static final String G_SINGLE_ALL_TASKS = "DnaAmpliconVarFastq/gSingleAllTasks.txt";
@@ -86,6 +92,11 @@ public class DnaAmpliconVarFastqIntegrationTest extends AbstractIntegrationTest 
         context = new Context();
         context.setVariable("jarPath", PipelineUtils.getExecutionPath());
     }
+    
+    @AfterEach
+    public void cleanUp() throws IOException {
+        cleanOutputDirForNextTest(OUTPUT_DIR, false);
+    }
 
     @ParameterizedTest
     @MethodSource("initControlSampleAllTasks")
@@ -98,19 +109,15 @@ public class DnaAmpliconVarFastqIntegrationTest extends AbstractIntegrationTest 
 
         assertFalse(actualCmd.contains(NULL));
         assertEquals(expectedCmd, actualCmd, format(ERROR_MESSAGE, task));
-
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
     }
 
     @Test
-    public void testControlSampleAllTasksXenomeNoOutput() throws IOException {
+    public void testControlSampleAllTasksXenomeNoOutput() {
         startAppWithConfigs(G_SINGLE_ALL_TASKS, SINGLE_STUDY_CONFIG);
 
         assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "sh_files").exists());
         assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "log_files").exists());
         assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "err_files").exists());
-
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
     }
 
     @ParameterizedTest
@@ -123,18 +130,15 @@ public class DnaAmpliconVarFastqIntegrationTest extends AbstractIntegrationTest 
         String actualAlignmentCmd = getCmd(ALIGNMENT_SH_FILE).trim();
         assertEquals(expectedAlignmentCmd, actualAlignmentCmd);
         
-        //TODO: hotfix from Iurii
-//        String expectedMergeMutationCmd = getTestTemplate(folder, MERGE_MUTATION_TEMPLATE, context);
-//        String actualMergeMutationCmd = getCmd(MERGE_MUTATION_SH_FILE).trim();
-//        assertEquals(expectedMergeMutationCmd, actualMergeMutationCmd);
+        String expectedMergeMutationCmd = getTestTemplate(folder, MERGE_MUTATION_TEMPLATE, context);
+        String actualMergeMutationCmd = getCmd(MERGE_MUTATION_SH_FILE).trim();
+        assertEquals(expectedMergeMutationCmd, actualMergeMutationCmd);
 
         assertAll(
             () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "sh_files").exists()),
             () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "log_files").exists()),
             () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "err_files").exists())
         );
-
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
     }
 
     @ParameterizedTest
@@ -157,8 +161,6 @@ public class DnaAmpliconVarFastqIntegrationTest extends AbstractIntegrationTest 
         assertFalse(actualAlignmentCmd.contains(NULL));
         assertFalse(actualPostAlignmentCmd.contains(NULL));
         assertFalse(actualQcSummaryCmd.contains(NULL));
-
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
     }
 
     @ParameterizedTest
@@ -167,7 +169,6 @@ public class DnaAmpliconVarFastqIntegrationTest extends AbstractIntegrationTest 
             throws IOException, URISyntaxException {
         startAppWithConfigs(globalConfig, studyConfig);
         
-        //TODO: make old fonda debug on searching log file *_for_N_analysis
         String expectedPostAlignmentCmd = getTestTemplate(folder, POST_ALIGNMENT_TEMPLATE, context);
         String actualPostAlignmentCmd = getCmd(POST_ALIGNMENT_SH_FILE).trim();
         assertEquals(expectedPostAlignmentCmd, actualPostAlignmentCmd);

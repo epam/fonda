@@ -141,7 +141,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration))|(Successful Step: GATK recalibration))" $logFile;)
+	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration))|(Successful Step: Index mkdup bam))" $logFile;)
 fi
 	echo Waiting for step: Index mkdup bam
 	sleep 60

@@ -23,7 +23,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (Merge fastqs|STAR alignment|Sort bam|Index bam|Mark duplicates|Index mkdup bam|RNA QC metrics|Merge RNA QC|Remove temporary directories))|(Successful Step: Remove temporary directories))" $logFile;)
+	str=$(grep -E "((Error Step: (Merge fastqs|STAR alignment|Sort bam|Index bam|Mark duplicates|Index mkdup bam|RNA QC metrics|Merge RNA QC|Remove temporary directories))|(Successful Step: Merge RNA QC))" $logFile;)
 fi
 	echo Waiting for step: Merge RNA QC
 	sleep 60
@@ -43,7 +43,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (Merge fastqs|STAR alignment|Sort bam|Index bam|Mark duplicates|Index mkdup bam|RNA QC metrics|Merge RNA QC|Remove temporary directories))|(Successful Step: Remove temporary directories))" $logFile;)
+	str=$(grep -E "((Error Step: (Merge fastqs|STAR alignment|Sort bam|Index bam|Mark duplicates|Index mkdup bam|RNA QC metrics|Merge RNA QC|Remove temporary directories))|(Successful Step: Merge RNA QC))" $logFile;)
 fi
 	echo Waiting for step: Merge RNA QC
 	sleep 60
@@ -63,7 +63,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (Merge fastqs|STAR alignment|Sort bam|Index bam|Mark duplicates|Index mkdup bam|RNA QC metrics|Merge RNA QC|Remove temporary directories))|(Successful Step: Remove temporary directories))" $logFile;)
+	str=$(grep -E "((Error Step: (Merge fastqs|STAR alignment|Sort bam|Index bam|Mark duplicates|Index mkdup bam|RNA QC metrics|Merge RNA QC|Remove temporary directories))|(Successful Step: Merge RNA QC))" $logFile;)
 fi
 	echo Waiting for step: Merge RNA QC
 	sleep 60
@@ -83,7 +83,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (Merge fastqs|STAR alignment|Sort bam|Index bam|Mark duplicates|Index mkdup bam|RNA QC metrics|Merge RNA QC|Remove temporary directories))|(Successful Step: Remove temporary directories))" $logFile;)
+	str=$(grep -E "((Error Step: (Merge fastqs|STAR alignment|Sort bam|Index bam|Mark duplicates|Index mkdup bam|RNA QC metrics|Merge RNA QC|Remove temporary directories))|(Successful Step: Merge RNA QC))" $logFile;)
 fi
 	echo Waiting for step: Merge RNA QC
 	sleep 60
@@ -103,7 +103,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (Merge fastqs|STAR alignment|Sort bam|Index bam|Mark duplicates|Index mkdup bam|RNA QC metrics|Merge RNA QC|Remove temporary directories))|(Successful Step: Remove temporary directories))" $logFile;)
+	str=$(grep -E "((Error Step: (Merge fastqs|STAR alignment|Sort bam|Index bam|Mark duplicates|Index mkdup bam|RNA QC metrics|Merge RNA QC|Remove temporary directories))|(Successful Step: Merge RNA QC))" $logFile;)
 fi
 	echo Waiting for step: Merge RNA QC
 	sleep 60
@@ -123,7 +123,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (Merge fastqs|STAR alignment|Sort bam|Index bam|Mark duplicates|Index mkdup bam|RNA QC metrics|Merge RNA QC|Remove temporary directories))|(Successful Step: Remove temporary directories))" $logFile;)
+	str=$(grep -E "((Error Step: (Merge fastqs|STAR alignment|Sort bam|Index bam|Mark duplicates|Index mkdup bam|RNA QC metrics|Merge RNA QC|Remove temporary directories))|(Successful Step: Merge RNA QC))" $logFile;)
 fi
 	echo Waiting for step: Merge RNA QC
 	sleep 60

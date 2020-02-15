@@ -4,7 +4,7 @@ str=""
 do
 [(${ifScript2})]
 then
-	str=$(grep -E "((Error Step: ([(${steps})]))|(Successful Step: [(${successfulTag})]))" $logFile;)
+	str=$(grep -E "((Error Step: ([(${steps})]))|(Successful Step: [(${tag})]))" $logFile;)
 fi
 	echo Waiting for step: [(${tag})]
 	sleep [(${period})]
@@ -24,9 +24,9 @@ str=""
 do
 [(${ifScript2})]
 then
-	str=$(grep -E "((Error Step: ([(${steps})]))|(Successful Step: [(${successfulTag})]))" $logFile;)
+	str=$(grep -E "((Error Step: ([(${steps})]))|(Successful Step: [(${tag})]))" $logFile;)
 fi
-	echo Waiting for step: [(${successfulTag})]
+	echo Waiting for step: [(${tag})]
 	sleep [(${period})]
 done
 
