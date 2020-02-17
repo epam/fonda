@@ -1,6 +1,5 @@
 echo `date` Begin Step: OptiType HLA typing...
-python optiType/OptiTypePipeline.py -i merged_fastq1.gz merged_fastq2.gz
---rna --config optiType/config.ini --outdir output/optitype
+python optiType/OptiTypePipeline.py -i merged_fastq1.gz merged_fastq2.gz --rna --config optiType/config.ini --outdir output/optitype
 mv output/optitype/hla_result.tsv output/optitype/sampleName_hla_result.tsv
 mv output/optitype/hla_coverage_plot.pdf output/optitype/sampleName_hla_coverage_plot.pdf
 if [ $? -eq 0 ]
@@ -13,3 +12,4 @@ else
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
 fi
+
