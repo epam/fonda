@@ -32,6 +32,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.util.Optional;
+
 import static com.epam.fonda.utils.ToolUtils.validate;
 import static java.lang.String.format;
 
@@ -121,7 +123,9 @@ public class Trimmomatic implements Tool<FastqResult> {
             trimmomaticFields.prefix = format("%s/%s", trimmomaticFields.sfqOutdir, sample.getName());
         }
         trimmomaticFields.trimmedFastq1 = format("%s.trimmed.R1.fastq.gz", trimmomaticFields.prefix);
-        trimmomaticFields.trimmedFastq2 = format("%s.trimmed.R2.fastq.gz", trimmomaticFields.prefix);
+        trimmomaticFields.trimmedFastq2 = trimmomaticFields.fastq2 == null
+                ? null
+                : format("%s.trimmed.R2.fastq.gz", trimmomaticFields.prefix);
         trimmomaticFields.trimmedUnpairedFastq1 = format("%s.trimmed_unpaired.R1.fq.gz",
                 trimmomaticFields.prefix);
         trimmomaticFields.trimmedUnpairedFastq2 = format("%s.trimmed_unpaired.R2.fq.gz",
