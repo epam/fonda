@@ -134,8 +134,6 @@ public class NovoalignSort implements Tool<BamResult> {
         private String sampleName;
         private int numThreads;
         private int index;
-        private String fastq1;
-        private String fastq2;
         private String tmpBam;
         private String rg;
         private String sortedBam;
