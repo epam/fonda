@@ -1,0 +1,84 @@
+#!/bin/bash -x
+
+# --- SGE options --- #
+
+#$ -wd build/resources/integrationTest/output
+#$ -N HlaTyping_Fastq_hlatyping_for_smv5_analysis
+#$ -o build/resources/integrationTest/output/log_files/HlaTyping_Fastq_hlatyping_for_smv5_analysis.log
+#$ -e build/resources/integrationTest/output/err_files/HlaTyping_Fastq_hlatyping_for_smv5_analysis.err
+#$ -q all.q
+#$ -R y
+#$ -pe threaded 4
+#$ -m a
+
+# --- The commands to be executed --- #
+
+cd build/resources/integrationTest/output
+
+echo `date` Begin the job execution...
+
+echo `date` Begin Step: Merge fastqs...
+
+cp /ngs/data/demo/test/fastq/smv5.R1.fastq.gz build/resources/integrationTest/output/smv5/fastq/smv5.merged_R1.fastq.gz
+cp /ngs/data/demo/test/fastq/smv5.R2.fastq.gz build/resources/integrationTest/output/smv5/fastq/smv5.merged_R2.fastq.gz
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Merge fastqs.
+	sleep 8
+else
+	echo `date` Error Step: Merge fastqs.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Xenome classification...
+xenome classify -T 8 -P /ngs/data/xenomeIdx/xenome.idx --pairs --graft-name human --host-name mouse --output-filename-prefix build/resources/integrationTest/output/smv5/tmp/smv5 --tmp-dir build/resources/integrationTest/output/smv5/tmp -i build/resources/integrationTest/output/smv5/fastq/smv5.merged_R1.fastq.gz -i build/resources/integrationTest/output/smv5/fastq/smv5.merged_R2.fastq.gz
+awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' build/resources/integrationTest/output/smv5/tmp/smv5_human_1.fastq > build/resources/integrationTest/output/smv5/tmp/smv5_convert_human_1.fastq
+awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' build/resources/integrationTest/output/smv5/tmp/smv5_human_2.fastq > build/resources/integrationTest/output/smv5/tmp/smv5_convert_human_2.fastq
+awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' build/resources/integrationTest/output/smv5/tmp/smv5_both_1.fastq > build/resources/integrationTest/output/smv5/tmp/smv5_convert_both_1.fastq
+awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' build/resources/integrationTest/output/smv5/tmp/smv5_both_2.fastq > build/resources/integrationTest/output/smv5/tmp/smv5_convert_both_2.fastq
+awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' build/resources/integrationTest/output/smv5/tmp/smv5_ambiguous_1.fastq > build/resources/integrationTest/output/smv5/tmp/smv5_convert_ambiguous_1.fastq
+awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' build/resources/integrationTest/output/smv5/tmp/smv5_ambiguous_2.fastq > build/resources/integrationTest/output/smv5/tmp/smv5_convert_ambiguous_2.fastq
+cat build/resources/integrationTest/output/smv5/tmp/smv5_convert_human_1.fastq build/resources/integrationTest/output/smv5/tmp/smv5_convert_both_1.fastq build/resources/integrationTest/output/smv5/tmp/smv5_convert_ambiguous_1.fastq | gzip -c > build/resources/integrationTest/output/smv5/fastq/smv5_classified_R1.fq.gz
+cat build/resources/integrationTest/output/smv5/tmp/smv5_convert_human_2.fastq build/resources/integrationTest/output/smv5/tmp/smv5_convert_both_2.fastq build/resources/integrationTest/output/smv5/tmp/smv5_convert_ambiguous_2.fastq | gzip -c > build/resources/integrationTest/output/smv5/fastq/smv5_classified_R2.fq.gz
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Xenome classification.
+	sleep 8
+else
+	echo `date` Error Step: Xenome classification.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Trimmomatic trimming...
+/ngs/data/app/java/v1.8.0u121/bin/java -jar /usr/bin/trimmomatic PE -threads 4 -phred33 build/resources/integrationTest/output/smv5/fastq/smv5_classified_R1.fq.gz build/resources/integrationTest/output/smv5/fastq/smv5_classified_R2.fq.gz build/resources/integrationTest/output/smv5/fastq/smv5.trimmed.R1.fastq.gz build/resources/integrationTest/output/smv5/fastq/smv5.trimmed_unpaired.R1.fq.gz build/resources/integrationTest/output/smv5/fastq/smv5.trimmed.R2.fastq.gz build/resources/integrationTest/output/smv5/fastq/smv5.trimmed_unpaired.R2.fq.gz ILLUMINACLIP:AGATCGGAAGAT:2:30:10 LEADING:20 TRAILING:20 SLIDINGWINDOW:4:15 MINLEN:36
+rm -rf build/resources/integrationTest/output/smv5/fastq/smv5.trimmed_unpaired.R1.fq.gz
+rm -rf build/resources/integrationTest/output/smv5/fastq/smv5.trimmed_unpaired.R2.fq.gz
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Trimmomatic trimming.
+	sleep 8
+else
+	echo `date` Error Step: Trimmomatic trimming.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Remove temporary directories...
+rm -rf build/resources/integrationTest/output/smv5/tmp
+
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Remove temporary directories.
+	sleep 8
+else
+	echo `date` Error Step: Remove temporary directories.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+echo `date` Finish the job execution!
