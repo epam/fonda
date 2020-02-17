@@ -32,8 +32,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import java.util.Optional;
-
 import static com.epam.fonda.utils.ToolUtils.validate;
 import static java.lang.String.format;
 
