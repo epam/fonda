@@ -4,7 +4,7 @@ job_name = dnaAmpliconVarFastq
 
 dir_out = build/resources/integrationTest/output
 
-fastq_list = build/resources/integrationTest/fastqPairedControlSampleNotNAForPostALignment.tsv
+fastq_list = build/resources/integrationTest/fastqPairedControlSampleNotNAForPostAlignment.tsv
 
 LibraryType = DNAWholeExomeSeq_Paired
 
