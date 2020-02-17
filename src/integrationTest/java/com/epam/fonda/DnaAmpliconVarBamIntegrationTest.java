@@ -52,39 +52,39 @@ public class DnaAmpliconVarBamIntegrationTest extends AbstractIntegrationTest {
     private static final String FOR_GA_51_TEMPLATE_SUFFIX = "for_GA51_analysis.txt";
     private static final String FOR_GA_52_TEMPLATE_SUFFIX = "for_GA52_analysis.txt";
     private static final String FOR_COHORT_ANALYSIS_TEMPLATE_SUFFIX = "for_cohort_analysis.txt";
-    public static final String DNA_AMPLICON_VAR_BAM_FREEBAYES =
+    private static final String DNA_AMPLICON_VAR_BAM_FREEBAYES =
             "DnaAmpliconVar_Bam_freebayes_";
-    public static final String DNA_AMPLICON_VAR_BAM_GATK_HAPLOTYPE_CALLER =
+    private static final String DNA_AMPLICON_VAR_BAM_GATK_HAPLOTYPE_CALLER =
             "DnaAmpliconVar_Bam_gatkHaplotypeCaller_";
-    public static final String DNA_AMPLICON_VAR_BAM_LOFREQ =
+    private static final String DNA_AMPLICON_VAR_BAM_LOFREQ =
             "DnaAmpliconVar_Bam_lofreq_";
-    public static final String DNA_AMPLICON_VAR_BAM_MUTECT_1 =
+    private static final String DNA_AMPLICON_VAR_BAM_MUTECT_1 =
             "DnaAmpliconVar_Bam_mutect1_";
-    public static final String DNA_AMPLICON_VAR_BAM_SCALPEL =
+    private static final String DNA_AMPLICON_VAR_BAM_SCALPEL =
             "DnaAmpliconVar_Bam_scalpel_";
-    public static final String DNA_AMPLICON_VAR_BAM_STRELKA_2 =
+    private static final String DNA_AMPLICON_VAR_BAM_STRELKA_2 =
             "DnaAmpliconVar_Bam_strelka2_";
-    public static final String DNA_AMPLICON_VAR_BAM_VARDICT =
+    private static final String DNA_AMPLICON_VAR_BAM_VARDICT =
             "DnaAmpliconVar_Bam_vardict_";
-    public static final String DNA_AMPLICON_VAR_BAM_VARIANT_DETECTION =
+    private static final String DNA_AMPLICON_VAR_BAM_VARIANT_DETECTION =
             "DnaAmpliconVar_Bam_variantDetection_";
-    public static final String DNA_AMPLICON_VAR_BAM_CONTEST =
+    private static final String DNA_AMPLICON_VAR_BAM_CONTEST =
             "DnaAmpliconVar_Bam_contEst_";
-    public static final String DNA_AMPLICON_VAR_BAM_EXOMECNV =
+    private static final String DNA_AMPLICON_VAR_BAM_EXOMECNV =
             "DnaAmpliconVar_Bam_exomecnv_";
-    public static final String DNA_AMPLICON_VAR_BAM_MUTECT_2 =
+    private static final String DNA_AMPLICON_VAR_BAM_MUTECT_2 =
             "DnaAmpliconVar_Bam_mutect2_";
-    public static final String DNA_AMPLICON_VAR_BAM_SEQUENZA =
+    private static final String DNA_AMPLICON_VAR_BAM_SEQUENZA =
             "DnaAmpliconVar_Bam_sequenza_";
     private static final String DNA_AMPLICON_VAR_BAM_MERGE_MUTATION =
             "DnaAmpliconVar_Bam_mergeMutation_";
-    public static final String DNA_AMPLICON_VAR_BAM_G_SINGLE_ALL_TASKS =
+    private static final String DNA_AMPLICON_VAR_BAM_G_SINGLE_ALL_TASKS =
             "DnaAmpliconVarBam/gSingleAllTasks.txt";
-    public static final String DNA_AMPLICON_VAR_BAM_S_SINGLE =
+    private static final String DNA_AMPLICON_VAR_BAM_S_SINGLE =
             "DnaAmpliconVarBam/sSingle.txt";
-    public static final String DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA =
+    private static final String DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA =
             "DnaAmpliconVarBam/gAllTasksSampleNotNA.txt";
-    public static final String DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA =
+    private static final String DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA =
             "DnaAmpliconVarBam/sControlSampleNotNA.txt";
     private TemplateEngine templateEngine = TemplateEngineUtils.init();
     private Context context = new Context();
