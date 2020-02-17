@@ -16,141 +16,157 @@
 
 package com.epam.fonda;
 
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.epam.fonda.utils.TemplateEngineUtils;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
-import static org.junit.Assert.assertFalse;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class Bam2FastqIntegrationTest extends AbstractIntegrationTest {
     private static final String OUTPUT_DIR_ROOT = "build/resources/integrationTest/";
     private static final String OUTPUT_DIR = "output/";
-    private static final String SAMPLE_NAME = "GA5/";
-    private static final String OUTPUT_SH_FILE = "output/sh_files/Bam2Fastq_convert_for_GA5_analysis.sh";
+    private static final String OUTPUT_SH_FILE_GA5 = "output/sh_files/Bam2Fastq_convert_for_GA5_analysis.sh";
+    private static final String OUTPUT_SH_FILE_GA51 = "output/sh_files/Bam2Fastq_convert_for_GA51_analysis.sh";
+    private static final String OUTPUT_SH_FILE_GA52 = "output/sh_files/Bam2Fastq_convert_for_GA52_analysis.sh";
     private static final String OUTPUT_FASTQ_FILE = "output/Example_project-run1234-031814-FastqPaths.txt";
-    private static final String PAIRED_STUDY_CONFIG = "Bam2Fastq/sPaired.txt";
     private static final String NULL = "null";
 
-    @Test
-    public void testSortPairedNonPicard() throws IOException {
-        startAppWithConfigs(
-                "Bam2Fastq/gPairedNonPicard.txt", PAIRED_STUDY_CONFIG);
-        File outputShFile = new File(this.getClass().getClassLoader().getResource(OUTPUT_SH_FILE).getPath());
-        try (BufferedReader reader = new BufferedReader(new FileReader(outputShFile))) {
-            List<String> lines = reader.lines().collect(Collectors.toList());
-            assertTrue(lines.stream().anyMatch(line -> line.contains("SortSam INPUT=")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains("SORT_ORDER=queryname")));
-            assertFalse(lines.stream().anyMatch(line -> line.contains("FASTQ=")));
-            assertTrue(lines.stream().noneMatch(line -> line.contains(NULL)));
-        }
+    private static final String S_PAIRED = "Bam2Fastq/sPaired.txt";
+    private static final String S_SINGLE = "Bam2Fastq/sSingle.txt";
+    private static final String S_SINGLE_CONTROL_SAMPLE = "Bam2Fastq/sSingleControlSample.txt";
+    private static final String G_SINGLE_PICARD = "Bam2Fastq/gSinglePicard.txt";
+    private static final String G_PAIRED_NON_PICARD = "Bam2Fastq/gPairedNonPicard.txt";
+    private static final String G_PAIRED_PICARD = "Bam2Fastq/gPairedPicard.txt";
+    private static final String GA5_TEMPLATE = "Bam2Fastq_convert_for_GA5_analysis.txt";
+    private static final String GA51_TEMPLATE = "Bam2Fastq_convert_for_GA51_analysis.txt";
+    private static final String GA52_TEMPLATE = "Bam2Fastq_convert_for_GA52_analysis.txt";
+    private static final String TEST_FASTQ_FILE = "Example_project-run1234-031814-FastqPaths.txt";
 
+    private TemplateEngine templateEngine = TemplateEngineUtils.init();
+    private Context context;
+
+    @BeforeEach
+    public void setup() {
+        context = new Context();
+    }
+
+    @AfterEach
+    public void cleanUp() throws IOException {
         cleanOutputDirForNextTest(OUTPUT_DIR, false);
     }
 
     @Test
-    public void testPairedPicard() throws IOException {
-        startAppWithConfigs(
-                "Bam2Fastq/gPairedPicard.txt", PAIRED_STUDY_CONFIG);
-        File outputShFile = new File(this.getClass().getClassLoader().getResource(OUTPUT_SH_FILE).getPath());
+    public void testSortPairedNonPicard() throws IOException, URISyntaxException {
+        startAppWithConfigs(G_PAIRED_NON_PICARD, S_PAIRED);
+        String testFolder = "bam2Fastq/testSortPairedNonPicard";
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(outputShFile))) {
-            List<String> lines = reader.lines().collect(Collectors.toList());
-            assertTrue(lines.stream().anyMatch(line -> line.contains("UNPAIRED_FASTQ=")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains("SECOND_END_FASTQ=")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains(".R2.fastq")));
-            assertTrue(lines.stream().noneMatch(line -> line.contains(NULL)));
-        }
+        String expectedGa5Cmd = getTemplate(testFolder, GA5_TEMPLATE);
+        String expectedGa52Cmd = getTemplate(testFolder, GA52_TEMPLATE);
 
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
+        String actualGa5Cmd = getCmd(OUTPUT_SH_FILE_GA5).trim();
+        String actualGa52Cmd = getCmd(OUTPUT_SH_FILE_GA52).trim();
+
+        assertAll(
+            () -> assertFalse(actualGa5Cmd.contains(NULL)),
+            () -> assertFalse(actualGa52Cmd.contains(NULL)),
+            () -> assertEquals(expectedGa5Cmd, actualGa5Cmd),
+            () -> assertEquals(expectedGa52Cmd, actualGa52Cmd),
+            this::assertDirectories
+        );
     }
 
     @Test
-    public void testSinglePicard3Columns() throws IOException {
-        startAppWithConfigs(
-                "Bam2Fastq/gSinglePicard.txt", "Bam2Fastq/sSingle.txt");
-        File outputShFile = new File(this.getClass().getClassLoader().getResource(OUTPUT_SH_FILE).getPath());
+    public void testPairedPicard() throws IOException, URISyntaxException {
+        startAppWithConfigs(G_PAIRED_PICARD, S_PAIRED);
+        String testFolder = "bam2Fastq/testPairedPicard";
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(outputShFile))) {
-            List<String> lines = reader.lines().collect(Collectors.toList());
-            assertTrue(lines.stream().anyMatch(line -> line.contains("FASTQ=")));
-            assertFalse(lines.stream().anyMatch(line -> line.contains("UNPAIRED_FASTQ=")));
-            assertFalse(lines.stream().anyMatch(line -> line.contains("SECOND_END_FASTQ=")));
-            assertFalse(lines.stream().anyMatch(line -> line.contains(".R2.fastq")));
-            assertTrue(lines.stream().noneMatch(line -> line.contains(NULL)));
-        }
+        String expectedGa5Cmd = getTemplate(testFolder, GA5_TEMPLATE);
+        String expectedGa52Cmd = getTemplate(testFolder, GA52_TEMPLATE);
+        String expectedFastqFile = getTestFastqFileString(testFolder);
 
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
+        String actualGa5Cmd = getCmd(OUTPUT_SH_FILE_GA5).trim();
+        String actualGa52Cmd = getCmd(OUTPUT_SH_FILE_GA52).trim();
+        String actualFastqFile = getOutputFastqFileString();
+
+        assertAll(
+            () -> assertFalse(actualGa5Cmd.contains(NULL)),
+            () -> assertFalse(actualGa52Cmd.contains(NULL)),
+            () -> assertFalse(actualFastqFile.contains(NULL)),
+            () -> assertEquals(expectedGa5Cmd, actualGa5Cmd),
+            () -> assertEquals(expectedGa52Cmd, actualGa52Cmd),
+            () -> assertEquals(expectedFastqFile, actualFastqFile),
+            this::assertDirectories
+        );
     }
 
     @Test
-    public void testSinglePicard5Columns() throws IOException {
-        startAppWithConfigs(
-                "Bam2Fastq/gSinglePicard.txt", "Bam2Fastq/sSingleControlSample.txt");
-        File outputShFile = new File(this.getClass().getClassLoader().
-                getResource("output/sh_files/Bam2Fastq_convert_for_GA51_analysis.sh").getPath());
+    public void testSinglePicard3Columns() throws IOException, URISyntaxException {
+        startAppWithConfigs(G_SINGLE_PICARD, S_SINGLE);
+        String testFolder = "bam2Fastq/testSinglePicard3Columns";
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(outputShFile))) {
-            List<String> lines = reader.lines().collect(Collectors.toList());
-            assertTrue(lines.stream().anyMatch(line -> line.contains("FASTQ=")));
-            assertFalse(lines.stream().anyMatch(line -> line.contains("UNPAIRED_FASTQ=")));
-            assertFalse(lines.stream().anyMatch(line -> line.contains("SECOND_END_FASTQ=")));
-            assertFalse(lines.stream().anyMatch(line -> line.contains(".R2.fastq")));
-            assertTrue(lines.stream().noneMatch(line -> line.contains(NULL)));
-        }
+        String expectedGa5Cmd = getTemplate(testFolder, GA5_TEMPLATE).trim();
+        String expectedFastqFile = getTestFastqFileString(testFolder);
 
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
+        String actualGa5Cmd = getCmd(OUTPUT_SH_FILE_GA5).trim();
+        String actualFastqFile = getOutputFastqFileString();
+
+        assertAll(
+            () -> assertFalse(actualGa5Cmd.contains(NULL)),
+            () -> assertFalse(actualFastqFile.contains(NULL)),
+            () -> assertEquals(expectedGa5Cmd, actualGa5Cmd),
+            () -> assertEquals(expectedFastqFile, actualFastqFile),
+            this::assertDirectories
+        );
     }
 
     @Test
-    public void testGetFastqListSingle() throws IOException {
-        startAppWithConfigs(
-                "Bam2Fastq/gSinglePicard.txt", "Bam2Fastq/sSingle.txt");
-        File outputFastqPathsFile = new File(this.getClass().getClassLoader().getResource(OUTPUT_FASTQ_FILE).getPath());
+    public void testSinglePicard5Columns() throws IOException, URISyntaxException {
+        startAppWithConfigs(G_SINGLE_PICARD, S_SINGLE_CONTROL_SAMPLE);
+        String testFolder = "bam2Fastq/testSinglePicard5Columns";
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(outputFastqPathsFile))) {
-            List<String> lines = reader.lines().collect(Collectors.toList());
-            assertTrue(lines.get(0).contains("Parameter"));
-            assertTrue(lines.get(1).contains("tumor\tNA"));
-            assertTrue(lines.stream().noneMatch(line -> line.contains(NULL)));
-        }
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
+        String expectedGa51Cmd = getTemplate(testFolder, GA51_TEMPLATE).trim();
+        String expectedGa52Cmd = getTemplate(testFolder, GA52_TEMPLATE).trim();
+
+        String actualGa51Cmd = getCmd(OUTPUT_SH_FILE_GA51).trim();
+        String actualGa52Cmd = getCmd(OUTPUT_SH_FILE_GA52).trim();
+
+        assertAll(
+            () -> assertEquals(expectedGa51Cmd, actualGa51Cmd),
+            () -> assertFalse(actualGa51Cmd.contains(NULL)),
+            () -> assertEquals(expectedGa52Cmd, actualGa52Cmd),
+            () -> assertFalse(actualGa52Cmd.contains(NULL)),
+            this::assertDirectories
+        );
     }
 
-    @Test
-    public void testGetFastqListPaired() throws IOException {
-        startAppWithConfigs(
-                "Bam2Fastq/gPairedPicard.txt", PAIRED_STUDY_CONFIG);
-        File outputFastqPathsFile = new File(this.getClass().getClassLoader().getResource(OUTPUT_FASTQ_FILE).getPath());
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(outputFastqPathsFile))) {
-            List<String> lines = reader.lines().collect(Collectors.toList());
-            assertTrue(lines.get(0).contains("Parameter1\tParameter2"));
-            assertTrue(lines.get(1).contains("sample\tGA52"));
-            assertTrue(lines.get(2).contains("tumor\tGA51"));
-            assertTrue(lines.get(3).contains("tumor\tNA"));
-            assertTrue(lines.stream().noneMatch(line -> line.contains(NULL)));
-            lines.remove(0);
-            String fastqPairedPathPattern = ".+?R1.fastq.gz.+?R2.fastq.gz.+?(\\n|$)";
-            assertTrue(lines.stream().filter(i -> !(i.isEmpty() && lines.get(lines.size() - 1).equals(i)))
-                    .allMatch(line -> line.matches(fastqPairedPathPattern)));
-        }
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
+    private String getTemplate(String folder, String file) {
+        return templateEngine.process(String.format("%s/%s", folder, file), context).trim();
     }
 
-    @Test
-    public void testSpecificDir() throws IOException {
-        startAppWithConfigs("Bam2Fastq/gPairedPicard.txt", PAIRED_STUDY_CONFIG);
-        assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + SAMPLE_NAME).exists());
-        assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "sh_files").exists());
-        assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "log_files").exists());
-        assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "err_files").exists());
-        assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + SAMPLE_NAME + "fastq").exists());
-        cleanOutputDirForNextTest(OUTPUT_DIR, true);
+    private void assertDirectories() {
+        assertAll(
+            () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "sh_files").exists()),
+            () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "log_files").exists()),
+            () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "err_files").exists())
+        );
+    }
+
+    private String getOutputFastqFileString() throws IOException, URISyntaxException {
+        return getCmd(OUTPUT_FASTQ_FILE).replaceAll("\\r\\n", "\n").trim();
+    }
+
+    private String getTestFastqFileString(String testFolder) throws IOException, URISyntaxException {
+        return getCmd(String.format("templates/%s/%s", testFolder, TEST_FASTQ_FILE)
+                .replaceAll("\\r\\n", "\n")).trim();
     }
 }
