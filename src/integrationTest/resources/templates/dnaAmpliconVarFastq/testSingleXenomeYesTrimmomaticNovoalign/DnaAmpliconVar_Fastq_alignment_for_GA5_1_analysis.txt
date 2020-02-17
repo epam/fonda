@@ -1,0 +1,81 @@
+#!/bin/bash -x
+
+# --- SGE options --- #
+
+#$ -wd build/resources/integrationTest/output
+#$ -N DnaAmpliconVar_Fastq_alignment_for_GA5_1_analysis
+#$ -o build/resources/integrationTest/output/log_files/DnaAmpliconVar_Fastq_alignment_for_GA5_1_analysis.log
+#$ -e build/resources/integrationTest/output/err_files/DnaAmpliconVar_Fastq_alignment_for_GA5_1_analysis.err
+#$ -q main.q
+#$ -R y
+#$ -pe threaded 4
+#$ -m a
+
+# --- The commands to be executed --- #
+
+cd build/resources/integrationTest/output
+
+echo `date` Begin the job execution...
+
+echo `date` Begin Step: Xenome classification...
+/usr/bin/xenome classify -T 8 -P /ngs/data/xenomeIdx/xenome.idx --pairs --graft-name human --host-name mouse --output-filename-prefix build/resources/integrationTest/output/GA5/tmp/GA5_1 --tmp-dir build/resources/integrationTest/output/GA5/tmp -i /ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_001.fastq.gz -i 
+awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' build/resources/integrationTest/output/GA5/tmp/GA5_1_human_1.fastq > build/resources/integrationTest/output/GA5/tmp/GA5_1_convert_human_1.fastq
+awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' build/resources/integrationTest/output/GA5/tmp/GA5_1_human_2.fastq > build/resources/integrationTest/output/GA5/tmp/GA5_1_convert_human_2.fastq
+awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' build/resources/integrationTest/output/GA5/tmp/GA5_1_both_1.fastq > build/resources/integrationTest/output/GA5/tmp/GA5_1_convert_both_1.fastq
+awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' build/resources/integrationTest/output/GA5/tmp/GA5_1_both_2.fastq > build/resources/integrationTest/output/GA5/tmp/GA5_1_convert_both_2.fastq
+awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' build/resources/integrationTest/output/GA5/tmp/GA5_1_ambiguous_1.fastq > build/resources/integrationTest/output/GA5/tmp/GA5_1_convert_ambiguous_1.fastq
+awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' build/resources/integrationTest/output/GA5/tmp/GA5_1_ambiguous_2.fastq > build/resources/integrationTest/output/GA5/tmp/GA5_1_convert_ambiguous_2.fastq
+cat build/resources/integrationTest/output/GA5/tmp/GA5_1_convert_human_1.fastq build/resources/integrationTest/output/GA5/tmp/GA5_1_convert_both_1.fastq build/resources/integrationTest/output/GA5/tmp/GA5_1_convert_ambiguous_1.fastq | gzip -c > build/resources/integrationTest/output/GA5/fastq/GA5_1_classified_R1.fq.gz
+cat build/resources/integrationTest/output/GA5/tmp/GA5_1_convert_human_2.fastq build/resources/integrationTest/output/GA5/tmp/GA5_1_convert_both_2.fastq build/resources/integrationTest/output/GA5/tmp/GA5_1_convert_ambiguous_2.fastq | gzip -c > build/resources/integrationTest/output/GA5/fastq/GA5_1_classified_R2.fq.gz
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Xenome classification.
+	sleep 8
+else
+	echo `date` Error Step: Xenome classification.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Trimmomatic trimming...
+/usr/lib/jvm/java-8-openjdk-amd64/bin/java -jar /usr/bin/trimmomatic PE -threads 4 -phred33 build/resources/integrationTest/output/GA5/fastq/GA5_1_classified_R1.fq.gz build/resources/integrationTest/output/GA5/fastq/GA5_1_classified_R2.fq.gz build/resources/integrationTest/output/GA5/fastq/GA5_1.trimmed.R1.fastq.gz build/resources/integrationTest/output/GA5/fastq/GA5_1.trimmed_unpaired.R1.fq.gz build/resources/integrationTest/output/GA5/fastq/GA5_1.trimmed.R2.fastq.gz build/resources/integrationTest/output/GA5/fastq/GA5_1.trimmed_unpaired.R2.fq.gz ILLUMINACLIP:AGATCGGAAGAT:2:30:10 LEADING:20 TRAILING:20 SLIDINGWINDOW:4:15 MINLEN:36
+rm -rf build/resources/integrationTest/output/GA5/fastq/GA5_1.trimmed_unpaired.R1.fq.gz
+rm -rf build/resources/integrationTest/output/GA5/fastq/GA5_1.trimmed_unpaired.R2.fq.gz
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Trimmomatic trimming.
+	sleep 8
+else
+	echo `date` Error Step: Trimmomatic trimming.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Novoalign alignment...
+/usr/bin/novoalign -c 4 -d /ngs/data/novoindexDB/novoindex.nix -o SAM $'@RG\tID:GA5\tSM:GA5\tLB:GA5\tPL:Illumina' -f build/resources/integrationTest/output/GA5/fastq/GA5_1.trimmed.R1.fastq.gz build/resources/integrationTest/output/GA5/fastq/GA5_1.trimmed.R2.fastq.gz --amplicons /ngs/data/S03723314_Padded_decoy.txt --hlimit 9 -t 0,2 -x 3 -H 22 --softclip 35 --trim3hp --matchreward 3 -k| /opt/samtools/samtools-0.1.19/samtools view -bS -|/opt/samtools/samtools-0.1.19/samtools sort - build/resources/integrationTest/output/GA5/bam/GA5_1.novoalign.sorted
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Novoalign alignment.
+	sleep 8
+else
+	echo `date` Error Step: Novoalign alignment.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Index bam...
+/opt/samtools/samtools-0.1.19/samtools index build/resources/integrationTest/output/GA5/bam/GA5_1.novoalign.sorted.bam
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Index bam.
+	sleep 8
+else
+	echo `date` Error Step: Index bam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+echo `date` Finish the job execution!

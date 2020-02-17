@@ -15,526 +15,219 @@
  */
 package com.epam.fonda;
 
-import com.epam.fonda.workflow.TaskContainer;
-import com.tngtech.java.junit.dataprovider.DataProvider;
-import com.tngtech.java.junit.dataprovider.DataProviderRunner;
-import com.tngtech.java.junit.dataprovider.UseDataProvider;
-import org.junit.After;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import com.epam.fonda.utils.PipelineUtils;
+import com.epam.fonda.utils.TemplateEngineUtils;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.net.URISyntaxException;
+import java.util.stream.Stream;
 
-import static org.junit.Assert.assertTrue;
+import static java.lang.String.format;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(DataProviderRunner.class)
 public class DnaAmpliconVarFastqIntegrationTest extends AbstractIntegrationTest {
-    private static final String OUTPUT_DIR = "output";
-    private static final String ERROR_MESSAGE = "An error occurred with task %s. Expected: %s";
+
+    private static final String OUTPUT_DIR = "output/";
+    private static final String OUTPUT_DIR_ROOT = "build/resources/integrationTest/";
+    private static final String ERROR_MESSAGE = "An error occurred with task %s";
+
     private static final String POST_ALIGNMENT_SH_FILE =
             "output/sh_files/DnaAmpliconVar_Fastq_postalignment_for_GA5_analysis.sh";
+    private static final String ALIGNMENT_SH_FILE =
+            "output/sh_files/DnaAmpliconVar_Fastq_alignment_for_GA5_1_analysis.sh";
+    private static final String QC_SUMMARY_SH_FILE =
+            "output/sh_files/DnaAmpliconVar_Fastq_qcsummary_for_cohort_analysis.sh";
+    private static final String MERGE_MUTATION_SH_FILE =
+            "output/sh_files/DnaAmpliconVar_Fastq_mergeMutation_for_cohort_analysis.sh";
+
     private static final String NULL = "null";
-    private static final String FASTA_FILE =
-            "/ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa";
-    private static final String REMOVE_TEMP_DIRS_STEP = "Begin Step: Remove temporary directories...";
-    private static final String SNPEFF_PATTERN = ".*?/usr/bin/python.+?vcf_snpeff_annotation.py.+?(\\n|$)";
     private static final String SINGLE_STUDY_CONFIG = "DnaAmpliconVarFastq/sSingle.txt";
     private static final String PAIRED_STUDY_CONFIG = "DnaAmpliconVarFastq/sPaired.txt";
-    private static final String ALIGNMENT_OUTPUT_SH =
-            "output/sh_files/DnaAmpliconVar_Fastq_alignment_for_GA5_1_analysis.sh";
+    private static final String ALL_TASKS_FOLDER =
+            "dnaAmpliconVarFastq/testControlSampleAllTasksXenomeNo";
+    private static final String ALL_TASKS_FREEBAYES = format(
+            "%s/DnaAmpliconVar_Fastq_freebayes_for_GA5_analysis", ALL_TASKS_FOLDER);
+    private static final String ALL_TASKS_GATK_HAPLOTYPE_CALLER = format(
+            "%s/DnaAmpliconVar_Fastq_gatkHaplotypeCaller_for_GA5_analysis", ALL_TASKS_FOLDER);
+    private static final String ALL_TASKS_LOFREQ = format(
+            "%s/DnaAmpliconVar_Fastq_lofreq_for_GA5_analysis", ALL_TASKS_FOLDER);
+    private static final String ALL_TASKS_MUTECT1 = format(
+            "%s/DnaAmpliconVar_Fastq_mutect1_for_GA5_analysis", ALL_TASKS_FOLDER);
+    private static final String ALL_TASKS_SCALPEL = format(
+            "%s/DnaAmpliconVar_Fastq_scalpel_for_GA5_analysis", ALL_TASKS_FOLDER);
+    private static final String ALL_TASKS_STRELKA2 = format(
+            "%s/DnaAmpliconVar_Fastq_strelka2_for_GA5_analysis", ALL_TASKS_FOLDER);
+    private static final String ALL_TASKS_VARDICT = format(
+            "%s/DnaAmpliconVar_Fastq_vardict_for_GA5_analysis", ALL_TASKS_FOLDER);
+    private static final String ALIGNMENT_TEMPLATE = "DnaAmpliconVar_Fastq_alignment_for_GA5_1_analysis.txt";
+    private static final String POST_ALIGNMENT_TEMPLATE =
+            "DnaAmpliconVar_Fastq_postalignment_for_GA5_analysis";
+    private static final String MERGE_MUTATION_TEMPLATE =
+            "DnaAmpliconVar_Fastq_mergeMutation_for_cohort_analysis.txt";
+    private static final String QC_SUMMARY_TEMPLATE = "DnaAmpliconVar_Fastq_qcsummary_for_cohort_analysis";
 
-    @After
-    public void cleanup() {
-        TaskContainer.getTasks().clear();
+    private static final String G_PAIRED_ALL_TASKS = "DnaAmpliconVarFastq/gPairedAllTasks.txt";
+    private static final String S_CONTROL_SAMPLE_NOT_NA = "DnaAmpliconVarFastq/sControlSampleNotNA.txt";
+    private static final String G_SINGLE_ALL_TASKS = "DnaAmpliconVarFastq/gSingleAllTasks.txt";
+    private static final String S_CONTROL_SAMPLE_NOT_NA_FOR_PA =
+            "DnaAmpliconVarFastq/sControlSampleNotNaForPostAlignment.txt";
+
+    private Context context;
+    private TemplateEngine templateEngine = TemplateEngineUtils.init();
+
+    @BeforeEach
+    public void setup() {
+        context = new Context();
+        context.setVariable("jarPath", PipelineUtils.getExecutionPath());
     }
 
-    @Test
-    public void testSingleXenomeYesTrimmomaticBwa() throws IOException {
-        startAppWithConfigs("DnaAmpliconVarFastq/gSingleTrimmomaticBwaYes.txt",
-                SINGLE_STUDY_CONFIG);
-
-        //test for trimmomatic, xenome and bwa toolset
-        File outputShFile = new File(this.getClass().getClassLoader().getResource(ALIGNMENT_OUTPUT_SH).getPath());
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(outputShFile))) {
-            List<String> lines = reader.lines().collect(Collectors.toList());
-            assertXenome(lines);
-            assertCommonTrimmomatic(lines);
-            assertTrue(lines.stream()
-                    .anyMatch(line -> line.contains("/usr/lib/jvm/java-8-openjdk-amd64/bin/java -jar ")));
-            assertTrue(lines.stream()
-                    .anyMatch(line -> line.contains("/usr/bin/trimmomatic PE -threads 4 -phred33 ")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains("build/resources/" +
-                    "integrationTest/output/GA5/fastq/GA5_1_classified_R1.fq.gz")));
-            assertBwa(lines);
-            assertTrue(lines.stream().noneMatch(line -> line.contains(NULL)));
-        }
-        assertPostAlignment();
-    }
-
-    @Test
-    public void testSingleXenomeYesTrimmomaticNovoalign() throws IOException {
-        startAppWithConfigs("DnaAmpliconVarFastq/gSingleTrimmomaticNovoalignYes.txt",
-                SINGLE_STUDY_CONFIG);
-
-        //test for trimmomatic, xenome and novoalign toolset
-        File outputShFile = new File(this.getClass().getClassLoader().getResource(ALIGNMENT_OUTPUT_SH).getPath());
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(outputShFile))) {
-            List<String> lines = reader.lines().collect(Collectors.toList());
-            assertXenome(lines);
-            assertCommonTrimmomatic(lines);
-            assertNovoalign(lines);
-            assertTrue(lines.stream().anyMatch(line -> line.contains(
-                    "-f build/resources/integrationTest/output/GA5/fastq/GA5_1.trimmed.R1.fastq.gz " +
-                            "build/resources/integrationTest/output/GA5/fastq/GA5_1.trimmed.R2.fastq.gz")));
-            assertTrue(lines.stream().noneMatch(line -> line.contains(NULL)));
-        }
-        assertPostAlignment();
-    }
-
-    @Test
-    public void testPairedXenomeYesSeqpurgeBwa() throws IOException {
-        startAppWithConfigs("DnaAmpliconVarFastq/gPairedSeqpurgeBwaXenomeYes.txt", PAIRED_STUDY_CONFIG);
-
-        //test for xenome, seqpurge and bwa toolset
-        File outputShFile = new File(this.getClass().getClassLoader().getResource(ALIGNMENT_OUTPUT_SH).getPath());
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(outputShFile))) {
-            List<String> lines = reader.lines().collect(Collectors.toList());
-            assertXenome(lines);
-            assertSequpurge(lines);
-            assertBwa(lines);
-        }
-        assertPostAlignment();
-    }
-
-    @Test
-    public void testPairedXenomeYesTrimmomaticBwa() throws IOException {
-        startAppWithConfigs("DnaAmpliconVarFastq/gPairedTrimmomaticBwaXenomeYes.txt", PAIRED_STUDY_CONFIG);
-
-        //test for xenome, trimmomatic and bwa toolset
-        File outputShFile = new File(this.getClass().getClassLoader().getResource(ALIGNMENT_OUTPUT_SH).getPath());
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(outputShFile))) {
-            List<String> lines = reader.lines().collect(Collectors.toList());
-            assertXenome(lines);
-            assertCommonTrimmomatic(lines);
-            assertTrue(lines.stream()
-                    .anyMatch(line -> line.contains("/usr/lib/jvm/java-8-openjdk-amd64/bin/java -jar ")));
-            assertTrue(lines.stream()
-                    .anyMatch(line -> line.contains("/usr/bin/trimmomatic PE -threads 4 -phred33 ")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains(
-                    "build/resources/integrationTest/output/GA5/fastq/GA5_1.trimmed.R1.fastq.gz ")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains(
-                    "build/resources/integrationTest/output/GA5/fastq/GA5_1.trimmed.R2.fastq.gz")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains("rm -rf " +
-                    "build/resources/integrationTest/output/GA5/fastq/GA5_1.trimmed_unpaired.R2.fq.gz")));
-            assertBwa(lines);
-        }
-        assertPostAlignment();
-    }
-
-    @Test
-    public void testPairedXenomeYesSeqpurgeNovoalign() throws IOException {
-        startAppWithConfigs("DnaAmpliconVarFastq/gPairedSeqpurgeNovoalignXenomeYes.txt",
-                PAIRED_STUDY_CONFIG);
-
-        //test for xenome, seqpurge and novoalign toolset
-        File outputShFile = new File(this.getClass().getClassLoader().getResource(ALIGNMENT_OUTPUT_SH).getPath());
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(outputShFile))) {
-            List<String> lines = reader.lines().collect(Collectors.toList());
-            assertXenome(lines);
-            assertSequpurge(lines);
-            assertNovoalign(lines);
-        }
-        assertPostAlignment();
-    }
-
-    @Test
-    public void testPicardAbraGatkSingle() throws IOException {
-        startAppWithConfigs("DnaAmpliconVarFastq/gAbraGatkPicardSingle.txt", SINGLE_STUDY_CONFIG);
-
-        //test for toolset picard + gatk_realign + abra+realign
-        File outputShFile = new File(this.getClass().getClassLoader().getResource(POST_ALIGNMENT_SH_FILE).getPath());
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(outputShFile))) {
-            List<String> lines = reader.lines().collect(Collectors.toList());
-            assertTrue(lines.stream().anyMatch(line -> line.contains("Begin Step: ABRA realignment...")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains(
-                    "/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx16g -jar /usr/bin/abra2")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains(
-                    "--single --tmpdir build/resources/integrationTest/output/GA5/tmp")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains("/opt/samtools/samtools-0.1.19/samtools index " +
-                    "build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.bam")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains("Begin Step: GATK realignment...")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains("-jar /usr/bin/gatk -T RealignerTargetCreator")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains("-jar /usr/bin/gatk -T IndelRealigner")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains("Begin Step: GATK recalibration..")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains("-jar /usr/bin/gatk -T BaseRecalibrator -R")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains("-jar /usr/bin/gatk -T PrintReads -R")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains("-knownSites 10 -knownSites 100 ")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains("Begin Step: Mark duplicates...")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains(
-                    "/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx16g -jar /opt/picard/picard.jar MarkDuplicates")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains("Begin Step: Index mkdup bam...")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains("Begin Step: DNA QC metrics...")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains("/usr/bin/bedtools coverage -abam " +
-                    "build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains("CollectAlignmentSummaryMetrics")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains("CollectHsMetrics")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains("CollectGcBiasMetrics")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains("CollectInsertSizeMetrics")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains("CollectQualityYieldMetrics")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains(
-                    "/opt/samtools/samtools-0.1.19/samtools mpileup")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains("Begin Step: Merge DNA QC...")));
-            assertTrue(lines.stream().anyMatch(line -> line.matches(
-                    ".*?/usr/bin/python.+?dna_rna_variant_qc_metrics.py.+?(\\n|$)")));
-            assertTrue(lines.stream().noneMatch(line -> line.contains(NULL)));
-        }
-
+    @AfterEach
+    public void cleanUp() throws IOException {
         cleanOutputDirForNextTest(OUTPUT_DIR, false);
     }
 
-    @Test
-    public void testPicardAbraGatkPaired() throws IOException {
-        startAppWithConfigs("DnaAmpliconVarFastq/gAbraGatkPicardPaired.txt", PAIRED_STUDY_CONFIG);
+    @ParameterizedTest
+    @MethodSource("initControlSampleAllTasks")
+    public void testControlSampleAllTasksXenomeNo(String task, String template) throws IOException, URISyntaxException {
+        startAppWithConfigs(G_SINGLE_ALL_TASKS, SINGLE_STUDY_CONFIG);
 
-        //test for toolset picard + gatk_realign + abra+realign
-        File outputShFile = new File(this.getClass().getClassLoader().getResource(POST_ALIGNMENT_SH_FILE).getPath());
+        String filePath = format("output/sh_files/DnaAmpliconVar_Fastq_%s_for_GA5_analysis.sh", task);
+        final String expectedCmd = templateEngine.process(template, context).trim();
+        final String actualCmd = getCmd(filePath).trim();
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(outputShFile))) {
-            List<String> lines = reader.lines().collect(Collectors.toList());
-            assertTrue(lines.stream().anyMatch(line -> line.contains(
-                    "--insert build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.insertsize.metrics")));
-            assertTrue(lines.stream().noneMatch(line -> line.contains("--single")));
-            assertTrue(lines.stream().noneMatch(line -> line.contains(NULL)));
-        }
-
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
+        assertFalse(actualCmd.contains(NULL));
+        assertEquals(expectedCmd, actualCmd, format(ERROR_MESSAGE, task));
     }
 
     @Test
-    @UseDataProvider("controlSampleNAAllTasks")
-    public void testControlSampleAllTasksXenomeNo(String task, String[] expectedStrings, String[] expectedPatterns)
-            throws IOException {
-        startAppWithConfigs("DnaAmpliconVarFastq/gSingleAllTasks.txt", SINGLE_STUDY_CONFIG);
+    public void testControlSampleAllTasksXenomeNoOutput() {
+        startAppWithConfigs(G_SINGLE_ALL_TASKS, SINGLE_STUDY_CONFIG);
 
-        //tests for toolsets
-        String outputShFilePath = "output/sh_files/DnaAmpliconVar_Fastq_" + task + "_for_GA5_analysis.sh";
-        File outputShFile = new File(this.getClass().getClassLoader().getResource(outputShFilePath).getPath());
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(outputShFile))) {
-            List<String> lines = reader.lines().collect(Collectors.toList());
-            for (String expectedString : expectedStrings) {
-                assertTrue(String.format(ERROR_MESSAGE, task, expectedString),
-                        lines.stream().anyMatch(line -> line.contains(expectedString)));
-            }
-            for (String expectedPattern : expectedPatterns) {
-                assertTrue(String.format(ERROR_MESSAGE, task, expectedPattern),
-                        lines.stream().anyMatch(line -> line.matches(expectedPattern)));
-            }
-            assertTrue(lines.stream().noneMatch(line -> line.contains(NULL)));
-        }
-
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
+        assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "sh_files").exists());
+        assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "log_files").exists());
+        assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "err_files").exists());
     }
 
-    @DataProvider
-    public static Object[][] controlSampleNAAllTasks() {
-        return new Object[][]{
-                {"vardict", new String[]{"Begin Step: Vardict detection...", "/VarDict/var2vcf_valid.pl",
-                    "/usr/bin/vardict/build/install/VarDict/bin/VarDict -G " + FASTA_FILE,
-                    REMOVE_TEMP_DIRS_STEP},
-                    new String[]{SNPEFF_PATTERN}},
+    @ParameterizedTest
+    @MethodSource("initConfigsTestAlignmentAndMergeMutation")
+    public void testAlignmentAndMergeMutation(String globalConfig, String studyConfig, String folder)
+            throws IOException, URISyntaxException {
+        startAppWithConfigs(globalConfig, studyConfig);
 
-                {"mutect1", new String[]{
-                    "Begin Step: Mutect1 detection...",
-                    "/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -jar /usr/bin/mutect",
-                    "--analysis_type MuTect --reference_sequence " + FASTA_FILE,
-                    "--dbsnp /ngs/data/db/mutect.dbsnp --cosmic /ngs/data/db/cosmic ",
-                    "--normal_panel ",
-                    "--vcf build/resources/integrationTest/output/GA5/mutect1/GA5.mutect1.variants.vcf"},
-                    new String[]{SNPEFF_PATTERN}},
+        String expectedAlignmentCmd = getTestTemplate(folder, ALIGNMENT_TEMPLATE, context).trim();
+        String actualAlignmentCmd = getCmd(ALIGNMENT_SH_FILE).trim();
+        assertEquals(expectedAlignmentCmd, actualAlignmentCmd);
 
-                {"strelka2",
-                    new String[]{
-                        "Begin Step: Strelka2 detection...",
-                        "/usr/bin/python /usr/bin/strelka2/configureStrelkaGermlineWorkflow.py",
-                        "--referenceFasta=" + FASTA_FILE,
-                        "/usr/bin/python build/resources/integrationTest/output/GA5/strelka2/runWorkflow.py" +
-                                " -m local -j 8",
-                        "zcat build/resources/integrationTest/output/GA5/strelka2/results/variants/" +
-                                "variants.vcf.gz"},
-                    new String[]{SNPEFF_PATTERN}},
+        String expectedMergeMutationCmd = getTestTemplate(folder, MERGE_MUTATION_TEMPLATE, context);
+        String actualMergeMutationCmd = getCmd(MERGE_MUTATION_SH_FILE).trim();
+        assertEquals(expectedMergeMutationCmd, actualMergeMutationCmd);
 
-                {"scalpel",
-                    new String[]{
-                        "Begin Step: Scalpel detection...",
-                        "/usr/bin/scalpel/scalpel-discovery --single --ref " + FASTA_FILE,
-                        "--bed /ngs/data/" +
-                                "S03723314_Padded.bed"},
-                    new String[]{SNPEFF_PATTERN}},
-
-                {"freebayes",
-                    new String[]{
-                        "Begin Step: Freebayes detection...",
-                        "/usr/bin/freebayes -f /ngs/data/reference_genome/hg19/hg19_decoy/" +
-                                "hg19.decoy.fa", REMOVE_TEMP_DIRS_STEP},
-                    new String[]{ SNPEFF_PATTERN}},
-
-                {"gatkHaplotypeCaller",
-                    new String[]{
-                        "Begin Step: GATK haplotypecaller detection...",
-                        "/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g",
-                        "-jar /usr/bin/gatk -T HaplotypeCaller",
-                        "--input_file build/resources/integrationTest/output/GA5/bam/" +
-                                "GA5.merged.sorted.realign.realign.recal.bam",
-                        "output/GA5/gatkHaplotypeCaller/GA5.gatkHaplotypeCaller.variants.vcf",
-                        "output/GA5/gatkHaplotypeCaller/GA5.gatkHaplotypeCaller.variants.pass.annotation.tsv",
-                        REMOVE_TEMP_DIRS_STEP},
-                    new String[]{ SNPEFF_PATTERN}},
-
-                {"lofreq",
-                    new String[]{
-                        "Begin Step: Lofreq detection...",
-                        "/usr/bin/lofreq call -f " + FASTA_FILE,
-                        "-o build/resources/integrationTest/output/GA5/lofreq/GA5.lofreq.variants.vcf",
-                        "-l /ngs/data/" +
-                                "S03723314_Padded.bed",
-                        "-o build/resources/integrationTest/output/GA5/lofreq/" +
-                                "GA5.lofreq.variants.pass.annotation.tsv"},
-                    new String[]{SNPEFF_PATTERN}},
-        };
+        assertAll(
+            () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "sh_files").exists()),
+            () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "log_files").exists()),
+            () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "err_files").exists())
+        );
     }
 
-    @Test
-    @UseDataProvider("controlSampleNotNAAllTasks")
-    public void testControlSampleNotNAAllTasksXenomeNo(String task, String[] expectedStrings,
-                                                       String[] expectedPatterns) throws IOException {
-        startAppWithConfigs(
-                "DnaAmpliconVarFastq/gPairedAllTasks.txt", "DnaAmpliconVarFastq/sControlSampleNotNA.txt");
+    @ParameterizedTest
+    @MethodSource("initTestFolderAndConfigs")
+    public void testStagesAndQcSummary(String testFolder, String globalConfig, String studyConfig)
+            throws IOException, URISyntaxException {
+        startAppWithConfigs(globalConfig, studyConfig);
 
-        //tests for toolsets
-        String outputShFilePath = "output/sh_files/DnaAmpliconVar_Fastq_" + task + "_for_GA5_analysis.sh";
-        File outputShFile = new File(this.getClass().getClassLoader().getResource(outputShFilePath).getPath());
+        String expectedAlignmentCmd = getTestTemplate(testFolder, ALIGNMENT_TEMPLATE, context);
+        String expectedPostAlignmentCmd = getTestTemplate(testFolder, POST_ALIGNMENT_TEMPLATE, context);
+        String expectedQcSummaryCmd = getTestTemplate(testFolder, QC_SUMMARY_TEMPLATE, context);
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(outputShFile))) {
-            List<String> lines = reader.lines().collect(Collectors.toList());
-            for (String expectedString : expectedStrings) {
-                assertTrue(String.format(ERROR_MESSAGE, task, expectedString),
-                        lines.stream().anyMatch(line -> line.contains(expectedString)));
-            }
-            for (String expectedPattern : expectedPatterns) {
-                assertTrue(String.format(ERROR_MESSAGE, task, expectedPattern),
-                        lines.stream().anyMatch(line -> line.matches(expectedPattern)));
-            }
+        String actualAlignmentCmd = getCmd(ALIGNMENT_SH_FILE).trim();
+        String actualPostAlignmentCmd = getCmd(POST_ALIGNMENT_SH_FILE).trim();
+        String actualQcSummaryCmd = getCmd(QC_SUMMARY_SH_FILE).trim();
 
-            assertTrue(lines.stream().noneMatch(line -> line.contains(NULL)));
-        }
-
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
+        assertEquals(expectedAlignmentCmd, actualAlignmentCmd);
+        assertEquals(expectedPostAlignmentCmd, actualPostAlignmentCmd);
+        assertEquals(expectedQcSummaryCmd, actualQcSummaryCmd);
+        assertFalse(actualAlignmentCmd.contains(NULL));
+        assertFalse(actualPostAlignmentCmd.contains(NULL));
+        assertFalse(actualQcSummaryCmd.contains(NULL));
     }
 
-    @DataProvider
-    public static Object[][] controlSampleNotNAAllTasks() {
-        return new Object[][]{
-                {"vardict",
-                    new String[]{
-                        "Begin Step: Vardict detection...",
-                        "/VarDict/var2vcf_paired.pl",
-                        "/usr/bin/vardict/build/install/VarDict/bin/VarDict -G " + FASTA_FILE,
-                        REMOVE_TEMP_DIRS_STEP},
-                    new String[]{SNPEFF_PATTERN}},
+    @ParameterizedTest
+    @MethodSource("initConfigsTestPostAlignment")
+    public void testPostAlignment(String globalConfig, String studyConfig, String folder)
+            throws IOException, URISyntaxException {
+        startAppWithConfigs(globalConfig, studyConfig);
 
-                {"contEst",
-                    new String[]{
-                        "Begin Step: Contamination estimation...",
-                        "/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g " +
-                                "-Djava.io.tmpdir=build/resources/integrationTest/output/GA5/contEst/tmp ",
-                        "-pf 100 -pc 0.01 -o build/resources/integrationTest/output/GA5/contEst/" +
-                                "GA5.contEst.result",
-                        "--min_mapq 20 -U ALLOW_SEQ_DICT_INCOMPATIBILITY"},
-                    new String[]{""}},
-
-                {"exomecnv",
-                    new String[]{
-                        "Begin Step: ExomeCNV detection...",
-                        "/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -jar /usr/bin/gatk -T " +
-                                "DepthOfCoverage",
-                        "-I build/resources/integrationTest/output/N/bam/" +
-                                "N.merged.sorted.realign.realign.recal.bam",
-                        "-I build/resources/integrationTest/output/GA5/bam/" +
-                                "GA5.merged.sorted.realign.realign.recal.bam",
-                        "/usr/bin/Rscript /usr/bin/exomecnv/exome_cnv.R"},
-                    new String[]{""}},
-
-                {"mutect2",
-                    new String[]{
-                        "Begin Step: Mutect2 detection...",
-                        "/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -Djava.io.tmpdir=",
-                        "-jar /usr/bin/gatk -T MuTect2",
-                        "build/resources/integrationTest/output/GA5/mutect2/GA5.mutect2.somatic.variants.vcf",
-                        REMOVE_TEMP_DIRS_STEP,
-                        "--intervals"},
-                    new String[]{SNPEFF_PATTERN}},
-
-                {"sequenza",
-                    new String[]{
-                        "Begin Step: bam pileup...",
-                        "/opt/samtools/samtools-0.1.19/samtools mpileup -q 10 -B -d 100000",
-                        "Begin Step: Sequenza detection...",
-                        "/usr/bin/python /usr/bin/sequenza/sequenza-utils.py pileup2seqz -gc 100",
-                        "/usr/bin/python /usr/bin/sequenza/sequenza-utils.py seqz-binning -w 50",
-                        "/usr/bin/Rscript /usr/bin/sequenza/sequenza.R -i",
-                        "build/resources/integrationTest/output/N/bam/" +
-                                "N.merged.sorted.realign.realign.recal.bam",
-                        "build/resources/integrationTest/output/GA5/bam/" +
-                                "GA5.merged.sorted.realign.realign.recal.bam"},
-                    new String[]{""}},
-
-                {"strelka2",
-                    new String[]{
-                        "Begin Step: Strelka2 detection...",
-                        "/usr/bin/python /usr/bin/strelka2/configureStrelkaSomaticWorkflow.py",
-                        "--referenceFasta=/ngs/data/reference_genome/hg19/hg19_decoy/" +
-                                "hg19.decoy.fa",
-                        "/usr/bin/python build/resources/integrationTest/output/GA5/strelka2/runWorkflow.py" +
-                                " -m local -j 8",
-                        "gunzip -c build/resources/integrationTest/output/GA5/strelka2/results/variants/" +
-                                "somatic.snvs.vcf.gz",
-                        "rm build/resources/integrationTest/output/GA5/strelka2/results/variants/" +
-                                "somatic.snvs.vcf",
-                        "rm build/resources/integrationTest/output/GA5/strelka2/results/variants/" +
-                                "somatic.indels.vcf",
-                        "gunzip -c build/resources/integrationTest/output/GA5/strelka2/results/variants/" +
-                                "somatic.indels.vcf.gz"},
-                    new String[]{SNPEFF_PATTERN}},
-
-                {"scalpel",
-                    new String[]{
-                        "Begin Step: Scalpel detection...",
-                        "/usr/bin/scalpel/scalpel-discovery --somatic --ref " + FASTA_FILE,
-                        "/usr/bin/scalpel/scalpel-export --somatic --db",
-                        "/GA5.scalpel.somatic.variants.vcf",
-                        "--bed /ngs/data/" +
-                                "S03723314_Padded.bed"},
-                    new String[]{SNPEFF_PATTERN}},
-
-                {"lofreq",
-                    new String[]{
-                        "Begin Step: Lofreq detection...",
-                        "/usr/bin/lofreq somatic -f " + FASTA_FILE,
-                        "gunzip -c build/resources/integrationTest/output/GA5/lofreq/" +
-                                "GA5.somatic_final.snvs.vcf.gz",
-                        "gunzip -c build/resources/integrationTest/output/GA5/lofreq/" +
-                                "GA5.somatic_final.indels.vcf.gz",
-                        "grep -v \"^#\" build/resources/integrationTest/output/GA5/lofreq/" +
-                                "GA5.somatic_final.indels.vcf"},
-                    new String[]{SNPEFF_PATTERN}},
-        };
+        String expectedPostAlignmentCmd = getTestTemplate(folder, POST_ALIGNMENT_TEMPLATE, context);
+        String actualPostAlignmentCmd = getCmd(POST_ALIGNMENT_SH_FILE).trim();
+        assertEquals(expectedPostAlignmentCmd, actualPostAlignmentCmd);
     }
 
-    private void assertBwa(List<String> lines) {
-        assertTrue(lines.stream().anyMatch(line -> line.contains("Begin Step: BWA alignment...")));
-        assertTrue(lines.stream().anyMatch(line -> line.contains("/usr/bin/bwa mem -t 4 " + FASTA_FILE)));
+    @SuppressWarnings("PMD")
+    private static Stream<Arguments> initConfigsTestPostAlignment() {
+        return Stream.of(
+                Arguments.of(G_SINGLE_ALL_TASKS, SINGLE_STUDY_CONFIG,
+                        "dnaAmpliconVarFastq/testControlSampleAllTasksXenomeNo"),
+                Arguments.of(G_PAIRED_ALL_TASKS, S_CONTROL_SAMPLE_NOT_NA_FOR_PA,
+                        "dnaAmpliconVarFastq/testControlSampleNotNAAllTasksXenomeNo")
+        );
     }
 
-    private void assertXenome(List<String> lines) {
-        assertTrue(lines.stream().anyMatch(line -> line.contains("Begin Step: Xenome classification...")));
-        assertTrue(lines.stream().anyMatch(line -> line.contains("/usr/bin/xenome classify -T 8 -P ")));
-        assertTrue(lines.stream().anyMatch(line -> line.contains("/ngs/data/xenomeIdx/xenome.idx " +
-                "--pairs --graft-name human --host-name mouse ")));
-        assertTrue(lines.stream().anyMatch(line -> line.contains("/ngs/data/xenomeIdx/xenome.idx " +
-                "--pairs --graft-name human --host-name mouse ")));
-        assertTrue(lines.stream().anyMatch(line -> line.contains("--output-filename-prefix" +
-                " build/resources/integrationTest/output/GA5/tmp/GA5_1 ")));
-        assertTrue(lines.stream()
-                .anyMatch(line -> line.contains("--tmp-dir build/resources/integrationTest/output/GA5/tmp -i ")));
-        assertTrue(lines.stream().anyMatch(line -> line.contains("/ngs/data/demo/test/fastq_data/" +
-                "GA5_0001_L002_R1_001.fastq.gz")));
+    @SuppressWarnings("PMD")
+    private static Stream<Arguments> initControlSampleAllTasks() {
+        return Stream.of(
+                Arguments.of("freebayes", ALL_TASKS_FREEBAYES),
+                Arguments.of("gatkHaplotypeCaller", ALL_TASKS_GATK_HAPLOTYPE_CALLER),
+                Arguments.of("lofreq", ALL_TASKS_LOFREQ),
+                Arguments.of("mutect1", ALL_TASKS_MUTECT1),
+                Arguments.of("scalpel", ALL_TASKS_SCALPEL),
+                Arguments.of("strelka2", ALL_TASKS_STRELKA2),
+                Arguments.of("vardict", ALL_TASKS_VARDICT)
+        );
     }
 
-    private void assertCommonTrimmomatic(List<String> lines) {
-        assertTrue(lines.stream().anyMatch(line -> line.contains("Begin Step: Trimmomatic trimming...")));
-        assertTrue(lines.stream().anyMatch(line -> line.contains("rm -rf " +
-                "build/resources/integrationTest/output/GA5/fastq/GA5_1.trimmed_unpaired.R1.fq.gz")));
+    @SuppressWarnings("PMD")
+    private static Stream<Arguments> initConfigsTestAlignmentAndMergeMutation() {
+        return Stream.of(
+                Arguments.of(G_SINGLE_ALL_TASKS, SINGLE_STUDY_CONFIG,
+                        "dnaAmpliconVarFastq/testControlSampleAllTasksXenomeNo"),
+                Arguments.of(G_PAIRED_ALL_TASKS, S_CONTROL_SAMPLE_NOT_NA,
+                        "dnaAmpliconVarFastq/testControlSampleNotNAAllTasksXenomeNo")
+        );
     }
 
-    private void assertNovoalign(List<String> lines) {
-        assertTrue(lines.stream().anyMatch(line -> line.contains("Begin Step: Novoalign alignment...")));
-        assertTrue(lines.stream().anyMatch(line -> line.contains("/usr/bin/novoalign -c 4 -d " +
-                "/ngs/data/novoindexDB/novoindex.nix -o SAM")));
+    private String getTestTemplate(String folder, String task, Context context) {
+        return templateEngine.process(format("%s/%s", folder, task), context).trim();
     }
 
-    private void assertSequpurge(List<String> lines) {
-        assertTrue(lines.stream().anyMatch(line -> line.contains("Begin Step: Seqpurge trimming...")));
-        assertTrue(lines.stream().anyMatch(line -> line.contains("/opt/ngs_bits/ngs-bits/bin/SeqPurge -threads 4 " +
-                "-in1 build/resources/integrationTest/output/GA5/fastq/GA5_1_classified_R1.fq.gz")));
-        assertTrue(lines.stream().anyMatch(line -> line.contains(
-                "-in2 build/resources/integrationTest/output/GA5/fastq/GA5_1_classified_R2.fq.gz")));
-        assertTrue(lines.stream().anyMatch(line -> line.contains(
-                "-a2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT")));
-        assertTrue(lines.stream().noneMatch(line -> line.contains(NULL)));
-    }
-
-    private void assertPostAlignment() throws IOException {
-        String outputShFilePath;
-        File outputShFile;
-        //test for qcSummary workflow in case of DnaAmpliconVarFastq
-        outputShFilePath = "output/sh_files/DnaAmpliconVar_Fastq_qcsummary_for_cohort_analysis.sh";
-        outputShFile = new File(this.getClass().getClassLoader().getResource(outputShFilePath).getPath());
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(outputShFile))) {
-            List<String> lines = reader.lines().collect(Collectors.toList());
-            commonQcSummary(lines);
-        }
-
-        // test for single readType
-        outputShFilePath = POST_ALIGNMENT_SH_FILE;
-        outputShFile = new File(this.getClass().getClassLoader().getResource(outputShFilePath).getPath());
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(outputShFile))) {
-            List<String> lines = reader.lines().collect(Collectors.toList());
-            commonPostalignment(lines);
-        }
-
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
-    }
-
-    private void commonQcSummary(List<String> lines) {
-        assertTrue(lines.stream().anyMatch(line -> line.contains("(Successful Step: Merge DNA QC)")));
-        assertTrue(lines.stream().anyMatch(line -> line.contains(
-                "build/resources/integrationTest/output/log_files/" +
-                        "DnaAmpliconVar_Fastq_postalignment_for_GA5_analysis.log")));
-        assertTrue(lines.stream().anyMatch(line -> line.contains("Confirm QC results from GA5")));
-        assertTrue(lines.stream().anyMatch(line -> line.matches(
-                ".*?\\/usr\\/bin\\/Rscript.+?QC_summary_analysis.R.+?(\\n|$)")));
-        assertTrue(lines.stream().noneMatch(line -> line.contains(NULL)));
-    }
-
-    private void commonPostalignment(List<String> lines) {
-        assertTrue(lines.stream().anyMatch(line -> line.contains(
-                "build/resources/integrationTest/output/log_files/" +
-                        "DnaAmpliconVar_Fastq_alignment_for_GA5_1_analysis.log")));
-        assertTrue(lines.stream().anyMatch(line -> line.contains("Begin Step: Merge DNA bams...")));
-        assertTrue(lines.stream().anyMatch(line -> line.contains("/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g " +
-                "-jar /opt/picard/picard.jar MergeSamFiles" +
-                " O=build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam")));
-        assertTrue(lines.stream().anyMatch(line -> line.contains("Begin Step: Index bam...")));
-        assertTrue(lines.stream().anyMatch(line -> line.contains("/opt/samtools/samtools-0.1.19/samtools index " +
-                "build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam")));
-        assertTrue(lines.stream().anyMatch(line -> line.contains("Successful Step: Index bam")));
-        assertTrue(lines.stream().anyMatch(line -> line.contains("build/resources/integrationTest/output/log_files/" +
-                "DnaAmpliconVar_Fastq_postalignment_for_GA5_analysis.log")));
-        assertTrue(lines.stream().anyMatch(line -> line.contains(REMOVE_TEMP_DIRS_STEP)));
-        assertTrue(lines.stream().noneMatch(line -> line.contains(NULL)));
+    @SuppressWarnings("PMD")
+    private static Stream<Arguments> initTestFolderAndConfigs() {
+        return Stream.of(
+                Arguments.of("dnaAmpliconVarFastq/testPairedPicardAbraGatk",
+                        "DnaAmpliconVarFastq/gAbraGatkPicardPaired.txt", PAIRED_STUDY_CONFIG),
+                Arguments.of("dnaAmpliconVarFastq/testPairedXenomeYesSeqpurgeBwa",
+                        "DnaAmpliconVarFastq/gPairedSeqpurgeBwaXenomeYes.txt", PAIRED_STUDY_CONFIG),
+                Arguments.of("dnaAmpliconVarFastq/testPairedXenomeYesSeqpurgeNovoalign",
+                        "DnaAmpliconVarFastq/gPairedSeqpurgeNovoalignXenomeYes.txt", PAIRED_STUDY_CONFIG),
+                Arguments.of("dnaAmpliconVarFastq/testPairedXenomeYesTrimmomaticBwa",
+                        "DnaAmpliconVarFastq/gPairedTrimmomaticBwaXenomeYes.txt", PAIRED_STUDY_CONFIG),
+                Arguments.of("dnaAmpliconVarFastq/testSinglePicardAbraGatk",
+                        "DnaAmpliconVarFastq/gAbraGatkPicardSingle.txt", SINGLE_STUDY_CONFIG),
+                Arguments.of("dnaAmpliconVarFastq/testSingleXenomeYesTrimmomaticBwa",
+                        "DnaAmpliconVarFastq/gSingleTrimmomaticBwaYes.txt", SINGLE_STUDY_CONFIG),
+                Arguments.of("dnaAmpliconVarFastq/testSingleXenomeYesTrimmomaticNovoalign",
+                        "DnaAmpliconVarFastq/gSingleTrimmomaticNovoalignYes.txt", SINGLE_STUDY_CONFIG)
+        );
     }
 }

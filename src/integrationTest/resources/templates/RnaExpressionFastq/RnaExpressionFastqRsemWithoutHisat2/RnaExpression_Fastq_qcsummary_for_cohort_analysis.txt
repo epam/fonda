@@ -23,18 +23,18 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-    str=$(grep -E "((Error Step: (Merge fastqs|STAR alignment|RSEM|RSEM annotation|Remove temporary directories|Run rsem|Merge RNA QC))|(Successful Step: Merge RNA QC))" $logFile;)
+	str=$(grep -E "((Error Step: (Merge fastqs|STAR alignment|RSEM|RSEM annotation|Remove temporary directories|Run rsem|Merge RNA QC))|(Successful Step: Merge RNA QC))" $logFile;)
 fi
-    echo Waiting for step: Merge RNA QC
-    sleep 60
+	echo Waiting for step: Merge RNA QC
+	sleep 60
 done
 
 if [[('[')]][ $str == "*Error Step: Merge RNA QC*" ]];
 then
-    echo $(date) Error QC results from smv1:
-    echo $str
+	echo $(date) Error QC results from smv1:
+	echo $str
 else
-    echo $(date) Confirm QC results from smv1
+	echo $(date) Confirm QC results from smv1
 fi
 
 logFile=build/resources/integrationTest/output/log_files/RnaExpression_Fastq_alignment_for_smv3_analysis.log
@@ -43,18 +43,18 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-    str=$(grep -E "((Error Step: (Merge fastqs|STAR alignment|RSEM|RSEM annotation|Remove temporary directories|Run rsem|Merge RNA QC))|(Successful Step: Merge RNA QC))" $logFile;)
+	str=$(grep -E "((Error Step: (Merge fastqs|STAR alignment|RSEM|RSEM annotation|Remove temporary directories|Run rsem|Merge RNA QC))|(Successful Step: Merge RNA QC))" $logFile;)
 fi
-    echo Waiting for step: Merge RNA QC
-    sleep 60
+	echo Waiting for step: Merge RNA QC
+	sleep 60
 done
 
 if [[('[')]][ $str == "*Error Step: Merge RNA QC*" ]];
 then
-    echo $(date) Error QC results from smv3:
-    echo $str
+	echo $(date) Error QC results from smv3:
+	echo $str
 else
-    echo $(date) Confirm QC results from smv3
+	echo $(date) Confirm QC results from smv3
 fi
 
 logFile=build/resources/integrationTest/output/log_files/RnaExpression_Fastq_alignment_for_smv2_analysis.log
@@ -63,18 +63,18 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-    str=$(grep -E "((Error Step: (Merge fastqs|STAR alignment|RSEM|RSEM annotation|Remove temporary directories|Run rsem|Merge RNA QC))|(Successful Step: Merge RNA QC))" $logFile;)
+	str=$(grep -E "((Error Step: (Merge fastqs|STAR alignment|RSEM|RSEM annotation|Remove temporary directories|Run rsem|Merge RNA QC))|(Successful Step: Merge RNA QC))" $logFile;)
 fi
-    echo Waiting for step: Merge RNA QC
-    sleep 60
+	echo Waiting for step: Merge RNA QC
+	sleep 60
 done
 
 if [[('[')]][ $str == "*Error Step: Merge RNA QC*" ]];
 then
-    echo $(date) Error QC results from smv2:
-    echo $str
+	echo $(date) Error QC results from smv2:
+	echo $str
 else
-    echo $(date) Confirm QC results from smv2
+	echo $(date) Confirm QC results from smv2
 fi
 
 logFile=build/resources/integrationTest/output/log_files/RnaExpression_Fastq_alignment_for_smv5_analysis.log
@@ -83,18 +83,18 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-    str=$(grep -E "((Error Step: (Merge fastqs|STAR alignment|RSEM|RSEM annotation|Remove temporary directories|Run rsem|Merge RNA QC))|(Successful Step: Merge RNA QC))" $logFile;)
+	str=$(grep -E "((Error Step: (Merge fastqs|STAR alignment|RSEM|RSEM annotation|Remove temporary directories|Run rsem|Merge RNA QC))|(Successful Step: Merge RNA QC))" $logFile;)
 fi
-    echo Waiting for step: Merge RNA QC
-    sleep 60
+	echo Waiting for step: Merge RNA QC
+	sleep 60
 done
 
 if [[('[')]][ $str == "*Error Step: Merge RNA QC*" ]];
 then
-    echo $(date) Error QC results from smv5:
-    echo $str
+	echo $(date) Error QC results from smv5:
+	echo $str
 else
-    echo $(date) Confirm QC results from smv5
+	echo $(date) Confirm QC results from smv5
 fi
 
 logFile=build/resources/integrationTest/output/log_files/RnaExpression_Fastq_alignment_for_smv4_analysis.log
@@ -103,18 +103,18 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-    str=$(grep -E "((Error Step: (Merge fastqs|STAR alignment|RSEM|RSEM annotation|Remove temporary directories|Run rsem|Merge RNA QC))|(Successful Step: Merge RNA QC))" $logFile;)
+	str=$(grep -E "((Error Step: (Merge fastqs|STAR alignment|RSEM|RSEM annotation|Remove temporary directories|Run rsem|Merge RNA QC))|(Successful Step: Merge RNA QC))" $logFile;)
 fi
-    echo Waiting for step: Merge RNA QC
-    sleep 60
+	echo Waiting for step: Merge RNA QC
+	sleep 60
 done
 
 if [[('[')]][ $str == "*Error Step: Merge RNA QC*" ]];
 then
-    echo $(date) Error QC results from smv4:
-    echo $str
+	echo $(date) Error QC results from smv4:
+	echo $str
 else
-    echo $(date) Confirm QC results from smv4
+	echo $(date) Confirm QC results from smv4
 fi
 
 logFile=build/resources/integrationTest/output/log_files/RnaExpression_Fastq_alignment_for_smv6_analysis.log
@@ -123,31 +123,31 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-    str=$(grep -E "((Error Step: (Merge fastqs|STAR alignment|RSEM|RSEM annotation|Remove temporary directories|Run rsem|Merge RNA QC))|(Successful Step: Merge RNA QC))" $logFile;)
+	str=$(grep -E "((Error Step: (Merge fastqs|STAR alignment|RSEM|RSEM annotation|Remove temporary directories|Run rsem|Merge RNA QC))|(Successful Step: Merge RNA QC))" $logFile;)
 fi
-    echo Waiting for step: Merge RNA QC
-    sleep 60
+	echo Waiting for step: Merge RNA QC
+	sleep 60
 done
 
 if [[('[')]][ $str == "*Error Step: Merge RNA QC*" ]];
 then
-    echo $(date) Error QC results from smv6:
-    echo $str
+	echo $(date) Error QC results from smv6:
+	echo $str
 else
-    echo $(date) Confirm QC results from smv6
+	echo $(date) Confirm QC results from smv6
 fi
 
 echo `date` Begin Step: QC summary analysis...
 /usr/bin/Rscript [(${jarPath})]/src/R/QC_summary_analysis.R -i build/resources/integrationTest/fastq_list.tsv -d build/resources/integrationTest/output -w RnaExpression_Fastq
 if [ $? -eq 0 ]
 then
-    echo `date` Successful Step: QC summary analysis.
-    sleep 8
+	echo `date` Successful Step: QC summary analysis.
+	sleep 8
 else
-    echo `date` Error Step: QC summary analysis.
+	echo `date` Error Step: QC summary analysis.
 
-    echo `date` The job was aborted due to ERRORS found.
-    exit 1;
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
 fi
 
 echo `date` Finish the job execution!

@@ -4,18 +4,18 @@ str=""
 do
 [(${ifScript2})]
 then
- str=$(grep -E "((Error Step: (tag))|(Successful Step: tag))" $logFile;)
+	str=$(grep -E "((Error Step: (tag))|(Successful Step: tag))" $logFile;)
 fi
- echo Waiting for step: tag
- sleep 60
+	echo Waiting for step: tag
+	sleep 60
 done
 
 [(${ifScript1})]tag*" ]];
 then
- echo $(date) Error bam from sampleName[# th:if = "${index != null}"]_index[/]:
- echo $str
+	echo $(date) Error bam from sampleName[# th:if = "${index != null}"]_index[/]:
+	echo $str
 else
-echo $(date) Confirm bam from sampleName[# th:if = "${index != null}"]_index[/]:
+	echo $(date) Confirm bam from sampleName[# th:if = "${index != null}"]_index[/]:
 fi
 [# th:if = "${controlSampleName != null}"]
 logFile=output/log_files/DnaAmpliconVarFastq_custTask_for_controlSampleName_analysis.log
@@ -24,18 +24,18 @@ str=""
 do
 [(${ifScript2})]
 then
- str=$(grep -E "((Error Step: (tag))|(Successful Step: tag))" $logFile;)
+	str=$(grep -E "((Error Step: (tag))|(Successful Step: tag))" $logFile;)
 fi
- echo Waiting for step: tag
- sleep 60
+	echo Waiting for step: tag
+	sleep 60
 done
 
 [(${ifScript1})]tag*" ]];
 then
- echo $(date) Error bam from sampleName.:
- echo $str
+	echo $(date) Error bam from sampleName.:
+	echo $str
 else
-echo $(date) Confirm bam from sampleName.:
+	echo $(date) Confirm bam from sampleName.:
 fi
 
 [/]

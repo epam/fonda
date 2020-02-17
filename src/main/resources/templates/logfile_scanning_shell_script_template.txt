@@ -4,18 +4,18 @@ str=""
 do
 [(${ifScript2})]
 then
- str=$(grep -E "((Error Step: ([(${steps})]))|(Successful Step: [(${tag})]))" $logFile;)
+	str=$(grep -E "((Error Step: ([(${steps})]))|(Successful Step: [(${tag})]))" $logFile;)
 fi
- echo Waiting for step: [(${tag})]
- sleep [(${period})]
+	echo Waiting for step: [(${tag})]
+	sleep [(${period})]
 done
 
 [(${ifScript1})][(${tag})]*" ]];
 then
- echo $(date) [(${errorMsgWithSampleName})]:
- echo $str
+	echo $(date) [(${errorMsgWithSampleName})]:
+	echo $str
 else
-echo $(date) [(${confirmMsgWithSampleName})]:
+	echo $(date) [(${confirmMsgWithSampleName})]:
 fi
 [# th:if = "${logFileWithControlSampleName != null}"]
 logFile=[(${logFileWithControlSampleName})]
@@ -24,18 +24,18 @@ str=""
 do
 [(${ifScript2})]
 then
- str=$(grep -E "((Error Step: ([(${steps})]))|(Successful Step: [(${tag})]))" $logFile;)
+	str=$(grep -E "((Error Step: ([(${steps})]))|(Successful Step: [(${tag})]))" $logFile;)
 fi
- echo Waiting for step: [(${tag})]
- sleep [(${period})]
+	echo Waiting for step: [(${tag})]
+	sleep [(${period})]
 done
 
 [(${ifScript1})][(${tag})]*" ]];
 then
- echo $(date) [(${errorMsgWithControlSampleName})]:
- echo $str
+	echo $(date) [(${errorMsgWithControlSampleName})]:
+	echo $str
 else
-echo $(date) [(${confirmMsgWithControlSampleName})]:
+	echo $(date) [(${confirmMsgWithControlSampleName})]:
 fi
 
 [/]
