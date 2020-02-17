@@ -118,7 +118,7 @@ else
 fi
 
 echo `date` Begin Step: Merge mutation annotation...
-/usr/bin/Rscript /C:/Users/Denis_Tegai/IdeaProjects/fonda/build/classes/java/main/src/R/dna_rna_mutation_data_analysis.R -i build/resources/integrationTest/fastqPairedControlSampleNotNA.tsv -d build/resources/integrationTest/output -t bwa+abra_realign+gatk_realign+picard+vardict+mutect2+strelka2+contEst+scalpel+lofreq+sequenza+exomecnv
+/usr/bin/Rscript [(${jarPath})]/src/R/dna_rna_mutation_data_analysis.R -i build/resources/integrationTest/fastqPairedControlSampleNotNA.tsv -d build/resources/integrationTest/output -t bwa+abra_realign+gatk_realign+picard+vardict+mutect2+strelka2+contEst+scalpel+lofreq+sequenza+exomecnv
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Merge mutation annotation.

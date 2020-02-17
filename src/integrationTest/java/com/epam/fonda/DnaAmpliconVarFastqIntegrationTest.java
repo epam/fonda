@@ -51,7 +51,7 @@ public class DnaAmpliconVarFastqIntegrationTest extends AbstractIntegrationTest 
             "output/sh_files/DnaAmpliconVar_Fastq_qcsummary_for_cohort_analysis.sh";
     private static final String MERGE_MUTATION_SH_FILE =
             "output/sh_files/DnaAmpliconVar_Fastq_mergeMutation_for_cohort_analysis.sh";
-    
+
     private static final String NULL = "null";
     private static final String SINGLE_STUDY_CONFIG = "DnaAmpliconVarFastq/sSingle.txt";
     private static final String PAIRED_STUDY_CONFIG = "DnaAmpliconVarFastq/sPaired.txt";
@@ -81,7 +81,7 @@ public class DnaAmpliconVarFastqIntegrationTest extends AbstractIntegrationTest 
     private static final String G_PAIRED_ALL_TASKS = "DnaAmpliconVarFastq/gPairedAllTasks.txt";
     private static final String S_CONTROL_SAMPLE_NOT_NA = "DnaAmpliconVarFastq/sControlSampleNotNA.txt";
     private static final String G_SINGLE_ALL_TASKS = "DnaAmpliconVarFastq/gSingleAllTasks.txt";
-    private static final String  S_CONTROL_SAMPLE_NOT_NA_FOR_PA = 
+    private static final String S_CONTROL_SAMPLE_NOT_NA_FOR_PA =
             "DnaAmpliconVarFastq/sControlSampleNotNaForPostAlignment.txt";
 
     private Context context;
@@ -92,7 +92,7 @@ public class DnaAmpliconVarFastqIntegrationTest extends AbstractIntegrationTest 
         context = new Context();
         context.setVariable("jarPath", PipelineUtils.getExecutionPath());
     }
-    
+
     @AfterEach
     public void cleanUp() throws IOException {
         cleanOutputDirForNextTest(OUTPUT_DIR, false);
@@ -129,7 +129,7 @@ public class DnaAmpliconVarFastqIntegrationTest extends AbstractIntegrationTest 
         String expectedAlignmentCmd = getTestTemplate(folder, ALIGNMENT_TEMPLATE, context).trim();
         String actualAlignmentCmd = getCmd(ALIGNMENT_SH_FILE).trim();
         assertEquals(expectedAlignmentCmd, actualAlignmentCmd);
-        
+
         String expectedMergeMutationCmd = getTestTemplate(folder, MERGE_MUTATION_TEMPLATE, context);
         String actualMergeMutationCmd = getCmd(MERGE_MUTATION_SH_FILE).trim();
         assertEquals(expectedMergeMutationCmd, actualMergeMutationCmd);
@@ -168,7 +168,7 @@ public class DnaAmpliconVarFastqIntegrationTest extends AbstractIntegrationTest 
     public void testPostAlignment(String globalConfig, String studyConfig, String folder)
             throws IOException, URISyntaxException {
         startAppWithConfigs(globalConfig, studyConfig);
-        
+
         String expectedPostAlignmentCmd = getTestTemplate(folder, POST_ALIGNMENT_TEMPLATE, context);
         String actualPostAlignmentCmd = getCmd(POST_ALIGNMENT_SH_FILE).trim();
         assertEquals(expectedPostAlignmentCmd, actualPostAlignmentCmd);
@@ -196,7 +196,7 @@ public class DnaAmpliconVarFastqIntegrationTest extends AbstractIntegrationTest 
                 Arguments.of("vardict", ALL_TASKS_VARDICT)
         );
     }
-    
+
     @SuppressWarnings("PMD")
     private static Stream<Arguments> initConfigsTestAlignmentAndMergeMutation() {
         return Stream.of(
