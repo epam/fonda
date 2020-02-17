@@ -2,7 +2,7 @@ echo `date` Begin Step: Merge fastqs...
 [# th:if = "${#arrays.length(fastqs1) > 1}"]zcat [# th:each = "fs : ${fastqs1}"][# th:text = "${fs}"][/] [/]| gzip -c > [(${mergedFastq1})]
 [# th:if = "${fastqs2 != null}"]zcat [# th:each = "fs : ${fastqs2}"][# th:text = "${fs}"][/] [/]| gzip -c > [(${mergedFastq2})][/][/]
 [# th:unless = "${#arrays.length(fastqs1) > 1}"]cp [# th:each =  "fs : ${fastqs1}"][# th:text = "${fs}"][/] [/][(${mergedFastq1})]
-[# th:if = "${fastqs2 != null}"]cp [# th:each = "fs : ${fastqs2}"][# th:text = "${fs}"][/][/][(${mergedFastq2})][/][/]
+[# th:if = "${fastqs2 != null}"]cp [# th:each = "fs : ${fastqs2}"][# th:text = "${fs}"][/] [/][(${mergedFastq2})][/][/]
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Merge fastqs.

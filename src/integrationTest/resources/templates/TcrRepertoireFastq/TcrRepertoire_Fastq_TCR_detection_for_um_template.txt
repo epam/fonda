@@ -46,7 +46,7 @@ else
 fi
 
 echo `date` Begin Step: MIXCR detection...
-/ngs/data/tools/MiXCR/v2.1.3/mixcr align -p rna-seq -s hsa -t 4 -OallowPartialAlignments=true build/resources/integrationTest/output/um/fastq/um.trimmed.R1.fastq.gz  build/resources/integrationTest/output/um/fastq/um.trimmed.R2.fastq.gz  build/resources/integrationTest/output/um/mixcr/um.mixcr.alignment.vdjca
+/ngs/data/tools/MiXCR/v2.1.3/mixcr align -p rna-seq -s hsa -t 4 -OallowPartialAlignments=true build/resources/integrationTest/output/um/fastq/um.trimmed.R1.fastq.gz build/resources/integrationTest/output/um/fastq/um.trimmed.R2.fastq.gz build/resources/integrationTest/output/um/mixcr/um.mixcr.alignment.vdjca
 /ngs/data/tools/MiXCR/v2.1.3/mixcr assemblePartial -f build/resources/integrationTest/output/um/mixcr/um.mixcr.alignment.vdjca build/resources/integrationTest/output/um/mixcr/um.mixcr.alignment.contig.vdjca
 /ngs/data/tools/MiXCR/v2.1.3/mixcr assemble -f -t 4 build/resources/integrationTest/output/um/mixcr/um.mixcr.alignment.contig.vdjca build/resources/integrationTest/output/um/mixcr/um.mixcr.clones.clns
 /ngs/data/tools/MiXCR/v2.1.3/mixcr exportClones -f build/resources/integrationTest/output/um/mixcr/um.mixcr.clones.clns build/resources/integrationTest/output/um/mixcr/um.mixcr.clones.txt
