@@ -1,0 +1,2 @@
+parameterType	shortName	Parameter	sample_type	match_control
+fastqFile	GA5	build/resources/integrationTest/output/GA5/fastq/GA5.fastq.gz	tumor	NA
