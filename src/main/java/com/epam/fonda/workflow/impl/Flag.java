@@ -105,7 +105,7 @@ public class Flag {
                 .gatkRealign(tasks.contains("gatk_realign"))
                 .contEst(tasks.contains("contEst"))
                 .mixcr(tasks.contains("mixcr"))
-                .optiType(tasks.contains("optiType"))
+                .optiType(tasks.contains("optitype"))
                 .build();
     }
 }

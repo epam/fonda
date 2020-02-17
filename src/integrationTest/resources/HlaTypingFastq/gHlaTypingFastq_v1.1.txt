@@ -1,0 +1,27 @@
+[Queue_Parameters]
+NUMTHREADS = 4
+MAXMEM = 24g
+QUEUE = all.q
+PE = -pe threaded
+
+[Databases]
+SPECIES = human
+GENOME_BUILD = hg19
+GENOME = /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa
+ADAPTER_FWD = AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC
+ADAPTER_REV = AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT
+
+[all_tools]
+seqpurge = /ngs/data/app/ngs-bits/v1.0/bin/SeqPurge
+java = /ngs/data/app/java/v1.8.0u121/bin/java
+samtools = /ngs/data/tools/samtools/v0.1.19/samtools
+optitype = /ngs/data/tools/OptiType/v1.2.1
+python = /ngs/data/app/python/v2.7.13/bin/python
+Rscript = /ngs/data/app/R/v3.5.0/bin/Rscript
+doubletdetection_python = /ngs/data/py/versions/3.5.2/bin/python
+
+[Pipeline_Info]
+workflow = HlaTyping_Fastq
+toolset = seqpurge+optitype
+flag_xenome = no
+read_type = paired
