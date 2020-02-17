@@ -27,10 +27,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class Bam2FastqIntegrationTest extends AbstractIntegrationTest {
     private static final String OUTPUT_DIR_ROOT = "build/resources/integrationTest/";
@@ -166,7 +166,7 @@ public class Bam2FastqIntegrationTest extends AbstractIntegrationTest {
     }
 
     private String getTestFastqFileString(String testFolder) throws IOException, URISyntaxException {
-        return getCmd(String.format("templates/%s/%s", testFolder, TEST_FASTQ_FILE)
-                .replaceAll("\\r\\n", "\n")).trim();
+        return getCmd(String.format("templates/%s/%s", testFolder, TEST_FASTQ_FILE))
+                .replaceAll("\\r\\n", "\n").trim();
     }
 }
