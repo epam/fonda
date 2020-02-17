@@ -60,6 +60,6 @@ SEQUENZA_GC50 = 100
 
 [Pipeline_Info]
 workflow = DnaCaptureVar_Fastq
-toolset = seqpurge+trimmomatic+bwa+novoalign
-read_type = paired
-flag_xenome = yes
+toolset = trimmomatic+novoalign
+read_type = single
+flag_xenome = no

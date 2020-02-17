@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.stream.Stream;
 
-import static com.epam.fonda.utils.PipelineUtils.getExecutionPath;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
@@ -42,7 +41,6 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
     @BeforeEach
     public void setup() {
         context = new Context();
-        context.setVariable("jarPath", getExecutionPath());
     }
 
     @AfterEach
@@ -53,17 +51,31 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
     @SuppressWarnings("PMD")
     private static Stream<Arguments> initParameters() {
         return Stream.of(
+//                Arguments.of(
+//                        String.format("%s/gXenomeSeqpurgeBwaPaired.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+//                        String.format("%s/sPaired.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+//                        String.format("%s/DnaCaptureVar_Fastq_alignment_for_GA5_1_analysis.sh",
+//                                OUTPUT_SH_FILES_DIR),
+//                        String.format("%s/XenomeSeqpurgeBwaPaired/dnaCaptureVar_Fastq_alignment_for_GA5_1_analysis_template",
+//                                DNA_CAPTURE_VAR_FASTQ_DIR)),
+//                Arguments.of(
+//                        String.format("%s/gXenomeSeqpurgeBwaPaired.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+//                        String.format("%s/sPaired.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+//                        String.format("%s/DnaCaptureVar_Fastq_postalignment_for_GA5_analysis.sh",
+//                                OUTPUT_SH_FILES_DIR),
+//                        String.format("%s/XenomeSeqpurgeBwaPaired/dnaCaptureVar_Fastq_postalignment_for_GA5_analysis_template",
+//                                DNA_CAPTURE_VAR_FASTQ_DIR)),
                 Arguments.of(
-                        String.format("%s/gXenomSeqpurgeTrimmomaticBwaNovoalignPaired.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
-                        String.format("%s/sPaired.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        String.format("%s/gTrimmomaticNovoalignSingle.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        String.format("%s/sSingle.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
                         String.format("%s/DnaCaptureVar_Fastq_alignment_for_GA5_1_analysis.sh",
                                 OUTPUT_SH_FILES_DIR),
-                        String.format("%s/XenomSeqpurgeTrimmomaticBwaNovoalignPaired/dnaCaptureVar_Fastq_alignment_for_GA5_1_analysis_template",
-                                DNA_CAPTURE_VAR_FASTQ_DIR)
-                ));
+                        String.format("%s/TrimmomaticNovoalignSingle/dnaCaptureVar_Fastq_alignment_for_GA5_1_analysis_template",
+                                DNA_CAPTURE_VAR_FASTQ_DIR))
+        );
     }
 
-    @ParameterizedTest(name = "{2}-test")
+    @ParameterizedTest
     @MethodSource("initParameters")
     void testDnaCaptureVarFastq(String gConfigPath, String sConfigPath, String outputShFile, String templatePath)
             throws IOException, URISyntaxException {
