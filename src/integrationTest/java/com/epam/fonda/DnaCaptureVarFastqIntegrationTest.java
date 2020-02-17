@@ -29,12 +29,16 @@ import java.net.URISyntaxException;
 import java.util.stream.Stream;
 
 import static com.epam.fonda.utils.PipelineUtils.getExecutionPath;
+import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
     private static final String OUTPUT_DIR = "output";
     private static final String DNA_CAPTURE_VAR_FASTQ_DIR = "DnaCaptureVarFastq";
     private static final String OUTPUT_SH_FILES_DIR = "output/sh_files";
+    private static final String STUDY_CONFIG_SINGLE = "sSingle.txt";
+    private static final String STUDY_CONFIG_PAIRED = "sPaired.txt";
+
 
     private TemplateEngine templateEngine = TemplateEngineUtils.init();
     private Context context = new Context();
@@ -54,91 +58,91 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
     private static Stream<Arguments> initParameters() {
         return Stream.of(
                 Arguments.of(
-                        String.format("%s/gXenomeSeqpurgeBwaPaired.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
-                        String.format("%s/sPaired.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
-                        String.format("%s/DnaCaptureVar_Fastq_alignment_for_GA5_1_analysis.sh",
+                        format("%s/gXenomeSeqpurgeBwaPaired.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/%s", DNA_CAPTURE_VAR_FASTQ_DIR, STUDY_CONFIG_PAIRED),
+                        format("%s/DnaCaptureVar_Fastq_alignment_for_GA5_1_analysis.sh",
                                 OUTPUT_SH_FILES_DIR),
-                        String.format("%s/XenomeSeqpurgeBwaPaired/dnaCaptureVar_Fastq_alignment_for_" +
+                        format("%s/XenomeSeqpurgeBwaPaired/dnaCaptureVar_Fastq_alignment_for_" +
                                         "GA5_1_analysis_template",
                                 DNA_CAPTURE_VAR_FASTQ_DIR)),
                 Arguments.of(
-                        String.format("%s/gXenomeSeqpurgeBwaPaired.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
-                        String.format("%s/sPaired.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
-                        String.format("%s/DnaCaptureVar_Fastq_postalignment_for_GA5_analysis.sh",
+                        format("%s/gXenomeSeqpurgeBwaPaired.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/%s", DNA_CAPTURE_VAR_FASTQ_DIR, STUDY_CONFIG_PAIRED),
+                        format("%s/DnaCaptureVar_Fastq_postalignment_for_GA5_analysis.sh",
                                 OUTPUT_SH_FILES_DIR),
-                        String.format("%s/XenomeSeqpurgeBwaPaired/dnaCaptureVar_Fastq_postalignment_for_" +
+                        format("%s/XenomeSeqpurgeBwaPaired/dnaCaptureVar_Fastq_postalignment_for_" +
                                         "GA5_analysis_template",
                                 DNA_CAPTURE_VAR_FASTQ_DIR)),
                 Arguments.of(
-                        String.format("%s/gTrimmomaticNovoalignSingle.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
-                        String.format("%s/sSingle.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
-                        String.format("%s/DnaCaptureVar_Fastq_alignment_for_GA5_1_analysis.sh",
+                        format("%s/gTrimmomaticNovoalignSingle.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/%s", DNA_CAPTURE_VAR_FASTQ_DIR, STUDY_CONFIG_SINGLE),
+                        format("%s/DnaCaptureVar_Fastq_alignment_for_GA5_1_analysis.sh",
                                 OUTPUT_SH_FILES_DIR),
-                        String.format("%s/TrimmomaticNovoalignSingle/dnaCaptureVar_Fastq_alignment_for_" +
+                        format("%s/TrimmomaticNovoalignSingle/dnaCaptureVar_Fastq_alignment_for_" +
                                         "GA5_1_analysis_template",
                                 DNA_CAPTURE_VAR_FASTQ_DIR)),
                 Arguments.of(
-                        String.format("%s/gTrimmomaticNovoalignSingle.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
-                        String.format("%s/sSingle.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
-                        String.format("%s/dnaCaptureVar_Fastq_postalignment_for_GA5_analysis.sh",
+                        format("%s/gTrimmomaticNovoalignSingle.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/%s", DNA_CAPTURE_VAR_FASTQ_DIR, STUDY_CONFIG_SINGLE),
+                        format("%s/dnaCaptureVar_Fastq_postalignment_for_GA5_analysis.sh",
                                 OUTPUT_SH_FILES_DIR),
-                        String.format("%s/TrimmomaticNovoalignSingle/dnaCaptureVar_Fastq_postalignment_for_" +
+                        format("%s/TrimmomaticNovoalignSingle/dnaCaptureVar_Fastq_postalignment_for_" +
                                         "GA5_analysis_template",
                                 DNA_CAPTURE_VAR_FASTQ_DIR)),
                 Arguments.of(
-                        String.format("%s/gBwaPicardQcAbraGatkPaired.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
-                        String.format("%s/sPaired.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
-                        String.format("%s/DnaCaptureVar_Fastq_alignment_for_GA5_1_analysis.sh",
+                        format("%s/gBwaPicardQcAbraGatkPaired.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/%s", DNA_CAPTURE_VAR_FASTQ_DIR, STUDY_CONFIG_PAIRED),
+                        format("%s/DnaCaptureVar_Fastq_alignment_for_GA5_1_analysis.sh",
                                 OUTPUT_SH_FILES_DIR),
-                        String.format("%s/BwaPicardQcAbraGatkPaired/dnaCaptureVar_Fastq_alignment_for_" +
+                        format("%s/BwaPicardQcAbraGatkPaired/dnaCaptureVar_Fastq_alignment_for_" +
                                         "GA5_1_analysis_template",
                                 DNA_CAPTURE_VAR_FASTQ_DIR)),
 
                 //Successful Step: GATK recalibration ??? case isn't ready for this question
                 Arguments.of(
-                        String.format("%s/gBwaPicardQcAbraGatkPaired.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
-                        String.format("%s/sPaired.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
-                        String.format("%s/dnaCaptureVar_Fastq_postalignment_for_GA5_analysis.sh",
+                        format("%s/gBwaPicardQcAbraGatkPaired.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/%s", DNA_CAPTURE_VAR_FASTQ_DIR, STUDY_CONFIG_PAIRED),
+                        format("%s/dnaCaptureVar_Fastq_postalignment_for_GA5_analysis.sh",
                                 OUTPUT_SH_FILES_DIR),
-                        String.format("%s/BwaPicardQcAbraGatkPaired/dnaCaptureVar_Fastq_postalignment_for_" +
+                        format("%s/BwaPicardQcAbraGatkPaired/dnaCaptureVar_Fastq_postalignment_for_" +
                                         "GA5_analysis_template",
                                 DNA_CAPTURE_VAR_FASTQ_DIR)),
 
                 //Successful Step: Remove temporary directories or Merge DNA QC ??? case isn't ready for this question
                 Arguments.of(
-                        String.format("%s/gBwaPicardQcAbraGatkPaired.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
-                        String.format("%s/sPaired.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
-                        String.format("%s/dnaCaptureVar_Fastq_qcsummary_for_cohort_analysis.sh",
+                        format("%s/gBwaPicardQcAbraGatkPaired.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/%s", DNA_CAPTURE_VAR_FASTQ_DIR, STUDY_CONFIG_PAIRED),
+                        format("%s/dnaCaptureVar_Fastq_qcsummary_for_cohort_analysis.sh",
                                 OUTPUT_SH_FILES_DIR),
-                        String.format("%s/BwaPicardQcAbraGatkPaired/dnaCaptureVar_Fastq_qcsummary_for_" +
+                        format("%s/BwaPicardQcAbraGatkPaired/dnaCaptureVar_Fastq_qcsummary_for_" +
                                         "cohort_analysis_template",
                                 DNA_CAPTURE_VAR_FASTQ_DIR)),
                 Arguments.of(
-                        String.format("%s/gBwaPicardQcAbraGatkSingle.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
-                        String.format("%s/sSingle.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
-                        String.format("%s/dnaCaptureVar_Fastq_alignment_for_GA5_1_analysis.sh",
+                        format("%s/gBwaPicardQcAbraGatkSingle.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/%s", DNA_CAPTURE_VAR_FASTQ_DIR, STUDY_CONFIG_SINGLE),
+                        format("%s/dnaCaptureVar_Fastq_alignment_for_GA5_1_analysis.sh",
                                 OUTPUT_SH_FILES_DIR),
-                        String.format("%s/BwaPicardQcAbraGatkSingle/dnaCaptureVar_Fastq_alignment_for_" +
+                        format("%s/BwaPicardQcAbraGatkSingle/dnaCaptureVar_Fastq_alignment_for_" +
                                         "GA5_1_analysis_template",
                                 DNA_CAPTURE_VAR_FASTQ_DIR)),
 
                 //Successful Step: GATK recalibration or Index rmdup bam ?? case isn't ready for this question
                 Arguments.of(
-                        String.format("%s/gBwaPicardQcAbraGatkSingle.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
-                        String.format("%s/sSingle.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
-                        String.format("%s/dnaCaptureVar_Fastq_postalignment_for_GA5_analysis.sh",
+                        format("%s/gBwaPicardQcAbraGatkSingle.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/%s", DNA_CAPTURE_VAR_FASTQ_DIR, STUDY_CONFIG_SINGLE),
+                        format("%s/dnaCaptureVar_Fastq_postalignment_for_GA5_analysis.sh",
                                 OUTPUT_SH_FILES_DIR),
-                        String.format("%s/BwaPicardQcAbraGatkSingle/dnaCaptureVar_Fastq_postalignment_for_" +
+                        format("%s/BwaPicardQcAbraGatkSingle/dnaCaptureVar_Fastq_postalignment_for_" +
                                         "GA5_analysis_template",
                                 DNA_CAPTURE_VAR_FASTQ_DIR)),
 
                 //Successful Step: Remove temporary directories or Merge DNA QC ?? case isn't ready for this question
                 Arguments.of(
-                        String.format("%s/gBwaPicardQcAbraGatkSingle.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
-                        String.format("%s/sSingle.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
-                        String.format("%s/dnaCaptureVar_Fastq_qcsummary_for_cohort_analysis.sh",
+                        format("%s/gBwaPicardQcAbraGatkSingle.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/%s", DNA_CAPTURE_VAR_FASTQ_DIR, STUDY_CONFIG_SINGLE),
+                        format("%s/dnaCaptureVar_Fastq_qcsummary_for_cohort_analysis.sh",
                                 OUTPUT_SH_FILES_DIR),
-                        String.format("%s/BwaPicardQcAbraGatkSingle/dnaCaptureVar_Fastq_qcsummary_for_" +
+                        format("%s/BwaPicardQcAbraGatkSingle/dnaCaptureVar_Fastq_qcsummary_for_" +
                                         "cohort_analysis_template",
                                 DNA_CAPTURE_VAR_FASTQ_DIR))
         );
