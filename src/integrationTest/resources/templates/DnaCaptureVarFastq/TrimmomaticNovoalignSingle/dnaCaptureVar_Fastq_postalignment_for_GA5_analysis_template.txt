@@ -24,7 +24,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (Xenome classification|Seqpurge trimming|BWA alignment|Index bam))|(Successful Step: Index bam))" $logFile;)
+	str=$(grep -E "((Error Step: (Trimmomatic trimming|Novoalign alignment|Index bam))|(Successful Step: Index bam))" $logFile;)
 fi
 	echo Waiting for step: Index bam
 	sleep 60
@@ -42,7 +42,7 @@ fi
 echo `date` Finish check the existence of the individual sorted bam file.
 
 echo `date` Begin Step: Merge DNA bams...
-/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -jar /opt/picard/picard.jar MergeSamFiles O=build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam I=build/resources/integrationTest/output/GA5/bam/GA5_1.bwa.sorted.bam VALIDATION_STRINGENCY=SILENT
+/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -jar /opt/picard/picard.jar MergeSamFiles O=build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam I=build/resources/integrationTest/output/GA5/bam/GA5_1.novoalign.sorted.bam VALIDATION_STRINGENCY=SILENT
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Merge DNA bams.
@@ -73,7 +73,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (Xenome classification|Seqpurge trimming|BWA alignment|Index bam|Merge DNA bams|Index rmdup bam))|(Successful Step: Index rmdup bam))" $logFile;)
+	str=$(grep -E "((Error Step: (Trimmomatic trimming|Novoalign alignment|Index bam|Merge DNA bams|Index rmdup bam))|(Successful Step: Index rmdup bam))" $logFile;)
 fi
 	echo Waiting for step: Index rmdup bam
 	sleep 60
@@ -88,8 +88,8 @@ else
 fi
 
 echo `date` Begin Step: Remove temporary directories...
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5_1.bwa.sorted.bam
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5_1.bwa.sorted.bam.bai
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5_1.novoalign.sorted.bam
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5_1.novoalign.sorted.bam.bai
 rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam
 rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam.bai
 rm -rf build/resources/integrationTest/output/GA5/tmp
@@ -105,4 +105,3 @@ else
 	exit 1;
 fi
 echo `date` Finish the job execution!
-

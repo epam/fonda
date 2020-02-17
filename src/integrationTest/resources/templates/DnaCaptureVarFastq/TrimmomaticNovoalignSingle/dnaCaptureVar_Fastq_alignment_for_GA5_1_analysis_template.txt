@@ -19,6 +19,7 @@ echo `date` Begin the job execution...
 
 echo `date` Begin Step: Trimmomatic trimming...
 /usr/lib/jvm/java-8-openjdk-amd64/bin/java -jar /usr/bin/trimmomatic SE -threads 4 -phred33 /ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_001.fastq.gz build/resources/integrationTest/output/GA5/fastq/GA5_1.trimmed.R1.fastq.gz ILLUMINACLIP:AGATCGGAAGAT:2:30:10 LEADING:20 TRAILING:20 SLIDINGWINDOW:4:15 MINLEN:36
+
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Trimmomatic trimming.
