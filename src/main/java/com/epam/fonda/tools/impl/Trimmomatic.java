@@ -114,20 +114,19 @@ public class Trimmomatic implements Tool<FastqResult> {
         trimmomaticFields.sampleName = sample.getName();
         trimmomaticFields.fastq1 = result.getOut().getMergedFastq1();
         trimmomaticFields.fastq2 = result.getOut().getMergedFastq2();
-        if (trimmomaticFields.index != null) {
+        if (StringUtils.isNotBlank(trimmomaticFields.index)) {
             trimmomaticFields.prefix = format("%s/%s_%s", trimmomaticFields.sfqOutdir,
                     sample.getName(), trimmomaticFields.index);
         } else {
             trimmomaticFields.prefix = format("%s/%s", trimmomaticFields.sfqOutdir, sample.getName());
         }
         trimmomaticFields.trimmedFastq1 = format("%s.trimmed.R1.fastq.gz", trimmomaticFields.prefix);
-        trimmomaticFields.trimmedFastq2 = trimmomaticFields.fastq2 == null
-                ? null
+        trimmomaticFields.trimmedFastq2 = StringUtils.isBlank(trimmomaticFields.fastq2) ? null
                 : format("%s.trimmed.R2.fastq.gz", trimmomaticFields.prefix);
-        trimmomaticFields.trimmedUnpairedFastq1 = format("%s.trimmed_unpaired.R1.fq.gz",
-                trimmomaticFields.prefix);
-        trimmomaticFields.trimmedUnpairedFastq2 = format("%s.trimmed_unpaired.R2.fq.gz",
-                trimmomaticFields.prefix);
+        trimmomaticFields.trimmedUnpairedFastq1 = StringUtils.isBlank(trimmomaticFields.fastq2) ? null
+                : format("%s.trimmed_unpaired.R1.fq.gz", trimmomaticFields.prefix);
+        trimmomaticFields.trimmedUnpairedFastq2 = StringUtils.isBlank(trimmomaticFields.fastq2) ? null
+                : format("%s.trimmed_unpaired.R2.fq.gz", trimmomaticFields.prefix);
         return trimmomaticFields;
     }
 }
