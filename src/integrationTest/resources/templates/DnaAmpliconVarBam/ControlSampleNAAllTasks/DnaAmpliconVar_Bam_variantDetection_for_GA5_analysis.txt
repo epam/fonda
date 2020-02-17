@@ -1,0 +1,124 @@
+#!/bin/bash -x
+
+# --- SGE options --- #
+
+#$ -wd build/resources/integrationTest/output
+#$ -N DnaAmpliconVar_Bam_variantDetection_for_GA5_analysis
+#$ -o build/resources/integrationTest/output/log_files/DnaAmpliconVar_Bam_variantDetection_for_GA5_analysis.log
+#$ -e build/resources/integrationTest/output/err_files/DnaAmpliconVar_Bam_variantDetection_for_GA5_analysis.err
+#$ -q main.q
+#$ -R y
+#$ -pe threaded 4
+#$ -m a
+
+# --- The commands to be executed --- #
+
+cd build/resources/integrationTest/output
+
+echo `date` Begin the job execution...
+
+echo `date` Begin Step: Run vardict...
+qsub build/resources/integrationTest/output/sh_files/DnaAmpliconVar_Bam_vardict_for_GA5_analysis.sh
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Run vardict.
+	sleep 8
+else
+	echo `date` Error Step: Run vardict.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Run gatkHaplotypeCaller...
+qsub build/resources/integrationTest/output/sh_files/DnaAmpliconVar_Bam_gatkHaplotypeCaller_for_GA5_analysis.sh
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Run gatkHaplotypeCaller.
+	sleep 8
+else
+	echo `date` Error Step: Run gatkHaplotypeCaller.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Run strelka2...
+qsub build/resources/integrationTest/output/sh_files/DnaAmpliconVar_Bam_strelka2_for_GA5_analysis.sh
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Run strelka2.
+	sleep 8
+else
+	echo `date` Error Step: Run strelka2.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Run mutect1...
+qsub build/resources/integrationTest/output/sh_files/DnaAmpliconVar_Bam_mutect1_for_GA5_analysis.sh
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Run mutect1.
+	sleep 8
+else
+	echo `date` Error Step: Run mutect1.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Run scalpel...
+qsub build/resources/integrationTest/output/sh_files/DnaAmpliconVar_Bam_scalpel_for_GA5_analysis.sh
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Run scalpel.
+	sleep 8
+else
+	echo `date` Error Step: Run scalpel.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Run lofreq...
+qsub build/resources/integrationTest/output/sh_files/DnaAmpliconVar_Bam_lofreq_for_GA5_analysis.sh
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Run lofreq.
+	sleep 8
+else
+	echo `date` Error Step: Run lofreq.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Run freebayes...
+qsub build/resources/integrationTest/output/sh_files/DnaAmpliconVar_Bam_freebayes_for_GA5_analysis.sh
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Run freebayes.
+	sleep 8
+else
+	echo `date` Error Step: Run freebayes.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Remove temporary directories...
+rm -rf build/resources/integrationTest/output/GA5/tmp
+
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Remove temporary directories.
+	sleep 8
+else
+	echo `date` Error Step: Remove temporary directories.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+echo `date` Finish the job execution!

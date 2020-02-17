@@ -15,338 +15,288 @@
  */
 package com.epam.fonda;
 
-import com.epam.fonda.workflow.TaskContainer;
-import com.tngtech.java.junit.dataprovider.DataProvider;
-import com.tngtech.java.junit.dataprovider.DataProviderRunner;
-import com.tngtech.java.junit.dataprovider.UseDataProvider;
-import org.junit.After;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import com.epam.fonda.utils.TemplateEngineUtils;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.net.URISyntaxException;
+import java.util.stream.Stream;
 
-import static org.junit.Assert.assertTrue;
+import static com.epam.fonda.utils.PipelineUtils.getExecutionPath;
+import static java.lang.String.format;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.params.provider.Arguments.of;
 
-@RunWith(DataProviderRunner.class)
 public class DnaAmpliconVarBamIntegrationTest extends AbstractIntegrationTest {
 
     private static final String OUTPUT_DIR = "output";
-    private static final String OUTPUT_SH_FILES_PATH = "build/resources/integrationTest/output/sh_files";
-    private static final String QSUB = "qsub ";
-    private static final String NULL = "null";
-    private static final String BEGIN_STEP_REMOVE_DIRECTORIES = "Begin Step: Remove temporary directories...";
-    private static final String PYTHON_VCF_SNPEFF_ANNOTATION =
-            ".*?/usr/bin/python.+?vcf_snpeff_annotation.py.+?(\\n|$)";
+    private static final String OUTPUT_SH_SUFFIX = "output/sh_files/";
+    private static final String BAM_AMPLICON_VAR_BAM_SUFFIX = "DnaAmpliconVarBam/";
+    private static final String CONTROL_SAMPLE_NAALL_TASKS_SUFFIX =
+            format("%sControlSampleNAAllTasks/", BAM_AMPLICON_VAR_BAM_SUFFIX);
+    private static final String CONTROL_SAMPLE_NOT_NAALL_TASKS_SUFFIX =
+            format("%sControlSampleNotNAAllTasks/", BAM_AMPLICON_VAR_BAM_SUFFIX);
+    private static final String CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA51_SUFFIX =
+            format("%sControlSampleNotNAAllTasks/ForGA51/", BAM_AMPLICON_VAR_BAM_SUFFIX);
+    private static final String CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA52_SUFFIX =
+            format("%sControlSampleNotNAAllTasks/ForGA52/", BAM_AMPLICON_VAR_BAM_SUFFIX);
+    private static final String FOR_GA_5_SH_SUFFIX = "for_GA5_analysis.sh";
+    private static final String FOR_GA_51_SH_SUFFIX = "for_GA51_analysis.sh";
+    private static final String FOR_GA_52_SH_SUFFIX = "for_GA52_analysis.sh";
+    private static final String FOR_COHORT_ANALYSIS_SH_SUFFIX = "for_cohort_analysis.sh";
+    private static final String FOR_GA_5_TEMPLATE_SUFFIX = "for_GA5_analysis.txt";
+    private static final String FOR_GA_51_TEMPLATE_SUFFIX = "for_GA51_analysis.txt";
+    private static final String FOR_GA_52_TEMPLATE_SUFFIX = "for_GA52_analysis.txt";
+    private static final String FOR_COHORT_ANALYSIS_TEMPLATE_SUFFIX = "for_cohort_analysis.txt";
+    private static final String DNA_AMPLICON_VAR_BAM_FREEBAYES =
+            "DnaAmpliconVar_Bam_freebayes_";
+    private static final String DNA_AMPLICON_VAR_BAM_GATK_HAPLOTYPE_CALLER =
+            "DnaAmpliconVar_Bam_gatkHaplotypeCaller_";
+    private static final String DNA_AMPLICON_VAR_BAM_LOFREQ =
+            "DnaAmpliconVar_Bam_lofreq_";
+    private static final String DNA_AMPLICON_VAR_BAM_MUTECT_1 =
+            "DnaAmpliconVar_Bam_mutect1_";
+    private static final String DNA_AMPLICON_VAR_BAM_SCALPEL =
+            "DnaAmpliconVar_Bam_scalpel_";
+    private static final String DNA_AMPLICON_VAR_BAM_STRELKA_2 =
+            "DnaAmpliconVar_Bam_strelka2_";
+    private static final String DNA_AMPLICON_VAR_BAM_VARDICT =
+            "DnaAmpliconVar_Bam_vardict_";
+    private static final String DNA_AMPLICON_VAR_BAM_VARIANT_DETECTION =
+            "DnaAmpliconVar_Bam_variantDetection_";
+    private static final String DNA_AMPLICON_VAR_BAM_CONTEST =
+            "DnaAmpliconVar_Bam_contEst_";
+    private static final String DNA_AMPLICON_VAR_BAM_EXOMECNV =
+            "DnaAmpliconVar_Bam_exomecnv_";
+    private static final String DNA_AMPLICON_VAR_BAM_MUTECT_2 =
+            "DnaAmpliconVar_Bam_mutect2_";
+    private static final String DNA_AMPLICON_VAR_BAM_SEQUENZA =
+            "DnaAmpliconVar_Bam_sequenza_";
+    private static final String DNA_AMPLICON_VAR_BAM_MERGE_MUTATION =
+            "DnaAmpliconVar_Bam_mergeMutation_";
+    private static final String DNA_AMPLICON_VAR_BAM_G_SINGLE_ALL_TASKS =
+            "DnaAmpliconVarBam/gSingleAllTasks.txt";
+    private static final String DNA_AMPLICON_VAR_BAM_S_SINGLE =
+            "DnaAmpliconVarBam/sSingle.txt";
+    private static final String DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA =
+            "DnaAmpliconVarBam/gAllTasksSampleNotNA.txt";
+    private static final String DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA =
+            "DnaAmpliconVarBam/sControlSampleNotNA.txt";
+    private TemplateEngine templateEngine = TemplateEngineUtils.init();
+    private Context context = new Context();
 
-    @After
-    public void cleanup() {
-        TaskContainer.getTasks().clear();
+    @BeforeEach
+    public void setup() {
+        context = new Context();
+        context.setVariable("jarPath", getExecutionPath());
     }
 
-    @Test
-    @UseDataProvider("controlSampleNAAllTasks")
-    public void testControlSampleNAAllTasks(String task, String[] expectedStrings, String[] expectedPatterns)
-            throws IOException {
-        startAppWithConfigs("DnaAmpliconVarBam/gSingleAllTasks.txt",
-                "DnaAmpliconVarBam/sSingle.txt");
-
-        //tests for toolsets
-        String filePath = "output/sh_files/DnaAmpliconVar_Bam_" + task + "_for_GA5_analysis.sh";
-        File outputShFile = new File(this.getClass().getClassLoader().getResource(filePath).getPath());
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(outputShFile))) {
-            List<String> lines = reader.lines().collect(Collectors.toList());
-            for (String expectedString : expectedStrings) {
-                assertTrue(lines.stream().anyMatch(line -> line.contains(expectedString)));
-            }
-            for (String expectedPattern : expectedPatterns) {
-                assertTrue(lines.stream().anyMatch(line -> line.matches(expectedPattern)));
-            }
-            assertTrue(lines.stream().noneMatch(line -> line.contains(NULL)));
-        }
-
-        //tests for variant detection
-        filePath = "output/sh_files/DnaAmpliconVar_Bam_variantDetection_for_GA5_analysis.sh";
-        outputShFile = new File(this.getClass().getClassLoader().getResource(filePath).getPath());
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(outputShFile))) {
-            List<String> lines = reader.lines().collect(Collectors.toList());
-            assertTrue(lines.stream().anyMatch(line -> line.contains(QSUB + OUTPUT_SH_FILES_PATH +
-                    "/DnaAmpliconVar_Bam_freebayes_for_GA5_analysis.sh")));
-            assertTrue(lines.stream().noneMatch(line -> line.contains(NULL)));
-            assertTrue(lines.stream().anyMatch(line -> line.contains(QSUB + OUTPUT_SH_FILES_PATH +
-                    "/DnaAmpliconVar_Bam_mutect1_for_GA5_analysis.sh")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains(QSUB + OUTPUT_SH_FILES_PATH +
-                    "/DnaAmpliconVar_Bam_strelka2_for_GA5_analysis.sh")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains(QSUB + OUTPUT_SH_FILES_PATH +
-                    "/DnaAmpliconVar_Bam_gatkHaplotypeCaller_for_GA5_analysis.sh")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains(QSUB + OUTPUT_SH_FILES_PATH +
-                    "/DnaAmpliconVar_Bam_scalpel_for_GA5_analysis.sh")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains(QSUB + OUTPUT_SH_FILES_PATH +
-                    "/DnaAmpliconVar_Bam_vardict_for_GA5_analysis.sh")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains(QSUB + OUTPUT_SH_FILES_PATH +
-                    "/DnaAmpliconVar_Bam_lofreq_for_GA5_analysis.sh")));
-        }
-
-        filePath = "output/sh_files/DnaAmpliconVar_Bam_mergeMutation_for_cohort_analysis.sh";
-        outputShFile = new File(this.getClass().getClassLoader().getResource(filePath).getPath());
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(outputShFile))) {
-            List<String> lines = reader.lines().collect(Collectors.toList());
-            assertTrue(lines.stream().anyMatch(line -> line.contains("Begin Step: Merge mutation annotation...")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains("dna_rna_mutation_data_analysis.R -i " +
-                    "build/resources/integrationTest/bamListOneSample.tsv -d build/resources/integrationTest/output " +
-                    "-t bwa+vardict+mutect1+strelka2+gatkHaplotypeCaller+scalpel+lofreq+freebayes")));
-            assertTrue(lines.stream().noneMatch(line -> line.contains(NULL)));
-        }
-
+    @AfterEach
+    public void cleanupDir() throws IOException {
         cleanOutputDirForNextTest(OUTPUT_DIR, false);
     }
 
-    @DataProvider
-    public static Object[][] controlSampleNAAllTasks() {
-        return new Object[][] {
-            {"freebayes",
-                new String[] {
-                    "Begin Step: Freebayes detection...",
-                    "/usr/bin/freebayes -f /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa",
-                    BEGIN_STEP_REMOVE_DIRECTORIES},
-                new String[] {
-                    PYTHON_VCF_SNPEFF_ANNOTATION}},
-
-            {"gatkHaplotypeCaller",
-                new String[] {
-                    "Begin Step: GATK haplotypecaller detection...",
-                    "-jar /usr/bin/gatk -T HaplotypeCaller " +
-                            "-R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa " +
-                            "-mmq 20 --intervals /ngs/data/S03723314_Padded.bed " +
-                            "--input_file /ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_003.bam " +
-                            "--out build/resources/integrationTest/output/GA5/gatkHaplotypeCaller/" +
-                            "GA5.gatkHaplotypeCaller.variants.vcf " +
-                            "--validation_strictness SILENT",
-                    "output/GA5/gatkHaplotypeCaller/GA5.gatkHaplotypeCaller.variants.vcf",
-                    "output/GA5/gatkHaplotypeCaller/GA5.gatkHaplotypeCaller.variants.pass.annotation.tsv",
-                    BEGIN_STEP_REMOVE_DIRECTORIES},
-                new String[] {
-                    PYTHON_VCF_SNPEFF_ANNOTATION}},
-
-            {"lofreq",
-                new String[] {
-                    "Begin Step: Lofreq detection...",
-                    "/usr/bin/lofreq call -f /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa",
-                    "-o build/resources/integrationTest/output/GA5/lofreq/GA5.lofreq.variants.vcf",
-                    "-l /ngs/data/S03723314_Padded.bed",
-                    "-o build/resources/integrationTest/output/GA5/lofreq/GA5.lofreq.variants.pass.annotation.tsv"},
-                new String[] {
-                    PYTHON_VCF_SNPEFF_ANNOTATION}},
-            {"vardict",
-                new String[] {
-                    "Begin Step: Vardict detection...",
-                    "/VarDict/var2vcf_valid.pl",
-                    "/usr/bin/vardict/build/install/VarDict/bin/VarDict " +
-                            "-G /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa",
-                    BEGIN_STEP_REMOVE_DIRECTORIES},
-                new String[] {
-                    PYTHON_VCF_SNPEFF_ANNOTATION}},
-
-            {"mutect1", new String[] {
-                "Begin Step: Mutect1 detection...",
-                "/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -jar /usr/bin/mutect",
-                "--analysis_type MuTect " +
-                        "--reference_sequence /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa",
-                "--dbsnp /ngs/data/db/mutect.dbsnp --cosmic /ngs/data/db/cosmic --normal_panel",
-                "--vcf build/resources/integrationTest/output/GA5/mutect1/GA5.mutect1.variants.vcf",
-                ""},
-                new String[] {
-                    PYTHON_VCF_SNPEFF_ANNOTATION}},
-
-            {"strelka2",
-                new String[] {
-                    "Begin Step: Strelka2 detection...",
-                    "/usr/bin/python /usr/bin/strelka2/configureStrelkaGermlineWorkflow.py",
-                    "--referenceFasta=/ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa",
-                    "/usr/bin/python build/resources/integrationTest/output/GA5/strelka2/runWorkflow.py " +
-                            "-m local -j 8",
-                    "zcat build/resources/integrationTest/output/GA5/strelka2/results/variants/variants.vcf.gz"},
-                new String[] {
-                    PYTHON_VCF_SNPEFF_ANNOTATION}},
-
-            {"scalpel",
-                new String[] {
-                    "Begin Step: Scalpel detection...",
-                    "/usr/bin/scalpel/scalpel-discovery --single " +
-                            "--ref /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa",
-                    "--bed /ngs/data/S03723314_Padded.bed"},
-                new String[] {
-                    PYTHON_VCF_SNPEFF_ANNOTATION}},
-        };
+    @ParameterizedTest(name = "{3}-test")
+    @MethodSource("initParametersNAAll")
+    void testDnaAmpliconVarBamNAAll(final String gConfigPath, final String sConfigPath, final String outputShFile,
+                                    final String templatePath) throws IOException, URISyntaxException {
+        startAppWithConfigs(gConfigPath, sConfigPath);
+        final String expectedCmd = templateEngine.process(templatePath, context);
+        assertEquals(expectedCmd.trim(), getCmd(outputShFile).trim());
     }
 
-    @Test
-    @UseDataProvider("controlSampleNotNAAllTasks")
-    public void testControlSampleNotNAAllTasks(String task, String[] expectedStrings, String[] expectedPatterns)
-            throws IOException {
-        startAppWithConfigs("DnaAmpliconVarBam/gAllTasksSampleNotNA.txt",
-                "DnaAmpliconVarBam/sControlSampleNotNA.txt");
-
-        //tests for toolsets
-        String filePath = "output/sh_files/DnaAmpliconVar_Bam_" + task + "_for_GA51_analysis.sh";
-        File outputShFile = new File(this.getClass().getClassLoader().getResource(filePath).getPath());
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(outputShFile))) {
-            List<String> lines = reader.lines().collect(Collectors.toList());
-            for (String expectedString : expectedStrings) {
-                assertTrue(lines.stream().anyMatch(line -> line.contains(expectedString)));
-            }
-            for (String expectedPattern : expectedPatterns) {
-                assertTrue(lines.stream().anyMatch(line -> line.matches(expectedPattern)));
-            }
-
-            assertTrue(lines.stream().noneMatch(line -> line.contains(NULL)));
-        }
-
-        //tests for variant detection
-        filePath = "output/sh_files/DnaAmpliconVar_Bam_variantDetection_for_GA51_analysis.sh";
-        outputShFile = new File(this.getClass().getClassLoader().getResource(filePath).getPath());
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(outputShFile))) {
-            List<String> lines = reader.lines().collect(Collectors.toList());
-            assertTrue(lines.stream().anyMatch(line -> line.contains(QSUB + OUTPUT_SH_FILES_PATH +
-                    "/DnaAmpliconVar_Bam_contEst_for_GA51_analysis.sh")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains(QSUB + OUTPUT_SH_FILES_PATH +
-                    "/DnaAmpliconVar_Bam_sequenza_for_GA51_analysis.sh")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains(QSUB + OUTPUT_SH_FILES_PATH +
-                    "/DnaAmpliconVar_Bam_exomecnv_for_GA51_analysis.sh")));
-            assertTrue(lines.stream().noneMatch(line -> line.contains(NULL)));
-            assertTrue(lines.stream().anyMatch(line -> line.contains(QSUB + OUTPUT_SH_FILES_PATH +
-                    "/DnaAmpliconVar_Bam_mutect2_for_GA51_analysis.sh")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains(QSUB + OUTPUT_SH_FILES_PATH +
-                    "/DnaAmpliconVar_Bam_strelka2_for_GA51_analysis.sh")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains(QSUB + OUTPUT_SH_FILES_PATH +
-                    "/DnaAmpliconVar_Bam_scalpel_for_GA51_analysis.sh")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains(QSUB + OUTPUT_SH_FILES_PATH +
-                    "/DnaAmpliconVar_Bam_vardict_for_GA51_analysis.sh")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains(QSUB + OUTPUT_SH_FILES_PATH +
-                    "/DnaAmpliconVar_Bam_lofreq_for_GA51_analysis.sh")));
-        }
-
-        filePath = "output/sh_files/DnaAmpliconVar_Bam_mergeMutation_for_cohort_analysis.sh";
-        outputShFile = new File(this.getClass().getClassLoader().getResource(filePath).getPath());
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(outputShFile))) {
-            List<String> lines = reader.lines().collect(Collectors.toList());
-            assertTrue(lines.stream().anyMatch(line -> line.contains("Begin Step: Merge mutation annotation...")));
-            assertTrue(lines.stream().anyMatch(line -> line.contains("dna_rna_mutation_data_analysis.R " +
-                    "-i build/resources/integrationTest/bamListSampleNotNA.tsv " +
-                    "-d build/resources/integrationTest/output -t bwa+contEst+sequenza+exomecnv+vardict+mutect2+" +
-                    "strelka2+scalpel+lofreq")));
-            assertTrue(lines.stream().noneMatch(line -> line.contains(NULL)));
-        }
-
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
+    @ParameterizedTest(name = "{3}-test")
+    @MethodSource("initParametersNotNAAll")
+    void testDnaAmpliconVarBamNotNAAll(final String gConfigPath, final String sConfigPath, final String outputShFile,
+                                       final String templatePath) throws IOException, URISyntaxException {
+        startAppWithConfigs(gConfigPath, sConfigPath);
+        final String expectedCmd = templateEngine.process(templatePath, context);
+        assertEquals(expectedCmd.trim(), getCmd(outputShFile).trim());
     }
 
-    @DataProvider
-    public static Object[][] controlSampleNotNAAllTasks() {
-        return new Object[][] {
-            {"contEst",
-                new String[] {
-                    "Begin Step: Contamination estimation...",
-                    "/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g " +
-                            "-Djava.io.tmpdir=build/resources/integrationTest/output/GA51/contEst/tmp",
-                    "-pf 100 -pc 0.01 -o build/resources/integrationTest/output/GA51/contEst/GA51.contEst.result",
-                    "-isr INTERSECTION --min_mapq 20 -U ALLOW_SEQ_DICT_INCOMPATIBILITY"},
-                new String[] { "" }},
+    @SuppressWarnings("PMD")
+    private static Stream<Arguments> initParametersNAAll() {
+        return Stream.of(
+                of(DNA_AMPLICON_VAR_BAM_G_SINGLE_ALL_TASKS, DNA_AMPLICON_VAR_BAM_S_SINGLE,
+                        format("%s%s%s",
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_FREEBAYES, FOR_GA_5_SH_SUFFIX),
+                        format("%s%s%s",
+                                CONTROL_SAMPLE_NAALL_TASKS_SUFFIX, DNA_AMPLICON_VAR_BAM_FREEBAYES,
+                                FOR_GA_5_TEMPLATE_SUFFIX)),
+                of(DNA_AMPLICON_VAR_BAM_G_SINGLE_ALL_TASKS, DNA_AMPLICON_VAR_BAM_S_SINGLE,
+                        format("%s%s%s",
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_GATK_HAPLOTYPE_CALLER, FOR_GA_5_SH_SUFFIX),
+                        format("%s%s%s",
+                                CONTROL_SAMPLE_NAALL_TASKS_SUFFIX, DNA_AMPLICON_VAR_BAM_GATK_HAPLOTYPE_CALLER,
+                                FOR_GA_5_TEMPLATE_SUFFIX)),
+                of(DNA_AMPLICON_VAR_BAM_G_SINGLE_ALL_TASKS, DNA_AMPLICON_VAR_BAM_S_SINGLE,
+                        format("%s%s%s",
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_LOFREQ, FOR_GA_5_SH_SUFFIX),
+                        format("%s%s%s",
+                                CONTROL_SAMPLE_NAALL_TASKS_SUFFIX, DNA_AMPLICON_VAR_BAM_LOFREQ,
+                                FOR_GA_5_TEMPLATE_SUFFIX)),
+                of(DNA_AMPLICON_VAR_BAM_G_SINGLE_ALL_TASKS, DNA_AMPLICON_VAR_BAM_S_SINGLE,
+                        format("%s%s%s",
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_MUTECT_1, FOR_GA_5_SH_SUFFIX),
+                        format("%s%s%s",
+                                CONTROL_SAMPLE_NAALL_TASKS_SUFFIX, DNA_AMPLICON_VAR_BAM_MUTECT_1,
+                                FOR_GA_5_TEMPLATE_SUFFIX)),
+                of(DNA_AMPLICON_VAR_BAM_G_SINGLE_ALL_TASKS, DNA_AMPLICON_VAR_BAM_S_SINGLE,
+                        format("%s%s%s",
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_SCALPEL, FOR_GA_5_SH_SUFFIX),
+                        format("%s%s%s",
+                                CONTROL_SAMPLE_NAALL_TASKS_SUFFIX, DNA_AMPLICON_VAR_BAM_SCALPEL,
+                                FOR_GA_5_TEMPLATE_SUFFIX)),
+                of(DNA_AMPLICON_VAR_BAM_G_SINGLE_ALL_TASKS, DNA_AMPLICON_VAR_BAM_S_SINGLE,
+                        format("%s%s%s",
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_STRELKA_2, FOR_GA_5_SH_SUFFIX),
+                        format("%s%s%s",
+                                CONTROL_SAMPLE_NAALL_TASKS_SUFFIX, DNA_AMPLICON_VAR_BAM_STRELKA_2,
+                                FOR_GA_5_TEMPLATE_SUFFIX)),
+                of(DNA_AMPLICON_VAR_BAM_G_SINGLE_ALL_TASKS, DNA_AMPLICON_VAR_BAM_S_SINGLE,
+                        format("%s%s%s",
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_VARDICT, FOR_GA_5_SH_SUFFIX),
+                        format("%s%s%s",
+                                CONTROL_SAMPLE_NAALL_TASKS_SUFFIX, DNA_AMPLICON_VAR_BAM_VARDICT,
+                                FOR_GA_5_TEMPLATE_SUFFIX)),
+                of(DNA_AMPLICON_VAR_BAM_G_SINGLE_ALL_TASKS, DNA_AMPLICON_VAR_BAM_S_SINGLE,
+                        format("%s%s%s",
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_VARIANT_DETECTION, FOR_GA_5_SH_SUFFIX),
+                        format("%s%s%s",
+                                CONTROL_SAMPLE_NAALL_TASKS_SUFFIX, DNA_AMPLICON_VAR_BAM_VARIANT_DETECTION,
+                                FOR_GA_5_TEMPLATE_SUFFIX)),
+                of(DNA_AMPLICON_VAR_BAM_G_SINGLE_ALL_TASKS, DNA_AMPLICON_VAR_BAM_S_SINGLE,
+                        format("%s%s%s",
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_MERGE_MUTATION, FOR_COHORT_ANALYSIS_SH_SUFFIX),
+                        format("%s%s%s",
+                                CONTROL_SAMPLE_NAALL_TASKS_SUFFIX, DNA_AMPLICON_VAR_BAM_MERGE_MUTATION,
+                                FOR_COHORT_ANALYSIS_TEMPLATE_SUFFIX))
+        );
+    }
 
-            {"exomecnv",
-                new String[] {
-                    "Begin Step: ExomeCNV detection...",
-                    "/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -jar /usr/bin/gatk -T DepthOfCoverage",
-                    "-I /ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_003.bam -L " +
-                            "/ngs/data/S03723314_Padded.bed " +
-                            "-o build/resources/integrationTest/output/GA51/exomecnv/GA51",
-                    "/usr/bin/Rscript /usr/bin/exomecnv/exome_cnv.R " +
-                            "-t build/resources/integrationTest/output/GA51/exomecnv/GA51.sample_interval_summary " +
-                            "-n build/resources/integrationTest/output/GA51/exomecnv/GA52.sample_interval_summary " +
-                            "-o build/resources/integrationTest/output/GA51/exomecnv -s GA51"},
-                new String[] {""} },
-
-            {"sequenza",
-                new String[] {
-                    "Begin Step: bam pileup...",
-                    "/opt/samtools/samtools-0.1.19/samtools mpileup -q 10 -B -d 100000",
-                    "Begin Step: Sequenza detection...",
-                    "/usr/bin/Rscript /usr/bin/sequenza/sequenza.R -i " +
-                            "build/resources/integrationTest/output/GA51/sequenza/GA51_small.seqz.gz",
-                    "/usr/bin/python /usr/bin/sequenza/sequenza-utils.py seqz-binning -w 50 " +
-                            "-s build/resources/integrationTest/output/GA51/sequenza/GA51.seqz.gz",
-                    "/usr/bin/python /usr/bin/sequenza/sequenza-utils.py pileup2seqz -gc 10 " +
-                            "-n build/resources/integrationTest/output/GA51/pileup/GA52.pileup.gz"},
-                new String[] {""}},
-
-            {"mutect2",
-                new String[] {
-                    "Begin Step: Mutect2 detection...",
-                    "/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -Djava.io.tmpdir=",
-                    "-jar /usr/bin/gatk -T MuTect2",
-                    "build/resources/integrationTest/output/GA51/mutect2/GA51.mutect2.somatic.variants.vcf",
-                    BEGIN_STEP_REMOVE_DIRECTORIES,
-                    "--intervals"},
-                new String[] {
-                    PYTHON_VCF_SNPEFF_ANNOTATION}},
-
-            {"vardict",
-                new String[] {
-                    "Begin Step: Vardict detection...",
-                    "/VarDict/var2vcf_paired.pl",
-                    "/usr/bin/vardict/build/install/VarDict/bin/VarDict " +
-                            "-G /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa",
-                    BEGIN_STEP_REMOVE_DIRECTORIES},
-                new String[] {
-                    PYTHON_VCF_SNPEFF_ANNOTATION}},
-
-            {"strelka2",
-                new String[] {
-                    "Begin Step: Strelka2 detection...",
-                    "/usr/bin/python /usr/bin/strelka2/configureStrelkaSomaticWorkflow.py",
-                    "--referenceFasta=/ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa",
-                    "/usr/bin/python build/resources/integrationTest/output/GA51/strelka2/runWorkflow.py " +
-                            "-m local -j 8",
-                    "gunzip -c build/resources/integrationTest/output/GA51/strelka2/results/variants/" +
-                            "somatic.snvs.vcf.gz",
-                    "rm build/resources/integrationTest/output/GA51/strelka2/results/variants/somatic.snvs.vcf",
-                    "rm build/resources/integrationTest/output/GA51/strelka2/results/variants/somatic.indels.vcf",
-                    "gunzip -c build/resources/integrationTest/output/GA51/strelka2/results/variants/" +
-                            "somatic.indels.vcf.gz"},
-                new String[] {
-                    PYTHON_VCF_SNPEFF_ANNOTATION}},
-
-            {"scalpel",
-                new String[] {
-                    "Begin Step: Scalpel detection...",
-                    "/usr/bin/scalpel/scalpel-discovery --somatic " +
-                            "--ref /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa",
-                    "/usr/bin/scalpel/scalpel-export --somatic --db",
-                    "/GA51.scalpel.somatic.variants.vcf",
-                    "--bed /ngs/data/S03723314_Padded.bed"},
-                new String[] {
-                    PYTHON_VCF_SNPEFF_ANNOTATION}},
-
-            {"lofreq",
-                new String[] {
-                    "Begin Step: Lofreq detection...",
-                    "/usr/bin/lofreq somatic -f /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa",
-                    "gunzip -c build/resources/integrationTest/output/GA51/lofreq/GA51.somatic_final.snvs.vcf.gz",
-                    "gunzip -c build/resources/integrationTest/output/GA51/lofreq/GA51.somatic_final.indels.vcf.gz",
-                    "grep -v \"^#\" build/resources/integrationTest/output/GA51/" +
-                            "lofreq/GA51.somatic_final.indels.vcf"},
-                new String[] {
-                    PYTHON_VCF_SNPEFF_ANNOTATION}},
-        };
+    @SuppressWarnings("PMD")
+    private static Stream<Arguments> initParametersNotNAAll() {
+        return Stream.of(
+                of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA, DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA,
+                        format("%s%s%s",
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_CONTEST, FOR_GA_51_SH_SUFFIX),
+                        format("%s%s%s",
+                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA51_SUFFIX, DNA_AMPLICON_VAR_BAM_CONTEST,
+                                FOR_GA_51_TEMPLATE_SUFFIX)),
+                of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA, DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA,
+                        format("%s%s%s",
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_EXOMECNV, FOR_GA_51_SH_SUFFIX),
+                        format("%s%s%s",
+                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA51_SUFFIX, DNA_AMPLICON_VAR_BAM_EXOMECNV,
+                                FOR_GA_51_TEMPLATE_SUFFIX)),
+                of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA, DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA,
+                        format("%s%s%s",
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_LOFREQ, FOR_GA_51_SH_SUFFIX),
+                        format("%s%s%s",
+                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA51_SUFFIX, DNA_AMPLICON_VAR_BAM_LOFREQ,
+                                FOR_GA_51_TEMPLATE_SUFFIX)),
+                of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA, DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA,
+                        format("%s%s%s",
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_MUTECT_2, FOR_GA_51_SH_SUFFIX),
+                        format("%s%s%s",
+                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA51_SUFFIX, DNA_AMPLICON_VAR_BAM_MUTECT_2,
+                                FOR_GA_51_TEMPLATE_SUFFIX)),
+                of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA, DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA,
+                        format("%s%s%s",
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_SCALPEL, FOR_GA_51_SH_SUFFIX),
+                        format("%s%s%s",
+                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA51_SUFFIX, DNA_AMPLICON_VAR_BAM_SCALPEL,
+                                FOR_GA_51_TEMPLATE_SUFFIX)),
+                of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA, DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA,
+                        format("%s%s%s",
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_SEQUENZA, FOR_GA_51_SH_SUFFIX),
+                        format("%s%s%s",
+                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA51_SUFFIX, DNA_AMPLICON_VAR_BAM_SEQUENZA,
+                                FOR_GA_51_TEMPLATE_SUFFIX)),
+                of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA, DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA,
+                        format("%s%s%s",
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_STRELKA_2, FOR_GA_51_SH_SUFFIX),
+                        format("%s%s%s",
+                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA51_SUFFIX, DNA_AMPLICON_VAR_BAM_STRELKA_2,
+                                FOR_GA_51_TEMPLATE_SUFFIX)),
+                of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA, DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA,
+                        format("%s%s%s",
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_VARDICT, FOR_GA_51_SH_SUFFIX),
+                        format("%s%s%s",
+                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA51_SUFFIX, DNA_AMPLICON_VAR_BAM_VARDICT,
+                                FOR_GA_51_TEMPLATE_SUFFIX)),
+                of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA, DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA,
+                        format("%s%s%s",
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_VARIANT_DETECTION, FOR_GA_51_SH_SUFFIX),
+                        format("%s%s%s",
+                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA51_SUFFIX, DNA_AMPLICON_VAR_BAM_VARIANT_DETECTION,
+                                FOR_GA_51_TEMPLATE_SUFFIX)),
+                of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA, DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA,
+                        format("%s%s%s",
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_CONTEST, FOR_GA_52_SH_SUFFIX),
+                        format("%s%s%s",
+                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA52_SUFFIX, DNA_AMPLICON_VAR_BAM_CONTEST,
+                                FOR_GA_52_TEMPLATE_SUFFIX)),
+                of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA, DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA,
+                        format("%s%s%s",
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_EXOMECNV, FOR_GA_52_SH_SUFFIX),
+                        format("%s%s%s",
+                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA52_SUFFIX, DNA_AMPLICON_VAR_BAM_EXOMECNV,
+                                FOR_GA_52_TEMPLATE_SUFFIX)),
+                of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA, DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA,
+                        format("%s%s%s",
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_LOFREQ, FOR_GA_52_SH_SUFFIX),
+                        format("%s%s%s",
+                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA52_SUFFIX, DNA_AMPLICON_VAR_BAM_LOFREQ,
+                                FOR_GA_52_TEMPLATE_SUFFIX)),
+                of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA, DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA,
+                        format("%s%s%s",
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_MUTECT_2, FOR_GA_52_SH_SUFFIX),
+                        format("%s%s%s",
+                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA52_SUFFIX, DNA_AMPLICON_VAR_BAM_MUTECT_2,
+                                FOR_GA_52_TEMPLATE_SUFFIX)),
+                of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA, DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA,
+                        format("%s%s%s",
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_SCALPEL, FOR_GA_52_SH_SUFFIX),
+                        format("%s%s%s",
+                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA52_SUFFIX, DNA_AMPLICON_VAR_BAM_SCALPEL,
+                                FOR_GA_52_TEMPLATE_SUFFIX)),
+                of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA, DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA,
+                        format("%s%s%s",
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_SEQUENZA, FOR_GA_52_SH_SUFFIX),
+                        format("%s%s%s",
+                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA52_SUFFIX, DNA_AMPLICON_VAR_BAM_SEQUENZA,
+                                FOR_GA_52_TEMPLATE_SUFFIX)),
+                of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA, DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA,
+                        format("%s%s%s",
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_STRELKA_2, FOR_GA_52_SH_SUFFIX),
+                        format("%s%s%s",
+                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA52_SUFFIX, DNA_AMPLICON_VAR_BAM_STRELKA_2,
+                                FOR_GA_52_TEMPLATE_SUFFIX)),
+                of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA, DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA,
+                        format("%s%s%s",
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_VARDICT, FOR_GA_52_SH_SUFFIX),
+                        format("%s%s%s",
+                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA52_SUFFIX, DNA_AMPLICON_VAR_BAM_VARDICT,
+                                FOR_GA_52_TEMPLATE_SUFFIX)),
+                of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA, DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA,
+                        format("%s%s%s",
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_VARIANT_DETECTION, FOR_GA_52_SH_SUFFIX),
+                        format("%s%s%s",
+                                CONTROL_SAMPLE_NOT_NAALL_TASKS_FOR_GA52_SUFFIX, DNA_AMPLICON_VAR_BAM_VARIANT_DETECTION,
+                                FOR_GA_52_TEMPLATE_SUFFIX)),
+                of(DNA_AMPLICON_VAR_BAM_G_ALL_TASKS_NOT_NA, DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA,
+                        format("%s%s%s",
+                                OUTPUT_SH_SUFFIX, DNA_AMPLICON_VAR_BAM_MERGE_MUTATION, FOR_COHORT_ANALYSIS_SH_SUFFIX),
+                        format("%s%s%s",
+                                CONTROL_SAMPLE_NOT_NAALL_TASKS_SUFFIX, DNA_AMPLICON_VAR_BAM_MERGE_MUTATION,
+                                FOR_COHORT_ANALYSIS_TEMPLATE_SUFFIX))
+        );
     }
 }

@@ -3,11 +3,12 @@ samtools mpileup -q 10 -B -d 100000 -f genome -l bed controlBam | gzip > output/
 samtools mpileup -q 10 -B -d 100000 -f genome -l bed bam | gzip > output/pileup/sampleName.pileup.gz
 if [ $? -eq 0 ]
 then
-    echo `date` Successful Step: bam pileup.
-    sleep 8
+	echo `date` Successful Step: bam pileup.
+	sleep 8
 else
-    echo `date` Error Step: bam pileup.
+	echo `date` Error Step: bam pileup.
 
-    echo `date` The job was aborted due to ERRORS found.
-    exit 1;
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
 fi
+
