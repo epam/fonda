@@ -3,9 +3,9 @@
 # --- SGE options --- #
 
 #$ -wd build/resources/integrationTest/output
-#$ -N HlaTyping_Fastq_hlaTyping_for_smv5_analysis
-#$ -o build/resources/integrationTest/output/log_files/HlaTyping_Fastq_hlaTyping_for_smv5_analysis.log
-#$ -e build/resources/integrationTest/output/err_files/HlaTyping_Fastq_hlaTyping_for_smv5_analysis.err
+#$ -N HlaTyping_Fastq_hlatyping_for_smv5_analysis
+#$ -o build/resources/integrationTest/output/log_files/HlaTyping_Fastq_hlatyping_for_smv5_analysis.log
+#$ -e build/resources/integrationTest/output/err_files/HlaTyping_Fastq_hlatyping_for_smv5_analysis.err
 #$ -q all.q
 #$ -R y
 #$ -pe threaded 4

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.epam.fonda;
 
 import com.epam.fonda.utils.TemplateEngineUtils;
@@ -17,16 +32,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class HlaTypingFastqIntegrationTest extends AbstractIntegrationTest {
 
     private static final String OUTPUT_DIR = "output";
-    private static final String G_CONFIG_PATH = "HlaTypingFastq/gHlaTypingFastq_v1.1.txt";
+    private static final String G_CONFIG_PATH = "HlaTypingFastq/gPairedSeqpurgeOptiType.txt";
     private static final String S_CONFIG_PATH = "HlaTypingFastq/sHlaTypingFastq.txt";
     private static final String HLA_TYPE_FASTQ_SUFFIX = "HlaTypingFastq/";
     private static final String OUTPUT_SH_FILE_SUFFIX = "output/sh_files/";
     private static final String SH_EXTENSION_SUFFIX = ".sh";
     private static final String TXT_EXTENSION_SUFFIX = ".txt";
-    private static final String TEMPLATE_OUTPUT_SMV1_SUFFIX = "HlaTyping_Fastq_hlaTyping_for_smv1_analysis";
-    private static final String TEMPLATE_OUTPUT_SMV2_SUFFIX = "HlaTyping_Fastq_hlaTyping_for_smv2_analysis";
-    private static final String TEMPLATE_OUTPUT_SMV3_SUFFIX = "HlaTyping_Fastq_hlaTyping_for_smv3_analysis";
-    private static final String TEMPLATE_OUTPUT_SMV5_SUFFIX = "HlaTyping_Fastq_hlaTyping_for_smv5_analysis";
+    private static final String TEMPLATE_OUTPUT_SMV1_SUFFIX = "HlaTyping_Fastq_hlatyping_for_smv1_analysis";
+    private static final String TEMPLATE_OUTPUT_SMV2_SUFFIX = "HlaTyping_Fastq_hlatyping_for_smv2_analysis";
+    private static final String TEMPLATE_OUTPUT_SMV3_SUFFIX = "HlaTyping_Fastq_hlatyping_for_smv3_analysis";
+    private static final String TEMPLATE_OUTPUT_SMV5_SUFFIX = "HlaTyping_Fastq_hlatyping_for_smv5_analysis";
     private TemplateEngine templateEngine = TemplateEngineUtils.init();
     private Context context = new Context();
 
