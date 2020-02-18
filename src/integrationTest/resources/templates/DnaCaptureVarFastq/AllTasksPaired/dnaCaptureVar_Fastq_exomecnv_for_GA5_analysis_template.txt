@@ -1,0 +1,49 @@
+#!/bin/bash -x
+
+# --- SGE options --- #
+
+#$ -wd build/resources/integrationTest/output
+#$ -N DnaCaptureVar_Fastq_exomecnv_for_GA5_analysis
+#$ -o build/resources/integrationTest/output/log_files/DnaCaptureVar_Fastq_exomecnv_for_GA5_analysis.log
+#$ -e build/resources/integrationTest/output/err_files/DnaCaptureVar_Fastq_exomecnv_for_GA5_analysis.err
+#$ -q main.q
+#$ -R y
+#$ -pe threaded 4
+#$ -m a
+
+# --- The commands to be executed --- #
+
+cd build/resources/integrationTest/output
+
+echo `date` Begin the job execution...
+
+echo `date` Begin Step: ExomeCNV detection...
+/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -jar /usr/bin/gatk -T DepthOfCoverage -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -I build/resources/integrationTest/output/N/bam/N.merged.sorted.rmdup.realign.realign.recal.bam -L /ngs/data/test.bed -o build/resources/integrationTest/output/GA5/exomecnv/N
+/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -jar /usr/bin/gatk -T DepthOfCoverage -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -I build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.realign.realign.recal.bam -L /ngs/data/test.bed -o build/resources/integrationTest/output/GA5/exomecnv/GA5
+/usr/bin/Rscript /usr/bin/exomecnv/exome_cnv.R -t build/resources/integrationTest/output/GA5/exomecnv/GA5.sample_interval_summary -n build/resources/integrationTest/output/GA5/exomecnv/N.sample_interval_summary -o build/resources/integrationTest/output/GA5/exomecnv -s GA5
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: ExomeCNV detection.
+	sleep 8
+else
+	echo `date` Error Step: ExomeCNV detection.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Remove temporary directories...
+rm -rf build/resources/integrationTest/output/GA5/exomecnv/N.sample_interval_summary
+rm -rf build/resources/integrationTest/output/GA5/exomecnv/GA5.sample_interval_summary
+
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Remove temporary directories.
+	sleep 8
+else
+	echo `date` Error Step: Remove temporary directories.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+echo `date` Finish the job execution!

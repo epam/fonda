@@ -38,6 +38,14 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
     private static final String OUTPUT_SH_FILES_DIR = "output/sh_files";
     private static final String STUDY_CONFIG_SINGLE = "sSingle.txt";
     private static final String STUDY_CONFIG_PAIRED = "sPaired.txt";
+    private static final String ALL_TASKS_PAIRED_TEMPLATES = "AllTasksPaired";
+    private static final String BWA_PICARD_QC_ABRA_GATK_PAIRED_TEMPLATES = "BwaPicardQcAbraGatkPaired";
+    private static final String BWA_PICARD_QC_ABRA_GATK_SINGLE_TEMPLATES = "BwaPicardQcAbraGatkSingle";
+    private static final String
+            BWA_VARDICT_MUTECT1_STRELKA2_GATK_HAPOTYPECALLER_SCALPEL_LOFREQ_FREEBAYES_TEMPLATES =
+            "BwaVardictMutect1Strelka2GatkHaplotypeCallerScalpelLofreqFreebayesPaired";
+    private static final String TRIMMOMATIC_NOVOALIGN_SINGLE_TEMPLATES = "TrimmomaticNovoalignSingle";
+    private static final String XENOME_SEQPURGE_BWA_PAIRED_TEMPLATES = "XenomeSeqpurgeBwaPaired";
 
 
     private TemplateEngine templateEngine = TemplateEngineUtils.init();
@@ -60,91 +68,238 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                 Arguments.of(
                         format("%s/gXenomeSeqpurgeBwaPaired.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/%s", DNA_CAPTURE_VAR_FASTQ_DIR, STUDY_CONFIG_PAIRED),
-                        format("%s/DnaCaptureVar_Fastq_alignment_for_GA5_1_analysis.sh",
-                                OUTPUT_SH_FILES_DIR),
-                        format("%s/XenomeSeqpurgeBwaPaired/dnaCaptureVar_Fastq_alignment_for_" +
-                                        "GA5_1_analysis_template",
-                                DNA_CAPTURE_VAR_FASTQ_DIR)),
+                        format("%s/DnaCaptureVar_Fastq_alignment_for_GA5_1_analysis.sh", OUTPUT_SH_FILES_DIR),
+                        format("%s/%s/dnaCaptureVar_Fastq_alignment_for_GA5_1_analysis_template",
+                                DNA_CAPTURE_VAR_FASTQ_DIR, XENOME_SEQPURGE_BWA_PAIRED_TEMPLATES)),
                 Arguments.of(
                         format("%s/gXenomeSeqpurgeBwaPaired.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/%s", DNA_CAPTURE_VAR_FASTQ_DIR, STUDY_CONFIG_PAIRED),
-                        format("%s/DnaCaptureVar_Fastq_postalignment_for_GA5_analysis.sh",
-                                OUTPUT_SH_FILES_DIR),
-                        format("%s/XenomeSeqpurgeBwaPaired/dnaCaptureVar_Fastq_postalignment_for_" +
-                                        "GA5_analysis_template",
-                                DNA_CAPTURE_VAR_FASTQ_DIR)),
+                        format("%s/DnaCaptureVar_Fastq_postalignment_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
+                        format("%s/%s/dnaCaptureVar_Fastq_postalignment_for_GA5_analysis_template",
+                                DNA_CAPTURE_VAR_FASTQ_DIR, XENOME_SEQPURGE_BWA_PAIRED_TEMPLATES)),
                 Arguments.of(
                         format("%s/gTrimmomaticNovoalignSingle.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/%s", DNA_CAPTURE_VAR_FASTQ_DIR, STUDY_CONFIG_SINGLE),
-                        format("%s/DnaCaptureVar_Fastq_alignment_for_GA5_1_analysis.sh",
-                                OUTPUT_SH_FILES_DIR),
-                        format("%s/TrimmomaticNovoalignSingle/dnaCaptureVar_Fastq_alignment_for_" +
-                                        "GA5_1_analysis_template",
-                                DNA_CAPTURE_VAR_FASTQ_DIR)),
+                        format("%s/DnaCaptureVar_Fastq_alignment_for_GA5_1_analysis.sh", OUTPUT_SH_FILES_DIR),
+                        format("%s/%s/dnaCaptureVar_Fastq_alignment_for_GA5_1_analysis_template",
+                                DNA_CAPTURE_VAR_FASTQ_DIR, TRIMMOMATIC_NOVOALIGN_SINGLE_TEMPLATES)),
                 Arguments.of(
                         format("%s/gTrimmomaticNovoalignSingle.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/%s", DNA_CAPTURE_VAR_FASTQ_DIR, STUDY_CONFIG_SINGLE),
-                        format("%s/dnaCaptureVar_Fastq_postalignment_for_GA5_analysis.sh",
-                                OUTPUT_SH_FILES_DIR),
-                        format("%s/TrimmomaticNovoalignSingle/dnaCaptureVar_Fastq_postalignment_for_" +
-                                        "GA5_analysis_template",
-                                DNA_CAPTURE_VAR_FASTQ_DIR)),
+                        format("%s/dnaCaptureVar_Fastq_postalignment_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
+                        format("%s/%s/dnaCaptureVar_Fastq_postalignment_for_GA5_analysis_template",
+                                DNA_CAPTURE_VAR_FASTQ_DIR, TRIMMOMATIC_NOVOALIGN_SINGLE_TEMPLATES)),
                 Arguments.of(
                         format("%s/gBwaPicardQcAbraGatkPaired.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/%s", DNA_CAPTURE_VAR_FASTQ_DIR, STUDY_CONFIG_PAIRED),
-                        format("%s/DnaCaptureVar_Fastq_alignment_for_GA5_1_analysis.sh",
-                                OUTPUT_SH_FILES_DIR),
-                        format("%s/BwaPicardQcAbraGatkPaired/dnaCaptureVar_Fastq_alignment_for_" +
-                                        "GA5_1_analysis_template",
-                                DNA_CAPTURE_VAR_FASTQ_DIR)),
-
-                //Successful Step: GATK recalibration ??? case isn't ready for this question
+                        format("%s/DnaCaptureVar_Fastq_alignment_for_GA5_1_analysis.sh", OUTPUT_SH_FILES_DIR),
+                        format("%s/%s/dnaCaptureVar_Fastq_alignment_for_GA5_1_analysis_template",
+                                DNA_CAPTURE_VAR_FASTQ_DIR, BWA_PICARD_QC_ABRA_GATK_PAIRED_TEMPLATES)),
                 Arguments.of(
                         format("%s/gBwaPicardQcAbraGatkPaired.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/%s", DNA_CAPTURE_VAR_FASTQ_DIR, STUDY_CONFIG_PAIRED),
-                        format("%s/dnaCaptureVar_Fastq_postalignment_for_GA5_analysis.sh",
-                                OUTPUT_SH_FILES_DIR),
-                        format("%s/BwaPicardQcAbraGatkPaired/dnaCaptureVar_Fastq_postalignment_for_" +
-                                        "GA5_analysis_template",
-                                DNA_CAPTURE_VAR_FASTQ_DIR)),
-
-                //Successful Step: Remove temporary directories or Merge DNA QC ??? case isn't ready for this question
+                        format("%s/dnaCaptureVar_Fastq_postalignment_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
+                        format("%s/%s/dnaCaptureVar_Fastq_postalignment_for_GA5_analysis_template",
+                                DNA_CAPTURE_VAR_FASTQ_DIR, BWA_PICARD_QC_ABRA_GATK_PAIRED_TEMPLATES)),
                 Arguments.of(
                         format("%s/gBwaPicardQcAbraGatkPaired.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/%s", DNA_CAPTURE_VAR_FASTQ_DIR, STUDY_CONFIG_PAIRED),
-                        format("%s/dnaCaptureVar_Fastq_qcsummary_for_cohort_analysis.sh",
-                                OUTPUT_SH_FILES_DIR),
-                        format("%s/BwaPicardQcAbraGatkPaired/dnaCaptureVar_Fastq_qcsummary_for_" +
-                                        "cohort_analysis_template",
-                                DNA_CAPTURE_VAR_FASTQ_DIR)),
+                        format("%s/dnaCaptureVar_Fastq_qcsummary_for_cohort_analysis.sh", OUTPUT_SH_FILES_DIR),
+                        format("%s/%s/dnaCaptureVar_Fastq_qcsummary_for_cohort_analysis_template",
+                                DNA_CAPTURE_VAR_FASTQ_DIR, BWA_PICARD_QC_ABRA_GATK_PAIRED_TEMPLATES)),
                 Arguments.of(
                         format("%s/gBwaPicardQcAbraGatkSingle.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/%s", DNA_CAPTURE_VAR_FASTQ_DIR, STUDY_CONFIG_SINGLE),
-                        format("%s/dnaCaptureVar_Fastq_alignment_for_GA5_1_analysis.sh",
+                        format("%s/dnaCaptureVar_Fastq_alignment_for_GA5_1_analysis.sh", OUTPUT_SH_FILES_DIR),
+                        format("%s/%s/dnaCaptureVar_Fastq_alignment_for_GA5_1_analysis_template",
+                                DNA_CAPTURE_VAR_FASTQ_DIR, BWA_PICARD_QC_ABRA_GATK_SINGLE_TEMPLATES)),
+                Arguments.of(
+                        format("%s/gBwaPicardQcAbraGatkSingle.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/%s", DNA_CAPTURE_VAR_FASTQ_DIR, STUDY_CONFIG_SINGLE),
+                        format("%s/dnaCaptureVar_Fastq_postalignment_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
+                        format("%s/%s/dnaCaptureVar_Fastq_postalignment_for_GA5_analysis_template",
+                                DNA_CAPTURE_VAR_FASTQ_DIR, BWA_PICARD_QC_ABRA_GATK_SINGLE_TEMPLATES)),
+                Arguments.of(
+                        format("%s/gBwaPicardQcAbraGatkSingle.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/%s", DNA_CAPTURE_VAR_FASTQ_DIR, STUDY_CONFIG_SINGLE),
+                        format("%s/dnaCaptureVar_Fastq_qcsummary_for_cohort_analysis.sh", OUTPUT_SH_FILES_DIR),
+                        format("%s/%s/dnaCaptureVar_Fastq_qcsummary_for_cohort_analysis_template",
+                                DNA_CAPTURE_VAR_FASTQ_DIR, BWA_PICARD_QC_ABRA_GATK_SINGLE_TEMPLATES)),
+                Arguments.of(
+                        format("%s/gBwaVardictMutect1Strelka2GatkHaplotypeCallerScalpelLofreqFreebayesPaired.txt",
+                                DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/sPairedCaseNA.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/DnaCaptureVar_Fastq_alignment_for_smv1_1_analysis.sh", OUTPUT_SH_FILES_DIR),
+                        format("%s/%s/dnaCaptureVar_Fastq_alignment_for_smv1_1_analysis_template",
+                                DNA_CAPTURE_VAR_FASTQ_DIR,
+                                BWA_VARDICT_MUTECT1_STRELKA2_GATK_HAPOTYPECALLER_SCALPEL_LOFREQ_FREEBAYES_TEMPLATES)),
+                Arguments.of(
+                        format("%s/gBwaVardictMutect1Strelka2GatkHaplotypeCallerScalpelLofreqFreebayesPaired.txt",
+                                DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/sPairedCaseNA.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/DnaCaptureVar_Fastq_freebayes_for_smv1_analysis.sh",
                                 OUTPUT_SH_FILES_DIR),
-                        format("%s/BwaPicardQcAbraGatkSingle/dnaCaptureVar_Fastq_alignment_for_" +
-                                        "GA5_1_analysis_template",
-                                DNA_CAPTURE_VAR_FASTQ_DIR)),
+                        format("%s/%s/dnaCaptureVar_Fastq_freebayes_for_smv1_analysis_template",
+                                DNA_CAPTURE_VAR_FASTQ_DIR,
+                                BWA_VARDICT_MUTECT1_STRELKA2_GATK_HAPOTYPECALLER_SCALPEL_LOFREQ_FREEBAYES_TEMPLATES)),
+                Arguments.of(
+                        format("%s/gBwaVardictMutect1Strelka2GatkHaplotypeCallerScalpelLofreqFreebayesPaired.txt",
+                                DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/sPairedCaseNA.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/DnaCaptureVar_Fastq_gatkHaplotypeCaller_for_smv1_analysis.sh", OUTPUT_SH_FILES_DIR),
+                        format("%s/%s/dnaCaptureVar_Fastq_gatkHaplotypeCaller_for_smv1_analysis_template",
+                                DNA_CAPTURE_VAR_FASTQ_DIR,
+                                BWA_VARDICT_MUTECT1_STRELKA2_GATK_HAPOTYPECALLER_SCALPEL_LOFREQ_FREEBAYES_TEMPLATES)),
+                Arguments.of(
+                        format("%s/gBwaVardictMutect1Strelka2GatkHaplotypeCallerScalpelLofreqFreebayesPaired.txt",
+                                DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/sPairedCaseNA.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/DnaCaptureVar_Fastq_lofreq_for_smv1_analysis.sh", OUTPUT_SH_FILES_DIR),
+                        format("%s/%s/dnaCaptureVar_Fastq_lofreq_for_smv1_analysis_template", DNA_CAPTURE_VAR_FASTQ_DIR,
+                                BWA_VARDICT_MUTECT1_STRELKA2_GATK_HAPOTYPECALLER_SCALPEL_LOFREQ_FREEBAYES_TEMPLATES)),
 
-                //Successful Step: GATK recalibration or Index rmdup bam ?? case isn't ready for this question
-                Arguments.of(
-                        format("%s/gBwaPicardQcAbraGatkSingle.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
-                        format("%s/%s", DNA_CAPTURE_VAR_FASTQ_DIR, STUDY_CONFIG_SINGLE),
-                        format("%s/dnaCaptureVar_Fastq_postalignment_for_GA5_analysis.sh",
-                                OUTPUT_SH_FILES_DIR),
-                        format("%s/BwaPicardQcAbraGatkSingle/dnaCaptureVar_Fastq_postalignment_for_" +
-                                        "GA5_analysis_template",
-                                DNA_CAPTURE_VAR_FASTQ_DIR)),
+                //========Not Ready. a lot of tools were mixed
+//                Arguments.of(
+//                        format("%s/gBwaVardictMutect1Strelka2GatkHaplotypeCallerScalpelLofreqFreebayesPaired.txt",
+//                                DNA_CAPTURE_VAR_FASTQ_DIR),
+//                        format("%s/sPairedCaseNA.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+//                        format("%s/DnaCaptureVar_Fastq_mergeMutation_for_cohort_analysis.sh", OUTPUT_SH_FILES_DIR),
+//                        format("%s/%s/dnaCaptureVar_Fastq_mergeMutation_for_cohort_analysis_template",
+//                                DNA_CAPTURE_VAR_FASTQ_DIR,
+//                                BWA_VARDICT_MUTECT1_STRELKA2_GATK_HAPOTYPECALLER_SCALPEL_LOFREQ_FREEBAYES_TEMPLATES))
+                //===============
 
-                //Successful Step: Remove temporary directories or Merge DNA QC ?? case isn't ready for this question
+
                 Arguments.of(
-                        format("%s/gBwaPicardQcAbraGatkSingle.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
-                        format("%s/%s", DNA_CAPTURE_VAR_FASTQ_DIR, STUDY_CONFIG_SINGLE),
-                        format("%s/dnaCaptureVar_Fastq_qcsummary_for_cohort_analysis.sh",
-                                OUTPUT_SH_FILES_DIR),
-                        format("%s/BwaPicardQcAbraGatkSingle/dnaCaptureVar_Fastq_qcsummary_for_" +
-                                        "cohort_analysis_template",
-                                DNA_CAPTURE_VAR_FASTQ_DIR))
+                        format("%s/gBwaVardictMutect1Strelka2GatkHaplotypeCallerScalpelLofreqFreebayesPaired.txt",
+                                DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/sPairedCaseNA.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/DnaCaptureVar_Fastq_mutect1_for_smv1_analysis.sh", OUTPUT_SH_FILES_DIR),
+                        format("%s/%s/dnaCaptureVar_Fastq_mutect1_for_smv1_analysis_template",
+                                DNA_CAPTURE_VAR_FASTQ_DIR,
+                                BWA_VARDICT_MUTECT1_STRELKA2_GATK_HAPOTYPECALLER_SCALPEL_LOFREQ_FREEBAYES_TEMPLATES)),
+
+
+                //========Not ready. tool mutect1 and gatkHaplotypeCaller were mixed
+//                Arguments.of(
+//                        format("%s/gBwaVardictMutect1Strelka2GatkHaplotypeCallerScalpelLofreqFreebayesPaired.txt",
+//                                DNA_CAPTURE_VAR_FASTQ_DIR),
+//                        format("%s/sPairedCaseNA.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+//                        format("%s/dnaCaptureVar_Fastq_postalignment_for_smv1_analysis.sh", OUTPUT_SH_FILES_DIR),
+//                        format("%s/%s/dnaCaptureVar_Fastq_postalignment_for_smv1_analysis_template",
+//                                DNA_CAPTURE_VAR_FASTQ_DIR,
+//                                BWA_VARDICT_MUTECT1_STRELKA2_GATK_HAPOTYPECALLER_SCALPEL_LOFREQ_FREEBAYES_TEMPLATES))
+                //===============
+
+
+                Arguments.of(
+                        format("%s/gBwaVardictMutect1Strelka2GatkHaplotypeCallerScalpelLofreqFreebayesPaired.txt",
+                                DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/sPairedCaseNA.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/DnaCaptureVar_Fastq_scalpel_for_smv1_analysis.sh", OUTPUT_SH_FILES_DIR),
+                        format("%s/%s/dnaCaptureVar_Fastq_scalpel_for_smv1_analysis_template",
+                                DNA_CAPTURE_VAR_FASTQ_DIR,
+                                BWA_VARDICT_MUTECT1_STRELKA2_GATK_HAPOTYPECALLER_SCALPEL_LOFREQ_FREEBAYES_TEMPLATES)),
+                Arguments.of(
+                        format("%s/gBwaVardictMutect1Strelka2GatkHaplotypeCallerScalpelLofreqFreebayesPaired.txt",
+                                DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/sPairedCaseNA.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/DnaCaptureVar_Fastq_strelka2_for_smv1_analysis.sh", OUTPUT_SH_FILES_DIR),
+                        format("%s/%s/dnaCaptureVar_Fastq_strelka2_for_smv1_analysis_template",
+                                DNA_CAPTURE_VAR_FASTQ_DIR,
+                                BWA_VARDICT_MUTECT1_STRELKA2_GATK_HAPOTYPECALLER_SCALPEL_LOFREQ_FREEBAYES_TEMPLATES)),
+
+
+                //=========here new fonda doesn't delete tmp. Why? But old fonda deletes tmp and also different bams
+//                Arguments.of(
+//                        format("%s/gBwaVardictMutect1Strelka2GatkHaplotypeCallerScalpelLofreqFreebayesPaired.txt",
+//                                DNA_CAPTURE_VAR_FASTQ_DIR),
+//                        format("%s/sPairedCaseNA.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+//                        format("%s/DnaCaptureVar_Fastq_vardict_for_smv1_analysis.sh", OUTPUT_SH_FILES_DIR),
+//                        format("%s/%s/dnaCaptureVar_Fastq_vardict_for_smv1_analysis_template",
+//                                DNA_CAPTURE_VAR_FASTQ_DIR,
+//                                BWA_VARDICT_MUTECT1_STRELKA2_GATK_HAPOTYPECALLER_SCALPEL_LOFREQ_FREEBAYES_TEMPLATES))
+                //==================
+
+
+                Arguments.of(
+                        format("%s/gPairedAllTasks.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/sPairedControlSampleNotNA.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/DnaCaptureVar_Fastq_alignment_for_GA5_1_analysis.sh", OUTPUT_SH_FILES_DIR),
+                        format("%s/%s/dnaCaptureVar_Fastq_alignment_for_GA5_1_analysis_template",
+                                DNA_CAPTURE_VAR_FASTQ_DIR, ALL_TASKS_PAIRED_TEMPLATES)),
+                Arguments.of(
+                        format("%s/gPairedAllTasks.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/sPairedControlSampleNotNA.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/DnaCaptureVar_Fastq_contEst_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
+                        format("%s/%s/dnaCaptureVar_Fastq_contEst_for_GA5_analysis_template",
+                                DNA_CAPTURE_VAR_FASTQ_DIR, ALL_TASKS_PAIRED_TEMPLATES)),
+                Arguments.of(
+                        format("%s/gPairedAllTasks.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/sPairedControlSampleNotNA.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/dnaCaptureVar_Fastq_exomecnv_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
+                        format("%s/%s/dnaCaptureVar_Fastq_exomecnv_for_GA5_analysis_template",
+                                DNA_CAPTURE_VAR_FASTQ_DIR, ALL_TASKS_PAIRED_TEMPLATES)),
+                Arguments.of(
+                        format("%s/gPairedAllTasks.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/sPairedControlSampleNotNA.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/DnaCaptureVar_Fastq_lofreq_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
+                        format("%s/%s/dnaCaptureVar_Fastq_lofreq_for_GA5_analysis_template",
+                                DNA_CAPTURE_VAR_FASTQ_DIR, ALL_TASKS_PAIRED_TEMPLATES)),
+
+
+                ////========Not Ready. a lot of tools were mixed
+//                Arguments.of(
+//                        format("%s/gPairedAllTasks.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+//                        format("%s/sPairedControlSampleNotNA.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+//                        format("%s/DnaCaptureVar_Fastq_mergeMutation_for_cohort_analysis.sh", OUTPUT_SH_FILES_DIR),
+//                        format("%s/%s/dnaCaptureVar_Fastq_mergeMutation_for_cohort_analysis_template",
+//                                DNA_CAPTURE_VAR_FASTQ_DIR, ALL_TASKS_PAIRED_TEMPLATES))
+                //=============
+
+
+                Arguments.of(
+                        format("%s/gPairedAllTasks.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/sPairedControlSampleNotNA.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/DnaCaptureVar_Fastq_mutect2_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
+                        format("%s/%s/dnaCaptureVar_Fastq_mutect2_for_GA5_analysis_template",
+                                DNA_CAPTURE_VAR_FASTQ_DIR, ALL_TASKS_PAIRED_TEMPLATES)),
+
+
+                //========Not ready. tool vardict and contEst were mixed. And there are extra codes
+//                Arguments.of(
+//                        format("%s/gPairedAllTasks.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+//                        format("%s/sPairedControlSampleNotNA.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+//                        format("%s/DnaCaptureVar_Fastq_postalignment_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
+//                        format("%s/%s/dnaCaptureVar_Fastq_postalignment_for_GA5_analysis_template",
+//                                DNA_CAPTURE_VAR_FASTQ_DIR, ALL_TASKS_PAIRED_TEMPLATES)),
+                //==============
+
+
+                Arguments.of(
+                        format("%s/gPairedAllTasks.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/sPairedControlSampleNotNA.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/DnaCaptureVar_Fastq_scalpel_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
+                        format("%s/%s/dnaCaptureVar_Fastq_scalpel_for_GA5_analysis_template",
+                                DNA_CAPTURE_VAR_FASTQ_DIR, ALL_TASKS_PAIRED_TEMPLATES)),
+                Arguments.of(
+                        format("%s/gPairedAllTasks.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/sPairedControlSampleNotNA.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/DnaCaptureVar_Fastq_sequenza_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
+                        format("%s/%s/dnaCaptureVar_Fastq_sequenza_for_GA5_analysis_template",
+                                DNA_CAPTURE_VAR_FASTQ_DIR, ALL_TASKS_PAIRED_TEMPLATES)),
+                Arguments.of(
+                        format("%s/gPairedAllTasks.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/sPairedControlSampleNotNA.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/DnaCaptureVar_Fastq_strelka2_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
+                        format("%s/%s/dnaCaptureVar_Fastq_strelka2_for_GA5_analysis_template",
+                                DNA_CAPTURE_VAR_FASTQ_DIR, ALL_TASKS_PAIRED_TEMPLATES)),
+                Arguments.of(
+                        format("%s/gPairedAllTasks.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/sPairedControlSampleNotNA.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/DnaCaptureVar_Fastq_vardict_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
+                        format("%s/%s/dnaCaptureVar_Fastq_vardict_for_GA5_analysis_template",
+                                DNA_CAPTURE_VAR_FASTQ_DIR, ALL_TASKS_PAIRED_TEMPLATES))
         );
     }
 

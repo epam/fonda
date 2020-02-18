@@ -1,0 +1,2 @@
+parameterType	shortName	Parameter1	Parameter2	sample_type	match_control
+fastqFile	smv1	/ngs/data/demo/test/fastq/smv1_GTGTTCTA_L004_R1_001.fastq.gz	/ngs/data/demo/test/fastq/smv1_GTGTTCTA_L004_R2_001.fastq.gz	case	NA

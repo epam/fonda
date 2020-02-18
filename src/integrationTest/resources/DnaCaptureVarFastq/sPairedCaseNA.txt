@@ -1,0 +1,17 @@
+[Series_Info]
+
+job_name = dnaCaptureVarFastq
+
+dir_out = build/resources/integrationTest/output
+
+fastq_list = build/resources/integrationTest/fastq_list_paired_case_na.tsv
+
+LibraryType = DNAWholeExomeSeq_Paired
+
+DataGenerationSource = Internal
+
+Date = 031814
+
+Project = Example_project
+
+Run = run1234

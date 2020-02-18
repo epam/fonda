@@ -1,0 +1,62 @@
+#!/bin/bash -x
+
+# --- SGE options --- #
+
+#$ -wd build/resources/integrationTest/output
+#$ -N DnaCaptureVar_Fastq_vardict_for_smv1_analysis
+#$ -o build/resources/integrationTest/output/log_files/DnaCaptureVar_Fastq_vardict_for_smv1_analysis.log
+#$ -e build/resources/integrationTest/output/err_files/DnaCaptureVar_Fastq_vardict_for_smv1_analysis.err
+#$ -q main.q
+#$ -R y
+#$ -pe threaded 4
+#$ -m a
+
+# --- The commands to be executed --- #
+
+cd build/resources/integrationTest/output
+
+echo `date` Begin the job execution...
+
+echo `date` Begin Step: Vardict detection...
+/usr/bin/vardict/build/install/VarDict/bin/VarDict -G /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -f 0.05 -r 3 -Q 20 -N smv1 -b build/resources/integrationTest/output/smv1/bam/smv1.merged.sorted.bam -z 1 -c 1 -S 2 -E 3 /ngs/data/test.bed | /usr/bin/vardict/VarDict/teststrandbias.R | /usr/bin/vardict/VarDict/var2vcf_valid.pl -N smv1 -E -f 0.05 > build/resources/integrationTest/output/smv1/vardict/smv1.vardict.variants.vcf
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Vardict detection.
+	sleep 8
+else
+	echo `date` Error Step: Vardict detection.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: SnpEff annotation...
+/usr/bin/python [(${jarPath})]/src/python/vcf_snpeff_annotation.py -s smv1 -i build/resources/integrationTest/output/smv1/vardict/smv1.vardict.variants.vcf -o build/resources/integrationTest/output/smv1/vardict/smv1.vardict.variants.pass.annotation.tsv -t vardict --canonical /ngs/data/reference_genome/GRCh37/Annotation/prefer_ensembl_transcript.txt --transvar /usr/bin/transvar -r hg19 --snpsift /usr/bin/snpsift --snpsift_db /ngs/data/bfx_tools/SnpEff/snpEff_v4.3p/snpEff/db --dbnsfp --dbsnp --coding_only --pass_only
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: SnpEff annotation.
+	sleep 8
+else
+	echo `date` Error Step: SnpEff annotation.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Remove temporary directories...
+rm -rf build/resources/integrationTest/output/smv1/bam/smv1_1.bwa.sorted.bam
+rm -rf build/resources/integrationTest/output/smv1/bam/smv1_1.bwa.sorted.bam.bai
+rm -rf build/resources/integrationTest/output/smv1/bam/smv1.merged.sorted.bam
+rm -rf build/resources/integrationTest/output/smv1/bam/smv1.merged.sorted.bam.bai
+rm -rf build/resources/integrationTest/output/smv1/tmp
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Remove temporary directories.
+	sleep 8
+else
+	echo `date` Error Step: Remove temporary directories.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+echo `date` Finish the job execution!
