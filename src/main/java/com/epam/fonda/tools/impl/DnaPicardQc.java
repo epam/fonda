@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.epam.fonda.tools.impl;
 
 import com.epam.fonda.entity.command.AbstractCommand;
@@ -45,6 +44,7 @@ public class DnaPicardQc implements Tool<MetricsResult> {
     private static final String DNA_PICARD_QC_TOOL_TEMPLATE_NAME = "dna_picard_qc_tool_template";
     private static final String DNA_AMPLICON_PICARD_QC_TOOL_TEMPLATE_NAME = "dna_amplicon_picard_qc_tool_template";
     private static final String DNA_CAPTURE_PICARD_QC_TOOL_TEMPLATE_NAME = "dna_capture_picard_qc_tool_template";
+    private static final String DNA_WGS_PICARD_QC_TOOL_TEMPLATE_NAME = "dna_wgs_picard_qc_tool_template";
     private static final String HS_METRICS = ".hs.metrics";
     private static final String BAM_EXTENSION = ".bam";
 
@@ -99,6 +99,7 @@ public class DnaPicardQc implements Tool<MetricsResult> {
         private String date;
         private String bam;
         private String mkdupBam;
+        private String analysis;
     }
 
     @NonNull
@@ -121,8 +122,7 @@ public class DnaPicardQc implements Tool<MetricsResult> {
     public MetricsResult generate(Configuration configuration, TemplateEngine templateEngine) {
         workflowType = configuration.getGlobalConfig().getPipelineInfo().getWorkflow();
         libraryType = validate(configuration.getStudyConfig().getLibraryType(), StudyConfigFormat.LIBRARY_TYPE);
-        if (!isWorkflowDnaAmplicon() && (!isWorkflowDnaCapture() &&
-                !(matchesExomeLibraryTypeCondition(libraryType) || matchesCaptureLibraryTypeCondition(libraryType)))) {
+        if (checkWorkflow()) {
             return metricsResult;
         }
         StringBuilder cmd = new StringBuilder();
@@ -139,11 +139,12 @@ public class DnaPicardQc implements Tool<MetricsResult> {
             cmd.append(templateEngine.process(DNA_CAPTURE_PICARD_QC_TOOL_TEMPLATE_NAME, context));
             metricsResultsList.addAll(new ArrayList<>(Arrays.asList(metricsFields.getBedCoverage(),
                     metricsFields.getRmdupHsMetrics(), additionalFields.mkdupBam)));
-        } else if (isWorkflowDnaCapture() && matchesExomeLibraryTypeCondition(libraryType)) {
+        } else if (isWorkflowDnaCapture() && matchesExomeLibraryTypeCondition(libraryType) || isWorkflowRna()) {
             cmd.append(templateEngine.process(DNA_PICARD_QC_TOOL_TEMPLATE_NAME, context));
-            List<String> dnaPicardQcAdditionalResults = new ArrayList<>();
-            dnaPicardQcAdditionalResults.add(metricsFields.getRmdupHsMetrics());
-            metricsResultsList.addAll(dnaPicardQcAdditionalResults);
+            metricsResultsList.add(metricsFields.getRmdupHsMetrics());
+        } else if (isWorkflowDnaWgs()) {
+            cmd.append(templateEngine.process(DNA_WGS_PICARD_QC_TOOL_TEMPLATE_NAME, context));
+            metricsResultsList.add(metricsFields.getRmdupHsMetrics());
         }
         TaskContainer.addTasks("DNA QC metrics", "Merge DNA QC");
         resultCommand.setToolCommand(resultCommand.getToolCommand() + cmd);
@@ -360,6 +361,7 @@ public class DnaPicardQc implements Tool<MetricsResult> {
                 GlobalConfigFormat.READ_TYPE);
         additionalFields.run = validate(configuration.getStudyConfig().getRun(), StudyConfigFormat.RUN);
         additionalFields.sampleName = sample.getName();
+        additionalFields.analysis = isWorkflowRna() ? "RNA" : "DNA";
         return additionalFields;
     }
 
@@ -383,11 +385,27 @@ public class DnaPicardQc implements Tool<MetricsResult> {
         return PipelineType.DNA_AMPLICON_VAR_FASTQ.getName().equals(workflowType);
     }
 
+    private boolean isWorkflowDnaWgs() {
+        return PipelineType.DNA_WGS_VAR_FASTQ.getName().equals(workflowType);
+    }
+
+    private boolean isWorkflowRna() {
+        return workflowType.contains("Rna");
+    }
+
     private boolean isCaptureWorkflowTargetType(final String libraryType) {
         return isWorkflowDnaCapture() && matchesCaptureLibraryTypeCondition(libraryType);
     }
 
     private String replaceBamOutdirWithQcOutdir(String stringToReplace, String bamOutdir, String qcOutdir) {
         return stringToReplace.replace(bamOutdir, qcOutdir);
+    }
+
+    private boolean checkWorkflow() {
+        return !isWorkflowDnaAmplicon()
+                && (!isWorkflowDnaCapture()
+                && !(matchesExomeLibraryTypeCondition(libraryType) || matchesCaptureLibraryTypeCondition(libraryType)))
+                && !isWorkflowDnaWgs()
+                && !isWorkflowRna();
     }
 }
