@@ -63,6 +63,7 @@ public class Flag {
     private boolean gatkRealign;
     private boolean contEst;
     private boolean mixcr;
+    private boolean optiType;
 
     public static Flag buildFlags(final Configuration configuration) {
         final Set tasks = configuration.getGlobalConfig().getPipelineInfo().getToolset();
@@ -104,6 +105,7 @@ public class Flag {
                 .gatkRealign(tasks.contains("gatk_realign"))
                 .contEst(tasks.contains("contEst"))
                 .mixcr(tasks.contains("mixcr"))
+                .optiType(tasks.contains("optitype"))
                 .build();
     }
 }

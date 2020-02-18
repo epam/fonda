@@ -43,7 +43,8 @@ public enum PipelineType {
     SC_IMMUNE_PROFILE_CELL_RANGER_FASTQ("scImmuneProfile_CellRanger_Fastq"),
     RNA_FUSION_FASTQ("RnaFusion_Fastq"),
     BAM_2_FASTQ("Bam2Fastq"),
-    TCR_REPERTOIRE_FASTQ("TcrRepertoire_Fastq");
+    TCR_REPERTOIRE_FASTQ("TcrRepertoire_Fastq"),
+    HLA_TYPING_FASTQ("HlaTyping_Fastq");
 
     private final String name;
     private static Map<String, PipelineType> idMap;

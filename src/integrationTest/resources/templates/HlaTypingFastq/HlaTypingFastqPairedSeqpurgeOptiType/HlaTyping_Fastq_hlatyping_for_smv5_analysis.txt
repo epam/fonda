@@ -1,0 +1,76 @@
+#!/bin/bash -x
+
+# --- SGE options --- #
+
+#$ -wd build/resources/integrationTest/output
+#$ -N HlaTyping_Fastq_hlatyping_for_smv5_analysis
+#$ -o build/resources/integrationTest/output/log_files/HlaTyping_Fastq_hlatyping_for_smv5_analysis.log
+#$ -e build/resources/integrationTest/output/err_files/HlaTyping_Fastq_hlatyping_for_smv5_analysis.err
+#$ -q all.q
+#$ -R y
+#$ -pe threaded 4
+#$ -m a
+
+# --- The commands to be executed --- #
+
+cd build/resources/integrationTest/output
+
+echo `date` Begin the job execution...
+
+echo `date` Begin Step: Merge fastqs...
+
+cp /ngs/data/demo/test/fastq/smv5.R1.fastq.gz build/resources/integrationTest/output/smv5/fastq/smv5.merged_R1.fastq.gz
+cp /ngs/data/demo/test/fastq/smv5.R2.fastq.gz build/resources/integrationTest/output/smv5/fastq/smv5.merged_R2.fastq.gz
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Merge fastqs.
+	sleep 8
+else
+	echo `date` Error Step: Merge fastqs.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Seqpurge trimming...
+/ngs/data/app/ngs-bits/v1.0/bin/SeqPurge -threads 4 -in1 build/resources/integrationTest/output/smv5/fastq/smv5.merged_R1.fastq.gz -in2 build/resources/integrationTest/output/smv5/fastq/smv5.merged_R2.fastq.gz -out1 build/resources/integrationTest/output/smv5/fastq/smv5.trimmed.R1.fastq.gz -out2 build/resources/integrationTest/output/smv5/fastq/smv5.trimmed.R2.fastq.gz -qcut 20 -a1 AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC -a2 AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Seqpurge trimming.
+	sleep 8
+else
+	echo `date` Error Step: Seqpurge trimming.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: OptiType HLA typing...
+/ngs/data/app/python/v2.7.13/bin/python /ngs/data/tools/OptiType/v1.2.1/OptiTypePipeline.py -i build/resources/integrationTest/output/smv5/fastq/smv5.trimmed.R1.fastq.gz build/resources/integrationTest/output/smv5/fastq/smv5.trimmed.R2.fastq.gz --dna --config /ngs/data/tools/OptiType/v1.2.1/config.ini --outdir build/resources/integrationTest/output/smv5/optitype
+mv build/resources/integrationTest/output/smv5/optitype/hla_result.tsv build/resources/integrationTest/output/smv5/optitype/smv5_hla_result.tsv
+mv build/resources/integrationTest/output/smv5/optitype/hla_coverage_plot.pdf build/resources/integrationTest/output/smv5/optitype/smv5_hla_coverage_plot.pdf
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: OptiType HLA typing.
+	sleep 8
+else
+	echo `date` Error Step: OptiType HLA typing.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Remove temporary directories...
+rm -rf build/resources/integrationTest/output/smv5/tmp
+
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Remove temporary directories.
+	sleep 8
+else
+	echo `date` Error Step: Remove temporary directories.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+echo `date` Finish the job execution!

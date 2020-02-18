@@ -21,6 +21,7 @@ import com.epam.fonda.workflow.impl.Bam2FastqWorkflow;
 import com.epam.fonda.workflow.impl.DnaVarBamWorkflow;
 import com.epam.fonda.workflow.impl.DnaVarFastqWorkflow;
 import com.epam.fonda.workflow.impl.Flag;
+import com.epam.fonda.workflow.impl.HlaTypingFastqWorkflow;
 import com.epam.fonda.workflow.impl.RnaExpressionBamWorkflow;
 import com.epam.fonda.workflow.impl.RnaExpressionFastqWorkflow;
 import com.epam.fonda.workflow.impl.RnaFusionFastqWorkflow;
@@ -54,6 +55,7 @@ public class WorkflowFactory {
             case DNA_WGS_VAR_BAM: return new DnaVarBamWorkflow(flag);
             case BAM_2_FASTQ: return new Bam2FastqWorkflow(flag);
             case TCR_REPERTOIRE_FASTQ: return new TcrRepertoireFastqWorkflow(flag);
+            case HLA_TYPING_FASTQ: return new HlaTypingFastqWorkflow(flag);
             default: throw new IllegalArgumentException(String.format("Requested workflow %s is not supported yet",
                     workflowName));
         }
