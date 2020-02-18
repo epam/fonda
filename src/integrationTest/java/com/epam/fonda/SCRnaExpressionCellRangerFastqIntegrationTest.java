@@ -29,6 +29,7 @@ import org.thymeleaf.context.Context;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.stream.Stream;
@@ -53,7 +54,6 @@ class SCRnaExpressionCellRangerFastqIntegrationTest extends AbstractIntegrationT
             "scRnaExpressionCellRangerFastq/sscRnaExpressionCellRangerFastq.txt";
     private static final String TEST_SHELL_SCRIPT_TEMPLATE_PATH =
             "output/sh_files/scRnaExpression_CellRanger_Fastq_alignment_for_smv1_analysis.sh";
-    private static final String APP_NAME = "fonda";
     private static final String SCRNA_EXPRESSION_FASTQ_COUNT_QC_GLOBAL_CONFIG =
             "scRnaExpressionCellRangerFastq/gCount.txt";
     private static final String SCRNA_EXPRESSION_FASTQ_COUNT_QC_DOUBLET_DETECTION_GLOBAL_CONFIG =
@@ -69,6 +69,7 @@ class SCRnaExpressionCellRangerFastqIntegrationTest extends AbstractIntegrationT
     private FastqFileSample expectedSample;
     private TemplateEngine expectedTemplateEngine = TemplateEngineUtils.init();
     private Context context;
+    private String appName;
 
     @BeforeEach
     void setup() {
@@ -81,6 +82,7 @@ class SCRnaExpressionCellRangerFastqIntegrationTest extends AbstractIntegrationT
         sampleForTestingWorkflow.setFastq1(Collections.singletonList(FASTQ_DIR));
         context.setVariable("sampleList", String.join(",",
                 CellRangerUtils.extractFastqDir(sampleForTestingWorkflow).getFastqDirs()));
+        appName = Paths.get(System.getProperty("user.dir")).getFileName().toString();
     }
 
     @Test
@@ -122,7 +124,7 @@ class SCRnaExpressionCellRangerFastqIntegrationTest extends AbstractIntegrationT
         expectedSample.setFastq1(Arrays.asList(FASTQ_1, FASTQ_2));
         FastqFileSample actualSample = CellRangerUtils.extractFastqDir(expectedSample);
 
-        assertTrue(actualSample.getFastqDirs().get(0).endsWith(APP_NAME));
+        assertTrue(actualSample.getFastqDirs().get(0).endsWith(appName));
     }
 
     @Test
@@ -130,7 +132,7 @@ class SCRnaExpressionCellRangerFastqIntegrationTest extends AbstractIntegrationT
         expectedSample.setFastq1(Collections.singletonList(FASTQ_1));
         FastqFileSample actualSample = CellRangerUtils.extractFastqDir(expectedSample);
 
-        assertTrue(actualSample.getFastqDirs().get(0).endsWith(APP_NAME));
+        assertTrue(actualSample.getFastqDirs().get(0).endsWith(appName));
     }
 
     @Test
@@ -139,6 +141,6 @@ class SCRnaExpressionCellRangerFastqIntegrationTest extends AbstractIntegrationT
         expectedSample.setFastq2(Collections.singletonList(FASTQ_2));
         FastqFileSample actualSample = CellRangerUtils.extractFastqDir(expectedSample);
 
-        assertTrue(actualSample.getFastqDirs().get(0).endsWith(APP_NAME));
+        assertTrue(actualSample.getFastqDirs().get(0).endsWith(appName));
     }
 }
