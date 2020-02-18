@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.epam.fonda.tools.impl;
 
 import com.epam.fonda.entity.command.BashCommand;
@@ -38,6 +37,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class DnaPicardQcTest extends AbstractTest {
     private static final String DNA_PICARD_QC_TOOL_TEST_TEMPLATE_NAME =
             "dnaPicardQc_tool_test_output_data";
+    private static final String RNA_PICARD_QC_TOOL_TEST_TEMPLATE_NAME =
+            "RnaPicardQc_tool_test_output_data";
     private static final String DNA_AMPLICON_PICARD_QC_TOOL_TEST_TEMPLATE_NAME =
             "dnaAmpliconPicardQc_tool_test_output_data";
     private static final String DNA_CAPTURE_PICARD_QC_TOOL_TEST_TEMPLATE_NAME =
@@ -112,6 +113,26 @@ class DnaPicardQcTest extends AbstractTest {
         context.setVariable(READ_TYPE, expectedPipelineInfo.getReadType());
         final String expectedCmd = expectedTemplateEngine
                 .process(DNA_PICARD_QC_TOOL_TEST_TEMPLATE_NAME, context);
+        final String actualCmd = dnaPicardQc.generate(expectedConfiguration, expectedTemplateEngine)
+                .getCommand()
+                .getToolCommand();
+        assertEquals(expectedCmd, actualCmd);
+    }
+
+    @Test
+    void shouldGenerateForRnaPicardQcWithPairedReadType() {
+        DnaPicardQc dnaPicardQc = new DnaPicardQc(expectedSample, metricsResult);
+        GlobalConfig.PipelineInfo expectedPipelineInfo = new GlobalConfig.PipelineInfo();
+        expectedPipelineInfo.setWorkflow(PipelineType.RNA_CAPTURE_VAR_FASTQ.getName());
+        expectedConfiguration.getGlobalConfig().setPipelineInfo(expectedPipelineInfo);
+        expectedPipelineInfo.setReadType(FastqReadType.PAIRED.getType());
+        expectedStudyConfig.setLibraryType("exome");
+        expectedConfiguration.setStudyConfig(expectedStudyConfig);
+        Context context = new Context();
+        context.setVariable(JAR_PATH, jarPath);
+        context.setVariable(READ_TYPE, expectedPipelineInfo.getReadType());
+        final String expectedCmd = expectedTemplateEngine
+                .process(RNA_PICARD_QC_TOOL_TEST_TEMPLATE_NAME, context);
         final String actualCmd = dnaPicardQc.generate(expectedConfiguration, expectedTemplateEngine)
                 .getCommand()
                 .getToolCommand();
