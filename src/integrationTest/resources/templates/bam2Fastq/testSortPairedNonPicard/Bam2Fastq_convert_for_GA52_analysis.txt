@@ -1,0 +1,59 @@
+#!/bin/bash -x
+
+# --- SGE options --- #
+
+#$ -wd build/resources/integrationTest/output
+#$ -N Bam2Fastq_convert_for_GA52_analysis
+#$ -o build/resources/integrationTest/output/log_files/Bam2Fastq_convert_for_GA52_analysis.log
+#$ -e build/resources/integrationTest/output/err_files/Bam2Fastq_convert_for_GA52_analysis.err
+#$ -q main.q
+#$ -R y
+#$ 2 4
+#$ -m a
+
+# --- The commands to be executed --- #
+
+cd build/resources/integrationTest/output
+
+echo `date` Begin the job execution...
+
+echo `date` Begin Step: Sort bam...
+/usr/lib/jvm/java-8-openjdk-amd64/bin/java -jar /opt/picard/picard.jar SortSam INPUT=/ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_002.bam OUTPUT=build/resources/integrationTest/output/GA52/fastq/GA52.sortByReadname.bam SORT_ORDER=queryname VALIDATION_STRINGENCY=SILENT
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Sort bam.
+	sleep 8
+else
+	echo `date` Error Step: Sort bam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+echo `date` Begin Step: Index bam...
+/opt/samtools/samtools-0.1.19/samtools index build/resources/integrationTest/output/GA52/fastq/GA52.sortByReadname.bam
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Index bam.
+	sleep 8
+else
+	echo `date` Error Step: Index bam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+echo `date` Begin Step: Remove temporary directories...
+rm -rf build/resources/integrationTest/output/GA52/fastq/GA52.sortByReadname.bam
+rm -rf build/resources/integrationTest/output/GA52/fastq/GA52.sortByReadname.bam.bai
+rm -rf build/resources/integrationTest/output/GA52/tmp
+
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Remove temporary directories.
+	sleep 8
+else
+	echo `date` Error Step: Remove temporary directories.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+echo `date` Finish the job execution!

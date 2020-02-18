@@ -1,0 +1,4 @@
+parameterType	shortName	Parameter1	Parameter2	sample_type	match_control
+fastqFile	GA51	build/resources/integrationTest/output/GA51/fastq/GA51.R1.fastq.gz	build/resources/integrationTest/output/GA51/fastq/GA51.R2.fastq.gz	sample	GA52
+fastqFile	GA52	build/resources/integrationTest/output/GA52/fastq/GA52.R1.fastq.gz	build/resources/integrationTest/output/GA52/fastq/GA52.R2.fastq.gz	tumor	GA51
+fastqFile	GA5	build/resources/integrationTest/output/GA5/fastq/GA5.R1.fastq.gz	build/resources/integrationTest/output/GA5/fastq/GA5.R2.fastq.gz	tumor	NA
