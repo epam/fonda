@@ -19,7 +19,6 @@ package com.epam.fonda.workflow.impl;
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.samples.bam.BamFileSample;
-import com.epam.fonda.tools.impl.QcSummary;
 import com.epam.fonda.tools.impl.RnaAnalysis;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
@@ -68,7 +67,6 @@ public class RnaExpressionBamWorkflow implements BamWorkflow {
     @Override
     public void postProcess(final Configuration configuration, final List<BamFileSample> samples) throws IOException {
         List<String> sampleNames = samples.stream().map(BamFileSample::getName).collect(Collectors.toList());
-        new QcSummary(flag, sampleNames).generate(configuration, TEMPLATE_ENGINE);
         new RnaAnalysis(flag, sampleNames).generate(configuration, TEMPLATE_ENGINE);
     }
 }

@@ -36,6 +36,7 @@ public enum PipelineType {
     DNA_CAPTURE_VAR_FASTQ("DnaCaptureVar_Fastq"),
     DNA_CAPTURE_VAR_BAM("DnaCaptureVar_Bam"),
     SC_RNA_EXPRESSION_FASTQ("scRnaExpression_Fastq"),
+    SC_RNA_EXPRESSION_BAM("scRnaExpression_Bam"),
     RNA_EXPRESSION_FASTQ("RnaExpression_Fastq"),
     RNA_EXPRESSION_BAM("RnaExpression_Bam"),
     RNA_CAPTURE_VAR_FASTQ("RnaCaptureVar_Fastq"),
