@@ -17,13 +17,33 @@ cd build/resources/integrationTest/output
 
 echo `date` Begin the job execution...
 
+logFile=build/resources/integrationTest/output/log_files/DnaCaptureVar_Fastq_strelka2_for_GA5_analysis.log
+str=""
+while [[('[')]][ $str = "" ]]
+do
+if [[('[')]][ -f $logFile  ]];
+then
+	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|Remove duplicates|Index rmdup bam|ABRA realignment|GATK realignment|GATK recalibration|Vardict detection|SnpEff annotation|Remove temporary directories|Run vardict|Contamination estimation|Run contEst|Strelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: SnpEff annotation))" $logFile;)
+fi
+	echo Waiting for step: SnpEff annotation
+	sleep 60
+done
+
+if [[('[')]][ $str == "*Error Step: SnpEff annotation*" ]];
+then
+	echo $(date) Error DNA mutation results from GA5:
+	echo $str
+else
+	echo $(date) Confirm DNA mutation results from GA5
+fi
+
 logFile=build/resources/integrationTest/output/log_files/DnaCaptureVar_Fastq_vardict_for_GA5_analysis.log
 str=""
 while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|Remove duplicates|Index rmdup bam|ABRA realignment|GATK realignment|GATK recalibration|Contamination estimation|Remove temporary directories|Run contEst|Vardict detection|SnpEff annotation|Run vardict|Stelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: Run exomecnv))" $logFile;)
+	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|Remove duplicates|Index rmdup bam|ABRA realignment|GATK realignment|GATK recalibration|Vardict detection|SnpEff annotation|Remove temporary directories|Run vardict|Contamination estimation|Run contEst|Strelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: SnpEff annotation))" $logFile;)
 fi
 	echo Waiting for step: SnpEff annotation
 	sleep 60
@@ -43,7 +63,27 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|Remove duplicates|Index rmdup bam|ABRA realignment|GATK realignment|GATK recalibration|Contamination estimation|Remove temporary directories|Run contEst|Vardict detection|SnpEff annotation|Run vardict|Stelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: Run exomecnv))" $logFile;)
+	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|Remove duplicates|Index rmdup bam|ABRA realignment|GATK realignment|GATK recalibration|Vardict detection|SnpEff annotation|Remove temporary directories|Run vardict|Contamination estimation|Run contEst|Strelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: SnpEff annotation))" $logFile;)
+fi
+	echo Waiting for step: SnpEff annotation
+	sleep 60
+done
+
+if [[('[')]][ $str == "*Error Step: SnpEff annotation*" ]];
+then
+	echo $(date) Error DNA mutation results from GA5:
+	echo $str
+else
+	echo $(date) Confirm DNA mutation results from GA5
+fi
+
+logFile=build/resources/integrationTest/output/log_files/DnaCaptureVar_Fastq_scalpel_for_GA5_analysis.log
+str=""
+while [[('[')]][ $str = "" ]]
+do
+if [[('[')]][ -f $logFile  ]];
+then
+	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|Remove duplicates|Index rmdup bam|ABRA realignment|GATK realignment|GATK recalibration|Vardict detection|SnpEff annotation|Remove temporary directories|Run vardict|Contamination estimation|Run contEst|Strelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: SnpEff annotation))" $logFile;)
 fi
 	echo Waiting for step: SnpEff annotation
 	sleep 60
@@ -63,47 +103,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|Remove duplicates|Index rmdup bam|ABRA realignment|GATK realignment|GATK recalibration|Contamination estimation|Remove temporary directories|Run contEst|Vardict detection|SnpEff annotation|Run vardict|Stelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: Run exomecnv))" $logFile;)
-fi
-	echo Waiting for step: SnpEff annotation
-	sleep 60
-done
-
-if [[('[')]][ $str == "*Error Step: SnpEff annotation*" ]];
-then
-	echo $(date) Error DNA mutation results from GA5:
-	echo $str
-else
-	echo $(date) Confirm DNA mutation results from GA5
-fi
-
-logFile=build/resources/integrationTest/output/log_files/DnaCaptureVar_Fastq_strelka2_for_GA5_analysis.log
-str=""
-while [[('[')]][ $str = "" ]]
-do
-if [[('[')]][ -f $logFile  ]];
-then
-	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|Remove duplicates|Index rmdup bam|ABRA realignment|GATK realignment|GATK recalibration|Contamination estimation|Remove temporary directories|Run contEst|Vardict detection|SnpEff annotation|Run vardict|Stelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv|Successful Step: SnpEff annotation))|(Successful Step: Successful Step: SnpEff annotation))" $logFile;)
-fi
-	echo Waiting for step: Successful Step: SnpEff annotation
-	sleep 60
-done
-
-if [[('[')]][ $str == "*Error Step: Successful Step: SnpEff annotation*" ]];
-then
-	echo $(date) Error DNA mutation results from GA5:
-	echo $str
-else
-	echo $(date) Confirm DNA mutation results from GA5
-fi
-
-logFile=build/resources/integrationTest/output/log_files/DnaCaptureVar_Fastq_scalpel_for_GA5_analysis.log
-str=""
-while [[('[')]][ $str = "" ]]
-do
-if [[('[')]][ -f $logFile  ]];
-then
-	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|Remove duplicates|Index rmdup bam|ABRA realignment|GATK realignment|GATK recalibration|Contamination estimation|Remove temporary directories|Run contEst|Vardict detection|SnpEff annotation|Run vardict|Stelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv|Successful Step: SnpEff annotation))|(Successful Step: Successful Step: SnpEff annotation))" $logFile;)
+	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|Remove duplicates|Index rmdup bam|ABRA realignment|GATK realignment|GATK recalibration|Vardict detection|SnpEff annotation|Remove temporary directories|Run vardict|Contamination estimation|Run contEst|Strelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: SnpEff annotation))" $logFile;)
 fi
 	echo Waiting for step: SnpEff annotation
 	sleep 60

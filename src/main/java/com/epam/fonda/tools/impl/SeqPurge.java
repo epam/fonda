@@ -119,9 +119,7 @@ public class SeqPurge implements Tool<FastqResult> {
             seqPurgeFields.prefix = format("%s/%s", seqPurgeFields.sfqOutdir, sample.getName());
         }
         seqPurgeFields.trimmedFastq1 = format("%s.trimmed.R1.fastq.gz", seqPurgeFields.prefix);
-        seqPurgeFields.trimmedFastq2 = seqPurgeFields.fastq2 == null
-                ? null
-                : format("%s.trimmed.R2.fastq.gz", seqPurgeFields.prefix);
+        seqPurgeFields.trimmedFastq2 = format("%s.trimmed.R2.fastq.gz", seqPurgeFields.prefix);
         return seqPurgeFields;
     }
 }
