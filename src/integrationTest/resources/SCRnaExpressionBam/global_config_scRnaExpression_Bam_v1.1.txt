@@ -23,10 +23,10 @@ Rscript = /ngs/data/app/R/v3.5.0/bin/Rscript
 doubletdetection_python = /ngs/data/py/versions/3.5.2/bin/python
 rsem = path/to/rsem
 stringtie = path/to/stringtie
+feature_count = feature_count
 
 [Pipeline_Info]
 workflow = scRnaExpression_Bam
 toolset = featureCount+rsem+cufflinks+stringtie+conversion
 flag_xenome = no
 read_type = paired
-feature_count = feature_count
