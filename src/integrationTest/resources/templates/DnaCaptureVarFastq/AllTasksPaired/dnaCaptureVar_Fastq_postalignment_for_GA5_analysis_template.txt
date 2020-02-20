@@ -187,7 +187,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|Remove duplicates|Index rmdup bam|ABRA realignment|GATK realignment|GATK recalibration))|(Successful Step: GATK recalibration))" $logFile;)
+	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|Remove duplicates|Index rmdup bam|ABRA realignment|GATK realignment|GATK recalibration))|(Successful Step: Index rmdup bam))" $logFile;)
 fi
 	echo Waiting for step: Index rmdup bam
 	sleep 60
@@ -198,7 +198,21 @@ then
 	echo $(date) Error bam from GA5.:
 	echo $str
 else
-	echo $(date) Confirm bam from GA5.
+	echo $(date) Confirm bam from GA5.:
+fi
+
+
+echo `date` Begin Step: Run vardict...
+qsub build/resources/integrationTest/output/sh_files/DnaCaptureVar_Fastq_vardict_for_GA5_analysis.sh
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Run vardict.
+	sleep 8
+else
+	echo `date` Error Step: Run vardict.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
 fi
 
 echo `date` Begin Step: Run contEst...
@@ -209,19 +223,6 @@ then
 	sleep 8
 else
 	echo `date` Error Step: Run contEst.
-
-	echo `date` The job was aborted due to ERRORS found.
-	exit 1;
-fi
-
-echo `date` Begin Step: Run vardict...
-qsub build/resources/integrationTest/output/sh_files/DnaCaptureVar_Fastq_vardict_for_GA5_analysis.sh
-if [ $? -eq 0 ]
-then
-	echo `date` Successful Step: Run vardict.
-	sleep 8
-else
-	echo `date` Error Step: Run vardict.
 
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;

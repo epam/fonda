@@ -160,13 +160,13 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                 Arguments.of(
                         format("%s/gBwaPicardQcAbraGatkPaired.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/%s", DNA_CAPTURE_VAR_FASTQ_DIR, STUDY_CONFIG_PAIRED),
-                        format("%s/dnaCaptureVar_Fastq_postalignment_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
+                        format("%s/DnaCaptureVar_Fastq_postalignment_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
                         format("%s/%s/dnaCaptureVar_Fastq_postalignment_for_GA5_analysis_template",
                                 DNA_CAPTURE_VAR_FASTQ_DIR, BWA_PICARD_QC_ABRA_GATK_PAIRED_TEMPLATES)),
                 Arguments.of(
                         format("%s/gBwaPicardQcAbraGatkPaired.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/%s", DNA_CAPTURE_VAR_FASTQ_DIR, STUDY_CONFIG_PAIRED),
-                        format("%s/dnaCaptureVar_Fastq_qcsummary_for_cohort_analysis.sh", OUTPUT_SH_FILES_DIR),
+                        format("%s/DnaCaptureVar_Fastq_qcsummary_for_cohort_analysis.sh", OUTPUT_SH_FILES_DIR),
                         format("%s/%s/dnaCaptureVar_Fastq_qcsummary_for_cohort_analysis_template",
                                 DNA_CAPTURE_VAR_FASTQ_DIR, BWA_PICARD_QC_ABRA_GATK_PAIRED_TEMPLATES))
         );
@@ -291,14 +291,12 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                         format("%s/DnaCaptureVar_Fastq_mutect2_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
                         format("%s/%s/dnaCaptureVar_Fastq_mutect2_for_GA5_analysis_template", DNA_CAPTURE_VAR_FASTQ_DIR,
                                 ALL_TASKS_PAIRED_TEMPLATES)),
-                //========Not ready. tool vardict and contEst were mixed. And there are extra codes
-//                Arguments.of(
-//                        format("%s/gPairedAllTasks.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
-//                        format("%s/sPairedControlSampleNotNA.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
-//                        format("%s/DnaCaptureVar_Fastq_postalignment_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
-//                        format("%s/%s/dnaCaptureVar_Fastq_postalignment_for_GA5_analysis_template",
-//                                DNA_CAPTURE_VAR_FASTQ_DIR, ALL_TASKS_PAIRED_TEMPLATES)),
-                //==============
+                Arguments.of(
+                        format("%s/gPairedAllTasks.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/sPairedControlSampleNotNA.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/DnaCaptureVar_Fastq_postalignment_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
+                        format("%s/%s/dnaCaptureVar_Fastq_postalignment_for_GA5_analysis_template",
+                                DNA_CAPTURE_VAR_FASTQ_DIR, ALL_TASKS_PAIRED_TEMPLATES)),
                 Arguments.of(
                         format("%s/gPairedAllTasks.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/sPairedControlSampleNotNA.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
