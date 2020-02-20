@@ -32,7 +32,7 @@ import org.thymeleaf.context.Context;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-class AmpliconAbraRealignTest extends AbstractTest {
+class AbraRealignTest extends AbstractTest {
     private static final String AMPLICON_ABRA_REALIGN_TOOL_TEST_TEMPLATE_NAME =
             "amplicon_abra_realign_tool_test_output_data";
     private Configuration expectedConfiguration;
@@ -67,23 +67,23 @@ class AmpliconAbraRealignTest extends AbstractTest {
 
     @Test
     void shouldGenerateWithPairedReadType() {
-        AmpliconAbraRealign ampliconAbraRealign = new AmpliconAbraRealign(expectedSample, bamResult);
+        AbraRealign abraRealign = new AbraRealign(expectedSample, bamResult);
         expectedPipelineInfo.setReadType("paired");
         Context context = new Context();
         context.setVariable("readType", expectedPipelineInfo.getReadType());
         String expectedCmd = expectedTemplateEngine.process(AMPLICON_ABRA_REALIGN_TOOL_TEST_TEMPLATE_NAME, context);
-        bamResult = ampliconAbraRealign.generate(expectedConfiguration, expectedTemplateEngine);
+        bamResult = abraRealign.generate(expectedConfiguration, expectedTemplateEngine);
         assertEquals(expectedCmd, bamResult.getCommand().getToolCommand());
     }
 
     @Test
     void shouldGenerateWithSingleReadType() {
-        AmpliconAbraRealign ampliconAbraRealign = new AmpliconAbraRealign(expectedSample, bamResult);
+        AbraRealign abraRealign = new AbraRealign(expectedSample, bamResult);
         expectedPipelineInfo.setReadType("single");
         Context context = new Context();
         context.setVariable("readType", expectedPipelineInfo.getReadType());
         String expectedCmd = expectedTemplateEngine.process(AMPLICON_ABRA_REALIGN_TOOL_TEST_TEMPLATE_NAME, context);
-        bamResult = ampliconAbraRealign.generate(expectedConfiguration, expectedTemplateEngine);
+        bamResult = abraRealign.generate(expectedConfiguration, expectedTemplateEngine);
         assertEquals(expectedCmd, bamResult.getCommand().getToolCommand());
     }
 

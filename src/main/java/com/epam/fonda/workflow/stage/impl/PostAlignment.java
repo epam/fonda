@@ -20,7 +20,7 @@ import com.epam.fonda.entity.command.AbstractCommand;
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.samples.fastq.FastqFileSample;
-import com.epam.fonda.tools.impl.AmpliconAbraRealign;
+import com.epam.fonda.tools.impl.AbraRealign;
 import com.epam.fonda.tools.impl.AmpliconGatkRealign;
 import com.epam.fonda.tools.impl.AmpliconGatkRecalibrate;
 import com.epam.fonda.tools.impl.DnaPicardQc;
@@ -56,7 +56,7 @@ public class PostAlignment implements Stage {
                              final TemplateEngine templateEngine) {
         if (flag.isPicard()) {
             bamResult = new PicardMarkDuplicate(sample, bamResult).generate(configuration, templateEngine);
-            if (isCapture(configuration)) {
+            if (isCapture(configuration) || isWgs(configuration)) {
                 bamResult = new PicardRemoveDuplicate(bamResult).generate(configuration, templateEngine);
             }
             if (flag.isQc()) {
@@ -75,7 +75,7 @@ public class PostAlignment implements Stage {
             }
         }
         if (flag.isAbraRealign()) {
-            bamResult = new AmpliconAbraRealign(sample, bamResult).generate(configuration, templateEngine);
+            bamResult = new AbraRealign(sample, bamResult).generate(configuration, templateEngine);
         }
         if (flag.isGatkRealign()) {
             bamResult = new AmpliconGatkRealign(sample, bamResult).generate(configuration, templateEngine);
@@ -87,5 +87,9 @@ public class PostAlignment implements Stage {
 
     private boolean isCapture(final Configuration configuration) {
         return configuration.getGlobalConfig().getPipelineInfo().getWorkflow().toLowerCase().contains("capture");
+    }
+
+    private boolean isWgs(final Configuration configuration) {
+        return configuration.getGlobalConfig().getPipelineInfo().getWorkflow().toLowerCase().contains("wgs");
     }
 }

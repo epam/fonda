@@ -23,6 +23,7 @@ import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
+import com.epam.fonda.utils.DnaUtils;
 import com.epam.fonda.workflow.TaskContainer;
 import lombok.Builder;
 import lombok.Data;
@@ -34,7 +35,7 @@ import org.thymeleaf.context.Context;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 @RequiredArgsConstructor
-public class AmpliconAbraRealign implements Tool<BamResult> {
+public class AbraRealign implements Tool<BamResult> {
 
     private static final String AMPLICON_ABRA_REALIGN_TOOL_TEMPLATE_NAME = "amplicon_abra_realign_tool_template";
 
@@ -56,6 +57,7 @@ public class AmpliconAbraRealign implements Tool<BamResult> {
         private String tmpOutdir;
         private String realignBam;
         private String bam;
+        private boolean isWgs;
     }
 
     @NonNull
@@ -81,6 +83,9 @@ public class AmpliconAbraRealign implements Tool<BamResult> {
         TaskContainer.addTasks("ABRA realignment");
         BamOutput bamOutput = bamResult.getBamOutput();
         bamOutput.setBam(additionalFields.realignBam);
+        if (additionalFields.isWgs) {
+            bamOutput.setBamIndex(additionalFields.realignBam.concat(".bai"));
+        }
         AbstractCommand resultCommand = bamResult.getCommand();
         resultCommand.setToolCommand(resultCommand.getToolCommand() + cmd);
         return bamResult;
@@ -120,6 +125,7 @@ public class AmpliconAbraRealign implements Tool<BamResult> {
                 .readType(validate(configuration.getGlobalConfig().getPipelineInfo().getReadType(),
                         GlobalConfigFormat.READ_TYPE))
                 .tmpOutdir(sample.getTmpOutdir())
+                .isWgs(DnaUtils.isWgsWorkflow(configuration))
                 .build();
     }
 }
