@@ -131,7 +131,7 @@ public class DnaVarFastqWorkflow implements FastqWorkflow {
         bamResult.getCommand().getTempDirs().add(sample.getTmpOutdir());
 
         if (sample.getSampleType().equals(PipelineUtils.CASE) || sample.getSampleType().equals(PipelineUtils.TUMOR)) {
-            resultCmd.append(DnaUtils.checkPeriodicBamStatus(stringTag, sample.getName(), null,
+            resultCmd.append(DnaUtils.checkPeriodicBamStatus(stringTag, sample.getName(), sample.getControlName(),
                     configuration, null));
             final boolean isPaired = StringUtils.isNoneBlank(sample.getControlName())
                     && !PipelineUtils.NA.equals(sample.getControlName());
