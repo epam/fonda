@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.epam.fonda.utils.PipelineUtils.isPaired;
 import static java.lang.String.format;
 
 public final class DnaUtils {
@@ -95,7 +96,7 @@ public final class DnaUtils {
         } else {
             msgMap.put(ERROR_MSG_WITH_SAMPLE, format(MSG_WITH_SAMPLE_FORMAT, ERROR_BAM, sampleName));
             msgMap.put(CONFIRM_MSG_WITH_SAMPLE, format(MSG_WITH_SAMPLE_FORMAT, CONFIRM_BAM, sampleName));
-            if (Optional.ofNullable(controlSampleName).isPresent()) {
+            if (isPaired(controlSampleName)) {
                 msgMap.put(ERROR_MSG_WITH_CONTROL_SAMPLE, format(MSG_WITH_CONTROL_SAMPLE_FORMAT, ERROR_BAM,
                         sampleName));
                 msgMap.put(CONFIRM_MSG_WITH_CONTROL_SAMPLE, format(MSG_WITH_CONTROL_SAMPLE_FORMAT, CONFIRM_BAM,
@@ -205,7 +206,7 @@ public final class DnaUtils {
                 .workflow(workflow)
                 .fileNameWithSampleName(format(FORMAT, workflow, custTask, sampleName))
                 .fileNameWithSampleNameIndex(format(FORMAT_INDEX, workflow, custTask, sampleName, index))
-                .fileNameWithControlSampleName(Optional.ofNullable(controlSampleName).isPresent() ? format(FORMAT,
+                .fileNameWithControlSampleName(isPaired(controlSampleName) ? format(FORMAT,
                         workflow, custTask, controlSampleName) : null)
                 .build();
     }
