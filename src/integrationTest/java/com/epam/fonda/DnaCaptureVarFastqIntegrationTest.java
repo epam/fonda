@@ -76,25 +76,25 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                 Arguments.of(
                         format("%s/gTrimmomaticNovoalignSingle.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/%s", DNA_CAPTURE_VAR_FASTQ_DIR, STUDY_CONFIG_SINGLE),
-                        format("%s/dnaCaptureVar_Fastq_postalignment_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
+                        format("%s/DnaCaptureVar_Fastq_postalignment_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
                         format("%s/%s/dnaCaptureVar_Fastq_postalignment_for_GA5_analysis_template",
                                 DNA_CAPTURE_VAR_FASTQ_DIR, TRIMMOMATIC_NOVOALIGN_SINGLE_TEMPLATES)),
                 Arguments.of(
                         format("%s/gBwaPicardQcAbraGatkSingle.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/%s", DNA_CAPTURE_VAR_FASTQ_DIR, STUDY_CONFIG_SINGLE),
-                        format("%s/dnaCaptureVar_Fastq_alignment_for_GA5_1_analysis.sh", OUTPUT_SH_FILES_DIR),
+                        format("%s/DnaCaptureVar_Fastq_alignment_for_GA5_1_analysis.sh", OUTPUT_SH_FILES_DIR),
                         format("%s/%s/dnaCaptureVar_Fastq_alignment_for_GA5_1_analysis_template",
                                 DNA_CAPTURE_VAR_FASTQ_DIR, BWA_PICARD_QC_ABRA_GATK_SINGLE_TEMPLATES)),
                 Arguments.of(
                         format("%s/gBwaPicardQcAbraGatkSingle.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/%s", DNA_CAPTURE_VAR_FASTQ_DIR, STUDY_CONFIG_SINGLE),
-                        format("%s/dnaCaptureVar_Fastq_postalignment_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
+                        format("%s/DnaCaptureVar_Fastq_postalignment_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
                         format("%s/%s/dnaCaptureVar_Fastq_postalignment_for_GA5_analysis_template",
                                 DNA_CAPTURE_VAR_FASTQ_DIR, BWA_PICARD_QC_ABRA_GATK_SINGLE_TEMPLATES)),
                 Arguments.of(
                         format("%s/gBwaPicardQcAbraGatkSingle.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/%s", DNA_CAPTURE_VAR_FASTQ_DIR, STUDY_CONFIG_SINGLE),
-                        format("%s/dnaCaptureVar_Fastq_qcsummary_for_cohort_analysis.sh", OUTPUT_SH_FILES_DIR),
+                        format("%s/DnaCaptureVar_Fastq_qcsummary_for_cohort_analysis.sh", OUTPUT_SH_FILES_DIR),
                         format("%s/%s/dnaCaptureVar_Fastq_qcsummary_for_cohort_analysis_template",
                                 DNA_CAPTURE_VAR_FASTQ_DIR, BWA_PICARD_QC_ABRA_GATK_SINGLE_TEMPLATES)),
                 Arguments.of(
@@ -227,7 +227,7 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                         format("%s/gBwaVardictMutect1Strelka2GatkHaplotypeCallerScalpelLofreqFreebayesPaired.txt",
                                 DNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/sPairedCaseNA.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
-                        format("%s/dnaCaptureVar_Fastq_postalignment_for_smv1_analysis.sh", OUTPUT_SH_FILES_DIR),
+                        format("%s/DnaCaptureVar_Fastq_postalignment_for_smv1_analysis.sh", OUTPUT_SH_FILES_DIR),
                         format("%s/%s/dnaCaptureVar_Fastq_postalignment_for_smv1_analysis_template",
                                 DNA_CAPTURE_VAR_FASTQ_DIR,
                                 BWA_VARDICT_MUTECT1_STRELKA2_GATK_HAPOTYPECALLER_SCALPEL_LOFREQ_FREEBAYES_TEMPLATES)),
@@ -270,7 +270,7 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                 Arguments.of(
                         format("%s/gPairedAllTasks.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/sPairedControlSampleNotNA.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
-                        format("%s/dnaCaptureVar_Fastq_exomecnv_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
+                        format("%s/DnaCaptureVar_Fastq_exomecnv_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
                         format("%s/%s/dnaCaptureVar_Fastq_exomecnv_for_GA5_analysis_template",
                                 DNA_CAPTURE_VAR_FASTQ_DIR, ALL_TASKS_PAIRED_TEMPLATES)),
                 Arguments.of(
