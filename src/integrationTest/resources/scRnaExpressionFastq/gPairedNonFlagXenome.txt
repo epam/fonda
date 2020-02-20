@@ -1,0 +1,35 @@
+[Queue_Parameters]
+NUMTHREADS = 4
+MAXMEM = 24g
+QUEUE = all.q
+PE = -pe threaded
+
+[Databases]
+SPECIES = human
+GENOME_BUILD = GRCh38
+ANNOTGENE = /ngs/data/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.annotation.knowntrx.exon.level1-2.trxlevel1-3.gtf
+GENOME = /ngs/data/reference_genome/GRCh38/Sequence/GRCh38.genome.fa
+TRANSCRIPTOME = /ngs/data/reference_genome/GRCh38/Sequence/GRCh38.gencode.v26.pc_transcripts.fa
+STARINDEX = /ngs/data/reference_genome/GRCh38/Index/STAR_gc26
+ANNOTGENESAF = /ngs/data/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.annotation.knowntrx.exon.level1-2.trxlevel1-3.saf
+ADAPTER_FWD = AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC
+ADAPTER_REV = AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT
+
+[all_tools]
+star = /ngs/data/tools/STAR/v2.4.0h1/bin/Linux_x86_64/STAR
+seqpurge = /ngs/data/app/ngs-bits/v1.0/bin/SeqPurge
+cufflinks = /ngs/data/tools/cufflinks/v2.2.1/cufflinks
+feature_count = /ngs/data/tools/subread/v1.4.5-p1/bin/featureCounts
+java = /ngs/data/tools/java/jre1.7.0_60/bin/java
+samtools = /ngs/data/tools/samtools/v0.1.19/samtools
+picard = /ngs/data/tools/picard/v2.10.3/picard.jar
+rnaseqc = /ngs/data/tools/RNA-SeQC/v1.1.8/RNA-SeQC_v1.1.8.jar
+python = /ngs/data/app/python/v2.7.2/bin/python
+Rscript = /ngs/data/app/R/v3.5.0/bin/Rscript
+doubletdetection_python = /ngs/data/py/versions/3.5.2/bin/python
+
+[Pipeline_Info]
+workflow = scRnaExpression_Fastq
+toolset = seqpurge+star+featureCount+cufflinks+conversion
+flag_xenome = no
+read_type = paired
