@@ -1,0 +1,108 @@
+#!/bin/bash -x
+
+# --- SGE options --- #
+
+#$ -wd build/resources/integrationTest/output
+#$ -N DnaCaptureVar_Fastq_postalignment_for_GA5_analysis
+#$ -o build/resources/integrationTest/output/log_files/DnaCaptureVar_Fastq_postalignment_for_GA5_analysis.log
+#$ -e build/resources/integrationTest/output/err_files/DnaCaptureVar_Fastq_postalignment_for_GA5_analysis.err
+#$ -q main.q
+#$ -R y
+#$ -pe threaded 4
+#$ -m a
+
+# --- The commands to be executed --- #
+
+cd build/resources/integrationTest/output
+
+echo `date` Begin the job execution...
+
+echo `date` Begin check the existence of the individual sorted bam file...
+logFile=build/resources/integrationTest/output/log_files/DnaCaptureVar_Fastq_alignment_for_GA5_1_analysis.log
+str=""
+while [[('[')]][ $str = "" ]]
+do
+if [[('[')]][ -f $logFile  ]];
+then
+	str=$(grep -E "((Error Step: (Xenome classification|Seqpurge trimming|BWA alignment|Index bam))|(Successful Step: Index bam))" $logFile;)
+fi
+	echo Waiting for step: Index bam
+	sleep 60
+done
+
+if [[('[')]][ $str == "*Error Step: Index bam*" ]];
+then
+	echo $(date) Error bam from GA5_1:
+	echo $str
+else
+	echo $(date) Confirm bam from GA5_1:
+fi
+
+
+echo `date` Finish check the existence of the individual sorted bam file.
+
+echo `date` Begin Step: Merge DNA bams...
+/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -jar /opt/picard/picard.jar MergeSamFiles O=build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam I=build/resources/integrationTest/output/GA5/bam/GA5_1.bwa.sorted.bam VALIDATION_STRINGENCY=SILENT
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Merge DNA bams.
+	sleep 8
+else
+	echo `date` Error Step: Merge DNA bams.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Index bam...
+/opt/samtools/samtools-0.1.19/samtools index build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Index bam.
+	sleep 8
+else
+	echo `date` Error Step: Index bam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+logFile=build/resources/integrationTest/output/log_files/DnaCaptureVar_Fastq_postalignment_for_GA5_analysis.log
+str=""
+while [[('[')]][ $str = "" ]]
+do
+if [[('[')]][ -f $logFile  ]];
+then
+	str=$(grep -E "((Error Step: (Xenome classification|Seqpurge trimming|BWA alignment|Index bam|Merge DNA bams|Index rmdup bam))|(Successful Step: Index rmdup bam))" $logFile;)
+fi
+	echo Waiting for step: Index rmdup bam
+	sleep 60
+done
+
+if [[('[')]][ $str == "*Error Step: Index rmdup bam*" ]];
+then
+	echo $(date) Error bam from GA5:
+	echo $str
+else
+	echo $(date) Confirm bam from GA5:
+fi
+
+echo `date` Begin Step: Remove temporary directories...
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5_1.bwa.sorted.bam
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5_1.bwa.sorted.bam.bai
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam.bai
+rm -rf build/resources/integrationTest/output/GA5/tmp
+
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Remove temporary directories.
+	sleep 8
+else
+	echo `date` Error Step: Remove temporary directories.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+echo `date` Finish the job execution!
+

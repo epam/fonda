@@ -56,6 +56,6 @@ KNOWN_INDELS_PHASE1 = 100
 
 [Pipeline_Info]
 workflow = DnaCaptureVar_Fastq
-toolset = bwa+abra_realign+gatk_realign+picard
-read_type = single
+toolset = bwa+vardict+mutect1+strelka2+gatkHaplotypeCaller+scalpel+lofreq+freebayes
+read_type = paired
 flag_xenome = no

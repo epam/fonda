@@ -4,9 +4,9 @@ job_name = dnaCaptureVarFastq
 
 dir_out = build/resources/integrationTest/output
 
-fastq_list = build/resources/integrationTest/fastqSingle.tsv
+fastq_list = build/resources/integrationTest/fastq_list_paired_case_na.tsv
 
-LibraryType = DNAWholeSeq_Single
+LibraryType = DNAWholeExomeSeq_Paired
 
 DataGenerationSource = Internal
 

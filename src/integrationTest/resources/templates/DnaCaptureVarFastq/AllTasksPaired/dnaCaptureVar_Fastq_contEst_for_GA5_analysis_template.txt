@@ -1,0 +1,46 @@
+#!/bin/bash -x
+
+# --- SGE options --- #
+
+#$ -wd build/resources/integrationTest/output
+#$ -N DnaCaptureVar_Fastq_contEst_for_GA5_analysis
+#$ -o build/resources/integrationTest/output/log_files/DnaCaptureVar_Fastq_contEst_for_GA5_analysis.log
+#$ -e build/resources/integrationTest/output/err_files/DnaCaptureVar_Fastq_contEst_for_GA5_analysis.err
+#$ -q main.q
+#$ -R y
+#$ -pe threaded 4
+#$ -m a
+
+# --- The commands to be executed --- #
+
+cd build/resources/integrationTest/output
+
+echo `date` Begin the job execution...
+
+echo `date` Begin Step: Contamination estimation...
+/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -Djava.io.tmpdir=build/resources/integrationTest/output/GA5/contEst/tmp -jar /usr/bin/gatk -T ContEst -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -L /ngs/data/test.bed -I:eval build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.realign.realign.recal.bam -I:genotype build/resources/integrationTest/output/N/bam/N.merged.sorted.rmdup.realign.realign.recal.bam -pf 100 -pc 0.01 -o build/resources/integrationTest/output/GA5/contEst/GA5.contEst.result -isr INTERSECTION --min_mapq 20 -U ALLOW_SEQ_DICT_INCOMPATIBILITY --validation_strictness SILENT
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Contamination estimation.
+	sleep 8
+else
+	echo `date` Error Step: Contamination estimation.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Remove temporary directories...
+rm -rf build/resources/integrationTest/output/GA5/contEst/tmp
+
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Remove temporary directories.
+	sleep 8
+else
+	echo `date` Error Step: Remove temporary directories.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+echo `date` Finish the job execution!

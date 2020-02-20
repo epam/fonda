@@ -21,6 +21,17 @@ bwa = /usr/bin/bwa
 trimmomatic = /usr/bin/trimmomatic
 novoalign = /usr/bin/novoalign
 xenome = /usr/bin/xenome
+transvar = /usr/bin/transvar
+snpsift = /usr/bin/snpsift
+gatk = /usr/bin/gatk
+freebayes = /usr/bin/freebayes
+lofreq = /usr/bin/lofreq
+mutect = /usr/bin/mutect
+mutect_java = /usr/lib/jvm/java-8-openjdk-amd64/bin/java
+scalpel = /usr/bin/scalpel
+strelka2 = /usr/bin/strelka2
+abra2 = /usr/bin/abra2
+bedtools = /usr/bin/bedtools
 
 [Databases]
 SPECIES = human
@@ -37,9 +48,14 @@ ADAPTER_FWD = AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC
 ADAPTER_REV = AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT
 ADAPTER_SEQ = AGATCGGAAGAT
 MOUSEXENOMEINDEX = /ngs/data/xenomeIdx/xenome.idx
+DBSNP = /ngs/data/db/mutect.dbsnp
+COSMIC = /ngs/data/db/cosmic
+MUTECT_NORMAL_PANEL = /ngs/data/db/mormal_panel
+KNOWN_INDELS_MILLS = 10
+KNOWN_INDELS_PHASE1 = 100
 
 [Pipeline_Info]
 workflow = DnaCaptureVar_Fastq
-toolset = trimmomatic+bwa+picard+qc
-read_type = single
-flag_xenome = yes
+toolset = bwa+picard+qc+abra_realign+gatk_realign
+read_type = paired
+flag_xenome = no
