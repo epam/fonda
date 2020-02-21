@@ -85,14 +85,14 @@ public abstract class AbstractIntegrationTest {
     }
 
     /**
-     * @param templatePath path to a template
+     * @param filePath path to a file
      * @return the template represented by {@code String}
      * @throws URISyntaxException if this URI cannot be converted to a URI
      * @throws IOException if an I/O error occurs reading from the stream
      */
-    public String getCmd(final String templatePath) throws URISyntaxException, IOException {
+    public String getCmd(final String filePath) throws URISyntaxException, IOException {
         Path path = Paths.get(Objects.requireNonNull(this.getClass().getClassLoader()
-                .getResource(templatePath)).toURI());
+                .getResource(filePath)).toURI());
         byte[] fileBytes = Files.readAllBytes(path);
         return new String(fileBytes);
     }

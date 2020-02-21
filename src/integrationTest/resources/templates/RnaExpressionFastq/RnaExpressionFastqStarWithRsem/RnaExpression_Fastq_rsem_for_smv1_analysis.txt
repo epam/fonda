@@ -23,10 +23,10 @@ mv build/resources/integrationTest/output/smv1/rsem/smv1.genes.results build/res
 mv build/resources/integrationTest/output/smv1/rsem/smv1.isoforms.results build/resources/integrationTest/output/smv1/rsem/smv1.rsem.isoform.expression.results
 if [ $? -eq 0 ]
 then
-	echo `date` Successful Step: RSEM.
+	echo `date` Successful Step: rsem.
 	sleep 8
 else
-	echo `date` Error Step: RSEM.
+	echo `date` Error Step: rsem.
 
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
@@ -37,10 +37,10 @@ echo `date` Begin Step: RSEM annotation...
 mv build/resources/integrationTest/output/smv1/rsem/smv1.rsem.annotate.gene.expression.results build/resources/integrationTest/output/smv1/rsem/smv1.rsem.gene.expression.results
 if [ $? -eq 0 ]
 then
-	echo `date` Successful Step: RSEM annotation.
+	echo `date` Successful Step: rsem annotation.
 	sleep 8
 else
-	echo `date` Error Step: RSEM annotation.
+	echo `date` Error Step: rsem annotation.
 
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;

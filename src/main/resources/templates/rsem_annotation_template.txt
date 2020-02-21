@@ -3,10 +3,10 @@ echo `date` Begin Step: RSEM annotation...
 mv [(${rsemAnnotationFields.rsemAnnoGeneResult})] [(${rsemAnnotationFields.rsemGeneResult})]
 if [ $? -eq 0 ]
 then
-	echo `date` Successful Step: RSEM annotation.
+	echo `date` Successful Step: rsem annotation.
 	sleep 8
 else
-	echo `date` Error Step: RSEM annotation.
+	echo `date` Error Step: rsem annotation.
 
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;

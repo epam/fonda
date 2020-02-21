@@ -1,0 +1,63 @@
+#!/bin/bash -x
+
+# --- SGE options --- #
+
+#$ -wd build/resources/integrationTest/output
+#$ -N scRnaExpression_Bam_rsem_for_GA51_analysis
+#$ -o build/resources/integrationTest/output/log_files/scRnaExpression_Bam_rsem_for_GA51_analysis.log
+#$ -e build/resources/integrationTest/output/err_files/scRnaExpression_Bam_rsem_for_GA51_analysis.err
+#$ -q all.q
+#$ -R y
+#$ -pe threaded 4
+#$ -m a
+
+# --- The commands to be executed --- #
+
+cd build/resources/integrationTest/output
+
+echo `date` Begin the job execution...
+
+echo `date` Begin Step: RSEM...
+path/to/rsem/rsem-calculate-expression -p 4 --no-bam-output --paired-end --bam --estimate-rspd --seed 12345 /ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_001.bam RSEMINDEX build/resources/integrationTest/output/GA51/rsem/GA51
+mv build/resources/integrationTest/output/GA51/rsem/GA51.genes.results build/resources/integrationTest/output/GA51/rsem/GA51.rsem.gene.expression.results
+mv build/resources/integrationTest/output/GA51/rsem/GA51.isoforms.results build/resources/integrationTest/output/GA51/rsem/GA51.rsem.isoform.expression.results
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: rsem.
+	sleep 8
+else
+	echo `date` Error Step: rsem.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: RSEM annotation...
+/ngs/data/app/python/v2.7.2/bin/python [(${jarPath})]/src/python/rna_gene_annotation.py -t rsem -i build/resources/integrationTest/output/GA51/rsem/GA51.rsem.gene.expression.results -o build/resources/integrationTest/output/GA51/rsem/GA51.rsem.annotate.gene.expression.results -a /ngs/data/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.annotation.saf
+mv build/resources/integrationTest/output/GA51/rsem/GA51.rsem.annotate.gene.expression.results build/resources/integrationTest/output/GA51/rsem/GA51.rsem.gene.expression.results
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: rsem annotation.
+	sleep 8
+else
+	echo `date` Error Step: rsem annotation.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Remove temporary directories...
+rm -rf build/resources/integrationTest/output/GA51/tmp
+
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Remove temporary directories.
+	sleep 8
+else
+	echo `date` Error Step: Remove temporary directories.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+echo `date` Finish the job execution!
+

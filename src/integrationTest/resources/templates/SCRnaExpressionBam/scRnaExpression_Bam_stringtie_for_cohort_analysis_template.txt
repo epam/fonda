@@ -1,0 +1,94 @@
+#!/bin/bash -x
+
+# --- SGE options --- #
+
+#$ -wd build/resources/integrationTest/output
+#$ -N scRnaExpression_Bam_stringtie_for_cohort_analysis
+#$ -o build/resources/integrationTest/output/log_files/scRnaExpression_Bam_stringtie_for_cohort_analysis.log
+#$ -e build/resources/integrationTest/output/err_files/scRnaExpression_Bam_stringtie_for_cohort_analysis.err
+#$ -q all.q
+#$ -R y
+#$ -pe threaded 4
+#$ -m a
+
+# --- The commands to be executed --- #
+
+cd build/resources/integrationTest/output
+
+echo `date` Begin the job execution...
+
+logFile=build/resources/integrationTest/output/log_files/scRnaExpression_Bam_stringtie_for_GA51_analysis.log
+str=""
+while [[('[')]][ $str = "" ]]
+do
+if [[('[')]][ -f $logFile  ]];
+then
+	str=$(grep -E "((Error Step: (Featurecounts|Remove temporary directories|Run featureCount|rsem|rsem annotation|Run rsem|Cufflinks|Run cufflinks|Stringtie|Run stringtie))|(Successful Step: stringtie))" $logFile;)
+fi
+	echo Waiting for step: stringtie
+	sleep 60
+done
+
+if [[('[')]][ $str == "*Error Step: stringtie*" ]];
+then
+	echo $(date) Error gene expression results from GA51:
+	echo $str
+else
+	echo $(date) Confirm gene expression results from GA51
+fi
+
+logFile=build/resources/integrationTest/output/log_files/scRnaExpression_Bam_stringtie_for_GA52_analysis.log
+str=""
+while [[('[')]][ $str = "" ]]
+do
+if [[('[')]][ -f $logFile  ]];
+then
+	str=$(grep -E "((Error Step: (Featurecounts|Remove temporary directories|Run featureCount|rsem|rsem annotation|Run rsem|Cufflinks|Run cufflinks|Stringtie|Run stringtie))|(Successful Step: stringtie))" $logFile;)
+fi
+	echo Waiting for step: stringtie
+	sleep 60
+done
+
+if [[('[')]][ $str == "*Error Step: stringtie*" ]];
+then
+	echo $(date) Error gene expression results from GA52:
+	echo $str
+else
+	echo $(date) Confirm gene expression results from GA52
+fi
+
+logFile=build/resources/integrationTest/output/log_files/scRnaExpression_Bam_stringtie_for_GA5_analysis.log
+str=""
+while [[('[')]][ $str = "" ]]
+do
+if [[('[')]][ -f $logFile  ]];
+then
+	str=$(grep -E "((Error Step: (Featurecounts|Remove temporary directories|Run featureCount|rsem|rsem annotation|Run rsem|Cufflinks|Run cufflinks|Stringtie|Run stringtie))|(Successful Step: stringtie))" $logFile;)
+fi
+	echo Waiting for step: stringtie
+	sleep 60
+done
+
+if [[('[')]][ $str == "*Error Step: stringtie*" ]];
+then
+	echo $(date) Error gene expression results from GA5:
+	echo $str
+else
+	echo $(date) Confirm gene expression results from GA5
+fi
+
+echo `date` Begin Step: Merge gene expression...
+/ngs/data/app/R/v3.5.0/bin/Rscript [(${jarPath})]/src/R/rna_expression_data_analysis.R -i build/resources/integrationTest/bamList.tsv -d build/resources/integrationTest/output -t stringtie
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Merge gene expression.
+	sleep 8
+else
+	echo `date` Error Step: Merge gene expression.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Finish the job execution!
+

@@ -1,0 +1,32 @@
+[Queue_Parameters]
+NUMTHREADS = 4
+MAXMEM = 24g
+QUEUE = all.q
+PE = -pe threaded
+
+[Databases]
+SPECIES = human
+GENOME_BUILD = GRCh38
+ANNOTGENE = /ngs/data/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.annotation.gtf
+GENOME = /ngs/data/reference_genome/GRCh38/Sequence/GRCh38.genome.fa
+TRANSCRIPTOME = /ngs/data/reference_genome/GRCh38/Sequence/GRCh38.gencode.fa
+ANNOTGENESAF = /ngs/data/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.annotation.saf
+RSEMINDEX = RSEMINDEX
+
+[all_tools]
+cufflinks = /ngs/data/tools/cufflinks/v2.2.1/cufflinks
+java = /ngs/data/tools/java/jre1.7.0_60/bin/java
+samtools = /ngs/data/tools/samtools/v0.1.19/samtools
+picard = /ngs/data/tools/picard/v2.10.3/picard.jar
+python = /ngs/data/app/python/v2.7.2/bin/python
+Rscript = /ngs/data/app/R/v3.5.0/bin/Rscript
+doubletdetection_python = /ngs/data/py/versions/3.5.2/bin/python
+rsem = path/to/rsem
+stringtie = path/to/stringtie
+feature_count = feature_count
+
+[Pipeline_Info]
+workflow = scRnaExpression_Bam
+toolset = featureCount+rsem+cufflinks+stringtie+conversion
+flag_xenome = no
+read_type = paired

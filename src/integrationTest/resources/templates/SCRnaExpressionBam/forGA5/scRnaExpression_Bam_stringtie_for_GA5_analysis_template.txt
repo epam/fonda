@@ -3,12 +3,12 @@
 # --- SGE options --- #
 
 #$ -wd build/resources/integrationTest/output
-#$ -N RnaExpression_Bam_stringtie_for_GA5_analysis
-#$ -o build/resources/integrationTest/output/log_files/RnaExpression_Bam_stringtie_for_GA5_analysis.log
-#$ -e build/resources/integrationTest/output/err_files/RnaExpression_Bam_stringtie_for_GA5_analysis.err
-#$ -q main.q
+#$ -N scRnaExpression_Bam_stringtie_for_GA5_analysis
+#$ -o build/resources/integrationTest/output/log_files/scRnaExpression_Bam_stringtie_for_GA5_analysis.log
+#$ -e build/resources/integrationTest/output/err_files/scRnaExpression_Bam_stringtie_for_GA5_analysis.err
+#$ -q all.q
 #$ -R y
-#$ PE 4
+#$ -pe threaded 4
 #$ -m a
 
 # --- The commands to be executed --- #
@@ -18,7 +18,7 @@ cd build/resources/integrationTest/output
 echo `date` Begin the job execution...
 
 echo `date` Begin Step: Stringtie...
-path/to/stringtie -p 4 -G /common/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.annotation.gtf -A build/resources/integrationTest/output/GA5/stringtie/GA5.stringtie.gene.expression.results -o build/resources/integrationTest/output/GA5/stringtie/GA5.stringtie.assembly.transcripts.gtf /ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_003.bam
+path/to/stringtie -p 4 -G /ngs/data/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.annotation.gtf -A build/resources/integrationTest/output/GA5/stringtie/GA5.stringtie.gene.expression.results -o build/resources/integrationTest/output/GA5/stringtie/GA5.stringtie.assembly.transcripts.gtf /ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_003.bam
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: stringtie.
@@ -44,3 +44,4 @@ else
 	exit 1;
 fi
 echo `date` Finish the job execution!
+

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package com.epam.fonda.workflow.impl;
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.samples.bam.BamFileSample;
-import com.epam.fonda.tools.impl.QcSummary;
 import com.epam.fonda.tools.impl.RnaAnalysis;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
@@ -68,7 +67,6 @@ public class RnaExpressionBamWorkflow implements BamWorkflow {
     @Override
     public void postProcess(final Configuration configuration, final List<BamFileSample> samples) throws IOException {
         List<String> sampleNames = samples.stream().map(BamFileSample::getName).collect(Collectors.toList());
-        new QcSummary(flag, sampleNames).generate(configuration, TEMPLATE_ENGINE);
         new RnaAnalysis(flag, sampleNames).generate(configuration, TEMPLATE_ENGINE);
     }
 }

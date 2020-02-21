@@ -61,7 +61,7 @@ public class RsemAnnotation implements Tool<RsemResult> {
         Context context = new Context();
         context.setVariable("rsemAnnotationFields", rsemAnnotationFields);
         final String cmd = templateEngine.process(RSEM_ANNOTATION_TEMPLATE_NAME, context);
-        TaskContainer.addTasks("RSEM annotation");
+        TaskContainer.addTasks("rsem annotation");
         rsemResult.setCommand(BashCommand.withTool(rsemResult.getCommand().getToolCommand() + cmd));
         return rsemResult;
     }

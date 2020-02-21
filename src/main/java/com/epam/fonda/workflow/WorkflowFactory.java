@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,6 +56,7 @@ public class WorkflowFactory {
             case BAM_2_FASTQ: return new Bam2FastqWorkflow(flag);
             case TCR_REPERTOIRE_FASTQ: return new TcrRepertoireFastqWorkflow(flag);
             case HLA_TYPING_FASTQ: return new HlaTypingFastqWorkflow(flag);
+            case SC_RNA_EXPRESSION_BAM: return new RnaExpressionBamWorkflow(flag);
             default: throw new IllegalArgumentException(String.format("Requested workflow %s is not supported yet",
                     workflowName));
         }

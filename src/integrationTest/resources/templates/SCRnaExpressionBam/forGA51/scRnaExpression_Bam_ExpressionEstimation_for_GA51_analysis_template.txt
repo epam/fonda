@@ -1,0 +1,86 @@
+#!/bin/bash -x
+
+# --- SGE options --- #
+
+#$ -wd build/resources/integrationTest/output
+#$ -N scRnaExpression_Bam_ExpressionEstimation_for_GA51_analysis
+#$ -o build/resources/integrationTest/output/log_files/scRnaExpression_Bam_ExpressionEstimation_for_GA51_analysis.log
+#$ -e build/resources/integrationTest/output/err_files/scRnaExpression_Bam_ExpressionEstimation_for_GA51_analysis.err
+#$ -q all.q
+#$ -R y
+#$ -pe threaded 4
+#$ -m a
+
+# --- The commands to be executed --- #
+
+cd build/resources/integrationTest/output
+
+echo `date` Begin the job execution...
+
+echo `date` Begin Step: Run featureCount...
+qsub build/resources/integrationTest/output/sh_files/scRnaExpression_Bam_featureCount_for_GA51_analysis.sh
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Run featureCount.
+	sleep 8
+else
+	echo `date` Error Step: Run featureCount.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Run rsem...
+qsub build/resources/integrationTest/output/sh_files/scRnaExpression_Bam_rsem_for_GA51_analysis.sh
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Run rsem.
+	sleep 8
+else
+	echo `date` Error Step: Run rsem.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Run cufflinks...
+qsub build/resources/integrationTest/output/sh_files/scRnaExpression_Bam_cufflinks_for_GA51_analysis.sh
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Run cufflinks.
+	sleep 8
+else
+	echo `date` Error Step: Run cufflinks.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Run stringtie...
+qsub build/resources/integrationTest/output/sh_files/scRnaExpression_Bam_stringtie_for_GA51_analysis.sh
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Run stringtie.
+	sleep 8
+else
+	echo `date` Error Step: Run stringtie.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Remove temporary directories...
+rm -rf build/resources/integrationTest/output/GA51/tmp
+
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Remove temporary directories.
+	sleep 8
+else
+	echo `date` Error Step: Remove temporary directories.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+echo `date` Finish the job execution!
+
