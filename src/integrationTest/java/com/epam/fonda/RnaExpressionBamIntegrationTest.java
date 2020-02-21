@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.stream.Stream;
 
+import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RnaExpressionBamIntegrationTest extends AbstractIntegrationTest {
@@ -41,23 +42,21 @@ public class RnaExpressionBamIntegrationTest extends AbstractIntegrationTest {
             "output/sh_files/RnaExpression_Bam_stringtie_for_GA5_analysis.sh";
     private static final String OUTPUT_SH_FILES_RNA_EXPRESSION_BAM_EXPRESSION_ESTIMATION_FOR_GA_5_ANALYSIS =
             "output/sh_files/RnaExpression_Bam_ExpressionEstimation_for_GA5_analysis.sh";
-    private static final String RNA_EXPRESSION_BAM_FEATURE_COUNT_RSEM_CUFFLINKS_STRINGTIE_SUFFIX =
-            "RnaExpressionBam/RnaExpressionBamFeatureCountRsemCufflinksStringtie";
+    private static final String RNA_EXPRESSION_BAM_SUFFIX = "RnaExpressionBam";
     private static final String RNA_EXPRESSION_BAM_FEATURE_COUNT_FOR_GA_5_ANALYSIS_TEMPLATE_PATH =
-            String.format("%s/RnaExpression_Bam_featureCount_for_GA5_analysis",
-                    RNA_EXPRESSION_BAM_FEATURE_COUNT_RSEM_CUFFLINKS_STRINGTIE_SUFFIX);
+            format("%s/RnaExpression_Bam_featureCount_for_GA5_analysis", RNA_EXPRESSION_BAM_SUFFIX);
     private static final String RNA_EXPRESSION_BAM_CUFFLINKS_FOR_GA_5_ANALYSIS_TEMPLATE_PATH =
-            String.format("%s/RnaExpression_Bam_cufflinks_for_GA5_analysis",
-                    RNA_EXPRESSION_BAM_FEATURE_COUNT_RSEM_CUFFLINKS_STRINGTIE_SUFFIX);
+            format("%s/RnaExpression_Bam_cufflinks_for_GA5_analysis",
+                    RNA_EXPRESSION_BAM_SUFFIX);
     private static final String RNA_EXPRESSION_BAM_RSEM_FOR_GA_5_ANALYSIS_TEMPLATE_PATH =
-            String.format("%s/RnaExpression_Bam_rsem_for_GA5_analysis",
-                    RNA_EXPRESSION_BAM_FEATURE_COUNT_RSEM_CUFFLINKS_STRINGTIE_SUFFIX);
+            format("%s/RnaExpression_Bam_rsem_for_GA5_analysis",
+                    RNA_EXPRESSION_BAM_SUFFIX);
     private static final String RNA_EXPRESSION_BAM_STRINGTIE_FOR_GA_5_ANALYSIS_TEMPLATE_PATH =
-            String.format("%s/RnaExpression_Bam_stringtie_for_GA5_analysis",
-                    RNA_EXPRESSION_BAM_FEATURE_COUNT_RSEM_CUFFLINKS_STRINGTIE_SUFFIX);
+            format("%s/RnaExpression_Bam_stringtie_for_GA5_analysis",
+                    RNA_EXPRESSION_BAM_SUFFIX);
     private static final String RNA_EXPRESSION_BAM_EXPRESSION_ESTIMATION_FOR_GA_5_ANALYSIS_TEMPLATE_PATH =
-            String.format("%s/RnaExpression_Bam_ExpressionEstimation_for_GA5_analysis",
-                    RNA_EXPRESSION_BAM_FEATURE_COUNT_RSEM_CUFFLINKS_STRINGTIE_SUFFIX);
+            format("%s/RnaExpression_Bam_ExpressionEstimation_for_GA5_analysis",
+                    RNA_EXPRESSION_BAM_SUFFIX);
 
     @ParameterizedTest(name = "{0}-test")
     @MethodSource("initParameters")
