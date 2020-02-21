@@ -1,0 +1,14 @@
+echo `date` Begin Step: ABRA realignment...
+[(${toolFields.java})] -Xmx16g -jar [(${toolFields.abra2})] --threads [(${additionalFields.numThreads})][# th:unless = "${additionalFields.isWgs}"][# th:if = "${additionalFields.readType != 'paired'}"] --single[/][/] --tmpdir [(${additionalFields.tmpOutdir})] --ref [(${additionalFields.genome})] --in [(${additionalFields.bam})] --out [(${additionalFields.realignBam})][# th:unless = "${additionalFields.isWgs}"] --targets [(${additionalFields.bed})][/]
+[(${toolFields.samtools})] index [(${additionalFields.realignBam})]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: ABRA realignment.
+	sleep 8
+else
+	echo `date` Error Step: ABRA realignment.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+

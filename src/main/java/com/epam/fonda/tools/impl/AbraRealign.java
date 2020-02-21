@@ -31,12 +31,15 @@ import lombok.RequiredArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.util.Arrays;
+
+import static com.epam.fonda.utils.DnaUtils.isWgsWorkflow;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 @RequiredArgsConstructor
-public class AmpliconAbraRealign implements Tool<BamResult> {
+public class AbraRealign implements Tool<BamResult> {
 
-    private static final String AMPLICON_ABRA_REALIGN_TOOL_TEMPLATE_NAME = "amplicon_abra_realign_tool_template";
+    private static final String ABRA_REALIGN_TOOL_TEMPLATE_NAME = "abra_realign_tool_template";
 
     @Data
     @Builder
@@ -56,6 +59,7 @@ public class AmpliconAbraRealign implements Tool<BamResult> {
         private String tmpOutdir;
         private String realignBam;
         private String bam;
+        private boolean isWgs;
     }
 
     @NonNull
@@ -77,12 +81,16 @@ public class AmpliconAbraRealign implements Tool<BamResult> {
         Context context = new Context();
         context.setVariable("toolFields", initializeToolFields(configuration));
         context.setVariable("additionalFields", additionalFields);
-        String cmd = templateEngine.process(AMPLICON_ABRA_REALIGN_TOOL_TEMPLATE_NAME, context);
+        String cmd = templateEngine.process(ABRA_REALIGN_TOOL_TEMPLATE_NAME, context);
         TaskContainer.addTasks("ABRA realignment");
         BamOutput bamOutput = bamResult.getBamOutput();
         bamOutput.setBam(additionalFields.realignBam);
+        bamOutput.setBamIndex(additionalFields.realignBam.concat(".bai"));
         AbstractCommand resultCommand = bamResult.getCommand();
         resultCommand.setToolCommand(resultCommand.getToolCommand() + cmd);
+        if (isWgsWorkflow(configuration)) {
+            resultCommand.getTempDirs().addAll(Arrays.asList(bamOutput.getBam(), bamOutput.getBamIndex()));
+        }
         return bamResult;
     }
 
@@ -120,6 +128,7 @@ public class AmpliconAbraRealign implements Tool<BamResult> {
                 .readType(validate(configuration.getGlobalConfig().getPipelineInfo().getReadType(),
                         GlobalConfigFormat.READ_TYPE))
                 .tmpOutdir(sample.getTmpOutdir())
+                .isWgs(isWgsWorkflow(configuration))
                 .build();
     }
 }

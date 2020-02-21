@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import com.epam.fonda.entity.command.AbstractCommand;
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.samples.fastq.FastqFileSample;
-import com.epam.fonda.tools.impl.AmpliconAbraRealign;
+import com.epam.fonda.tools.impl.AbraRealign;
 import com.epam.fonda.tools.impl.AmpliconGatkRealign;
 import com.epam.fonda.tools.impl.AmpliconGatkRecalibrate;
 import com.epam.fonda.tools.impl.DnaPicardQc;
@@ -33,6 +33,8 @@ import com.epam.fonda.workflow.impl.Flag;
 import com.epam.fonda.workflow.stage.Stage;
 import lombok.AllArgsConstructor;
 import org.thymeleaf.TemplateEngine;
+
+import static com.epam.fonda.utils.DnaUtils.isWgsWorkflow;
 
 /**
  * The workflow stage is followed by the Alignment stage.
@@ -56,7 +58,7 @@ public class PostAlignment implements Stage {
                              final TemplateEngine templateEngine) {
         if (flag.isPicard()) {
             bamResult = new PicardMarkDuplicate(sample, bamResult).generate(configuration, templateEngine);
-            if (isCapture(configuration)) {
+            if (isCapture(configuration) || isWgsWorkflow(configuration)) {
                 bamResult = new PicardRemoveDuplicate(bamResult).generate(configuration, templateEngine);
             }
             if (flag.isQc()) {
@@ -75,7 +77,7 @@ public class PostAlignment implements Stage {
             }
         }
         if (flag.isAbraRealign()) {
-            bamResult = new AmpliconAbraRealign(sample, bamResult).generate(configuration, templateEngine);
+            bamResult = new AbraRealign(sample, bamResult).generate(configuration, templateEngine);
         }
         if (flag.isGatkRealign()) {
             bamResult = new AmpliconGatkRealign(sample, bamResult).generate(configuration, templateEngine);

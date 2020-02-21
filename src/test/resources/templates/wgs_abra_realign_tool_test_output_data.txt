@@ -1,0 +1,14 @@
+echo `date` Begin Step: ABRA realignment...
+java -Xmx16g -jar abra2 --threads 5 --tmpdir stmpOutdir --ref genome --in sbamOutdir/sampleName.toolName.sorted.bamFile.bam --out sbamOutdir/sampleName.toolName.sorted.realign.bamFile.realign.bam
+samtools index sbamOutdir/sampleName.toolName.sorted.realign.bamFile.realign.bam
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: ABRA realignment.
+	sleep 8
+else
+	echo `date` Error Step: ABRA realignment.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
