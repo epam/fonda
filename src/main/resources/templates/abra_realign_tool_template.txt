@@ -1,5 +1,5 @@
 echo `date` Begin Step: ABRA realignment...
-[(${toolFields.java})] -Xmx16g -jar [(${toolFields.abra2})] --threads [(${additionalFields.numThreads})] [# th:unless = "${additionalFields.isWgs}"]-L [(${additionalFields.bed})] [/][# th:if = "${additionalFields.readType != 'paired'}"] --single[/] --tmpdir [(${additionalFields.tmpOutdir})] --ref [(${additionalFields.genome})] --in [(${additionalFields.bam})] --out [(${additionalFields.realignBam})] --targets [(${additionalFields.bed})]
+[(${toolFields.java})] -Xmx16g -jar [(${toolFields.abra2})] --threads [(${additionalFields.numThreads})][# th:unless = "${additionalFields.isWgs}"][# th:if = "${additionalFields.readType != 'paired'}"] --single[/][/] --tmpdir [(${additionalFields.tmpOutdir})] --ref [(${additionalFields.genome})] --in [(${additionalFields.bam})] --out [(${additionalFields.realignBam})][# th:unless = "${additionalFields.isWgs}"] --targets [(${additionalFields.bed})][/]
 [(${toolFields.samtools})] index [(${additionalFields.realignBam})]
 if [ $? -eq 0 ]
 then

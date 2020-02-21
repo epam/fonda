@@ -39,7 +39,7 @@ import static com.epam.fonda.utils.ToolUtils.validate;
 @RequiredArgsConstructor
 public class AbraRealign implements Tool<BamResult> {
 
-    private static final String AMPLICON_ABRA_REALIGN_TOOL_TEMPLATE_NAME = "abra_realign_tool_template";
+    private static final String ABRA_REALIGN_TOOL_TEMPLATE_NAME = "abra_realign_tool_template";
 
     @Data
     @Builder
@@ -81,7 +81,7 @@ public class AbraRealign implements Tool<BamResult> {
         Context context = new Context();
         context.setVariable("toolFields", initializeToolFields(configuration));
         context.setVariable("additionalFields", additionalFields);
-        String cmd = templateEngine.process(AMPLICON_ABRA_REALIGN_TOOL_TEMPLATE_NAME, context);
+        String cmd = templateEngine.process(ABRA_REALIGN_TOOL_TEMPLATE_NAME, context);
         TaskContainer.addTasks("ABRA realignment");
         BamOutput bamOutput = bamResult.getBamOutput();
         bamOutput.setBam(additionalFields.realignBam);
