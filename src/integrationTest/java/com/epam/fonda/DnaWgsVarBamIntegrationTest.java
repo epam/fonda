@@ -41,7 +41,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DnaWgsVarBamIntegrationTest extends AbstractIntegrationTest {
 
-    private static final String OUTPUT_DIR = "output";
     private static final String OUTPUT_DIR_ROOT = "build/resources/integrationTest/";
 
     private static final String FIRST_PART_OF_THE_TEST_SHELL_SCRIPT_PATH = "output/sh_files/DnaWgsVar_Bam_";
