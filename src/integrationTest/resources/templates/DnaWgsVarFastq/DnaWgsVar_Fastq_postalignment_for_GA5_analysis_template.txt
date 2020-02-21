@@ -152,7 +152,7 @@ else
 fi
 
 echo `date` Begin Step: ABRA realignment...
-/ngs/data/app/java/v1.8.0u121/bin/java -Xmx16g -jar /ngs/data/tools/abra2/v2.07/abra2-2.07.jar --threads 8 --single --tmpdir build/resources/integrationTest/output/GA5/tmp --ref /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa --in build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.bam --out build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.realign.bam --targets /ngs/data/S03723314_Padded.bed
+/ngs/data/app/java/v1.8.0u121/bin/java -Xmx16g -jar /ngs/data/tools/abra2/v2.07/abra2-2.07.jar --threads 8 --tmpdir build/resources/integrationTest/output/GA5/tmp --ref /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa --in build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.bam --out build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.realign.bam
 /ngs/data/tools/samtools/v0.1.19/samtools index build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.realign.bam
 if [ $? -eq 0 ]
 then
@@ -214,6 +214,8 @@ rm -rf build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.mkdup.ins
 rm -rf build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.mkdup.gcbias.metrics
 rm -rf build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.mkdup.gc.summary.metrics
 rm -rf build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.rmdup.hs.metrics
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.realign.bam
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.realign.bam.bai
 rm -rf build/resources/integrationTest/output/GA5/tmp
 
 if [ $? -eq 0 ]
