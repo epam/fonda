@@ -79,7 +79,7 @@ class SCRnaExpressionCellRangerFastqIntegrationTest extends AbstractIntegrationT
 
     @AfterEach
     public void cleanUp() {
-
+        //no op
     }
 
     @Test
@@ -92,7 +92,7 @@ class SCRnaExpressionCellRangerFastqIntegrationTest extends AbstractIntegrationT
             () -> assertTrue(new File(format("%s%s/err_files", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
             () -> assertTrue(new File(format("%s%s/count", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()));
 
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
+        cleanOutputDirForNextTest(OUTPUT_DIR);
     }
 
     @ParameterizedTest
@@ -101,7 +101,7 @@ class SCRnaExpressionCellRangerFastqIntegrationTest extends AbstractIntegrationT
         startAppWithConfigs(globalConfigPath, SCRNA_EXPRESSION_FASTQ_STUDY_CONFIG);
         final String expectedCmd = templateEngine.process(templatePath, context);
         assertEquals(expectedCmd.trim(), getCmd(TEST_SHELL_SCRIPT_TEMPLATE_PATH).trim());
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
+        cleanOutputDirForNextTest(OUTPUT_DIR);
     }
 
     @SuppressWarnings("PMD")
