@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,10 +31,10 @@ import org.thymeleaf.context.Context;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
 class AbraRealignTest extends AbstractTest {
     private static final String AMPLICON_ABRA_REALIGN_TOOL_TEST_TEMPLATE_NAME =
             "amplicon_abra_realign_tool_test_output_data";
+    private static final String WGS_ABRA_REALIGN_TOOL_TEST_TEMPLATE_NAME = "wgs_abra_realign_tool_test_output_data";
     private Configuration expectedConfiguration;
     private GlobalConfig.PipelineInfo expectedPipelineInfo;
     private FastqFileSample expectedSample;
@@ -49,6 +49,7 @@ class AbraRealignTest extends AbstractTest {
         constructToolConfig(expectedGlobalConfig);
         constructDatabaseConfig(expectedGlobalConfig);
         expectedPipelineInfo = new GlobalConfig.PipelineInfo();
+        expectedPipelineInfo.setWorkflow("DnaAmpliconVar_Bam");
         GlobalConfig.QueueParameters expectedQueueParameters = new GlobalConfig.QueueParameters();
         expectedQueueParameters.setNumThreads(5);
         expectedGlobalConfig.setQueueParameters(expectedQueueParameters);
@@ -83,6 +84,18 @@ class AbraRealignTest extends AbstractTest {
         Context context = new Context();
         context.setVariable("readType", expectedPipelineInfo.getReadType());
         String expectedCmd = expectedTemplateEngine.process(AMPLICON_ABRA_REALIGN_TOOL_TEST_TEMPLATE_NAME, context);
+        bamResult = abraRealign.generate(expectedConfiguration, expectedTemplateEngine);
+        assertEquals(expectedCmd, bamResult.getCommand().getToolCommand());
+    }
+
+    @Test
+    void shouldGenerateWgsWorkflow() {
+        AbraRealign abraRealign = new AbraRealign(expectedSample, bamResult);
+        expectedPipelineInfo.setReadType("single");
+        expectedPipelineInfo.setWorkflow("DnaWgsVar_Fastq");
+        Context context = new Context();
+        context.setVariable("readType", expectedPipelineInfo.getReadType());
+        String expectedCmd = expectedTemplateEngine.process(WGS_ABRA_REALIGN_TOOL_TEST_TEMPLATE_NAME, context);
         bamResult = abraRealign.generate(expectedConfiguration, expectedTemplateEngine);
         assertEquals(expectedCmd, bamResult.getCommand().getToolCommand());
     }

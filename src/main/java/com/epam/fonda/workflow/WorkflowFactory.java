@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ public class WorkflowFactory {
             case DNA_AMPLICON_VAR_BAM: return new DnaVarBamWorkflow(flag);
             case DNA_CAPTURE_VAR_BAM: return new DnaVarBamWorkflow(flag);
             case DNA_WGS_VAR_BAM: return new DnaVarBamWorkflow(flag);
-            case DNA_WGS_VAR_FASTQ: return new DnaVarFastqWorkflow(flag,"Index rmdup bam");
+            case DNA_WGS_VAR_FASTQ: return new DnaVarFastqWorkflow(flag, "Index rmdup bam");
             case BAM_2_FASTQ: return new Bam2FastqWorkflow(flag);
             case TCR_REPERTOIRE_FASTQ: return new TcrRepertoireFastqWorkflow(flag);
             case HLA_TYPING_FASTQ: return new HlaTypingFastqWorkflow(flag);
