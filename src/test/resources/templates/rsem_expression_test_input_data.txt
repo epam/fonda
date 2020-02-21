@@ -4,10 +4,10 @@ mv output/rsem/sampleName.genes.results output/rsem/sampleName.rsem.gene.express
 mv output/rsem/sampleName.isoforms.results output/rsem/sampleName.rsem.isoform.expression.results
 if [ $? -eq 0 ]
 then
-	echo `date` Successful Step: RSEM.
+	echo `date` Successful Step: rsem.
 	sleep 8
 else
-	echo `date` Error Step: RSEM.
+	echo `date` Error Step: rsem.
 
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;

@@ -100,7 +100,7 @@ public class FeatureCount implements Tool<FeatureCountResult> {
         context.setVariable("queueParametersFields", initializeQueueParametersFields(configuration));
         context.setVariable("directoryFields", initializeDirectoryFields(configuration, featureOutdir));
         String cmd = templateEngine.process(FEATURECOUNT_TOOL_TEMPLATE_NAME, context);
-        TaskContainer.addTasks("Feautrecounts");
+        TaskContainer.addTasks("Featurecounts");
         featureCountOutput.setFeatureCountGeneCount(additionalFeatureCountFields.featureCountGeneCount);
         return FeatureCountResult.builder()
                 .featureCountOutput(featureCountOutput)

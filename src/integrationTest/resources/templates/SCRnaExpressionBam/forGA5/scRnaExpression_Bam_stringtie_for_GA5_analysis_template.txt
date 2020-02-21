@@ -21,10 +21,10 @@ echo `date` Begin Step: Stringtie...
 path/to/stringtie -p 4 -G /ngs/data/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.annotation.gtf -A build/resources/integrationTest/output/GA5/stringtie/GA5.stringtie.gene.expression.results -o build/resources/integrationTest/output/GA5/stringtie/GA5.stringtie.assembly.transcripts.gtf /ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_003.bam
 if [ $? -eq 0 ]
 then
-	echo `date` Successful Step: Stringtie.
+	echo `date` Successful Step: stringtie.
 	sleep 8
 else
-	echo `date` Error Step: Stringtie.
+	echo `date` Error Step: stringtie.
 
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
