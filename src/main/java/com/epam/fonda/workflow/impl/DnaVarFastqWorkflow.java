@@ -129,10 +129,6 @@ public class DnaVarFastqWorkflow implements FastqWorkflow {
         BamOutput bamOutput = bamResult.getBamOutput();
         bamOutput.setControlBam(bamOutput.getBam().replace(sample.getName(), sample.getControlName()));
         bamResult.getCommand().getTempDirs().add(sample.getTmpOutdir());
-        if (DnaUtils.isWgsWorkflow(configuration)) {
-            bamResult.getCommand().getTempDirs().add(bamOutput.getBam());
-            bamResult.getCommand().getTempDirs().add(bamOutput.getBamIndex());
-        }
         if (sample.getSampleType().equals(PipelineUtils.CASE) || sample.getSampleType().equals(PipelineUtils.TUMOR)) {
             resultCmd.append(DnaUtils.checkPeriodicBamStatus(stringTag, sample.getName(), null,
                     configuration, null));

@@ -34,6 +34,8 @@ import com.epam.fonda.workflow.stage.Stage;
 import lombok.AllArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 
+import static com.epam.fonda.utils.DnaUtils.isWgsWorkflow;
+
 /**
  * The workflow stage is followed by the Alignment stage.
  * Consists of list of tools that require {@link BamResult}.
@@ -56,7 +58,7 @@ public class PostAlignment implements Stage {
                              final TemplateEngine templateEngine) {
         if (flag.isPicard()) {
             bamResult = new PicardMarkDuplicate(sample, bamResult).generate(configuration, templateEngine);
-            if (isCapture(configuration) || isWgs(configuration)) {
+            if (isCapture(configuration) || isWgsWorkflow(configuration)) {
                 bamResult = new PicardRemoveDuplicate(bamResult).generate(configuration, templateEngine);
             }
             if (flag.isQc()) {
@@ -87,9 +89,5 @@ public class PostAlignment implements Stage {
 
     private boolean isCapture(final Configuration configuration) {
         return configuration.getGlobalConfig().getPipelineInfo().getWorkflow().toLowerCase().contains("capture");
-    }
-
-    private boolean isWgs(final Configuration configuration) {
-        return configuration.getGlobalConfig().getPipelineInfo().getWorkflow().toLowerCase().contains("wgs");
     }
 }
