@@ -16,12 +16,7 @@
 
 package com.epam.fonda;
 
-import com.epam.fonda.utils.TemplateEngineUtils;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +29,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class Bam2FastqIntegrationTest extends AbstractIntegrationTest {
     private static final String OUTPUT_DIR_ROOT = "build/resources/integrationTest/";
-    private static final String OUTPUT_DIR = "output/";
     private static final String OUTPUT_SH_FILE_GA5 = "output/sh_files/Bam2Fastq_convert_for_GA5_analysis.sh";
     private static final String OUTPUT_SH_FILE_GA51 = "output/sh_files/Bam2Fastq_convert_for_GA51_analysis.sh";
     private static final String OUTPUT_SH_FILE_GA52 = "output/sh_files/Bam2Fastq_convert_for_GA52_analysis.sh";
@@ -51,19 +45,6 @@ public class Bam2FastqIntegrationTest extends AbstractIntegrationTest {
     private static final String GA51_TEMPLATE = "Bam2Fastq_convert_for_GA51_analysis.txt";
     private static final String GA52_TEMPLATE = "Bam2Fastq_convert_for_GA52_analysis.txt";
     private static final String TEST_FASTQ_FILE = "Example_project-run1234-031814-FastqPaths.txt";
-
-    private TemplateEngine templateEngine = TemplateEngineUtils.init();
-    private Context context;
-
-    @BeforeEach
-    public void setup() {
-        context = new Context();
-    }
-
-    @AfterEach
-    public void cleanUp() throws IOException {
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
-    }
 
     @Test
     public void testSortPairedNonPicard() throws IOException, URISyntaxException {

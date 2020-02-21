@@ -15,14 +15,10 @@
  */
 package com.epam.fonda;
 
-import com.epam.fonda.utils.TemplateEngineUtils;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,7 +32,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TcrRepertoireFastqIntegrationTest extends AbstractIntegrationTest {
 
-    private static final String OUTPUT_DIR = "output";
     private static final String OUTPUT_DIR_ROOT = "build/resources/integrationTest/";
 
     private static final String TCR_REPERTOIRE_FASTQ_TCR_DETECTION_FOR_SMV1_SH_FILE_PATH =
@@ -66,19 +61,12 @@ public class TcrRepertoireFastqIntegrationTest extends AbstractIntegrationTest {
     private static final String TCR_REPERTOIRE_FASTQ_STUDY_CONFIG_PATH =
         "TcrRepertoireFast/config_TcrRepertoire_Fastq_test.txt";
 
-    private final TemplateEngine expectedTemplateEngine = TemplateEngineUtils.init();
-    private final Context context = new Context();
-
-    @AfterEach
-    void cleanUp() throws IOException {
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
-    }
 
     @ParameterizedTest
     @MethodSource("initParameters")
     void testTcrRepertoireFastqWorkflow(String templatePath, String filePath) throws IOException, URISyntaxException {
         startAppWithConfigs(TCR_REPERTOIRE_FASTQ_GLOBAL_CONFIG_PATH, TCR_REPERTOIRE_FASTQ_STUDY_CONFIG_PATH);
-        String expectedCmd = expectedTemplateEngine.process(templatePath, context);
+        String expectedCmd = templateEngine.process(templatePath, context);
         assertEquals(expectedCmd.trim(), getCmd(filePath).trim());
     }
 

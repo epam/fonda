@@ -15,15 +15,10 @@
  */
 package com.epam.fonda;
 
-import com.epam.fonda.utils.PipelineUtils;
-import com.epam.fonda.utils.TemplateEngineUtils;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.io.File;
@@ -39,7 +34,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DnaAmpliconVarFastqIntegrationTest extends AbstractIntegrationTest {
 
-    private static final String OUTPUT_DIR = "output/";
     private static final String OUTPUT_DIR_ROOT = "build/resources/integrationTest/";
     private static final String ERROR_MESSAGE = "An error occurred with task %s";
 
@@ -83,20 +77,6 @@ public class DnaAmpliconVarFastqIntegrationTest extends AbstractIntegrationTest 
     private static final String G_SINGLE_ALL_TASKS = "DnaAmpliconVarFastq/gSingleAllTasks.txt";
     private static final String S_CONTROL_SAMPLE_NOT_NA_FOR_PA =
             "DnaAmpliconVarFastq/sControlSampleNotNaForPostAlignment.txt";
-
-    private Context context;
-    private TemplateEngine templateEngine = TemplateEngineUtils.init();
-
-    @BeforeEach
-    public void setup() {
-        context = new Context();
-        context.setVariable("jarPath", PipelineUtils.getExecutionPath());
-    }
-
-    @AfterEach
-    public void cleanUp() throws IOException {
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
-    }
 
     @ParameterizedTest
     @MethodSource("initControlSampleAllTasks")

@@ -15,21 +15,15 @@
  */
 package com.epam.fonda;
 
-import com.epam.fonda.utils.TemplateEngineUtils;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.stream.Stream;
 
-import static com.epam.fonda.utils.PipelineUtils.getExecutionPath;
 import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,7 +31,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DnaAnalysisIntegrationTest extends AbstractIntegrationTest {
 
-    private static final String OUTPUT_DIR = "output";
     private static final String OUTPUT_DIR_ROOT = "build/resources/integrationTest/";
     private static final String AMPLICON = "Amplicon";
     private static final String CAPTURE = "Capture";
@@ -102,32 +95,18 @@ public class DnaAnalysisIntegrationTest extends AbstractIntegrationTest {
     private static final String LAST_PART_TO_THE_PATH_OF_MERGE_MUTATION_SH =
         "Var_Fastq_mergeMutation_for_cohort_analysis.sh";
 
-    private final TemplateEngine expectedTemplateEngine = TemplateEngineUtils.init();
-    private Context context;
-
-    @BeforeEach
-    void setup() {
-        context = new Context();
-        context.setVariable("jarPath", getExecutionPath());
-    }
-
-    @AfterEach
-    void cleanUp() throws IOException {
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
-    }
-
     @ParameterizedTest
     @MethodSource("initParameters")
     public void testPeriodicDnaMutationStatusCheck(String globalConfigPath, String templatePath, String taskName,
         String workflow, String mergeMutationTemplatePath) throws IOException, URISyntaxException {
         startAppWithConfigs(globalConfigPath, DNA_ANALYSIS_S_SINGLE_STUDY_CONFIG);
 
-        String expectedCmd = expectedTemplateEngine.process(templatePath, context);
+        String expectedCmd = templateEngine.process(templatePath, context);
         String filePath = FIRST_PART_OF_THE_PATH_TO_DNA_SHELL_SCRIPT + workflow +
             THIRD_PART_OF_THE_PATH_TO_DNA_SHELL_SCRIPT + taskName + LAST_PART_OF_THE_PATH_TO_DNA_SHELL_SCRIPT;
         assertEquals(expectedCmd.trim(), getCmd(filePath).trim());
 
-        expectedCmd = expectedTemplateEngine.process(mergeMutationTemplatePath, context);
+        expectedCmd = templateEngine.process(mergeMutationTemplatePath, context);
         filePath = FIRST_PART_TO_THE_PATH_OF_MERGE_MUTATION_SH + workflow + LAST_PART_TO_THE_PATH_OF_MERGE_MUTATION_SH;
         assertEquals(expectedCmd.trim(), getCmd(filePath).trim());
     }

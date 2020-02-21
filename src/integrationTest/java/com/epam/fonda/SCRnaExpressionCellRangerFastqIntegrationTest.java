@@ -17,14 +17,12 @@ package com.epam.fonda;
 
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.utils.CellRangerUtils;
-import com.epam.fonda.utils.TemplateEngineUtils;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +32,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.stream.Stream;
 
-import static com.epam.fonda.utils.PipelineUtils.getExecutionPath;
 import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,7 +39,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SCRnaExpressionCellRangerFastqIntegrationTest extends AbstractIntegrationTest {
 
-    private static final String OUTPUT_DIR = "output";
     private static final String OUTPUT_DIR_ROOT = "build/resources/integrationTest/";
     private static final String SCRNA_ANALYSIS_COUNT_QC_DOUBLET_DETECTION_TEST_TEMPLATE_PATH =
             "scRnaExpressionCellRangerFastq/scRnaExpressionCellRangerFastq_CountDoubletDetectionQC_template.txt";
@@ -67,8 +63,6 @@ class SCRnaExpressionCellRangerFastqIntegrationTest extends AbstractIntegrationT
     private static final String SAMPLE_1 = "sampleName";
 
     private FastqFileSample expectedSample;
-    private TemplateEngine expectedTemplateEngine = TemplateEngineUtils.init();
-    private Context context;
     private String appName;
 
     @BeforeEach
@@ -76,13 +70,16 @@ class SCRnaExpressionCellRangerFastqIntegrationTest extends AbstractIntegrationT
         expectedSample = new FastqFileSample();
         expectedSample.setFastq1(Arrays.asList(FASTQ_1, FASTQ_2));
         expectedSample.setName(SAMPLE_1);
-        context = new Context();
-        context.setVariable("jarPath", getExecutionPath());
         FastqFileSample sampleForTestingWorkflow = new FastqFileSample();
         sampleForTestingWorkflow.setFastq1(Collections.singletonList(FASTQ_DIR));
         context.setVariable("sampleList", String.join(",",
                 CellRangerUtils.extractFastqDir(sampleForTestingWorkflow).getFastqDirs()));
         appName = Paths.get(System.getProperty("user.dir")).getFileName().toString();
+    }
+
+    @AfterEach
+    public void cleanUp() {
+
     }
 
     @Test
@@ -102,7 +99,7 @@ class SCRnaExpressionCellRangerFastqIntegrationTest extends AbstractIntegrationT
     @MethodSource("initParameters")
     void testCount(String globalConfigPath, String templatePath) throws IOException, URISyntaxException {
         startAppWithConfigs(globalConfigPath, SCRNA_EXPRESSION_FASTQ_STUDY_CONFIG);
-        final String expectedCmd = expectedTemplateEngine.process(templatePath, context);
+        final String expectedCmd = templateEngine.process(templatePath, context);
         assertEquals(expectedCmd.trim(), getCmd(TEST_SHELL_SCRIPT_TEMPLATE_PATH).trim());
         cleanOutputDirForNextTest(OUTPUT_DIR, false);
     }
