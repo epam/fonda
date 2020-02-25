@@ -15,13 +15,10 @@
  */
 package com.epam.fonda;
 
-import com.epam.fonda.utils.TemplateEngineUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,7 +32,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DnaWgsVarFastqIntegrationTest extends AbstractIntegrationTest {
 
-    private static final String OUTPUT_DIR = "output";
     private static final String OUTPUT_DIR_ROOT = "build/resources/integrationTest/";
 
     private static final String DNA_WGS_VAR_FASTQ_ALIGNMENT_FOR_GA_5_1_SH_FILE_PATH =
@@ -64,14 +60,11 @@ public class DnaWgsVarFastqIntegrationTest extends AbstractIntegrationTest {
         "DnaWgsVarFastq/global_config_DnaWgsVar_Fastq_v1.1.txt";
     public static final String STUDY_CONFIG_PATH = "DnaWgsVarFastq/sscRnaExpressionCellRangerFastq.txt";
 
-    private final TemplateEngine expectedTemplateEngine = TemplateEngineUtils.init();
-    private final Context context = new Context();
-
     @ParameterizedTest
     @MethodSource("initParameters")
     void testControlSample(String templatePath, String filePath) throws IOException, URISyntaxException {
         startAppWithConfigs(DNA_WGS_VAR_FASTQ_GLOBAL_CONFIG_PATH, STUDY_CONFIG_PATH);
-        String expectedCmd = expectedTemplateEngine.process(templatePath, context);
+        String expectedCmd = templateEngine.process(templatePath, context);
         assertEquals(expectedCmd.trim(), getCmd(filePath).trim());
     }
 
