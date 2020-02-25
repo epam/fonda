@@ -1,0 +1,296 @@
+#!/bin/bash -x
+
+# --- SGE options --- #
+
+#$ -wd build/resources/integrationTest/output
+#$ -N RnaCaptureVar_Fastq_alignment_for_GA5_analysis
+#$ -o build/resources/integrationTest/output/log_files/RnaCaptureVar_Fastq_alignment_for_GA5_analysis.log
+#$ -e build/resources/integrationTest/output/err_files/RnaCaptureVar_Fastq_alignment_for_GA5_analysis.err
+#$ -q all.q
+#$ -R y
+#$ -pe threaded 4
+#$ -m a
+
+# --- The commands to be executed --- #
+
+cd build/resources/integrationTest/output
+
+echo `date` Begin the job execution...
+
+echo `date` Begin Step: Merge fastqs...
+cp /ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_001.fastq.gz build/resources/integrationTest/output/GA5/fastq/GA5.merged_R1.fastq.gz
+cp /ngs/data/demo/test/fastq_data/GA5_0001_L002_R2_001.fastq.gz build/resources/integrationTest/output/GA5/fastq/GA5.merged_R2.fastq.gz
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Merge fastqs.
+	sleep 8
+else
+	echo `date` Error Step: Merge fastqs.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Xenome classification...
+/usr/bin/xenome classify -T 8 -P /ngs/data/xenomeIdx/xenome.idx --pairs --graft-name human --host-name mouse --output-filename-prefix build/resources/integrationTest/output/GA5/tmp/GA5 --tmp-dir build/resources/integrationTest/output/GA5/tmp -i build/resources/integrationTest/output/GA5/fastq/GA5.merged_R1.fastq.gz -i build/resources/integrationTest/output/GA5/fastq/GA5.merged_R2.fastq.gz
+awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' build/resources/integrationTest/output/GA5/tmp/GA5_human_1.fastq > build/resources/integrationTest/output/GA5/tmp/GA5_convert_human_1.fastq
+awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' build/resources/integrationTest/output/GA5/tmp/GA5_human_2.fastq > build/resources/integrationTest/output/GA5/tmp/GA5_convert_human_2.fastq
+awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' build/resources/integrationTest/output/GA5/tmp/GA5_both_1.fastq > build/resources/integrationTest/output/GA5/tmp/GA5_convert_both_1.fastq
+awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' build/resources/integrationTest/output/GA5/tmp/GA5_both_2.fastq > build/resources/integrationTest/output/GA5/tmp/GA5_convert_both_2.fastq
+awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' build/resources/integrationTest/output/GA5/tmp/GA5_ambiguous_1.fastq > build/resources/integrationTest/output/GA5/tmp/GA5_convert_ambiguous_1.fastq
+awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' build/resources/integrationTest/output/GA5/tmp/GA5_ambiguous_2.fastq > build/resources/integrationTest/output/GA5/tmp/GA5_convert_ambiguous_2.fastq
+cat build/resources/integrationTest/output/GA5/tmp/GA5_convert_human_1.fastq build/resources/integrationTest/output/GA5/tmp/GA5_convert_both_1.fastq build/resources/integrationTest/output/GA5/tmp/GA5_convert_ambiguous_1.fastq | gzip -c > build/resources/integrationTest/output/GA5/fastq/GA5_classified_R1.fq.gz
+cat build/resources/integrationTest/output/GA5/tmp/GA5_convert_human_2.fastq build/resources/integrationTest/output/GA5/tmp/GA5_convert_both_2.fastq build/resources/integrationTest/output/GA5/tmp/GA5_convert_ambiguous_2.fastq | gzip -c > build/resources/integrationTest/output/GA5/fastq/GA5_classified_R2.fq.gz
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Xenome classification.
+	sleep 8
+else
+	echo `date` Error Step: Xenome classification.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Seqpurge trimming...
+/opt/ngs_bits/ngs-bits/bin/SeqPurge -threads 4 -in1 build/resources/integrationTest/output/GA5/fastq/GA5_classified_R1.fq.gz -in2 build/resources/integrationTest/output/GA5/fastq/GA5_classified_R2.fq.gz -out1 build/resources/integrationTest/output/GA5/fastq/GA5.trimmed.R1.fastq.gz -out2 build/resources/integrationTest/output/GA5/fastq/GA5.trimmed.R2.fastq.gz -qcut 20
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Seqpurge trimming.
+	sleep 8
+else
+	echo `date` Error Step: Seqpurge trimming.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` the adapter sequence trmming step was skipped since no adapter sequences were provided in the config files.
+
+echo `date` Begin Step: STAR alignment...
+/site/ne/home/wings/bfx_tools/STAR/v2.4.0h1/bin/Linux_x86_64/STAR --genomeDir /site/ne/home/wings/ref_data/reference_genome/hg19/hg19_decoy/STAR_Index --genomeLoad NoSharedMemory --readFilesIn build/resources/integrationTest/output/GA5/fastq/GA5.trimmed.R1.fastq.gz build/resources/integrationTest/output/GA5/fastq/GA5.trimmed.R2.fastq.gz --outFileNamePrefix build/resources/integrationTest/output/GA5/bam/GA5. --outFilterMatchNmin 0 --outStd Log --outFilterMultimapNmax 5 --outFilterMatchNminOverLread 0.66 --outFilterScoreMinOverLread 0.66 --outSAMunmapped Within --outFilterMultimapScoreRange 1 --outSAMstrandField intronMotif --outFilterScoreMin 0 --alignSJoverhangMin 8 --alignSJDBoverhangMin 1 --runThreadN 4 --outSAMtype BAM Unsorted --outSAMattrRGline ID:GA5 SM:GA5 LB:RNA PL:Illumina CN:cr --readFilesCommand zcat
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: STAR alignment.
+	sleep 8
+else
+	echo `date` Error Step: STAR alignment.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Sort bam...
+/site/ne/app/x86_64/java/v1.8.0u121/bin/java -jar /site/ne/home/wings/bfx_tools/picard/v2.10.3/picard.jar SortSam INPUT=build/resources/integrationTest/output/GA5/bam/GA5.Aligned.out.bam OUTPUT=build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.bam SORT_ORDER=coordinate VALIDATION_STRINGENCY=SILENT
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Sort bam.
+	sleep 8
+else
+	echo `date` Error Step: Sort bam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Index bam...
+/site/ne/home/wings/bfx_tools/samtools/v0.1.19/samtools index build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.bam
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Index bam.
+	sleep 8
+else
+	echo `date` Error Step: Index bam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Mark duplicates...
+/site/ne/app/x86_64/java/v1.8.0u121/bin/java -Xmx16g -jar /site/ne/home/wings/bfx_tools/picard/v2.10.3/picard.jar MarkDuplicates INPUT=build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.bam OUTPUT=build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.mkdup.bam METRICS_FILE=build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.metrics ASSUME_SORTED=true REMOVE_DUPLICATES=false VALIDATION_STRINGENCY=SILENT TMP_DIR=build/resources/integrationTest/output/GA5/tmp
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Mark duplicates.
+	sleep 8
+else
+	echo `date` Error Step: Mark duplicates.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Index mkdup bam...
+/site/ne/home/wings/bfx_tools/samtools/v0.1.19/samtools index build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.mkdup.bam
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Index mkdup bam.
+	sleep 8
+else
+	echo `date` Error Step: Index mkdup bam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Remove Duplicates...
+/site/ne/home/wings/bfx_tools/samtools/v0.1.19/samtools view -bF 1024 build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.mkdup.bam > build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.bam
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Remove duplicates.
+	sleep 8
+else
+	echo `date` Error Step: Remove duplicates.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Index rmdup bam...
+/site/ne/home/wings/bfx_tools/samtools/v0.1.19/samtools index build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.bam
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Index rmdup bam.
+	sleep 8
+else
+	echo `date` Error Step: Index rmdup bam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: RNA QC metrics...
+/site/ne/app/x86_64/java/v1.8.0u121/bin/java -Xmx16g -jar /site/ne/home/wings/bfx_tools/picard/v2.10.3/picard.jar CollectAlignmentSummaryMetrics REFERENCE_SEQUENCE=/site/ne/home/wings/ref_data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa INPUT=build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.mkdup.bam OUTPUT=build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.align.metrics VALIDATION_STRINGENCY=SILENT TMP_DIR=build/resources/integrationTest/output/GA5/tmp
+/site/ne/app/x86_64/java/v1.8.0u121/bin/java -Xmx16g -jar /site/ne/home/wings/bfx_tools/picard/v2.10.3/picard.jar CollectHsMetrics REFERENCE_SEQUENCE=/site/ne/home/wings/ref_data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa INPUT=build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.mkdup.bam OUTPUT=build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.hs.metrics MQ=0 Q=0 TARGET_INTERVALS=/site/ne/home/wings/ref_data/seq-hybrid_capture/SureSelectHumanAllExon/v4/S03723314_Padded_decoy.txt BAIT_INTERVALS=/site/ne/home/wings/ref_data/seq-hybrid_capture/SureSelectHumanAllExon/v4/S03723314_Padded_decoy.txt VALIDATION_STRINGENCY=SILENT TMP_DIR=build/resources/integrationTest/output/GA5/tmp
+/site/ne/app/x86_64/java/v1.8.0u121/bin/java -Xmx16g -jar /site/ne/home/wings/bfx_tools/picard/v2.10.3/picard.jar CollectHsMetrics REFERENCE_SEQUENCE=/site/ne/home/wings/ref_data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa INPUT=build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.bam OUTPUT=build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.rmdup.hs.metrics MQ=0 Q=0 TARGET_INTERVALS=/site/ne/home/wings/ref_data/seq-hybrid_capture/SureSelectHumanAllExon/v4/S03723314_Padded_decoy.txt BAIT_INTERVALS=/site/ne/home/wings/ref_data/seq-hybrid_capture/SureSelectHumanAllExon/v4/S03723314_Padded_decoy.txt VALIDATION_STRINGENCY=SILENT TMP_DIR=build/resources/integrationTest/output/GA5/tmp
+/site/ne/app/x86_64/java/v1.8.0u121/bin/java -Xmx16g -jar /site/ne/home/wings/bfx_tools/picard/v2.10.3/picard.jar CollectGcBiasMetrics REFERENCE_SEQUENCE=/site/ne/home/wings/ref_data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa INPUT=build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.mkdup.bam OUTPUT=build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.gcbias.metrics SUMMARY_OUTPUT=build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.gc.summary.metrics CHART=build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.gcbias.pdf VALIDATION_STRINGENCY=SILENT TMP_DIR=build/resources/integrationTest/output/GA5/tmp
+/site/ne/app/x86_64/java/v1.8.0u121/bin/java -Xmx16g -jar /site/ne/home/wings/bfx_tools/picard/v2.10.3/picard.jar CollectInsertSizeMetrics REFERENCE_SEQUENCE=/site/ne/home/wings/ref_data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa INPUT=build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.mkdup.bam OUTPUT=build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.insertsize.metrics HISTOGRAM_FILE=build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.insertsize.pdf VALIDATION_STRINGENCY=SILENT TMP_DIR=build/resources/integrationTest/output/GA5/tmp
+/site/ne/app/x86_64/java/v1.8.0u121/bin/java -Xmx16g -jar /site/ne/home/wings/bfx_tools/picard/v2.10.3/picard.jar CollectQualityYieldMetrics REFERENCE_SEQUENCE=/site/ne/home/wings/ref_data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa INPUT=build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.mkdup.bam OUTPUT=build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.quality.metrics VALIDATION_STRINGENCY=SILENT TMP_DIR=build/resources/integrationTest/output/GA5/tmp
+/site/ne/home/wings/bfx_tools/samtools/v0.1.19/samtools mpileup -q 0 -Q 0 -B -d 100000 -f /site/ne/home/wings/ref_data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -l /site/ne/home/wings/ref_data/seq-hybrid_capture/SureSelectHumanAllExon/v4/S03723314_Padded.bed build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.bam > build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.rmdup.pileup
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: RNA QC metrics.
+	sleep 8
+else
+	echo `date` Error Step: RNA QC metrics.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Merge RNA QC...
+/site/ne/app/x86_64/python/v2.7.2/bin/python /Users/ilyaugryumov/IdeaProjects/fonda/build/classes/main/src/python/dna_rna_variant_qc_metrics.py --sample GA5 --align build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.align.metrics --mkdup_hybrid build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.hs.metrics --rmdup_hybrid build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.rmdup.hs.metrics --insert build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.insertsize.metrics --gcbias build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.gc.summary.metrics --duplicate build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.metrics --pileup build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.rmdup.pileup --read_type paired --type wes --project Example_project --run run1234 --date 031814 --output build/resources/integrationTest/output/GA5/qc/GA5.alignment.merged.QC.metric.txt
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Merge RNA QC.
+	sleep 8
+else
+	echo `date` Error Step: Merge RNA QC.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: GATK SplitNCigarReads...
+/site/ne/app/x86_64/java/v1.8.0u121/bin/java -Xmx10g -Djava.io.tmpdir=null -jar /site/ne/home/wings/bfx_tools/GATK/v3.7/GenomeAnalysisTK.jar -T SplitNCigarReads -R /site/ne/home/wings/ref_data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa --input_file build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.bam -rf ReassignOneMappingQuality -RMQF 255 -RMQT 60 -U ALLOW_N_CIGAR_READS --out build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.bam --validation_strictness SILENT
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: GATK SplitNCigarReads.
+	sleep 8
+else
+	echo `date` Error Step: GATK SplitNCigarReads.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: ABRA realignment...
+/site/ne/app/x86_64/java/v1.8.0u121/bin/java -Xmx16g -jar null --threads 4 --tmpdir build/resources/integrationTest/output/GA5/tmp --ref /site/ne/home/wings/ref_data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa --in build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.bam --out build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.realign.bam --targets /site/ne/home/wings/ref_data/seq-hybrid_capture/SureSelectHumanAllExon/v4/S03723314_Padded.bed
+/site/ne/home/wings/bfx_tools/samtools/v0.1.19/samtools index build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.realign.bam
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: ABRA realignment.
+	sleep 8
+else
+	echo `date` Error Step: ABRA realignment.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: GATK realignment...
+/site/ne/app/x86_64/java/v1.8.0u121/bin/java -Xmx10g -Djava.io.tmpdir=build/resources/integrationTest/output/GA5/tmp -jar /site/ne/home/wings/bfx_tools/GATK/v3.7/GenomeAnalysisTK.jar -T RealignerTargetCreator -R /site/ne/home/wings/ref_data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -I build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.realign.bam -o build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.realign.realign_interval.list -known /site/ne/home/wings/ref_data/public_data/gatk_known_indels/Mills_and_1000G_gold_standard.indels.hg19_decoy.vcf -known /site/ne/home/wings/ref_data/public_data/gatk_known_indels/1000G_phase1.indels.hg19_decoy.vcf
+/site/ne/app/x86_64/java/v1.8.0u121/bin/java -Xmx10g -Djava.io.tmpdir=build/resources/integrationTest/output/GA5/tmp -jar /site/ne/home/wings/bfx_tools/GATK/v3.7/GenomeAnalysisTK.jar -T IndelRealigner -R /site/ne/home/wings/ref_data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -I build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.realign.bam -targetIntervals build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.realign.realign_interval.list -o build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.realign.realign.bam --maxReadsForRealignment 100000 -known /site/ne/home/wings/ref_data/public_data/gatk_known_indels/Mills_and_1000G_gold_standard.indels.hg19_decoy.vcf -known /site/ne/home/wings/ref_data/public_data/gatk_known_indels/1000G_phase1.indels.hg19_decoy.vcf
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: GATK realignment.
+	sleep 8
+else
+	echo `date` Error Step: GATK realignment.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: GATK recalibration...
+/site/ne/app/x86_64/java/v1.8.0u121/bin/java -Xmx10g -Djava.io.tmpdir=build/resources/integrationTest/output/GA5/tmp -jar /site/ne/home/wings/bfx_tools/GATK/v3.7/GenomeAnalysisTK.jar -T BaseRecalibrator -R /site/ne/home/wings/ref_data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -I build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.realign.realign.bam --disable_indel_quals -knownSites /site/ne/home/wings/ref_data/public_data/dbSNP/dbsnp_138.hg19_decoy.vcf -knownSites /site/ne/home/wings/ref_data/public_data/gatk_known_indels/Mills_and_1000G_gold_standard.indels.hg19_decoy.vcf -knownSites /site/ne/home/wings/ref_data/public_data/gatk_known_indels/1000G_phase1.indels.hg19_decoy.vcf -o build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.realign.realign.recal.table
+/site/ne/app/x86_64/java/v1.8.0u121/bin/java -Xmx10g -Djava.io.tmpdir=build/resources/integrationTest/output/GA5/tmp -jar /site/ne/home/wings/bfx_tools/GATK/v3.7/GenomeAnalysisTK.jar -T PrintReads -R /site/ne/home/wings/ref_data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -I build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.realign.realign.bam -BQSR build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.realign.realign.recal.table -o build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.realign.realign.recal.bam
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: GATK recalibration.
+	sleep 8
+else
+	echo `date` Error Step: GATK recalibration.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Run gatkHaplotypeCaller...
+qsub build/resources/integrationTest/output/sh_files/RnaCaptureVar_Fastq_gatkHaplotypeCaller_for_GA5_analysis.sh
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Run gatkHaplotypeCaller.
+	sleep 8
+else
+	echo `date` Error Step: Run gatkHaplotypeCaller.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Remove temporary directories...
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.realign.realign.recal.table
+rm -rf build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.insertsize.metrics
+rm -rf build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.align.metrics
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.Aligned.out.bam.bai
+rm -rf build/resources/integrationTest/output/GA5/gatkHaplotypeCaller/tmp
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.mkdup.bam.bai
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.realign.realign.bam.bai
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.mkdup.bam
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.bam.bai
+rm -rf build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.rmdup.pileup
+rm -rf build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.rmdup.hs.metrics
+rm -rf build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.metrics
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.realign.realign_interval.list
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.bam
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.bam.bai
+rm -rf build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.quality.metrics
+rm -rf build/resources/integrationTest/output/GA5/tmp
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.realign.realign.bam
+rm -rf build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.gcbias.metrics
+rm -rf build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.gc.summary.metrics
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.bam
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.Aligned.out.bam
+rm -rf build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.hs.metrics
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Remove temporary directories.
+	sleep 8
+else
+	echo `date` Error Step: Remove temporary directories.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Finish the job execution!
