@@ -16,7 +16,7 @@ version = new Version(major: 2, minor: 0, patch: 0, build: buildNumber)
 class Version {
     int major, minor, patch
     String build
-    
+
     String toString() {
         "$major.$minor.$patch${build ? ".$build" : ''}"
     }
@@ -75,11 +75,7 @@ dependencies {
 
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: versionJunitJupiterApi
     testRuntime group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: versionJunitJupiterEngine
-    testCompile group: 'junit', name: 'junit', version: versionJunit
-    testRuntime group: 'org.junit.vintage', name: 'junit-vintage-engine', version: versionJunitJupiterEngine
     testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: versionJunitParams
-    testCompile group: 'com.tngtech.java', name: 'junit-dataprovider', version: versionJunitDataprovider
-    testCompile group: 'com.github.stefanbirkner', name: 'system-rules', version: versionSystemRules
     testCompileOnly group: 'org.projectlombok', name: 'lombok', version: versionLombok
 }
 
@@ -131,12 +127,9 @@ jacocoTestCoverageVerification {
     violationRules {
         rule {
             element = 'CLASS'
-            excludes = ['com.epam.fonda.entity.*',
-                        'com.epam.fonda.workflow.Workflow',
-                        'com.epam.fonda.workflow.BamWorkflow',
+            excludes = ['com.epam.fonda.workflow.Workflow',
                         'com.epam.fonda.OptionNames',
                         'com.epam.fonda.Main',
-                        'com.epam.fonda.FondaLauncher',
                         'com.epam.fonda.Executor']
             limit {
                 counter = 'LINE'

@@ -15,22 +15,16 @@
  */
 package com.epam.fonda;
 
-import com.epam.fonda.utils.TemplateEngineUtils;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.stream.Stream;
 
-import static com.epam.fonda.utils.PipelineUtils.getExecutionPath;
 import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,7 +32,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SCRnaExpressionBamIntegrationTest extends AbstractIntegrationTest {
 
-    private static final String OUTPUT_DIR = "output";
     private static final String OUTPUT_DIR_ROOT = "build/resources/integrationTest/";
 
     private static final String SC_RNA_EXPRESSION_BAM_CUFFLINKS_FOR_GA_5_ANALYSIS_TEMPLATE_PATH =
@@ -104,26 +97,13 @@ public class SCRnaExpressionBamIntegrationTest extends AbstractIntegrationTest {
     private static final String RSEM_TASK_NAME = "rsem";
     private static final String STRINGTIE_TASK_NAME = "stringtie";
 
-    private final TemplateEngine expectedTemplateEngine = TemplateEngineUtils.init();
-    private final Context context = new Context();
-
-    @BeforeEach
-    void setUp() {
-        context.setVariable("jarPath", getExecutionPath());
-    }
-
-    @AfterEach
-    void cleanUp() throws IOException {
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
-    }
-
     @ParameterizedTest
     @MethodSource("initParameters")
     void testWorkflow(String taskName, String suffixForFilePath, String templatePath)
         throws IOException, URISyntaxException {
         startAppWithConfigs(SCRNA_EXPRESSION_BAM_GLOBAL_CONFIG, SCRNA_EXPRESSION_BAM_STUDY_CONFIG);
         String filePath = FIRST_PART_OF_THE_SH_FILE_PATH + taskName + suffixForFilePath;
-        final String expectedCmd = expectedTemplateEngine.process(templatePath, context);
+        final String expectedCmd = templateEngine.process(templatePath, context);
         assertEquals(expectedCmd.trim(), getCmd(filePath).trim());
     }
 
@@ -131,13 +111,13 @@ public class SCRnaExpressionBamIntegrationTest extends AbstractIntegrationTest {
     void testConversion() throws IOException, URISyntaxException {
         startAppWithConfigs(SCRNA_EXPRESSION_BAM_GLOBAL_CONFIG, SCRNA_EXPRESSION_BAM_STUDY_CONFIG);
         String expectedCmd =
-            expectedTemplateEngine.process(SC_RNA_EXPRESSION_BAM_CUFFLINKS_FOR_COHORT_TEMPLATE_PATH, context);
+            templateEngine.process(SC_RNA_EXPRESSION_BAM_CUFFLINKS_FOR_COHORT_TEMPLATE_PATH, context);
         assertEquals(expectedCmd.trim(), getCmd(SC_RNA_EXPRESSION_BAM_CUFFLINKS_FOR_COHORT_FILE_PATH).trim());
 
-        expectedCmd = expectedTemplateEngine.process(SC_RNA_EXPRESSION_BAM_RSEM_FOR_COHORT_TEMPLATE_PATH, context);
+        expectedCmd = templateEngine.process(SC_RNA_EXPRESSION_BAM_RSEM_FOR_COHORT_TEMPLATE_PATH, context);
         assertEquals(expectedCmd.trim(), getCmd(SC_RNA_EXPRESSION_BAM_RSEM_FOR_COHORT_FILE_PATH).trim());
 
-        expectedCmd = expectedTemplateEngine.process(SC_RNA_EXPRESSION_BAM_STRINGTIE_FOR_COHORT_TEMPLATE_PATH, context);
+        expectedCmd = templateEngine.process(SC_RNA_EXPRESSION_BAM_STRINGTIE_FOR_COHORT_TEMPLATE_PATH, context);
         assertEquals(expectedCmd.trim(), getCmd(SC_RNA_EXPRESSION_BAM_STRINGTIE_FOR_COHORT_FILE_PATH).trim());
     }
 

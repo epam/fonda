@@ -15,8 +15,12 @@
  */
 package com.epam.fonda;
 
+import com.epam.fonda.utils.TemplateEngineUtils;
 import com.epam.fonda.workflow.TaskContainer;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,41 +32,46 @@ import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.Objects;
 
+import static com.epam.fonda.utils.PipelineUtils.getExecutionPath;
+
 /**
  * Helper class to provide common functionality of integration tests
  */
 public abstract class AbstractIntegrationTest {
 
+    public static Context context;
+    public static TemplateEngine templateEngine = TemplateEngineUtils.init();
+    public static final String OUTPUT_DIR = "output/";
+
+    @BeforeEach
+    public void setUp() {
+        context = new Context();
+        context.setVariable("jarPath", getExecutionPath());
+    }
+
     @AfterEach
-    public void cleanup() {
+    public void cleanUp() throws IOException {
+        cleanOutputDirForNextTest(OUTPUT_DIR);
         TaskContainer.getTasks().clear();
     }
 
     /**
      * @param outputDir a path to the directory need to be deleted
-     * @param innerTest must be true if it is a path to the directory not located in build/resources/... folder
      * @throws IOException
      */
-    public void cleanOutputDirForNextTest(String outputDir, boolean innerTest) throws IOException {
-        Path dirToDelete = null;
-        if (innerTest) {
-            dirToDelete = Paths.get(outputDir);
-        }
+    public void cleanOutputDirForNextTest(String outputDir) throws IOException {
         try {
-            Path dirResource = Paths.get(this.getClass().getClassLoader().getResource(outputDir).toURI());
-            if (dirResource != null) {
-                dirToDelete = Paths.get(dirResource.toUri());
+            Path dirResource = Paths.get(
+                    Objects.requireNonNull(this.getClass().getClassLoader().getResource(outputDir)).toURI());
+            Path dirToDelete = Paths.get(dirResource.toUri());
+            if (dirToDelete.toFile().exists()) {
+                Files.walk(dirToDelete, FileVisitOption.FOLLOW_LINKS)
+                        .map(Path::toFile)
+                        .sorted(Comparator.reverseOrder())
+                        .forEach(File::delete);
             }
         } catch (URISyntaxException e) {
             throw new IOException(e);
-        }
-
-
-        if (dirToDelete != null && dirToDelete.toFile().exists()) {
-            Files.walk(dirToDelete, FileVisitOption.FOLLOW_LINKS)
-                    .map(Path::toFile)
-                    .sorted(Comparator.reverseOrder())
-                    .forEach(File::delete);
         }
     }
 

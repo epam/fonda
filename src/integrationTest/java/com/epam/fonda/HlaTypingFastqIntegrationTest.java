@@ -15,13 +15,9 @@
  */
 package com.epam.fonda;
 
-import com.epam.fonda.utils.TemplateEngineUtils;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -31,7 +27,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HlaTypingFastqIntegrationTest extends AbstractIntegrationTest {
 
-    private static final String OUTPUT_DIR = "output";
     private static final String G_CONFIG_PAIRED_SEQPURGE_OPTITYPE_PATH = "HlaTypingFastq/gPairedSeqpurgeOptiType.txt";
     private static final String G_CONFIG_PAIRED_TRIMM_QC_XENOME_YES_PATH = "HlaTypingFastq/gPairedTrimmQcXenomeYes.txt";
     private static final String S_CONFIG_PATH = "HlaTypingFastq/sHlaTypingFastq.txt";
@@ -46,13 +41,6 @@ public class HlaTypingFastqIntegrationTest extends AbstractIntegrationTest {
     private static final String TEMPLATE_OUTPUT_SMV2_SUFFIX = "HlaTyping_Fastq_hlatyping_for_smv2_analysis";
     private static final String TEMPLATE_OUTPUT_SMV3_SUFFIX = "HlaTyping_Fastq_hlatyping_for_smv3_analysis";
     private static final String TEMPLATE_OUTPUT_SMV5_SUFFIX = "HlaTyping_Fastq_hlatyping_for_smv5_analysis";
-    private TemplateEngine templateEngine = TemplateEngineUtils.init();
-    private Context context = new Context();
-
-    @AfterEach
-    public void cleanupDir() throws IOException {
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
-    }
 
     @ParameterizedTest(name = "{1}-test")
     @MethodSource("initParametersPairedSeqpurgeOptiType")

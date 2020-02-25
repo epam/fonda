@@ -17,16 +17,11 @@ package com.epam.fonda;
 
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.utils.CellRangerUtils;
-import com.epam.fonda.utils.PipelineUtils;
-import com.epam.fonda.utils.TemplateEngineUtils;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,7 +37,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SCImmuneProfileCellRangerFastqTest extends AbstractIntegrationTest {
 
     private static final String OUTPUT_DIR_ROOT = "build/resources/integrationTest/";
-    private static final String OUTPUT_DIR = "output";
     private static final String SCIMMUNE_PROFILE_CELLRANGER_FASTQ_PBMC4K_TEST_TEMPLATE =
             "scImmuneProfileCellRangerFastq/scImmuneProfileCellRangerFastq_VdjQc_template.txt";
     private static final String SCIMMUNE_PROFILE_CELL_RANGER_FASTQ_COHORT_TEST_TEMPLATE =
@@ -55,8 +49,6 @@ public class SCImmuneProfileCellRangerFastqTest extends AbstractIntegrationTest 
     private static final String OUTPUT_FILE_PBMC_4_K_ANALYSIS_SH =
             "output/sh_files/scImmuneProfile_CellRanger_Fastq_alignment_for_pbmc4k_analysis.sh";
     private static final String FASTQ_DATA_FOLDER = "fastq_data";
-    private Context context = new Context();
-    private TemplateEngine expectedTemplateEngine = TemplateEngineUtils.init();
     private FastqFileSample expectedSample;
 
     @BeforeEach
@@ -68,16 +60,8 @@ public class SCImmuneProfileCellRangerFastqTest extends AbstractIntegrationTest 
                 .sampleOutputDir("build/resources/integrationTest/output/pbmc4k")
                 .build();
         String fastqDirs = String.join(",", CellRangerUtils.extractFastqDir(expectedSample).getFastqDirs());
-        String jarPath = PipelineUtils.getExecutionPath();
-        context = new Context();
         context.setVariable("fastqDir", fastqDirs);
-        context.setVariable("jarPath", jarPath);
         startAppWithConfigs(GLOBAL_CONFIG_NAME, STUDY_CONFIG_NAME);
-    }
-
-    @AfterEach
-    void cleanWorkDirs() throws IOException {
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
     }
 
     @Test
@@ -101,7 +85,7 @@ public class SCImmuneProfileCellRangerFastqTest extends AbstractIntegrationTest 
     @ParameterizedTest
     @MethodSource("initCmdAndOutput")
     void testVdj(String testTemplate, String outputFilePath) throws IOException, URISyntaxException {
-        final String expectedCmd = expectedTemplateEngine.process(testTemplate, context).trim();
+        final String expectedCmd = templateEngine.process(testTemplate, context).trim();
         final String actualCmd = getCmd(outputFilePath).trim();
 
         assertEquals(expectedCmd, actualCmd);

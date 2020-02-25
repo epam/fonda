@@ -15,15 +15,10 @@
  */
 package com.epam.fonda;
 
-import com.epam.fonda.utils.TemplateEngineUtils;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,7 +33,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.epam.fonda.utils.PipelineUtils.getExecutionPath;
 import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,7 +41,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DnaCaptureVarBamIntegrationTest extends AbstractIntegrationTest {
 
-    private static final String OUTPUT_DIR = "output";
     private static final String OUTPUT_DIR_ROOT = "build/resources/integrationTest/";
     private static final String NULL = "null";
 
@@ -88,19 +81,6 @@ public class DnaCaptureVarBamIntegrationTest extends AbstractIntegrationTest {
             "%s/DnaCaptureVar_Bam_vardict_for_GA51_analysis_test", NOT_NA_ALL_TASKS_FOLDER);
     private static final String VARIANT_DETECTION_FOR_GA_51_ANALYSIS_TEST = format(
             "%s/DnaCaptureVar_Bam_variantDetection_for_GA51_analysis_test", NOT_NA_ALL_TASKS_FOLDER);
-    private static Context context;
-    private TemplateEngine templateEngine = TemplateEngineUtils.init();
-
-    @BeforeEach
-    public void setup() {
-        context = new Context();
-        context.setVariable("jarPath", getExecutionPath());
-    }
-
-    @AfterEach
-    public void cleanWorkDir() throws IOException {
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
-    }
 
     @ParameterizedTest
     @MethodSource("initTaskAndTemplateNAAllTasks")

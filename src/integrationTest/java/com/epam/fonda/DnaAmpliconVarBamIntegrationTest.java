@@ -15,27 +15,20 @@
  */
 package com.epam.fonda;
 
-import com.epam.fonda.utils.TemplateEngineUtils;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.stream.Stream;
 
-import static com.epam.fonda.utils.PipelineUtils.getExecutionPath;
 import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.params.provider.Arguments.of;
 
 public class DnaAmpliconVarBamIntegrationTest extends AbstractIntegrationTest {
 
-    private static final String OUTPUT_DIR = "output";
     private static final String OUTPUT_SH_SUFFIX = "output/sh_files/";
     private static final String BAM_AMPLICON_VAR_BAM_SUFFIX = "DnaAmpliconVarBam/";
     private static final String CONTROL_SAMPLE_NAALL_TASKS_SUFFIX =
@@ -88,19 +81,6 @@ public class DnaAmpliconVarBamIntegrationTest extends AbstractIntegrationTest {
             "DnaAmpliconVarBam/gAllTasksSampleNotNA.txt";
     private static final String DNA_AMPLICON_VAR_BAM_S_CONTROL_NOT_NA =
             "DnaAmpliconVarBam/sControlSampleNotNA.txt";
-    private TemplateEngine templateEngine = TemplateEngineUtils.init();
-    private Context context = new Context();
-
-    @BeforeEach
-    public void setup() {
-        context = new Context();
-        context.setVariable("jarPath", getExecutionPath());
-    }
-
-    @AfterEach
-    public void cleanupDir() throws IOException {
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
-    }
 
     @ParameterizedTest(name = "{3}-test")
     @MethodSource("initParametersNAAll")

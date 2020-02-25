@@ -15,14 +15,10 @@
  */
 package com.epam.fonda;
 
-import com.epam.fonda.utils.TemplateEngineUtils;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,7 +32,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RnaFusionFastqIntegrationTest extends AbstractIntegrationTest {
     private static final String OUTPUT_SH_FILE = "output/sh_files/RnaFusion_Fastq_fusion_for_smv1_analysis.sh";
-    private static final String OUTPUT_DIR = "output/";
     private static final String OUTPUT_DIR_ROOT = "build/resources/integrationTest/";
     private static final String S_CONFIG_PATH = "RnaFusionFastq/sRnaFusionFastq.txt";
     private static final String SAMPLE_NAME = "smv1/";
@@ -64,14 +59,6 @@ public class RnaFusionFastqIntegrationTest extends AbstractIntegrationTest {
     private static final String RNA_FUSION_FASTQ_G_STAR_FUSION_AND_FUSION_CATCHER_TXT =
             "RnaFusionFastq/gStarFusionAndFusionCatcher.txt";
     private static final String NULL = "null";
-
-    private TemplateEngine templateEngine = TemplateEngineUtils.init();
-    private Context context = new Context();
-
-    @AfterEach
-    void cleanWorkDirs() throws IOException {
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
-    }
 
     @ParameterizedTest
     @MethodSource("initGlobalConfigAndTemplatePath")

@@ -16,15 +16,10 @@
 package com.epam.fonda;
 
 import com.epam.fonda.entity.configuration.GlobalConfigFormat;
-import com.epam.fonda.utils.TemplateEngineUtils;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,7 +34,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.epam.fonda.utils.PipelineUtils.getExecutionPath;
 import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,7 +41,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DnaWgsVarBamIntegrationTest extends AbstractIntegrationTest {
 
-    private static final String OUTPUT_DIR = "output";
     private static final String OUTPUT_DIR_ROOT = "build/resources/integrationTest/";
 
     private static final String FIRST_PART_OF_THE_TEST_SHELL_SCRIPT_PATH = "output/sh_files/DnaWgsVar_Bam_";
@@ -118,19 +111,6 @@ public class DnaWgsVarBamIntegrationTest extends AbstractIntegrationTest {
     private static final String DNA_WGA_VAR_BAN_MERGE_MUTATION_FOR_COHORT_ANALYSES_NOT_NA_TEMPLATE_PATH =
         "DnaWgsVarBam/DnaWgsVar_Bam_mergeMutation_for_cohort_analysis_not_NA_template.txt";
 
-    private TemplateEngine expectedTemplateEngine = TemplateEngineUtils.init();
-    private Context context = new Context();
-
-    @BeforeEach
-    void setUp() {
-        context.setVariable("jarPath", getExecutionPath());
-    }
-
-    @AfterEach
-    void cleanUp() throws IOException {
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
-    }
-
     @ParameterizedTest
     @MethodSource("initParameters")
     void testControlSample(String globalConfigPath, String studyConfigPath, String taskName,
@@ -139,13 +119,13 @@ public class DnaWgsVarBamIntegrationTest extends AbstractIntegrationTest {
         startAppWithConfigs(globalConfigPath, studyConfigPath);
 
         String filePath = format("%s%s%s", FIRST_PART_OF_THE_TEST_SHELL_SCRIPT_PATH, taskName, suffixForFilePath);
-        String expectedCmd = expectedTemplateEngine.process(templatePath, context);
+        String expectedCmd = templateEngine.process(templatePath, context);
         assertEquals(expectedCmd.trim(), getCmd(filePath).trim());
 
-        expectedCmd = expectedTemplateEngine.process(variantDetectionTemplatePath, context);
+        expectedCmd = templateEngine.process(variantDetectionTemplatePath, context);
         assertEquals(expectedCmd.trim(), getCmd(variantDetectionFilePath).trim());
 
-        expectedCmd = expectedTemplateEngine.process(mergeMutationTemplatePath, context);
+        expectedCmd = templateEngine.process(mergeMutationTemplatePath, context);
         assertEquals(expectedCmd.trim(), getCmd(TEST_SHELL_SCRIPT_PATH_MERGE_MUTATION).trim());
 
     }

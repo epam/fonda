@@ -15,25 +15,18 @@
  */
 package com.epam.fonda;
 
-import com.epam.fonda.utils.TemplateEngineUtils;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.stream.Stream;
 
-import static com.epam.fonda.utils.PipelineUtils.getExecutionPath;
 import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
-    private static final String OUTPUT_DIR = "output";
     private static final String DNA_CAPTURE_VAR_FASTQ_DIR = "DnaCaptureVarFastq";
     private static final String OUTPUT_SH_FILES_DIR = "output/sh_files";
     private static final String STUDY_CONFIG_SINGLE = "sSingle.txt";
@@ -49,19 +42,13 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
     private static final String TRIMMOMATIC_NOVOALIGN_SINGLE_TEMPLATES = "TrimmomaticNovoalignSingle";
     private static final String XENOME_SEQPURGE_BWA_PAIRED_TEMPLATES = "XenomeSeqpurgeBwaPaired";
 
-
-    private TemplateEngine templateEngine = TemplateEngineUtils.init();
-    private Context context = new Context();
-
-    @BeforeEach
-    public void setup() {
-        context = new Context();
-        context.setVariable("jarPath", getExecutionPath());
-    }
-
-    @AfterEach
-    public void cleanWorkDir() throws IOException {
-        cleanOutputDirForNextTest(OUTPUT_DIR, false);
+    @ParameterizedTest
+    @MethodSource({"initParametersSingle", "initParametersPaired", "initParameters"})
+    void testDnaCaptureVarFastq(String gConfigPath, String sConfigPath, String outputShFile, String templatePath)
+            throws IOException, URISyntaxException {
+        startAppWithConfigs(gConfigPath, sConfigPath);
+        String expectedCmd = templateEngine.process(templatePath, context);
+        assertEquals(expectedCmd.trim(), getCmd(outputShFile).trim());
     }
 
     @SuppressWarnings("PMD")
@@ -322,14 +309,5 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                         format("%s/%s/dnaCaptureVar_Fastq_vardict_for_GA5_analysis_template",
                                 DNA_CAPTURE_VAR_FASTQ_DIR, ALL_TASKS_PAIRED_TEMPLATES))
         );
-    }
-
-    @ParameterizedTest
-    @MethodSource({"initParametersSingle", "initParametersPaired", "initParameters"})
-    void testDnaCaptureVarFastq(String gConfigPath, String sConfigPath, String outputShFile, String templatePath)
-            throws IOException, URISyntaxException {
-        startAppWithConfigs(gConfigPath, sConfigPath);
-        String expectedCmd = templateEngine.process(templatePath, context);
-        assertEquals(expectedCmd.trim(), getCmd(outputShFile).trim());
     }
 }
