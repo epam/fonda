@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.epam.fonda.workflow.stage.impl;
 
 import com.epam.fonda.entity.command.AbstractCommand;
@@ -171,11 +170,8 @@ public class Alignment implements Stage {
 
     private BamResult markDuplicate(final Flag flag, final FastqFileSample sample, final Configuration configuration,
                                     final TemplateEngine templateEngine) {
-        final String workflow = configuration.getGlobalConfig().getPipelineInfo().getWorkflow();
-        if (workflow.contains("RnaExpression_Fastq") || flag.isPicard()) {
-            bamResult = new PicardMarkDuplicate(sample, bamResult).generate(configuration, templateEngine);
-        }
-        if (flag.isRmdup() || flag.isPicard()) {
+        bamResult = new PicardMarkDuplicate(sample, bamResult).generate(configuration, templateEngine);
+        if (flag.isRmdup()) {
             bamResult = new PicardRemoveDuplicate(bamResult).generate(configuration, templateEngine);
         }
         return bamResult;
@@ -186,7 +182,8 @@ public class Alignment implements Stage {
         final String workflow = configuration.getGlobalConfig().getPipelineInfo().getWorkflow();
         if (flag.isRnaSeQC()) {
             metricsResult = new RNASeQC(sample, bamResult.getBamOutput()).generate(configuration, templateEngine);
-        } else if (flag.isQc() || workflow.equalsIgnoreCase("scRnaExpression_Fastq")) {
+        } else if (workflow.equalsIgnoreCase("scRnaExpression_Fastq")) {
+            metricsResult.setBamOutput(bamResult.getBamOutput());
             metricsResult = new DnaPicardQc(sample, metricsResult).generate(configuration, templateEngine);
         }
     }
