@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.epam.fonda.workflow.stage.impl;
 
 import com.epam.fonda.entity.command.AbstractCommand;
@@ -22,6 +21,7 @@ import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.impl.BwaSort;
 import com.epam.fonda.tools.impl.Count;
+import com.epam.fonda.tools.impl.DnaPicardQc;
 import com.epam.fonda.tools.impl.Hisat2;
 import com.epam.fonda.tools.impl.NovoalignSort;
 import com.epam.fonda.tools.impl.PicardMarkDuplicate;
@@ -179,8 +179,12 @@ public class Alignment implements Stage {
 
     private void qcCheck(final Flag flag, final FastqFileSample sample, final Configuration configuration,
                          final TemplateEngine templateEngine) {
+        final String workflow = configuration.getGlobalConfig().getPipelineInfo().getWorkflow();
         if (flag.isRnaSeQC()) {
             metricsResult = new RNASeQC(sample, bamResult.getBamOutput()).generate(configuration, templateEngine);
+        } else if (workflow.equalsIgnoreCase("scRnaExpression_Fastq")) {
+            metricsResult.setBamOutput(bamResult.getBamOutput());
+            metricsResult = new DnaPicardQc(sample, metricsResult).generate(configuration, templateEngine);
         }
     }
 }
