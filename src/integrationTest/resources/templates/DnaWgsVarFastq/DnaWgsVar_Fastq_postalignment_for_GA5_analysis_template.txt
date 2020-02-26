@@ -1,0 +1,232 @@
+#!/bin/bash -x
+
+# --- SGE options --- #
+
+#$ -wd build/resources/integrationTest/output
+#$ -N DnaWgsVar_Fastq_postalignment_for_GA5_analysis
+#$ -o build/resources/integrationTest/output/log_files/DnaWgsVar_Fastq_postalignment_for_GA5_analysis.log
+#$ -e build/resources/integrationTest/output/err_files/DnaWgsVar_Fastq_postalignment_for_GA5_analysis.err
+#$ -q all.q
+#$ -R y
+#$ -pe threaded 8
+#$ -m a
+
+# --- The commands to be executed --- #
+
+cd build/resources/integrationTest/output
+
+echo `date` Begin the job execution...
+
+echo `date` Begin check the existence of the individual sorted bam file...
+logFile=build/resources/integrationTest/output/log_files/DnaWgsVar_Fastq_alignment_for_GA5_1_analysis.log
+str=""
+while [[('[')]][ $str = "" ]]
+do
+if [[('[')]][ -f $logFile  ]];
+then
+	str=$(grep -E "((Error Step: (Novoalign alignment|Index bam))|(Successful Step: Index bam))" $logFile;)
+fi
+	echo Waiting for step: Index bam
+	sleep 60
+done
+
+if [[('[')]][ $str == "*Error Step: Index bam*" ]];
+then
+	echo $(date) Error bam from GA5_1:
+	echo $str
+else
+	echo $(date) Confirm bam from GA5_1:
+fi
+
+
+echo `date` Finish check the existence of the individual sorted bam file.
+
+echo `date` Begin Step: Merge DNA bams...
+/ngs/data/app/java/v1.8.0u121/bin/java -Xmx10g -jar /ngs/data/tools/picard/v2.10.3/picard.jar MergeSamFiles O=build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam I=build/resources/integrationTest/output/GA5/bam/GA5_1.novoalign.sorted.bam VALIDATION_STRINGENCY=SILENT
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Merge DNA bams.
+	sleep 8
+else
+	echo `date` Error Step: Merge DNA bams.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Index bam...
+/ngs/data/tools/samtools/v0.1.19/samtools index build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Index bam.
+	sleep 8
+else
+	echo `date` Error Step: Index bam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Mark duplicates...
+/ngs/data/app/java/v1.8.0u121/bin/java -Xmx16g -jar /ngs/data/tools/picard/v2.10.3/picard.jar MarkDuplicates INPUT=build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam OUTPUT=build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.mkdup.bam METRICS_FILE=build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.mkdup.metrics ASSUME_SORTED=true REMOVE_DUPLICATES=false VALIDATION_STRINGENCY=SILENT TMP_DIR=build/resources/integrationTest/output/GA5/tmp
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Mark duplicates.
+	sleep 8
+else
+	echo `date` Error Step: Mark duplicates.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Index mkdup bam...
+/ngs/data/tools/samtools/v0.1.19/samtools index build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.mkdup.bam
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Index mkdup bam.
+	sleep 8
+else
+	echo `date` Error Step: Index mkdup bam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Remove Duplicates...
+/ngs/data/tools/samtools/v0.1.19/samtools view -bF 1024 build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.mkdup.bam > build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.bam
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Remove duplicates.
+	sleep 8
+else
+	echo `date` Error Step: Remove duplicates.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Index rmdup bam...
+/ngs/data/tools/samtools/v0.1.19/samtools index build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.bam
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Index rmdup bam.
+	sleep 8
+else
+	echo `date` Error Step: Index rmdup bam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: DNA QC metrics...
+/ngs/data/app/java/v1.8.0u121/bin/java -Xmx16g -jar /ngs/data/tools/picard/v2.10.3/picard.jar CollectAlignmentSummaryMetrics REFERENCE_SEQUENCE=/ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa INPUT=build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.mkdup.bam OUTPUT=build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.mkdup.align.metrics VALIDATION_STRINGENCY=SILENT TMP_DIR=build/resources/integrationTest/output/GA5/tmp
+/ngs/data/app/java/v1.8.0u121/bin/java -Xmx16g -jar /ngs/data/tools/picard/v2.10.3/picard.jar CollectWgsMetrics REFERENCE_SEQUENCE=/ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa INPUT=build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.mkdup.bam OUTPUT=build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.mkdup.hs.metrics VALIDATION_STRINGENCY=SILENT TMP_DIR=build/resources/integrationTest/output/GA5/tmp
+/ngs/data/app/java/v1.8.0u121/bin/java -Xmx16g -jar /ngs/data/tools/picard/v2.10.3/picard.jar CollectWgsMetrics REFERENCE_SEQUENCE=/ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa INPUT=build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.bam OUTPUT=build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.rmdup.hs.metrics VALIDATION_STRINGENCY=SILENT TMP_DIR=build/resources/integrationTest/output/GA5/tmp
+/ngs/data/app/java/v1.8.0u121/bin/java -Xmx16g -jar /ngs/data/tools/picard/v2.10.3/picard.jar CollectGcBiasMetrics REFERENCE_SEQUENCE=/ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa INPUT=build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.mkdup.bam OUTPUT=build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.mkdup.gcbias.metrics SUMMARY_OUTPUT=build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.mkdup.gc.summary.metrics CHART=build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.mkdup.gcbias.pdf VALIDATION_STRINGENCY=SILENT TMP_DIR=build/resources/integrationTest/output/GA5/tmp
+/ngs/data/app/java/v1.8.0u121/bin/java -Xmx16g -jar /ngs/data/tools/picard/v2.10.3/picard.jar CollectInsertSizeMetrics REFERENCE_SEQUENCE=/ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa INPUT=build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.mkdup.bam OUTPUT=build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.mkdup.insertsize.metrics HISTOGRAM_FILE=build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.mkdup.insertsize.pdf VALIDATION_STRINGENCY=SILENT TMP_DIR=build/resources/integrationTest/output/GA5/tmp
+/ngs/data/app/java/v1.8.0u121/bin/java -Xmx16g -jar /ngs/data/tools/picard/v2.10.3/picard.jar CollectQualityYieldMetrics REFERENCE_SEQUENCE=/ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa INPUT=build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.mkdup.bam OUTPUT=build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.mkdup.quality.metrics VALIDATION_STRINGENCY=SILENT TMP_DIR=build/resources/integrationTest/output/GA5/tmp
+/ngs/data/tools/samtools/v0.1.19/samtools mpileup -q 0 -Q 0 -B -d 100000 -f /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.bam > build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.rmdup.pileup
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: DNA QC metrics.
+	sleep 8
+else
+	echo `date` Error Step: DNA QC metrics.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Merge DNA QC...
+/ngs/data/app/python/v2.7.2/bin/python [(${jarPath})]/src/python/dna_rna_variant_qc_metrics.py --sample GA5 --align build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.mkdup.align.metrics --mkdup_hybrid build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.mkdup.hs.metrics --rmdup_hybrid build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.rmdup.hs.metrics --gcbias build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.mkdup.gc.summary.metrics --duplicate build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.mkdup.metrics --pileup build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.rmdup.pileup --read_type single --type wgs --project Example_project --run run1234 --date 031814 --output build/resources/integrationTest/output/GA5/qc/GA5.alignment.merged.QC.metric.txt
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Merge DNA QC.
+	sleep 8
+else
+	echo `date` Error Step: Merge DNA QC.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: ABRA realignment...
+/ngs/data/app/java/v1.8.0u121/bin/java -Xmx16g -jar /ngs/data/tools/abra2/v2.07/abra2-2.07.jar --threads 8 --tmpdir build/resources/integrationTest/output/GA5/tmp --ref /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa --in build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.bam --out build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.realign.bam
+/ngs/data/tools/samtools/v0.1.19/samtools index build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.realign.bam
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: ABRA realignment.
+	sleep 8
+else
+	echo `date` Error Step: ABRA realignment.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+logFile=build/resources/integrationTest/output/log_files/DnaWgsVar_Fastq_postalignment_for_GA5_analysis.log
+str=""
+while [[('[')]][ $str = "" ]]
+do
+if [[('[')]][ -f $logFile  ]];
+then
+	str=$(grep -E "((Error Step: (Novoalign alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|Remove duplicates|Index rmdup bam|DNA QC metrics|Merge DNA QC|ABRA realignment))|(Successful Step: Index rmdup bam))" $logFile;)
+fi
+	echo Waiting for step: Index rmdup bam
+	sleep 60
+done
+
+if [[('[')]][ $str == "*Error Step: Index rmdup bam*" ]];
+then
+	echo $(date) Error bam from GA5:
+	echo $str
+else
+	echo $(date) Confirm bam from GA5:
+fi
+
+echo `date` Begin Step: Run gatkHaplotypeCaller...
+qsub build/resources/integrationTest/output/sh_files/DnaWgsVar_Fastq_gatkHaplotypeCaller_for_GA5_analysis.sh
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Run gatkHaplotypeCaller.
+	sleep 8
+else
+	echo `date` Error Step: Run gatkHaplotypeCaller.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Remove temporary directories...
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5_1.novoalign.sorted.bam
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5_1.novoalign.sorted.bam.bai
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam.bai
+rm -rf build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.mkdup.metrics
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.mkdup.bam
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.mkdup.bam.bai
+rm -rf build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.mkdup.align.metrics
+rm -rf build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.mkdup.hs.metrics
+rm -rf build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.mkdup.quality.metrics
+rm -rf build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.rmdup.pileup
+rm -rf build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.mkdup.insertsize.metrics
+rm -rf build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.mkdup.gcbias.metrics
+rm -rf build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.mkdup.gc.summary.metrics
+rm -rf build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.rmdup.hs.metrics
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.realign.bam
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.realign.bam.bai
+rm -rf build/resources/integrationTest/output/GA5/tmp
+
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Remove temporary directories.
+	sleep 8
+else
+	echo `date` Error Step: Remove temporary directories.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+echo `date` Finish the job execution!
+

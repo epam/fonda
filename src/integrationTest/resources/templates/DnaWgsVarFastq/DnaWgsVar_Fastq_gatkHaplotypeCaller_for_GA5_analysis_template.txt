@@ -1,0 +1,60 @@
+#!/bin/bash -x
+
+# --- SGE options --- #
+
+#$ -wd build/resources/integrationTest/output
+#$ -N DnaWgsVar_Fastq_gatkHaplotypeCaller_for_GA5_analysis
+#$ -o build/resources/integrationTest/output/log_files/DnaWgsVar_Fastq_gatkHaplotypeCaller_for_GA5_analysis.log
+#$ -e build/resources/integrationTest/output/err_files/DnaWgsVar_Fastq_gatkHaplotypeCaller_for_GA5_analysis.err
+#$ -q all.q
+#$ -R y
+#$ -pe threaded 8
+#$ -m a
+
+# --- The commands to be executed --- #
+
+cd build/resources/integrationTest/output
+
+echo `date` Begin the job execution...
+
+echo `date` Begin Step: GATK haplotypecaller detection...
+/ngs/data/app/java/v1.8.0u121/bin/java -Xmx10g -Djava.io.tmpdir=build/resources/integrationTest/output/GA5/gatkHaplotypeCaller/tmp -jar /ngs/data/tools/GATK/v3.7/GenomeAnalysisTK.jar -T HaplotypeCaller -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -mmq 20 --input_file build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.realign.bam --out build/resources/integrationTest/output/GA5/gatkHaplotypeCaller/GA5.gatkHaplotypeCaller.variants.vcf --validation_strictness SILENT
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: GATK haplotypecaller detection.
+	sleep 8
+else
+	echo `date` Error Step: GATK haplotypecaller detection.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: SnpEff annotation...
+/ngs/data/app/python/v2.7.2/bin/python [(${jarPath})]/src/python/vcf_snpeff_annotation.py -s GA5 -i build/resources/integrationTest/output/GA5/gatkHaplotypeCaller/GA5.gatkHaplotypeCaller.variants.vcf -o build/resources/integrationTest/output/GA5/gatkHaplotypeCaller/GA5.gatkHaplotypeCaller.variants.pass.annotation.tsv -t gatkHaplotypeCaller --canonical /ngs/data/reference_genome/GRCh37/Annotation/prefer_ensembl_transcript.txt --transvar /ngs/data/app/python/v2.7.2/bin/transvar -r hg19 --snpsift /ngs/data/tools/SnpEff/snpEff_v4.3p/snpEff/SnpSift.jar --snpsift_db /ngs/data/tools/SnpEff/snpEff_v4.3p/snpEff/db --dbnsfp --dbsnp --coding_only --pass_only
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: SnpEff annotation.
+	sleep 8
+else
+	echo `date` Error Step: SnpEff annotation.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Remove temporary directories...
+rm -rf build/resources/integrationTest/output/GA5/gatkHaplotypeCaller/tmp
+
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Remove temporary directories.
+	sleep 8
+else
+	echo `date` Error Step: Remove temporary directories.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+echo `date` Finish the job execution!
+
