@@ -22,6 +22,7 @@ import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.impl.BwaSort;
 import com.epam.fonda.tools.impl.Count;
+import com.epam.fonda.tools.impl.DnaPicardQc;
 import com.epam.fonda.tools.impl.Hisat2;
 import com.epam.fonda.tools.impl.NovoalignSort;
 import com.epam.fonda.tools.impl.PicardMarkDuplicate;
@@ -170,8 +171,11 @@ public class Alignment implements Stage {
 
     private BamResult markDuplicate(final Flag flag, final FastqFileSample sample, final Configuration configuration,
                                     final TemplateEngine templateEngine) {
-        bamResult = new PicardMarkDuplicate(sample, bamResult).generate(configuration, templateEngine);
-        if (flag.isRmdup()) {
+        final String workflow = configuration.getGlobalConfig().getPipelineInfo().getWorkflow();
+        if (workflow.contains("RnaExpression_Fastq") || flag.isPicard()) {
+            bamResult = new PicardMarkDuplicate(sample, bamResult).generate(configuration, templateEngine);
+        }
+        if (flag.isRmdup() || flag.isPicard()) {
             bamResult = new PicardRemoveDuplicate(bamResult).generate(configuration, templateEngine);
         }
         return bamResult;
@@ -179,8 +183,11 @@ public class Alignment implements Stage {
 
     private void qcCheck(final Flag flag, final FastqFileSample sample, final Configuration configuration,
                          final TemplateEngine templateEngine) {
+        final String workflow = configuration.getGlobalConfig().getPipelineInfo().getWorkflow();
         if (flag.isRnaSeQC()) {
             metricsResult = new RNASeQC(sample, bamResult.getBamOutput()).generate(configuration, templateEngine);
+        } else if (flag.isQc() || workflow.equalsIgnoreCase("scRnaExpression_Fastq")) {
+            metricsResult = new DnaPicardQc(sample, metricsResult).generate(configuration, templateEngine);
         }
     }
 }
