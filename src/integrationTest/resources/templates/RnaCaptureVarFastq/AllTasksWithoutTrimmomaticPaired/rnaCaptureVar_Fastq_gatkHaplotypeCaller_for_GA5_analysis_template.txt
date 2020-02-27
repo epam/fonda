@@ -18,7 +18,7 @@ cd build/resources/integrationTest/output
 echo `date` Begin the job execution...
 
 echo `date` Begin Step: GATK haplotypecaller detection...
-/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -Djava.io.tmpdir=build/resources/integrationTest/output/GA5/gatkHaplotypeCaller/tmp -jar /usr/bin/gatk -T HaplotypeCaller -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa --intervals /ngs/data/S03723314_Padded.bed --input_file build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.realign.realign.recal.bam -dontUseSoftClippedBases -stand_call_conf 20.0 --out build/resources/integrationTest/output/GA5/gatkHaplotypeCaller/GA5.gatkHaplotypeCaller.raw.vcf --validation_strictness SILENT
+/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -Djava.io.tmpdir=build/resources/integrationTest/output/GA5/gatkHaplotypeCaller/tmp -jar /usr/bin/gatk -T HaplotypeCaller -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa --intervals /ngs/data/test_data.bed --input_file build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.realign.realign.recal.bam -dontUseSoftClippedBases -stand_call_conf 20.0 --out build/resources/integrationTest/output/GA5/gatkHaplotypeCaller/GA5.gatkHaplotypeCaller.raw.vcf --validation_strictness SILENT
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: GATK haplotypecaller detection.
@@ -44,7 +44,7 @@ else
 fi
 
 echo `date` Begin Step: SnpEff annotation...
-/usr/bin/python /Users/ilyaugryumov/IdeaProjects/fonda/build/classes/main/src/python/vcf_snpeff_annotation.py -s GA5 -i build/resources/integrationTest/output/GA5/gatkHaplotypeCaller/GA5.gatkHaplotypeCaller.variants.vcf -o build/resources/integrationTest/output/GA5/gatkHaplotypeCaller/GA5.gatkHaplotypeCaller.variants.pass.annotation.tsv -t gatkHaplotypeCaller --canonical /ngs/data/reference_genome/GRCh37/Annotation/prefer_ensembl_transcript.txt --transvar /usr/bin/transvar -r hg19 --snpsift /usr/bin/snpsift --snpsift_db /ngs/data/SnpEff/snpEff_v4.3p/snpEff/db --dbnsfp --dbsnp --coding_only --pass_only
+/usr/bin/python [(${jarPath})]/src/python/vcf_snpeff_annotation.py -s GA5 -i build/resources/integrationTest/output/GA5/gatkHaplotypeCaller/GA5.gatkHaplotypeCaller.variants.vcf -o build/resources/integrationTest/output/GA5/gatkHaplotypeCaller/GA5.gatkHaplotypeCaller.variants.pass.annotation.tsv -t gatkHaplotypeCaller --canonical /ngs/data/reference_genome/GRCh37/Annotation/prefer_ensembl_transcript.txt --transvar /usr/bin/transvar -r hg19 --snpsift /usr/bin/snpsift --snpsift_db /ngs/data/SnpEff/snpEff_v4.3p/snpEff/db --dbnsfp --dbsnp --coding_only --pass_only
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: SnpEff annotation.

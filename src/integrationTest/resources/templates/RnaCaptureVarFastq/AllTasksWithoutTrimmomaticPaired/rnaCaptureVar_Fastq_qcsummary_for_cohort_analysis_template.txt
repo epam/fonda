@@ -38,7 +38,7 @@ else
 fi
 
 echo `date` Begin Step: QC summary analysis...
-/usr/bin/Rscript /Users/ilyaugryumov/IdeaProjects/fonda/build/classes/main/src/R/QC_summary_analysis.R -i /Users/ilyaugryumov/IdeaProjects/fonda/testRnaCaptureFastqExample/sample/fastqPaired.tsv -d build/resources/integrationTest/output -w RnaCaptureVar_Fastq
+/usr/bin/Rscript [(${jarPath})]/src/R/QC_summary_analysis.R -i [(${jarPath})]/testRnaCaptureFastqExample/sample/fastqPaired.tsv -d build/resources/integrationTest/output -w RnaCaptureVar_Fastq
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: QC summary analysis.
