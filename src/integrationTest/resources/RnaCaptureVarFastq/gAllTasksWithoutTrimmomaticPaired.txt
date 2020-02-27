@@ -63,6 +63,6 @@ SEQUENZA_GC50 = 10
 
 [Pipeline_Info]
 workflow = RnaCaptureVar_Fastq
-toolset = seqpurge+trimmomatic+star+picard+qc+abra_realign+gatk_realign+gatkHaplotypeCaller
+toolset = seqpurge+star+picard+qc+abra_realign+gatk_realign+gatkHaplotypeCaller
 flag_xenome = yes
 read_type = paired

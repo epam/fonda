@@ -1,0 +1,53 @@
+#!/bin/bash -x
+
+# --- SGE options --- #
+
+#$ -wd build/resources/integrationTest/output
+#$ -N RnaCaptureVar_Fastq_qcsummary_for_cohort_analysis
+#$ -o build/resources/integrationTest/output/log_files/RnaCaptureVar_Fastq_qcsummary_for_cohort_analysis.log
+#$ -e build/resources/integrationTest/output/err_files/RnaCaptureVar_Fastq_qcsummary_for_cohort_analysis.err
+#$ -q all.q
+#$ -R y
+#$ -pe threaded 4
+#$ -m a
+
+# --- The commands to be executed --- #
+
+cd build/resources/integrationTest/output
+
+echo `date` Begin the job execution...
+
+logFile=build/resources/integrationTest/output/log_files/RnaCaptureVar_Fastq_alignment_for_GA5_analysis.log
+str=""
+while [[ $str = "" ]]
+do
+if [[ -f $logFile  ]];
+then
+	str=$(grep -E "(Successful|Error) Step: Merge RNA QC" $logFile;)
+fi
+	echo Waiting for step: Merge RNA QC
+	sleep 60
+done
+
+if [[ $str == "*Error Step: Merge RNA QC*" ]];
+then
+	echo $(date) Error QC results from GA5:
+	echo $str
+else
+	echo $(date) Confirm QC results from GA5
+fi
+
+echo `date` Begin Step: QC summary analysis...
+/usr/bin/Rscript /Users/ilyaugryumov/IdeaProjects/fonda/build/classes/main/src/R/QC_summary_analysis.R -i /Users/ilyaugryumov/IdeaProjects/fonda/testRnaCaptureFastqExample/sample/fastqPaired.tsv -d build/resources/integrationTest/output -w RnaCaptureVar_Fastq
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: QC summary analysis.
+	sleep 8
+else
+	echo `date` Error Step: QC summary analysis.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Finish the job execution!

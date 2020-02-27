@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class RnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
     private static final String RNA_CAPTURE_VAR_FASTQ_DIR = "RnaCaptureVarFastq";
     private static final String OUTPUT_SH_FILES_DIR = "output/sh_files";
-    private static final String ALL_TASKS_PAIRED = "AllTasksPaired";
+    private static final String ALL_TASKS_WITHOUT_TRIMMOMATIC_PAIRED = "AllTasksWithoutTrimmomaticPaired";
 
     @ParameterizedTest
     @MethodSource("initParameters")
@@ -28,12 +28,25 @@ public class RnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
     @SuppressWarnings("PMD")
     private static Stream<Arguments> initParameters() {
         return Stream.of(
+//                Arguments.of(
+//                        format("%s/gAllTasksWithoutTrimmomaticPaired.txt", RNA_CAPTURE_VAR_FASTQ_DIR),
+//                        format("%s/sPaired.txt", RNA_CAPTURE_VAR_FASTQ_DIR),
+//                        format("%s/RnaCaptureVar_Fastq_alignment_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
+//                        format("%s/%s/rnaCaptureVar_Fastq_alignment_for_GA5_analysis_template",
+//                                RNA_CAPTURE_VAR_FASTQ_DIR, ALL_TASKS_WITHOUT_TRIMMOMATIC_PAIRED)),
+//                Arguments.of(
+//                        format("%s/gAllTasksWithoutTrimmomaticPaired.txt", RNA_CAPTURE_VAR_FASTQ_DIR),
+//                        format("%s/sPaired.txt", RNA_CAPTURE_VAR_FASTQ_DIR),
+//                        format("%s/RnaCaptureVar_Fastq_gatkHaplotypeCaller_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
+//                        format("%s/%s/rnaCaptureVar_Fastq_gatkHaplotypeCaller_for_GA5_analysis_template",
+//                                RNA_CAPTURE_VAR_FASTQ_DIR, ALL_TASKS_WITHOUT_TRIMMOMATIC_PAIRED)),
                 Arguments.of(
-                        format("%s/gAllTasksPaired.txt", RNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/gAllTasksWithoutTrimmomaticPaired.txt", RNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/sPaired.txt", RNA_CAPTURE_VAR_FASTQ_DIR),
-                        format("%s/RnaCaptureVar_Fastq_alignment_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
-                        format("%s/%s/rnaCaptureVar_Fastq_alignment_for_GA5_analysis_template",
-                                RNA_CAPTURE_VAR_FASTQ_DIR, ALL_TASKS_PAIRED)
-                ));
+                        format("%s/RnaCaptureVar_Fastq_qcsummary_for_cohort_analysis.sh", OUTPUT_SH_FILES_DIR),
+                        format("%s/%s/rnaCaptureVar_Fastq_qcsummary_for_cohort_analysis_template",
+                                RNA_CAPTURE_VAR_FASTQ_DIR, ALL_TASKS_WITHOUT_TRIMMOMATIC_PAIRED))
+
+        );
     }
 }

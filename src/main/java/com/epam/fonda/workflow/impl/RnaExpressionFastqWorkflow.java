@@ -24,9 +24,11 @@ import com.epam.fonda.tools.results.FastqResult;
 import com.epam.fonda.utils.PipelineUtils;
 import com.epam.fonda.utils.TemplateEngineUtils;
 import com.epam.fonda.workflow.FastqWorkflow;
+import com.epam.fonda.workflow.PipelineType;
 import com.epam.fonda.workflow.stage.impl.Alignment;
-import com.epam.fonda.workflow.stage.impl.SecondaryAnalysis;
+import com.epam.fonda.workflow.stage.impl.PostAlignment;
 import com.epam.fonda.workflow.stage.impl.PreAlignment;
+import com.epam.fonda.workflow.stage.impl.SecondaryAnalysis;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,12 +56,14 @@ public class RnaExpressionFastqWorkflow implements FastqWorkflow {
         FastqResult fastqResult = PipelineUtils.mergeFastq(sample);
         fastqResult = new PreAlignment(fastqResult).process(flag, sample, configuration, TEMPLATE_ENGINE);
         BamResult bamResult = new Alignment(fastqResult).mapping(flag, sample, configuration, TEMPLATE_ENGINE);
+        if (PipelineType.RNA_CAPTURE_VAR_FASTQ.getName()
+                .equalsIgnoreCase(configuration.getGlobalConfig().getPipelineInfo().getWorkflow())) {
+            bamResult = new PostAlignment(bamResult).process(flag, sample, configuration, TEMPLATE_ENGINE);
+        }
         String secondaryAnalysis = new SecondaryAnalysis(bamResult, sample.getName(), sample.getSampleOutputDir())
                 .process(flag, configuration, TEMPLATE_ENGINE);
-
         final String cmd = bamResult.getCommand().getToolCommand() + secondaryAnalysis +
                 cleanUpTmpDir(bamResult.getCommand().getTempDirs());
-
         printShell(configuration, cmd, sample.getName(), null);
         log.debug(String.format("Successful step: the %s sample was processed.", sample.getName()));
     }
