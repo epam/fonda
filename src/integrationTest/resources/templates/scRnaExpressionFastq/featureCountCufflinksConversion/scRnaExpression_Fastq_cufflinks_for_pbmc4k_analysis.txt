@@ -18,7 +18,7 @@ cd build/resources/integrationTest/output
 echo `date` Begin the job execution...
 
 echo `date` Begin Step: Cufflinks...
-/ngs/data/tools/cufflinks/v2.2.1/cufflinks --library-type fr-unstranded --num-threads 4 -b /ngs/data/reference_genome/GRCh38/Sequence/GRCh38.genome.fa --GTF /ngs/data/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.annotation.knowntrx.exon.level1-2.trxlevel1-3.gtf --output-dir build/resources/integrationTest/output/pbmc4k/cufflinks build/resources/integrationTest/output/pbmc4k/bam/pbmc4k.star.sorted.rmdup.bam
+/ngs/data/tools/cufflinks/v2.2.1/cufflinks --library-type fr-unstranded --num-threads 4 -b /ngs/data/reference_genome/GRCh38/Sequence/GRCh38.genome.fa --GTF /ngs/data/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.annotation.gtf --output-dir build/resources/integrationTest/output/pbmc4k/cufflinks build/resources/integrationTest/output/pbmc4k/bam/pbmc4k.star.sorted.rmdup.bam
 mv build/resources/integrationTest/output/pbmc4k/cufflinks/genes.fpkm_tracking build/resources/integrationTest/output/pbmc4k/cufflinks/pbmc4k.cufflinks.gene.expression.results
 mv build/resources/integrationTest/output/pbmc4k/cufflinks/isoforms.fpkm_tracking build/resources/integrationTest/output/pbmc4k/cufflinks/pbmc4k.cufflinks.isoform.expression.results
 if [ $? -eq 0 ]

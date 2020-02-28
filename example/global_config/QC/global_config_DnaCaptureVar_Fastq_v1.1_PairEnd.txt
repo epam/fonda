@@ -9,9 +9,9 @@ SPECIES = human
 GENOME_BUILD = hg38
 GENOME = /ngs/data/reference_genome/GRCh38.p10/Sequence/GRCh38.p10.genome.fa
 NOVOINDEX = /ngs/data/reference_genome/GRCh38.p10/Sequence/GRCh38.p10.genome.nix
-BED = /ngs/data/S07604514_Padded_hg38.bed
-BED_WITH_HEADER = /ngs/data/S07604514_Padded_hg38.txt
-BED_FOR_COVERAGE = /ngs/data/S07604514_Padded_hg38.txt
+BED = /ngs/data/data_padded_hg38.bed
+BED_WITH_HEADER = /ngs/data/data_padded_hg38.txt
+BED_FOR_COVERAGE = /ngs/data/data_padded_hg38.txt
 
 [all_tools]
 bedtools = /ngs/data/tools/bedtools2/v2.2.1/bin/bedtools

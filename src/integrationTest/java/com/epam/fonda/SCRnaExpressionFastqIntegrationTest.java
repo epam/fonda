@@ -52,18 +52,12 @@ public class SCRnaExpressionFastqIntegrationTest extends AbstractIntegrationTest
     private static final String FEATURE_COUNT_FILE = "scRnaExpression_Fastq_featureCount_for_pbmc4k_analysis";
     private static final String SH_FILE_PATH = "%ssh_files/%s.sh";
 
-    private static final String ALIGNMENT_SH_PATH = format(
-            SH_FILE_PATH, OUTPUT_DIR, ALIGNMENT_FILE);
-    private static final String RSEM_SH_PATH = format(
-            SH_FILE_PATH, OUTPUT_DIR, RSEM_FILE);
-    private static final String QC_SUMMARY_SH_PATH = format(
-            SH_FILE_PATH, OUTPUT_DIR, QC_SUMMARY_FILE);
-    private static final String CUFFLINKS_COHORT_SH_PATH = format(
-            SH_FILE_PATH, OUTPUT_DIR, CUFFLINK_COHORT_FILE);
-    private static final String CUFFLINKS_PBMC4K_SH_PATH = format(
-            SH_FILE_PATH, OUTPUT_DIR, CUFFLINK_PBMC4K_FILE);
-    private static final String FEATURE_COUNT_SH_PATH = format(
-            SH_FILE_PATH, OUTPUT_DIR, FEATURE_COUNT_FILE);
+    private static final String ALIGNMENT_SH_PATH = format(SH_FILE_PATH, OUTPUT_DIR, ALIGNMENT_FILE);
+    private static final String RSEM_SH_PATH = format(SH_FILE_PATH, OUTPUT_DIR, RSEM_FILE);
+    private static final String QC_SUMMARY_SH_PATH = format(SH_FILE_PATH, OUTPUT_DIR, QC_SUMMARY_FILE);
+    private static final String CUFFLINKS_COHORT_SH_PATH = format(SH_FILE_PATH, OUTPUT_DIR, CUFFLINK_COHORT_FILE);
+    private static final String CUFFLINKS_PBMC4K_SH_PATH = format(SH_FILE_PATH, OUTPUT_DIR, CUFFLINK_PBMC4K_FILE);
+    private static final String FEATURE_COUNT_SH_PATH = format(SH_FILE_PATH, OUTPUT_DIR, FEATURE_COUNT_FILE);
 
     private static final String INCOMPABILITY_ERROR_MESSAGE =
             "Error Step: Unfortunately, HISAT2 is not compatible with RSEM, please change either one!";
