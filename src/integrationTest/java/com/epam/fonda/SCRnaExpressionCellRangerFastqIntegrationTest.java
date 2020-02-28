@@ -17,6 +17,7 @@ package com.epam.fonda;
 
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.utils.CellRangerUtils;
+import com.epam.fonda.workflow.TaskContainer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -79,7 +80,7 @@ class SCRnaExpressionCellRangerFastqIntegrationTest extends AbstractIntegrationT
 
     @AfterEach
     public void cleanUp() {
-        //no op
+        TaskContainer.getTasks().clear();
     }
 
     @Test

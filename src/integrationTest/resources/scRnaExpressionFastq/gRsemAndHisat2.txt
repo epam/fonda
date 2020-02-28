@@ -14,6 +14,8 @@ STARINDEX = /ngs/data/reference_genome/GRCh38/Index/STAR_gc26
 ANNOTGENESAF = /ngs/data/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.annotation.saf
 ADAPTER_FWD = AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC
 ADAPTER_REV = AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT
+RSEMINDEX = RSEMINDEX
+HISAT2INDEX = HISAT2INDEX
 BED = BED
 BED_FOR_COVERAGE = BED_FOR_COVERAGE
 BED_WITH_HEADER = BED_WITH_HEADER
@@ -33,6 +35,8 @@ doubletdetection_python = /ngs/data/py/versions/3.5.2/bin/python
 
 [Pipeline_Info]
 workflow = scRnaExpression_Fastq
-toolset = seqpurge+star+featureCount+cufflinks+conversion
+toolset = rsem+hisat2
 flag_xenome = no
 read_type = paired
+rsem = rsem
+hisat2 = hisat2
