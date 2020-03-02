@@ -171,8 +171,7 @@ public class Alignment implements Stage {
     private BamResult markDuplicate(final Flag flag, final FastqFileSample sample, final Configuration configuration,
                                     final TemplateEngine templateEngine) {
         bamResult = new PicardMarkDuplicate(sample, bamResult).generate(configuration, templateEngine);
-        if (flag.isRmdup() || configuration.getGlobalConfig().getPipelineInfo().getWorkflow()
-                .equalsIgnoreCase("scRnaExpression_Fastq")) {
+        if (flag.isRmdup() || isScRnaExpressionFastq(configuration)) {
             bamResult = new PicardRemoveDuplicate(bamResult).generate(configuration, templateEngine);
         }
         return bamResult;
@@ -180,13 +179,17 @@ public class Alignment implements Stage {
 
     private void qcCheck(final Flag flag, final FastqFileSample sample, final Configuration configuration,
                          final TemplateEngine templateEngine) {
-        final String workflow = configuration.getGlobalConfig().getPipelineInfo().getWorkflow();
-        final boolean isScRnaExpressionFastq = workflow.equalsIgnoreCase("scRnaExpression_Fastq");
+        final boolean isScRnaExpressionFastq = isScRnaExpressionFastq(configuration);
         if (flag.isRnaSeQC() && !isScRnaExpressionFastq) {
             metricsResult = new RNASeQC(sample, bamResult.getBamOutput()).generate(configuration, templateEngine);
         } else if (isScRnaExpressionFastq) {
             metricsResult.setBamOutput(bamResult.getBamOutput());
             metricsResult = new DnaPicardQc(sample, metricsResult).generate(configuration, templateEngine);
         }
+    }
+
+    private boolean isScRnaExpressionFastq(final Configuration configuration) {
+        return configuration.getGlobalConfig().getPipelineInfo().getWorkflow()
+                .equalsIgnoreCase("scRnaExpression_Fastq");
     }
 }
