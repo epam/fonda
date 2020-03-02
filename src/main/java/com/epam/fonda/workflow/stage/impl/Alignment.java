@@ -39,6 +39,7 @@ import com.epam.fonda.tools.results.MetricsOutput;
 import com.epam.fonda.tools.results.MetricsResult;
 import com.epam.fonda.tools.results.SalmonResult;
 import com.epam.fonda.tools.results.StarFusionResult;
+import com.epam.fonda.workflow.PipelineType;
 import com.epam.fonda.workflow.impl.Flag;
 import com.epam.fonda.workflow.stage.Stage;
 import org.thymeleaf.TemplateEngine;
@@ -98,7 +99,7 @@ public class Alignment implements Stage {
                              final TemplateEngine templateEngine) {
         if (flag.isStar()) {
             bamResult = new Star(flag, sample, fastqResult.getOut()).generate(configuration, templateEngine);
-            if (!flag.isRsem()) {
+            if (!flag.isRsem() && !isRnaCaptureVarFastq(configuration)) {
                 bamResult = markDuplicate(flag, sample, configuration, templateEngine);
                 qcCheck(flag, sample, configuration, templateEngine);
             }
@@ -191,5 +192,10 @@ public class Alignment implements Stage {
     private boolean isScRnaExpressionFastq(final Configuration configuration) {
         return configuration.getGlobalConfig().getPipelineInfo().getWorkflow()
                 .equalsIgnoreCase("scRnaExpression_Fastq");
+    }
+
+    private boolean isRnaCaptureVarFastq(final Configuration configuration) {
+        return PipelineType.RNA_CAPTURE_VAR_FASTQ.getName()
+                .equalsIgnoreCase(configuration.getGlobalConfig().getPipelineInfo().getWorkflow());
     }
 }

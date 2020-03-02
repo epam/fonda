@@ -28,18 +28,18 @@ public class RnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
     @SuppressWarnings("PMD")
     private static Stream<Arguments> initParameters() {
         return Stream.of(
-//                Arguments.of(
-//                        format("%s/gAllTasksWithoutTrimmomaticPaired.txt", RNA_CAPTURE_VAR_FASTQ_DIR),
-//                        format("%s/sPaired.txt", RNA_CAPTURE_VAR_FASTQ_DIR),
-//                        format("%s/RnaCaptureVar_Fastq_alignment_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
-//                        format("%s/%s/rnaCaptureVar_Fastq_alignment_for_GA5_analysis_template",
-//                                RNA_CAPTURE_VAR_FASTQ_DIR, ALL_TASKS_WITHOUT_TRIMMOMATIC_PAIRED)),
+                Arguments.of(
+                        format("%s/gAllTasksWithoutTrimmomaticPaired.txt", RNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/sPaired.txt", RNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/RnaCaptureVar_Fastq_alignment_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
+                        format("%s/%s/rnaCaptureVar_Fastq_alignment_for_GA5_analysis_template",
+                                RNA_CAPTURE_VAR_FASTQ_DIR, ALL_TASKS_WITHOUT_TRIMMOMATIC_PAIRED)),
 //                Arguments.of(
 //                        format("%s/gAllTasksWithoutTrimmomaticPaired.txt", RNA_CAPTURE_VAR_FASTQ_DIR),
 //                        format("%s/sPaired.txt", RNA_CAPTURE_VAR_FASTQ_DIR),
 //                        format("%s/RnaCaptureVar_Fastq_gatkHaplotypeCaller_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
 //                        format("%s/%s/rnaCaptureVar_Fastq_gatkHaplotypeCaller_for_GA5_analysis_template",
-//                                RNA_CAPTURE_VAR_FASTQ_DIR, ALL_TASKS_WITHOUT_TRIMMOMATIC_PAIRED)),
+//                                RNA_CAPTURE_VAR_FASTQ_DIR, ALL_TASKS_WITHOUT_TRIMMOMATIC_PAIRED))
                 Arguments.of(
                         format("%s/gAllTasksWithoutTrimmomaticPaired.txt", RNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/sPaired.txt", RNA_CAPTURE_VAR_FASTQ_DIR),

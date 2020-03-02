@@ -159,12 +159,12 @@ fi
 
 echo `date` Begin Step: RNA QC metrics...
 /usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx16g -jar /opt/picard/picard.jar CollectAlignmentSummaryMetrics REFERENCE_SEQUENCE=/ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa INPUT=build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.mkdup.bam OUTPUT=build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.align.metrics VALIDATION_STRINGENCY=SILENT TMP_DIR=build/resources/integrationTest/output/GA5/tmp
-/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx16g -jar /opt/picard/picard.jar CollectHsMetrics REFERENCE_SEQUENCE=/ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa INPUT=build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.mkdup.bam OUTPUT=build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.hs.metrics MQ=0 Q=0 TARGET_INTERVALS=/ngs/data/test_data_decoy.txt BAIT_INTERVALS=/ngs/data/test_data_decoy.txt VALIDATION_STRINGENCY=SILENT TMP_DIR=build/resources/integrationTest/output/GA5/tmp
-/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx16g -jar /opt/picard/picard.jar CollectHsMetrics REFERENCE_SEQUENCE=/ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa INPUT=build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.bam OUTPUT=build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.rmdup.hs.metrics MQ=0 Q=0 TARGET_INTERVALS=/ngs/data/test_data_decoy.txt BAIT_INTERVALS=/ngs/data/test_data_decoy.txt VALIDATION_STRINGENCY=SILENT TMP_DIR=build/resources/integrationTest/output/GA5/tmp
+/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx16g -jar /opt/picard/picard.jar CollectHsMetrics REFERENCE_SEQUENCE=/ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa INPUT=build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.mkdup.bam OUTPUT=build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.hs.metrics MQ=0 Q=0 TARGET_INTERVALS=/ngs/data/S03723314_Padded_decoy.txt BAIT_INTERVALS=/ngs/data/S03723314_Padded_decoy.txt VALIDATION_STRINGENCY=SILENT TMP_DIR=build/resources/integrationTest/output/GA5/tmp
+/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx16g -jar /opt/picard/picard.jar CollectHsMetrics REFERENCE_SEQUENCE=/ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa INPUT=build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.bam OUTPUT=build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.rmdup.hs.metrics MQ=0 Q=0 TARGET_INTERVALS=/ngs/data/S03723314_Padded_decoy.txt BAIT_INTERVALS=/ngs/data/S03723314_Padded_decoy.txt VALIDATION_STRINGENCY=SILENT TMP_DIR=build/resources/integrationTest/output/GA5/tmp
 /usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx16g -jar /opt/picard/picard.jar CollectGcBiasMetrics REFERENCE_SEQUENCE=/ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa INPUT=build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.mkdup.bam OUTPUT=build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.gcbias.metrics SUMMARY_OUTPUT=build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.gc.summary.metrics CHART=build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.gcbias.pdf VALIDATION_STRINGENCY=SILENT TMP_DIR=build/resources/integrationTest/output/GA5/tmp
 /usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx16g -jar /opt/picard/picard.jar CollectInsertSizeMetrics REFERENCE_SEQUENCE=/ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa INPUT=build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.mkdup.bam OUTPUT=build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.insertsize.metrics HISTOGRAM_FILE=build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.insertsize.pdf VALIDATION_STRINGENCY=SILENT TMP_DIR=build/resources/integrationTest/output/GA5/tmp
 /usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx16g -jar /opt/picard/picard.jar CollectQualityYieldMetrics REFERENCE_SEQUENCE=/ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa INPUT=build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.mkdup.bam OUTPUT=build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.quality.metrics VALIDATION_STRINGENCY=SILENT TMP_DIR=build/resources/integrationTest/output/GA5/tmp
-/opt/samtools/samtools-0.1.19/samtools mpileup -q 0 -Q 0 -B -d 100000 -f /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -l /ngs/data/test_data.bed build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.bam > build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.rmdup.pileup
+/opt/samtools/samtools-0.1.19/samtools mpileup -q 0 -Q 0 -B -d 100000 -f /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -l /ngs/data/S03723314_Padded.bed build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.bam > build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.rmdup.pileup
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: RNA QC metrics.
@@ -190,7 +190,7 @@ else
 fi
 
 echo `date` Begin Step: GATK SplitNCigarReads...
-/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -Djava.io.tmpdir=null -jar /usr/bin/gatk -T SplitNCigarReads -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa --input_file build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.bam -rf ReassignOneMappingQuality -RMQF 255 -RMQT 60 -U ALLOW_N_CIGAR_READS --out build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.bam --validation_strictness SILENT
+/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -Djava.io.tmpdir=build/resources/integrationTest/output/GA5/gatkSplit/tmp -jar /usr/bin/gatk -T SplitNCigarReads -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa --input_file build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.bam -rf ReassignOneMappingQuality -RMQF 255 -RMQT 60 -U ALLOW_N_CIGAR_READS --out build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.bam --validation_strictness SILENT
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: GATK SplitNCigarReads.
@@ -201,9 +201,8 @@ else
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
 fi
-
 echo `date` Begin Step: ABRA realignment...
-/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx16g -jar /usr/bin/abra2 --threads 4 --tmpdir build/resources/integrationTest/output/GA5/tmp --ref /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa --in build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.bam --out build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.realign.bam --targets /ngs/data/test_data.bed
+/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx16g -jar /usr/bin/abra2 --threads 4 --tmpdir build/resources/integrationTest/output/GA5/tmp --ref /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa --in build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.bam --out build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.realign.bam --targets /ngs/data/S03723314_Padded.bed
 /opt/samtools/samtools-0.1.19/samtools index build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.realign.bam
 if [ $? -eq 0 ]
 then
@@ -258,29 +257,29 @@ else
 fi
 
 echo `date` Begin Step: Remove temporary directories...
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.realign.realign.recal.table
-rm -rf build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.insertsize.metrics
-rm -rf build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.align.metrics
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.Aligned.out.bam.bai
-rm -rf build/resources/integrationTest/output/GA5/gatkHaplotypeCaller/tmp
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.mkdup.bam.bai
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.realign.realign.bam.bai
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.mkdup.bam
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.bam.bai
-rm -rf build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.rmdup.pileup
-rm -rf build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.rmdup.hs.metrics
-rm -rf build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.metrics
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.realign.realign_interval.list
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.bam
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.bam
 rm -rf build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.bam.bai
-rm -rf build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.quality.metrics
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.Aligned.out.bam
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.Aligned.out.bam.bai
 rm -rf build/resources/integrationTest/output/GA5/tmp
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.realign.realign.bam
+rm -rf build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.metrics
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.mkdup.bam
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.mkdup.bam.bai
+rm -rf build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.align.metrics
+rm -rf build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.hs.metrics
+rm -rf build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.quality.metrics
+rm -rf build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.rmdup.pileup
+rm -rf build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.insertsize.metrics
 rm -rf build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.gcbias.metrics
 rm -rf build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.gc.summary.metrics
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.bam
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.Aligned.out.bam
-rm -rf build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.mkdup.hs.metrics
+rm -rf build/resources/integrationTest/output/GA5/qc/GA5.star.sorted.rmdup.hs.metrics
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.bam
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.bam.bai
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.realign.realign_interval.list
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.realign.realign.bam
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.realign.realign.bam.bai
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.rmdup.splitRead.realign.realign.recal.table
+
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Remove temporary directories.
