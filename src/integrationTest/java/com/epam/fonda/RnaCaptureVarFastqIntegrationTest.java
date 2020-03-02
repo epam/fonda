@@ -15,6 +15,7 @@ public class RnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
     private static final String RNA_CAPTURE_VAR_FASTQ_DIR = "RnaCaptureVarFastq";
     private static final String OUTPUT_SH_FILES_DIR = "output/sh_files";
     private static final String ALL_TASKS_WITHOUT_TRIMMOMATIC_PAIRED = "AllTasksWithoutTrimmomaticPaired";
+    private static final String TRIMMOMATIC_STAR_PAIRED = "TrimmomaticStarPaired";
 
     @ParameterizedTest
     @MethodSource("initParameters")
@@ -34,18 +35,27 @@ public class RnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                         format("%s/RnaCaptureVar_Fastq_alignment_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
                         format("%s/%s/rnaCaptureVar_Fastq_alignment_for_GA5_analysis_template",
                                 RNA_CAPTURE_VAR_FASTQ_DIR, ALL_TASKS_WITHOUT_TRIMMOMATIC_PAIRED)),
+                //=======Not ready for two were mixed fields in GatkHaplotypeCaller и GatkHaplotypeCallerRnaFilter
 //                Arguments.of(
 //                        format("%s/gAllTasksWithoutTrimmomaticPaired.txt", RNA_CAPTURE_VAR_FASTQ_DIR),
 //                        format("%s/sPaired.txt", RNA_CAPTURE_VAR_FASTQ_DIR),
 //                        format("%s/RnaCaptureVar_Fastq_gatkHaplotypeCaller_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
 //                        format("%s/%s/rnaCaptureVar_Fastq_gatkHaplotypeCaller_for_GA5_analysis_template",
 //                                RNA_CAPTURE_VAR_FASTQ_DIR, ALL_TASKS_WITHOUT_TRIMMOMATIC_PAIRED))
+                //======
+                //test hasn't 1 test mergeMutation_for_cohort_analysis.sh more
                 Arguments.of(
                         format("%s/gAllTasksWithoutTrimmomaticPaired.txt", RNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/sPaired.txt", RNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/RnaCaptureVar_Fastq_qcsummary_for_cohort_analysis.sh", OUTPUT_SH_FILES_DIR),
                         format("%s/%s/rnaCaptureVar_Fastq_qcsummary_for_cohort_analysis_template",
-                                RNA_CAPTURE_VAR_FASTQ_DIR, ALL_TASKS_WITHOUT_TRIMMOMATIC_PAIRED))
+                                RNA_CAPTURE_VAR_FASTQ_DIR, ALL_TASKS_WITHOUT_TRIMMOMATIC_PAIRED)),
+                Arguments.of(
+                        format("%s/gTrimmomaticStarPaired.txt.txt", RNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/sPaired.txt", RNA_CAPTURE_VAR_FASTQ_DIR),
+                        format("%s/RnaCaptureVar_Fastq_alignment_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
+                        format("%s/%s/rnaCaptureVar_Fastq_alignment_for_GA5_analysis_template",
+                                RNA_CAPTURE_VAR_FASTQ_DIR, TRIMMOMATIC_STAR_PAIRED))
 
         );
     }
