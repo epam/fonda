@@ -94,7 +94,7 @@ else
 fi
 
 echo `date` Begin Step: ABRA realignment...
-/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx16g -jar /usr/bin/abra2 --threads 4 --single --tmpdir build/resources/integrationTest/output/GA5/tmp --ref /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa --in build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam --out build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.bam --targets /ngs/data/S03723314_Padded.bed
+/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx16g -jar /usr/bin/abra2 --threads 4 --single --tmpdir build/resources/integrationTest/output/GA5/tmp --ref /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa --in build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam --out build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.bam --targets /ngs/data/test_data_Padded.bed
 /opt/samtools/samtools-0.1.19/samtools index build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.bam
 if [ $? -eq 0 ]
 then

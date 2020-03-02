@@ -18,7 +18,7 @@ cd build/resources/integrationTest/output
 echo `date` Begin the job execution...
 
 echo `date` Begin Step: Mutect2 detection...
-/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -Djava.io.tmpdir=build/resources/integrationTest/output/GA51/mutect2/tmp -jar /usr/bin/gatk -T MuTect2 -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa --intervals /ngs/data/S03723314_Padded.bed --input_file:normal /ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_003.bam --input_file:tumor /ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_003.bam --out build/resources/integrationTest/output/GA51/mutect2/GA51.mutect2.somatic.variants.vcf --validation_strictness SILENT
+/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -Djava.io.tmpdir=build/resources/integrationTest/output/GA51/mutect2/tmp -jar /usr/bin/gatk -T MuTect2 -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa --intervals /ngs/data/test_data_Padded.bed --input_file:normal /ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_003.bam --input_file:tumor /ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_003.bam --out build/resources/integrationTest/output/GA51/mutect2/GA51.mutect2.somatic.variants.vcf --validation_strictness SILENT
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Mutect2 detection.

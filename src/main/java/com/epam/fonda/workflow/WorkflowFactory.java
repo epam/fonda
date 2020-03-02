@@ -44,6 +44,7 @@ public class WorkflowFactory {
         Flag flag = Flag.buildFlags(configuration);
         switch (PipelineType.getByName(workflowName)) {
             case RNA_EXPRESSION_FASTQ: return new RnaExpressionFastqWorkflow(flag);
+            case SC_RNA_EXPRESSION_FASTQ: return new RnaExpressionFastqWorkflow(flag);
             case SC_RNA_EXPRESSION_CELLRANGER_FASTQ: return new SCRnaExpressionCellRangerFastqWorkflow(flag);
             case RNA_EXPRESSION_BAM: return new RnaExpressionBamWorkflow(flag);
             case SC_IMMUNE_PROFILE_CELL_RANGER_FASTQ: return new SCImmuneProfileCellRangerFastqWorkflow(flag);

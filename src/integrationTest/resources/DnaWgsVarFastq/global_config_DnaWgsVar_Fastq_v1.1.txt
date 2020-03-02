@@ -7,10 +7,10 @@ PE = -pe threaded
 [Databases]
 SPECIES = human
 GENOME_BUILD = hg19
-BED = /ngs/data/S03723314_Padded.bed
-BED_WITH_HEADER = /ngs/data/S03723314_Padded_decoy.txt
-BED_FOR_COVERAGE = /ngs/data/S03723314_Padded_decoy.txt
-BED_PRIMER = /ngs/data/S03723314_Padded_decoy.txt
+BED = /ngs/data/test_data_Padded.bed
+BED_WITH_HEADER = /ngs/data/test_data_padded_decoy.txt
+BED_FOR_COVERAGE = /ngs/data/test_data_padded_decoy.txt
+BED_PRIMER = /ngs/data/test_data_padded_decoy.txt
 GENOME = /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa
 NOVOINDEX = /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.nix
 SNPSIFTDB = /ngs/data/tools/SnpEff/snpEff_v4.3p/snpEff/db

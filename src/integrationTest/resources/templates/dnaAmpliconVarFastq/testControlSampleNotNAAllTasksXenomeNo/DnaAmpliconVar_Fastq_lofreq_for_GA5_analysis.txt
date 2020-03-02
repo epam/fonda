@@ -18,7 +18,7 @@ cd build/resources/integrationTest/output
 echo `date` Begin the job execution...
 
 echo `date` Begin Step: Lofreq detection...
-/usr/bin/lofreq somatic -f /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa --min-cov 3 --call-indels -n build/resources/integrationTest/output/N/bam/N.merged.sorted.realign.realign.recal.bam -t build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.realign.recal.bam -l /ngs/data/S03723314_Padded.bed --threads 4 -o build/resources/integrationTest/output/GA5/lofreq/GA5.
+/usr/bin/lofreq somatic -f /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa --min-cov 3 --call-indels -n build/resources/integrationTest/output/N/bam/N.merged.sorted.realign.realign.recal.bam -t build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.realign.recal.bam -l /ngs/data/test_data_Padded.bed --threads 4 -o build/resources/integrationTest/output/GA5/lofreq/GA5.
 gunzip -c build/resources/integrationTest/output/GA5/lofreq/GA5.somatic_final.snvs.vcf.gz > build/resources/integrationTest/output/GA5/lofreq/GA5.somatic_final.snvs.vcf
 gunzip -c build/resources/integrationTest/output/GA5/lofreq/GA5.somatic_final.indels.vcf.gz > build/resources/integrationTest/output/GA5/lofreq/GA5.somatic_final.indels.vcf
 grep -v "^#" build/resources/integrationTest/output/GA5/lofreq/GA5.somatic_final.indels.vcf | cat build/resources/integrationTest/output/GA5/lofreq/GA5.somatic_final.snvs.vcf - > build/resources/integrationTest/output/GA5/lofreq/GA5.lofreq.somatic.variants.vcf

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -170,9 +170,9 @@ public class CmdParserTest extends AbstractTest {
         globalConfig.getDatabaseConfig().setGenomeBuild("hg19");
         globalConfig.getDatabaseConfig().setGenome(format("/%s/hg19.decoy.fa", ROOT_OUTDIR));
         globalConfig.getDatabaseConfig().setNovoIndex(format("/%s/hg19.decoy.nix", ROOT_OUTDIR));
-        globalConfig.getDatabaseConfig().setBed(format("/%s/S03723314_Padded.bed", ROOT_OUTDIR));
-        globalConfig.getDatabaseConfig().setBedWithHeader(format("/%s/S03723314_Padded_decoy.txt", ROOT_OUTDIR));
-        globalConfig.getDatabaseConfig().setBedForCoverage(format("/%s/S03723314_Padded_decoy.txt",
+        globalConfig.getDatabaseConfig().setBed(format("/%s/test_data_padded.bed", ROOT_OUTDIR));
+        globalConfig.getDatabaseConfig().setBedWithHeader(format("/%s/test_data_padded_decoy.txt", ROOT_OUTDIR));
+        globalConfig.getDatabaseConfig().setBedForCoverage(format("/%s/test_data_padded_decoy.txt",
                 ROOT_OUTDIR));
         globalConfig.getDatabaseConfig().setSnpsiftdb(format("/%s/db", ROOT_OUTDIR));
         globalConfig.getDatabaseConfig().setCanonicalTranscript(format("/%s/prefer_ensembl_transcript.txt",

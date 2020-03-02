@@ -146,7 +146,11 @@ public class DnaPicardQc implements Tool<MetricsResult> {
             cmd.append(templateEngine.process(DNA_WGS_PICARD_QC_TOOL_TEMPLATE_NAME, context));
             metricsResultsList.add(metricsFields.getRmdupHsMetrics());
         }
-        TaskContainer.addTasks("DNA QC metrics", "Merge DNA QC");
+        if (isWorkflowRna()) {
+            TaskContainer.addTasks("RNA QC metrics", "Merge RNA QC");
+        } else {
+            TaskContainer.addTasks("DNA QC metrics", "Merge DNA QC");
+        }
         resultCommand.setToolCommand(resultCommand.getToolCommand() + cmd);
         resultCommand.getTempDirs().addAll(metricsResultsList);
 
@@ -317,7 +321,7 @@ public class DnaPicardQc implements Tool<MetricsResult> {
                                                                               String bamOutdir, String qcOutdir) {
         MetricsFields metricsFields = new MetricsFields();
         metricsFields.alignMetrics = replaceBamOutdirWithQcOutdir(mkdupBam
-                        .replace(BAM_EXTENSION, ".align.metrics"), bamOutdir, qcOutdir);
+                .replace(BAM_EXTENSION, ".align.metrics"), bamOutdir, qcOutdir);
         metricsFields.gcbiasChart = replaceBamOutdirWithQcOutdir(mkdupBam
                 .replace(BAM_EXTENSION, ".gcbias.pdf"), bamOutdir, qcOutdir);
         metricsFields.gcbiasMetrics = replaceBamOutdirWithQcOutdir(mkdupBam

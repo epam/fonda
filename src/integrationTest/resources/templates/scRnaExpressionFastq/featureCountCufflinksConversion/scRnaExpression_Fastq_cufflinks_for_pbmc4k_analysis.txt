@@ -1,0 +1,63 @@
+#!/bin/bash -x
+
+# --- SGE options --- #
+
+#$ -wd build/resources/integrationTest/output
+#$ -N scRnaExpression_Fastq_cufflinks_for_pbmc4k_analysis
+#$ -o build/resources/integrationTest/output/log_files/scRnaExpression_Fastq_cufflinks_for_pbmc4k_analysis.log
+#$ -e build/resources/integrationTest/output/err_files/scRnaExpression_Fastq_cufflinks_for_pbmc4k_analysis.err
+#$ -q all.q
+#$ -R y
+#$ -pe threaded 4
+#$ -m a
+
+# --- The commands to be executed --- #
+
+cd build/resources/integrationTest/output
+
+echo `date` Begin the job execution...
+
+echo `date` Begin Step: Cufflinks...
+/ngs/data/tools/cufflinks/v2.2.1/cufflinks --library-type fr-unstranded --num-threads 4 -b /ngs/data/reference_genome/GRCh38/Sequence/GRCh38.genome.fa --GTF /ngs/data/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.annotation.gtf --output-dir build/resources/integrationTest/output/pbmc4k/cufflinks build/resources/integrationTest/output/pbmc4k/bam/pbmc4k.star.sorted.rmdup.bam
+mv build/resources/integrationTest/output/pbmc4k/cufflinks/genes.fpkm_tracking build/resources/integrationTest/output/pbmc4k/cufflinks/pbmc4k.cufflinks.gene.expression.results
+mv build/resources/integrationTest/output/pbmc4k/cufflinks/isoforms.fpkm_tracking build/resources/integrationTest/output/pbmc4k/cufflinks/pbmc4k.cufflinks.isoform.expression.results
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: cufflinks
+	sleep 8
+else
+	echo `date` Error Step: cufflinks
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Remove temporary directories...
+rm -rf build/resources/integrationTest/output/pbmc4k/bam/pbmc4k.star.sorted.bam
+rm -rf build/resources/integrationTest/output/pbmc4k/bam/pbmc4k.star.sorted.bam.bai
+rm -rf build/resources/integrationTest/output/pbmc4k/bam/pbmc4k.Aligned.out.bam
+rm -rf build/resources/integrationTest/output/pbmc4k/bam/pbmc4k.Aligned.out.bam.bai
+rm -rf build/resources/integrationTest/output/pbmc4k/qc/pbmc4k.star.sorted.mkdup.metrics
+rm -rf build/resources/integrationTest/output/pbmc4k/bam/pbmc4k.star.sorted.mkdup.bam
+rm -rf build/resources/integrationTest/output/pbmc4k/bam/pbmc4k.star.sorted.mkdup.bam.bai
+rm -rf build/resources/integrationTest/output/pbmc4k/tmp
+rm -rf build/resources/integrationTest/output/pbmc4k/qc/pbmc4k.star.sorted.mkdup.align.metrics
+rm -rf build/resources/integrationTest/output/pbmc4k/qc/pbmc4k.star.sorted.mkdup.hs.metrics
+rm -rf build/resources/integrationTest/output/pbmc4k/qc/pbmc4k.star.sorted.mkdup.quality.metrics
+rm -rf build/resources/integrationTest/output/pbmc4k/qc/pbmc4k.star.sorted.rmdup.pileup
+rm -rf build/resources/integrationTest/output/pbmc4k/qc/pbmc4k.star.sorted.mkdup.insertsize.metrics
+rm -rf build/resources/integrationTest/output/pbmc4k/qc/pbmc4k.star.sorted.mkdup.gcbias.metrics
+rm -rf build/resources/integrationTest/output/pbmc4k/qc/pbmc4k.star.sorted.mkdup.gc.summary.metrics
+rm -rf build/resources/integrationTest/output/pbmc4k/qc/pbmc4k.star.sorted.rmdup.hs.metrics
+
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Remove temporary directories.
+	sleep 8
+else
+	echo `date` Error Step: Remove temporary directories.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+echo `date` Finish the job execution!

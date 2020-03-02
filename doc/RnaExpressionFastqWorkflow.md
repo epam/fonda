@@ -229,11 +229,11 @@ PE = -pe threaded
 [Databases]
 SPECIES = human
 GENOME_BUILD = GRCh38
-ANNOTGENE = /data/test-fonda/Annotation/Gencode_v26/gencode.v26.annotation.knowntrx.exon.level1-2.trxlevel1-3.gtf
+ANNOTGENE = /data/test-fonda/Annotation/Gencode_v26/gencode.v26.annotation.gtf
 GENOME = /data/test-fonda/Sequence/GRCh38.genome.fa
 TRANSCRIPTOME = /data/test-fonda/Sequence/GRCh38.gencode.v26.pc_transcripts.fa
 STARINDEX = /data/test-fonda/Index/STAR_gc26
-ANNOTGENESAF = /data/test-fonda/Annotation/Gencode_v26/gencode.v26.annotation.knowntrx.exon.level1-2.trxlevel1-3.saf
+ANNOTGENESAF = /data/test-fonda/Annotation/Gencode_v26/gencode.v26.annotation.saf
 rRNABED = /data/test-fonda/Annotation/Gencode_v26/gencode.v26.rRNA.list
 ADAPTER_FWD = AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC
 ADAPTER_REV = AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT

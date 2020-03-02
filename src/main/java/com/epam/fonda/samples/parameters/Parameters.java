@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.epam.fonda.samples.parameters;
 
 import com.epam.fonda.samples.SampleType;
@@ -68,7 +67,7 @@ public class Parameters {
             parameters.setSampleType(values[longLength - 2]);
             parameters.setMatchControl(values[longLength - 1]);
         } else {
-            log.error(String.format("Error Step: Please check the number of columns in pair-end fastq_list file. " +
+            log.error(String.format("Error Step: Please check the number of columns in fastq or bam list file. " +
                     "It should be either %d or %d!", shortLength, longLength));
             throw new IllegalArgumentException(" Incompatible number of columns");
         }

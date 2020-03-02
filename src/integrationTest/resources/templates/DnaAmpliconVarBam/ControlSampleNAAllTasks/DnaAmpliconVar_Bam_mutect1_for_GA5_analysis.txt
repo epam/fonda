@@ -18,7 +18,7 @@ cd build/resources/integrationTest/output
 echo `date` Begin the job execution...
 
 echo `date` Begin Step: Mutect1 detection...
-/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -jar /usr/bin/mutect --analysis_type MuTect --reference_sequence /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa --read_filter NotPrimaryAlignment --allow_potentially_misencoded_quality_scores --intervals /ngs/data/S03723314_Padded.bed --input_file:tumor /ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_003.bam --dbsnp /ngs/data/db/mutect.dbsnp --cosmic /ngs/data/db/cosmic --normal_panel /ngs/data/db/mormal_panel --vcf build/resources/integrationTest/output/GA5/mutect1/GA5.mutect1.variants.vcf
+/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -jar /usr/bin/mutect --analysis_type MuTect --reference_sequence /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa --read_filter NotPrimaryAlignment --allow_potentially_misencoded_quality_scores --intervals /ngs/data/test_data_Padded.bed --input_file:tumor /ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_003.bam --dbsnp /ngs/data/db/mutect.dbsnp --cosmic /ngs/data/db/cosmic --normal_panel /ngs/data/db/mormal_panel --vcf build/resources/integrationTest/output/GA5/mutect1/GA5.mutect1.variants.vcf
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Mutect1 detection.

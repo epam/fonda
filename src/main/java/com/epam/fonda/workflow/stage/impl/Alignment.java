@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -171,7 +171,7 @@ public class Alignment implements Stage {
     private BamResult markDuplicate(final Flag flag, final FastqFileSample sample, final Configuration configuration,
                                     final TemplateEngine templateEngine) {
         bamResult = new PicardMarkDuplicate(sample, bamResult).generate(configuration, templateEngine);
-        if (flag.isRmdup()) {
+        if (flag.isRmdup() || isScRnaExpressionFastq(configuration)) {
             bamResult = new PicardRemoveDuplicate(bamResult).generate(configuration, templateEngine);
         }
         return bamResult;
@@ -179,12 +179,17 @@ public class Alignment implements Stage {
 
     private void qcCheck(final Flag flag, final FastqFileSample sample, final Configuration configuration,
                          final TemplateEngine templateEngine) {
-        final String workflow = configuration.getGlobalConfig().getPipelineInfo().getWorkflow();
-        if (flag.isRnaSeQC()) {
+        final boolean isScRnaExpressionFastq = isScRnaExpressionFastq(configuration);
+        if (flag.isRnaSeQC() && !isScRnaExpressionFastq) {
             metricsResult = new RNASeQC(sample, bamResult.getBamOutput()).generate(configuration, templateEngine);
-        } else if (workflow.equalsIgnoreCase("scRnaExpression_Fastq")) {
+        } else if (isScRnaExpressionFastq) {
             metricsResult.setBamOutput(bamResult.getBamOutput());
             metricsResult = new DnaPicardQc(sample, metricsResult).generate(configuration, templateEngine);
         }
+    }
+
+    private boolean isScRnaExpressionFastq(final Configuration configuration) {
+        return configuration.getGlobalConfig().getPipelineInfo().getWorkflow()
+                .equalsIgnoreCase("scRnaExpression_Fastq");
     }
 }
