@@ -19,6 +19,7 @@ import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.impl.QcSummary;
 import com.epam.fonda.tools.impl.RnaAnalysis;
+import com.epam.fonda.tools.impl.RnaMutationAnalysis;
 import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.tools.results.FastqResult;
 import com.epam.fonda.utils.PipelineUtils;
@@ -73,5 +74,6 @@ public class RnaExpressionFastqWorkflow implements FastqWorkflow {
         List<String> sampleNames = samples.stream().map(FastqFileSample::getName).collect(Collectors.toList());
         new QcSummary(flag, sampleNames).generate(configuration, TEMPLATE_ENGINE);
         new RnaAnalysis(flag, sampleNames).generate(configuration, TEMPLATE_ENGINE);
+        new RnaMutationAnalysis(flag, sampleNames).generate(configuration, TEMPLATE_ENGINE);
     }
 }

@@ -57,7 +57,7 @@ public class GatkHaplotypeCallerRnaFilter implements Tool<VariantsVcfResult> {
         TaskContainer.addTasks("GATK haplotypecaller filtration");
         AbstractCommand command = BashCommand.withTool(variantsVcfResult.getAbstractCommand().getToolCommand() + cmd);
         variantsVcfResult.setAbstractCommand(command);
-        variantsVcfResult.getVariantsVcfOutput().setVariantsVcfFiltered(additionalFields.variantsVcfFiltered);
+        variantsVcfResult.getVariantsVcfOutput().setVariantsVcf(additionalFields.variantsVcfFiltered);
         return variantsVcfResult;
     }
 
