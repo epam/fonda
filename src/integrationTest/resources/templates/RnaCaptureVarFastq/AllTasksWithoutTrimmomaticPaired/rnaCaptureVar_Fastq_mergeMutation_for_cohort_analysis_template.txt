@@ -1,0 +1,53 @@
+#!/bin/bash -x
+
+# --- SGE options --- #
+
+#$ -wd build/resources/integrationTest/output
+#$ -N RnaCaptureVar_Fastq_mergeMutation_for_cohort_analysis
+#$ -o build/resources/integrationTest/output/log_files/RnaCaptureVar_Fastq_mergeMutation_for_cohort_analysis.log
+#$ -e build/resources/integrationTest/output/err_files/RnaCaptureVar_Fastq_mergeMutation_for_cohort_analysis.err
+#$ -q all.q
+#$ -R y
+#$ -pe threaded 4
+#$ -m a
+
+# --- The commands to be executed --- #
+
+cd build/resources/integrationTest/output
+
+echo `date` Begin the job execution...
+
+logFile=build/resources/integrationTest/output/log_files/RnaCaptureVar_Fastq_gatkHaplotypeCaller_for_GA5_analysis.log
+str=""
+while [[ $str = "" ]]
+do
+if [[ -f $logFile  ]];
+then
+	str=$(grep -E "(Successful|Error) Step: SnpEff annotation" $logFile;)
+fi
+	echo Waiting for step: SnpEff annotation
+	sleep 60
+done
+
+if [[ $str == "*Error Step: SnpEff annotation*" ]];
+then
+	echo $(date) Error RNA mutation results from GA5:
+	echo $str
+else
+	echo $(date) Confirm RNA mutation results from GA5
+fi
+
+echo `date` Begin Step: Merge mutation annotation...
+/usr/bin/Rscript /Users/ilyaugryumov/IdeaProjects/fonda/build/classes/main/src/R/dna_rna_mutation_data_analysis.R -i /Users/ilyaugryumov/IdeaProjects/fonda/testRnaCaptureFastqExample/sample/fastqPaired.tsv -d build/resources/integrationTest/output -t seqpurge+star+picard+qc+abra_realign+gatk_realign+gatkHaplotypeCaller
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Merge mutation annotation.
+	sleep 8
+else
+	echo `date` Error Step: Merge mutation annotation.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Finish the job execution!
