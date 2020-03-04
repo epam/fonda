@@ -139,7 +139,8 @@ public class DnaPicardQc implements Tool<MetricsResult> {
             cmd.append(templateEngine.process(DNA_CAPTURE_PICARD_QC_TOOL_TEMPLATE_NAME, context));
             metricsResultsList.addAll(new ArrayList<>(Arrays.asList(metricsFields.getBedCoverage(),
                     metricsFields.getRmdupHsMetrics(), additionalFields.mkdupBam)));
-        } else if (isWorkflowDnaCapture() && matchesExomeLibraryTypeCondition(libraryType) || isWorkflowRna()) {
+        } else if (isWorkflowDnaCapture() && matchesExomeLibraryTypeCondition(libraryType) ||
+                isRnaWorkflow(configuration)) {
             cmd.append(templateEngine.process(DNA_PICARD_QC_TOOL_TEMPLATE_NAME, context));
             metricsResultsList.add(metricsFields.getRmdupHsMetrics());
         } else if (isWorkflowDnaWgs()) {
@@ -411,5 +412,13 @@ public class DnaPicardQc implements Tool<MetricsResult> {
                 && !(matchesExomeLibraryTypeCondition(libraryType) || matchesCaptureLibraryTypeCondition(libraryType)))
                 && !isWorkflowDnaWgs()
                 && !isWorkflowRna();
+    }
+
+    private boolean isRnaWorkflow(final Configuration configuration) {
+        if (PipelineType.RNA_CAPTURE_VAR_FASTQ.getName()
+                .equalsIgnoreCase(configuration.getGlobalConfig().getPipelineInfo().getWorkflow())) {
+            return matchesCaptureLibraryTypeCondition(libraryType);
+        }
+        return isWorkflowRna();
     }
 }

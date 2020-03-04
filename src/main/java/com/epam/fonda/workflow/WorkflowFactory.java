@@ -59,6 +59,7 @@ public class WorkflowFactory {
             case TCR_REPERTOIRE_FASTQ: return new TcrRepertoireFastqWorkflow(flag);
             case HLA_TYPING_FASTQ: return new HlaTypingFastqWorkflow(flag);
             case SC_RNA_EXPRESSION_BAM: return new RnaExpressionBamWorkflow(flag);
+            case RNA_CAPTURE_VAR_FASTQ: return new RnaExpressionFastqWorkflow(flag);
             default: throw new IllegalArgumentException(String.format("Requested workflow %s is not supported yet",
                     workflowName));
         }

@@ -126,7 +126,7 @@ class DnaPicardQcTest extends AbstractTest {
         expectedPipelineInfo.setWorkflow(PipelineType.RNA_CAPTURE_VAR_FASTQ.getName());
         expectedConfiguration.getGlobalConfig().setPipelineInfo(expectedPipelineInfo);
         expectedPipelineInfo.setReadType(FastqReadType.PAIRED.getType());
-        expectedStudyConfig.setLibraryType("exome");
+        expectedStudyConfig.setLibraryType("target");
         expectedConfiguration.setStudyConfig(expectedStudyConfig);
         Context context = new Context();
         context.setVariable(JAR_PATH, jarPath);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,14 +19,17 @@ import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.impl.QcSummary;
 import com.epam.fonda.tools.impl.RnaAnalysis;
+import com.epam.fonda.tools.impl.RnaMutationAnalysis;
 import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.tools.results.FastqResult;
 import com.epam.fonda.utils.PipelineUtils;
 import com.epam.fonda.utils.TemplateEngineUtils;
 import com.epam.fonda.workflow.FastqWorkflow;
+import com.epam.fonda.workflow.PipelineType;
 import com.epam.fonda.workflow.stage.impl.Alignment;
-import com.epam.fonda.workflow.stage.impl.SecondaryAnalysis;
+import com.epam.fonda.workflow.stage.impl.PostAlignment;
 import com.epam.fonda.workflow.stage.impl.PreAlignment;
+import com.epam.fonda.workflow.stage.impl.SecondaryAnalysis;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,12 +57,14 @@ public class RnaExpressionFastqWorkflow implements FastqWorkflow {
         FastqResult fastqResult = PipelineUtils.mergeFastq(sample);
         fastqResult = new PreAlignment(fastqResult).process(flag, sample, configuration, TEMPLATE_ENGINE);
         BamResult bamResult = new Alignment(fastqResult).mapping(flag, sample, configuration, TEMPLATE_ENGINE);
+        if (PipelineType.RNA_CAPTURE_VAR_FASTQ.getName()
+                .equalsIgnoreCase(configuration.getGlobalConfig().getPipelineInfo().getWorkflow())) {
+            bamResult = new PostAlignment(bamResult).process(flag, sample, configuration, TEMPLATE_ENGINE);
+        }
         String secondaryAnalysis = new SecondaryAnalysis(bamResult, sample.getName(), sample.getSampleOutputDir())
                 .process(flag, configuration, TEMPLATE_ENGINE);
-
         final String cmd = bamResult.getCommand().getToolCommand() + secondaryAnalysis +
                 cleanUpTmpDir(bamResult.getCommand().getTempDirs());
-
         printShell(configuration, cmd, sample.getName(), null);
         log.debug(String.format("Successful step: the %s sample was processed.", sample.getName()));
     }
@@ -69,5 +74,6 @@ public class RnaExpressionFastqWorkflow implements FastqWorkflow {
         List<String> sampleNames = samples.stream().map(FastqFileSample::getName).collect(Collectors.toList());
         new QcSummary(flag, sampleNames).generate(configuration, TEMPLATE_ENGINE);
         new RnaAnalysis(flag, sampleNames).generate(configuration, TEMPLATE_ENGINE);
+        new RnaMutationAnalysis(flag, sampleNames).generate(configuration, TEMPLATE_ENGINE);
     }
 }

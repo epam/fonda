@@ -57,7 +57,7 @@ public class GatkSplitReads implements Tool<BamResult> {
         String tmpGatkSplitOutdir = String.format("%s/gatkSplit/tmp", sampleOutdir);
         PipelineUtils.createDir(tmpGatkSplitOutdir);
         String splitBam = bamResult.getBamOutput().getBam().replace(".bam", ".splitRead.bam");
-        String splitBamIndex = bamResult.getBamOutput().getBam().replace(".bam", ".bam.bai");
+        String splitBamIndex = splitBam.replace(".bam", ".bam.bai");
         Context context = new Context();
         context.setVariable("toolFields", toolFields);
         context.setVariable("tmpGatkSplitOutdir", tmpGatkSplitOutdir);

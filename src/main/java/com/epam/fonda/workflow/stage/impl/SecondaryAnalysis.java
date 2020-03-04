@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import com.epam.fonda.tools.impl.Exomecnv;
 import com.epam.fonda.tools.impl.FeatureCount;
 import com.epam.fonda.tools.impl.Freebayes;
 import com.epam.fonda.tools.impl.GatkHaplotypeCaller;
+import com.epam.fonda.tools.impl.GatkHaplotypeCallerRnaFilter;
 import com.epam.fonda.tools.impl.Lofreq;
 import com.epam.fonda.tools.impl.Mutect1;
 import com.epam.fonda.tools.impl.Mutect2;
@@ -145,7 +146,12 @@ public class SecondaryAnalysis implements Stage {
                 .equalsIgnoreCase(configuration.getGlobalConfig().getPipelineInfo().getWorkflow());
         final GatkHaplotypeCaller gatkHaplotypeCaller = new GatkHaplotypeCaller(sampleName,
                 bamResult.getBamOutput().getBam(), sampleOutputDir, isRnaCaptureRnaWorkflow);
-        processVcfTool(configuration, templateEngine, alignCmd, gatkHaplotypeCaller);
+        Tool<VariantsVcfResult> tool = PipelineType.RNA_CAPTURE_VAR_FASTQ.getName()
+                .equalsIgnoreCase(configuration.getGlobalConfig().getPipelineInfo().getWorkflow())
+                ? new GatkHaplotypeCallerRnaFilter(sampleName, gatkHaplotypeCaller
+                                                                    .generate(configuration, templateEngine))
+                : gatkHaplotypeCaller;
+        processVcfTool(configuration, templateEngine, alignCmd, tool);
     }
 
     private void exomecnv(final Flag flag, final Configuration configuration, final TemplateEngine templateEngine,

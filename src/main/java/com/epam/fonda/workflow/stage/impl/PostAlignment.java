@@ -24,11 +24,13 @@ import com.epam.fonda.tools.impl.AbraRealign;
 import com.epam.fonda.tools.impl.AmpliconGatkRealign;
 import com.epam.fonda.tools.impl.AmpliconGatkRecalibrate;
 import com.epam.fonda.tools.impl.DnaPicardQc;
+import com.epam.fonda.tools.impl.GatkSplitReads;
 import com.epam.fonda.tools.impl.PicardMarkDuplicate;
 import com.epam.fonda.tools.impl.PicardRemoveDuplicate;
 import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.tools.results.MetricsOutput;
 import com.epam.fonda.tools.results.MetricsResult;
+import com.epam.fonda.workflow.PipelineType;
 import com.epam.fonda.workflow.impl.Flag;
 import com.epam.fonda.workflow.stage.Stage;
 import lombok.AllArgsConstructor;
@@ -75,6 +77,11 @@ public class PostAlignment implements Stage {
                 command.getTempDirs().addAll(metricsCommand.getTempDirs());
                 bamResult.setCommand(command);
             }
+        }
+        if (PipelineType.RNA_CAPTURE_VAR_FASTQ.getName()
+                .equalsIgnoreCase(configuration.getGlobalConfig().getPipelineInfo().getWorkflow())) {
+            bamResult = new GatkSplitReads(sample.getSampleOutputDir(),
+                    bamResult).generate(configuration, templateEngine);
         }
         if (flag.isAbraRealign()) {
             bamResult = new AbraRealign(sample, bamResult).generate(configuration, templateEngine);

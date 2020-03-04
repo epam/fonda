@@ -1,0 +1,120 @@
+#!/bin/bash -x
+
+# --- SGE options --- #
+
+#$ -wd build/resources/integrationTest/output
+#$ -N RnaCaptureVar_Fastq_alignment_for_GA5_analysis
+#$ -o build/resources/integrationTest/output/log_files/RnaCaptureVar_Fastq_alignment_for_GA5_analysis.log
+#$ -e build/resources/integrationTest/output/err_files/RnaCaptureVar_Fastq_alignment_for_GA5_analysis.err
+#$ -q all.q
+#$ -R y
+#$ -pe threaded 4
+#$ -m a
+
+# --- The commands to be executed --- #
+
+cd build/resources/integrationTest/output
+
+echo `date` Begin the job execution...
+
+echo `date` Begin Step: Merge fastqs...
+
+cp /ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_001.fastq.gz build/resources/integrationTest/output/GA5/fastq/GA5.merged_R1.fastq.gz
+cp /ngs/data/demo/test/fastq_data/GA5_0001_L002_R2_001.fastq.gz build/resources/integrationTest/output/GA5/fastq/GA5.merged_R2.fastq.gz
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Merge fastqs.
+	sleep 8
+else
+	echo `date` Error Step: Merge fastqs.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Trimmomatic trimming...
+/usr/lib/jvm/java-8-openjdk-amd64/bin/java -jar /usr/bin/trimmomatic PE -threads 4 -phred33 build/resources/integrationTest/output/GA5/fastq/GA5.merged_R1.fastq.gz build/resources/integrationTest/output/GA5/fastq/GA5.merged_R2.fastq.gz build/resources/integrationTest/output/GA5/fastq/GA5.trimmed.R1.fastq.gz build/resources/integrationTest/output/GA5/fastq/GA5.trimmed_unpaired.R1.fq.gz build/resources/integrationTest/output/GA5/fastq/GA5.trimmed.R2.fastq.gz build/resources/integrationTest/output/GA5/fastq/GA5.trimmed_unpaired.R2.fq.gz ILLUMINACLIP:AGATCGGAAGAT:2:30:10 LEADING:20 TRAILING:20 SLIDINGWINDOW:4:15 MINLEN:36
+rm -rf build/resources/integrationTest/output/GA5/fastq/GA5.trimmed_unpaired.R1.fq.gz
+rm -rf build/resources/integrationTest/output/GA5/fastq/GA5.trimmed_unpaired.R2.fq.gz
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Trimmomatic trimming.
+	sleep 8
+else
+	echo `date` Error Step: Trimmomatic trimming.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: STAR alignment...
+/opt/STAR/STAR-STAR_2.4.0h1/bin/Linux_x86_64/STAR --genomeDir /common/reference_genome/GRCh38/Index/STAR_g26 --genomeLoad NoSharedMemory --readFilesIn build/resources/integrationTest/output/GA5/fastq/GA5.trimmed.R1.fastq.gz build/resources/integrationTest/output/GA5/fastq/GA5.trimmed.R2.fastq.gz --outFileNamePrefix build/resources/integrationTest/output/GA5/bam/GA5. --outFilterMatchNmin 0 --outStd Log --outFilterMultimapNmax 5 --outFilterMatchNminOverLread 0.66 --outFilterScoreMinOverLread 0.66 --outSAMunmapped Within --outFilterMultimapScoreRange 1 --outSAMstrandField intronMotif --outFilterScoreMin 0 --alignSJoverhangMin 8 --alignSJDBoverhangMin 1 --runThreadN 4 --outSAMtype BAM Unsorted --outSAMattrRGline ID:GA5 SM:GA5 LB:RNA PL:Illumina CN:cr --readFilesCommand zcat
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: STAR alignment.
+	sleep 8
+else
+	echo `date` Error Step: STAR alignment.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Sort bam...
+/usr/lib/jvm/java-8-openjdk-amd64/bin/java -jar /opt/picard/picard.jar SortSam INPUT=build/resources/integrationTest/output/GA5/bam/GA5.Aligned.out.bam OUTPUT=build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.bam SORT_ORDER=coordinate VALIDATION_STRINGENCY=SILENT
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Sort bam.
+	sleep 8
+else
+	echo `date` Error Step: Sort bam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Index bam...
+/opt/samtools/samtools-0.1.19/samtools index build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.bam
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Index bam.
+	sleep 8
+else
+	echo `date` Error Step: Index bam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: GATK SplitNCigarReads...
+/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -Djava.io.tmpdir=build/resources/integrationTest/output/GA5/gatkSplit/tmp -jar /usr/bin/gatk -T SplitNCigarReads -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa --input_file build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.bam -rf ReassignOneMappingQuality -RMQF 255 -RMQT 60 -U ALLOW_N_CIGAR_READS --out build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.splitRead.bam --validation_strictness SILENT
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: GATK SplitNCigarReads.
+	sleep 8
+else
+	echo `date` Error Step: GATK SplitNCigarReads.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+echo `date` Begin Step: Remove temporary directories...
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.bam
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.bam.bai
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.Aligned.out.bam
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.Aligned.out.bam.bai
+rm -rf build/resources/integrationTest/output/GA5/tmp
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.splitRead.bam
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.splitRead.bam.bai
+
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Remove temporary directories.
+	sleep 8
+else
+	echo `date` Error Step: Remove temporary directories.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+echo `date` Finish the job execution!
