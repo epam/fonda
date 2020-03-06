@@ -7,7 +7,7 @@ This document contains a description of the installation requirements, the steps
 
 ### Overall workflow description
 
-**Bam2Fastq** workflow responsible for converting bam file to fastq files.
+**Bam2Fastq** is workflow responsible for converting bam file to fastq files.
 The workflow provides the following available tools for each analysis step:
 
 - data processing: **picard**, **samtools**
@@ -18,7 +18,7 @@ A workflow toolset could contain the following popular option:
 
 ### Software requirements
 
-Before the Fonda launch it is necessary to prepare execution environment for successful workflow launch.
+Before the Fonda launch, it is necessary to prepare execution environment for successful workflow launch.
 
 - Install common:
 
@@ -27,48 +27,7 @@ sudo su && \
 apt-get update -y && \
 apt-get install -y wget curl openjdk-8-jdk unzip git libigraph0-dev \
 libssl-dev libcrypto++-dev libxml2-dev libgmp-dev zlib1g-dev
-
-#[install python3.7]
-#[first option]
-apt-get update -y && \
-apt-get install -y software-properties-common && \
-add-apt-repository ppa:deadsnakes/ppa && \
-apt-get update -y && \
-apt-get install python3.7
-
-#[second option]
-apt-get update -y && \
-apt-get install -y build-essential libncurses5-dev libnss3-dev \
-libreadline-dev libffi-dev && \
-cd /tmp && \
-wget https://www.python.org/ftp/python/3.7.2/Python-3.7.2.tar.xz && \
-tar -xf Python-3.7.2.tar.xz && \
-cd Python-3.7.2 && \
-./configure --enable-optimizations && \
-make -j 1 && \
-make altinstall
-
-#[install additional]
-apt-get install -y python3.7-dev python3-lxml && \
-wget https://bootstrap.pypa.io/get-pip.py -O ./get-pip.py && \
-python3.7 ./get-pip.py
 ```
-
-- Install **R** package:
-
-``` bash
-echo "deb http://cran.rstudio.com/bin/linux/ubuntu xenial/" | tee -a /etc/apt/sources.list && \
-gpg --keyserver keyserver.ubuntu.com --recv-key E084DAB9 && \
-gpg -a --export E084DAB9 | apt-key add - && \
-apt-get update && \
-apt-get install r-base r-base-dev
-
-#[install R packages]
-#[enter to R environment and run]
-install.packages("getopt", repos="http://cran.r-project.org")
-install.packages("plyr", repos="http://cran.r-project.org")
-```
-
 -  Install **samtools**:
 
 ``` bash
@@ -125,9 +84,6 @@ SPECIES = human
 java = /ngs/data/app/java/v1.8.0u121/bin/java
 samtools = /ngs/data/tools/samtools/v0.1.19/samtools
 picard = /ngs/data/tools/picard/v2.10.3/picard.jar
-python = /ngs/data/app/python/v2.7.2/bin/python
-Rscript = /ngs/data/app/R/v3.5.0/bin/Rscript
-doubletdetection_python = /ngs/data/py/versions/3.5.2/bin/python
 
 [Pipeline_Info]
 workflow = Bam2Fastq
@@ -143,10 +99,10 @@ Example template of the **Bam2Fastq** workflow **study\_config** file:
 [Series_Info]
 job_name = pe_job
 dir_out = /ngs/data/demo/test/Bam2Fastq_test
-bam_list = /ngs/data/demo/test/example/HlaTyping_WES_SampleBamPaths.txt
+bam_list = /ngs/data/demo/test/example/Test_BamToFastq_SampleBamPaths.txt
 LibraryType = DNASeq_Paired
 DataGenerationSource = Internal
-Date = 20140318
+Date = 20200306
 Project = Example_project
 Run = run1234
 Cufflinks.library_type = fr-unstranded
