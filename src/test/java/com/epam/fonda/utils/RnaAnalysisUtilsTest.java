@@ -83,7 +83,7 @@ public class RnaAnalysisUtilsTest extends AbstractTest {
     void testDataAnalysis() {
         expectedConfiguration.getStudyConfig().setFastqList("sampleList");
         Context context = new Context();
-        context.setVariable("jarPath", getExecutionPath());
+        context.setVariable("jarPath", getExecutionPath(expectedConfiguration));
         final String expectedCmd = expectedTemplateEngine.process(RNA_ANALYSIS_DATA_ANALYSIS_TEST_OUTPUT_DATA_PATH,
                 context);
         final String actualBashCommand = RnaAnalysisUtils.dataAnalysis(expectedConfiguration, expectedTemplateEngine,

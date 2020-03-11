@@ -89,7 +89,7 @@ public class QcSummary implements PostProcessTool {
                 .errorMessage("Error QC results from " + sample)
                 .successMessage("Confirm QC results from " + sample)
                 .task("QC summary analysis")
-                .jarPath(PipelineUtils.getExecutionPath())
+                .jarPath(PipelineUtils.getExecutionPath(configuration))
                 .steps(String.join("|", TaskContainer.getTasks()))
                 .successPattern(tag)
                 .build();

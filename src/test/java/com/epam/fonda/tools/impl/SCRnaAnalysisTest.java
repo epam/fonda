@@ -62,7 +62,7 @@ public class SCRnaAnalysisTest extends AbstractTest {
         CommonOutdir commonOutdir = new CommonOutdir("output");
         commonOutdir.createDirectory();
         constructConfiguration(commonOutdir);
-        jarPath = getExecutionPath();
+        jarPath = getExecutionPath(expectedConfiguration);
     }
 
     @Test

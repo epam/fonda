@@ -93,7 +93,7 @@ public class Count implements Tool<BamResult> {
     private CountFields constructFields(Configuration configuration) {
         checkValues(configuration);
         CountFields countFields = new CountFields();
-        countFields.jarPath = PipelineUtils.getExecutionPath();
+        countFields.jarPath = PipelineUtils.getExecutionPath(configuration);
         countFields.cellRanger = configuration.getGlobalConfig().getToolConfig().getCellranger();
         countFields.rScript = configuration.getGlobalConfig().getToolConfig().getRScript();
         countFields.sampleName = sample.getName();

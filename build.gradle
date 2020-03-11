@@ -118,7 +118,13 @@ test {
     }
 }
 
-jacoco{
+if (project.hasProperty("skipTest")) {
+    gradle.startParameter.excludedTaskNames += "test"
+    gradle.startParameter.excludedTaskNames += "integrationTest"
+    gradle.startParameter.excludedTaskNames += "jacocoTestCoverageVerification"
+}
+
+jacoco {
     toolVersion = "0.8.4"
 }
 

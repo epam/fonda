@@ -1,0 +1,27 @@
+echo `date` Begin Step: RNA QC metrics...
+rnaSeqcJava -Xmx16g -jar rnaSeqc -r genome -t annotgene -n 1000 -s 'sampleName|sbamOutdir/sampleName.toolName.sorted.mkdup.bam|RNASEQC analysis' -o sqcOutdir VALIDATION_STRINGENCY=SILENT TMP_DIR=stmpOutdir
+java -Xmx16g -jar picard CollectGcBiasMetrics REFERENCE_SEQUENCE=genome INPUT=sbamOutdir/sampleName.toolName.sorted.mkdup.bam OUTPUT=sqcOutdir/sampleName.toolName.sorted.mkdup.gcbias.metrics SUMMARY_OUTPUT=sqcOutdir/sampleName.toolName.sorted.mkdup.gc.summary.metrics CHART=sqcOutdir/sampleName.toolName.sorted.mkdup.gcbias.pdf VALIDATION_STRINGENCY=SILENT TMP_DIR=stmpOutdir
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: RNA QC metrics.
+	sleep 8
+else
+	echo `date` Error Step: RNA QC metrics.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Merge RNA QC...
+python [(${jarPath})]/src/python/rna_qc_metrics.py --sample sampleName --rnaseq sqcOutdir/metrics.tsv --duplicate sqcOutdir/sampleName.toolName.sorted.mkdup.metrics --gcbias sqcOutdir/sampleName.toolName.sorted.mkdup.gc.summary.metrics --project project --run run --date date --output sqcOutdir/sampleName.alignment.merged.QC.metric.txt
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Merge RNA QC.
+	sleep 8
+else
+	echo `date` Error Step: Merge RNA QC.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+

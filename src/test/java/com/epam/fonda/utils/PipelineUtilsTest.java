@@ -158,6 +158,6 @@ class PipelineUtilsTest extends AbstractTest {
 
     @Test
     void getExecutionPath() {
-        assertTrue(StringUtils.isNotBlank(PipelineUtils.getExecutionPath()));
+        assertTrue(StringUtils.isNotBlank(PipelineUtils.getExecutionPath(expectedConfiguration)));
     }
 }

@@ -51,7 +51,7 @@ Users should choose to set the tools and databases as their specific pipeline ne
 | Section | Parameters |
 | --- | --- |
 | **\[Queue_Parameters\]** | NUMTHREADS (4)<br/>MAXMEM (8g)<br/>QUEUE (all.q/c32.q)<br/>PE (-pe threaded) |
-| **\[all\_tools\]**<br/>need to install properly before running Fonda pipeline | Star, hisat2, seqpurge, trimmomatic, java, python, Rscript, gatk, abra2, vardict, mutect1, lofreq, strelka2, freebayes, sequenza, exomecnv, samtools, picard, transvar, snpsift, xenome, contest |
+| **\[all\_tools\]**<br/>need to install properly before running Fonda pipeline | Star, hisat2, seqpurge, trimmomatic, java, python, Rscript, gatk, abra2, vardict, mutect1, lofreq, strelka2, freebayes, sequenza, exomecnv, samtools, picard, transvar, snpsift, xenome, contest, src_scripts |
 | **\[Databases\]**<br/>need to download/prepare properly before running Fonda pipeline | SPECIES (human/mouse)<br/>BED<br/>BED_WITH_HEADER<br/>BED_FOR_COVERAGE<br/>SNPSIFTDB (for snpsift)<br/>MOUSEXENOMEINDEX (for xenome)<br/>CONTEST_POPAF (for contest)<br/>CANONICAL_TRANSCRIPT<br/>GENOME<br/>GENOME_BUILD (hg19/GRCh38/mm10)<br/>KNOWN_INDELS_MILLS (for gatk_realign)<br/>KNOWN_INDELS_PHASE1 (for gatk_realign)<br/>DBSNP (for gatk_realign)<br/>COSMIC (for gatk_realign)<br/>NOVOINDEX (for novoalign)<br/>ADAPTER_SEQ (for seqpurge)<br/>ADAPTER_FWD (for trimmomatic)<br/>ADAPTER_REV (for trimmomatic) |
 | **\[Pipeline_Info\]** | workflow<br/>toolset<br/>flag_xenome (yes/no)<br/>read_type (paired/single) |
 
@@ -60,7 +60,7 @@ Users should choose to set the tools and databases as their specific pipeline ne
 | Section | Parameters |
 | --- | --- |
 | **\[Queue_Parameters\]** | NUMTHREADS (4)<br/>MAXMEM (8g)<br/>QUEUE (all.q/c32.q)<br/>PE (-pe threaded) |
-| **\[all\_tools\]**<br/>need to install properly before running Fonda pipeline | star, hisat2, seqpurge, trimmomatic, java, rnaseqc_java, python, Rscript, cufflinks, rsem, stringtie, feature_count, samtools, picard, rnaseqc, xenome |
+| **\[all\_tools\]**<br/>need to install properly before running Fonda pipeline | star, hisat2, seqpurge, trimmomatic, java, rnaseqc_java, python, Rscript, cufflinks, rsem, stringtie, feature_count, samtools, picard, rnaseqc, xenome, src_scripts |
 | **\[Databases\]**<br/>need to download/prepare properly before running Fonda pipeline | SPECIES (human/mouse)<br/>ANNOTGENE<br/>GENOME<br/>GENOME_BUILD (hg19/GRCh38)<br/>TRANSCRIPTOME<br/>ANNOTGENESAF<br/>STARINDEX (for star)<br/>MOUSEXENOMEINDEX (for xenome)<br/>ADAPTER_SEQ (for seqpurge)<br/>ADAPTER_FWD (for trimmomatic)<br/>ADAPTER_REV (for trimmomatic) |
 | **\[Pipeline_Info\]** | workflow<br/>toolset<br/>flag_xenome (yes/no)<br/>read_type (paired/single) |
 
@@ -69,7 +69,7 @@ Users should choose to set the tools and databases as their specific pipeline ne
 | Section | Parameters |
 | --- | --- |
 | **\[Queue_Parameters\]** | NUMTHREADS (4)<br/>MAXMEM (8g)<br/>QUEUE (all.q/c32.q)<br/>PE (-pe threaded) |
-| **\[all\_tools\]**<br/>need to install properly before running Fonda pipeline | bwa, novoalign, seqpurge, trimmomatic, java, python, Rscript, gatk, abra2, vardict, mutect1, mutect2, lofreq, strelka2, freebayes, sequenza, exomecnv, samtools, picard, transvar, snpsift, xenome, contest |
+| **\[all\_tools\]**<br/>need to install properly before running Fonda pipeline | bwa, novoalign, seqpurge, trimmomatic, java, python, Rscript, gatk, abra2, vardict, mutect1, mutect2, lofreq, strelka2, freebayes, sequenza, exomecnv, samtools, picard, transvar, snpsift, xenome, contest, src_scripts |
 | **\[Databases\]**<br/>need to download/prepare properly before running Fonda pipeline | SPECIES (human/mouse)<br/>BED<br/>BED_WITH_HEADER<br/>BED_FOR_COVERAGE<br/>SNPSIFTDB (for snpsift)<br/>MOUSEXENOMEINDEX (for xenome)<br/>CONTEST_POPAF (for contest)<br/>CANONICAL_TRANSCRIPT<br/>GENOME<br/>GENOME_BUILD (hg19/GRCh38/mm10)<br/>KNOWN_INDELS_MILLS (for gatk_realign)<br/>KNOWN_INDELS_PHASE1 (for gatk_realign)<br/>DBSNP (for gatk_realign)<br/>COSMIC (for gatk_realign)<br/>NOVOINDEX (for novoalign)<br/>ADAPTER_SEQ (for seqpurge)<br/>ADAPTER_FWD (for trimmomatic)<br/>ADAPTER_REV (for trimmomatic) |
 | **\[Pipeline_Info\]** | workflow<br/>toolset<br/>flag_xenome (yes/no)<br/>read_type (paired/single) |
 
@@ -78,7 +78,7 @@ Users should choose to set the tools and databases as their specific pipeline ne
 | Section | Parameters |
 | --- | --- |
 | **\[Queue_Parameters\]** | NUMTHREADS (4)<br/>MAXMEM (8g)<br/>QUEUE (all.q/c32.q)<br/>PE (-pe threaded) |
-| **\[all\_tools\]**<br/>need to install properly before running Fonda pipeline | bwa, novoalign, seqpurge, trimmomatic, java, python, Rscript, gatk, abra2, vardict, mutect1, mutect2, lofreq, strelka2, freebayes, samtools, picard, transvar, snpsift, xenome |
+| **\[all\_tools\]**<br/>need to install properly before running Fonda pipeline | bwa, novoalign, seqpurge, trimmomatic, java, python, Rscript, gatk, abra2, vardict, mutect1, mutect2, lofreq, strelka2, freebayes, samtools, picard, transvar, snpsift, xenome, src_scripts |
 | **\[Databases\]**<br/>need to download/prepare properly before running Fonda pipeline | SPECIES (human/mouse)<br/>BED<br/>BED_WITH_HEADER<br/>BED_FOR_COVERAGE<br/>SNPSIFTDB (for snpsift)<br/>MOUSEXENOMEINDEX (for xenome)<br/>CONTEST_POPAF (for contest)<br/>CANONICAL_TRANSCRIPT<br/>GENOME<br/>GENOME_BUILD (hg19/GRCh38/mm10)<br/>KNOWN_INDELS_MILLS (for gatk_realign)<br/>KNOWN_INDELS_PHASE1 (for gatk_realign)<br/>DBSNP (for gatk_realign)<br/>COSMIC (for gatk_realign)<br/>NOVOINDEX (for novoalign)<br/>ADAPTER_SEQ (for seqpurge)<br/>ADAPTER_FWD (for trimmomatic)<br/>ADAPTER_REV (for trimmomatic) |
 | **\[Pipeline_Info\]** | workflow<br/>toolset<br/>flag_xenome (yes/no)<br/>read_type (paired/single) |
 
@@ -87,7 +87,7 @@ Users should choose to set the tools and databases as their specific pipeline ne
 | Section | Parameters |
 | --- | --- |
 | **\[Queue_Parameters\]** | NUMTHREADS (4)<br/>MAXMEM (8g)<br/>QUEUE (all.q/c32.q)<br/>PE (-pe threaded) |
-| **\[all\_tools\]**<br/>need to install properly before running Fonda pipeline | cellranger, java, python, Rscript, samtools, picard |
+| **\[all\_tools\]**<br/>need to install properly before running Fonda pipeline | cellranger, java, python, Rscript, samtools, picard, src_scripts |
 | **\[Databases\]**<br/>need to download/prepare properly before running Fonda pipeline | SPECIES (human/mouse)<br/>GENOME_BUILD (hg19/GRCh38/mm10)<br/>GENOME<br/>TRANSCRIPTOME |
 | **\[cellranger\]** | cellranger_EXPECTED_CELLS<br/>cellranger_FORCED_CELLS<br/>cellranger_NOSECONDARY<br/>cellranger_CHEMISTRY<br/>cellranger_R1-LENGTH<br/>cellranger_R2-LENGTH<br/>cellranger_LANES<br/>cellranger_INDICES |
 | **\[Pipeline_Info\]** | workflow<br/>toolset<br/>flag_xenome (yes/no)<br/>read_type (paired/single) |

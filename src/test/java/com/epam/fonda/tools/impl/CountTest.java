@@ -64,7 +64,7 @@ public class CountTest extends AbstractTest {
                 .command(BashCommand.withTool(""))
                 .build();
         count = new Count(expectedSample, bamResult);
-        jarPath = getExecutionPath();
+        jarPath = getExecutionPath(expectedConfiguration);
     }
 
     @Test

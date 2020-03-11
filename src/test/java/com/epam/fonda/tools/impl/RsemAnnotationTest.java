@@ -57,7 +57,7 @@ class RsemAnnotationTest extends AbstractTest {
     @Test
     void generateTest() {
         Context context = new Context();
-        context.setVariable("jarPath", getExecutionPath());
+        context.setVariable("jarPath", getExecutionPath(expectedConfiguration));
         final String expectedCmd = expectedTemplateEngine.process(RSEM_EXPRESSION_TEST_INPUT_DATA_PATH, context);
         final String actualBashCommand = rsemAnnotation.generate(expectedConfiguration, expectedTemplateEngine)
                 .getCommand().getToolCommand();

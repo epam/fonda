@@ -76,7 +76,7 @@ public class VcfSnpeffAnnotation implements Tool<VcfScnpeffAnnonationResult> {
      **/
     @Override
     public VcfScnpeffAnnonationResult generate(Configuration configuration, TemplateEngine templateEngine) {
-        AdditionalFields additionalFields = initializeAdditionalFields();
+        AdditionalFields additionalFields = initializeAdditionalFields(configuration);
         String cmd = templateEngine.process(VCF_SNPEFF_ANNOTATION_TOOL_TEMPLATE_NAME,
                 buildContext(configuration, additionalFields));
         TaskContainer.addTasks("SnpEff annotation");
@@ -130,10 +130,11 @@ public class VcfSnpeffAnnotation implements Tool<VcfScnpeffAnnonationResult> {
      * This method initializes fields of the AdditionalFields {@link AdditionalFields} class.
      *
      * @return {@link AdditionalFields} with its fields.
-     **/
-    private AdditionalFields initializeAdditionalFields() {
+     *
+     * @param configuration*/
+    private AdditionalFields initializeAdditionalFields(final Configuration configuration) {
         AdditionalFields additionalFields = new AdditionalFields();
-        additionalFields.jarPath = getExecutionPath();
+        additionalFields.jarPath = getExecutionPath(configuration);
         additionalFields.variantsVcf = variantsVcfResult.getVariantsVcfOutput().getVariantsVcf();
         additionalFields.var2Snpsift = additionalFields.variantsVcf
                 .replace(".vcf", ".pass.annotation.tsv");

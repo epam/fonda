@@ -69,7 +69,7 @@ class DnaAnalysisTest extends AbstractTest {
         configuration.setCommonOutdir(commonOutdir);
         DnaAnalysis dnaAnalysis = new DnaAnalysis(samples, null, Flag.buildFlags(configuration));
         dnaAnalysis.generate(configuration, expectedTemplateEngine);
-        String jarPath = getExecutionPath();
+        String jarPath = getExecutionPath(configuration);
         Context context = new Context();
         context.setVariable("jarPath", jarPath);
         context.setVariable("output", TEST_DIRECTORY);
@@ -80,6 +80,6 @@ class DnaAnalysisTest extends AbstractTest {
         Stream<String> lines = Files.lines(path);
         String actualData = lines.collect(Collectors.joining(System.lineSeparator()));
         lines.close();
-        assertEquals(expectedData, actualData);
+        assertEquals(expectedData.trim(), actualData.trim());
     }
 }

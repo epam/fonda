@@ -35,12 +35,13 @@ To launch all unit and integration tests, to perform the source code analysis (v
 To build Fonda run the command:
 
 ``` bash
-./gradlew clean build zip
+./gradlew clean build zip -PskipTest
 ```
 
 - **`clean`** - deletes the Fonda `build` directory for a fresh compile
 - **`build`** - creates Fonda `.jar` file and `src` folder in `build/libs`
 - **`zip`** - packs Fonda `.jar` and `src` folder into a zip file located in `build/distributions`
+- **`-PskipTest`** - option to skip all tests
 
 **_Note_**: before building a specific Fonda version, please check the Fonda version in the `build.gradle` file is the correct one.
 
@@ -51,7 +52,7 @@ Fonda package contains two components:
 1. Fonda **`.jar`** file
 2. **`src`** folder
 
-Please make sure `src` folder and `.jar` file are put in the same parental directory for proper usages. This is necessary because Fonda needs to call some external scripts from `src` folder (`python` and `R` subfolders) in some pipeline usages.  
+If the `src_scripts` option in global config is not set, please make sure `src` folder and `.jar` file are put in the same parental directory for proper usages. This is necessary because Fonda needs to call some external scripts from `src` folder (`python` and `R` subfolders) in some pipeline usages.  
 For different pipeline utilities, the user needs to make sure the corresponding software prerequisites are properly installed before executing a specific Fonda pipeline. The user can check the required software and databases in the `global_config` files.
 
 ## Available workflows in Fonda
@@ -114,6 +115,8 @@ Examples of the **global_config** files you can see [here](example/global_config
 > Please keep in mind that in each **global_config** file the only tools and databases are included that are required for executing this specific pipeline version.  
 > For example, `global_config_RnaExpression_Fastq_v1.1.txt` may list out the databases, tools and parameters for a particular `RnaExpression_Fastq` pipeline version 1. Later on, `global_config_RnaExpression_Fastq_v1.2.txt` may be prepared for another `RnaExpression_Fastq` pipeline version 2. In the second config the required databases, tools and parameters might be quite different from the first one.  
 > Therefore, all potential databases, tools and parameter options for each available workflow shall be listed out to make sure users can take the full advantage of using Fonda in different projects.
+
+To control the line-endings behavior the `line_ending` option was introduced in the `[Pipeline_Info]` section. The option can be specified as `LF` (Unix-style end-of-line marker) or `CRLF` (Windows-style end-of-line marker) value. If the option is not specified, the system line separator was set as the default one.
 
 **`-study_config`** file - sets a configuration file for a particular study - for cases when a specific study is selected to perform the NGS data analysis. In this config file, there is 1 section - [Series_Info].  
 Required parameters for each workflow:

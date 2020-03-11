@@ -15,6 +15,8 @@
  */
 package com.epam.fonda;
 
+import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.GlobalConfig;
 import com.epam.fonda.utils.TemplateEngineUtils;
 import com.epam.fonda.workflow.TaskContainer;
 import org.junit.jupiter.api.AfterEach;
@@ -45,8 +47,10 @@ public abstract class AbstractIntegrationTest {
 
     @BeforeEach
     public void setUp() {
+        final Configuration configuration = new Configuration();
+        configuration.setGlobalConfig(new GlobalConfig());
         context = new Context();
-        context.setVariable("jarPath", getExecutionPath());
+        context.setVariable("jarPath", getExecutionPath(configuration));
     }
 
     @AfterEach

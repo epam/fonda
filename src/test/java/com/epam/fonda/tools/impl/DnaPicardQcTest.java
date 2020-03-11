@@ -66,7 +66,7 @@ class DnaPicardQcTest extends AbstractTest {
         expectedStudyConfig = new StudyConfig();
         constructStudyConfig(expectedStudyConfig);
         expectedConfiguration.setStudyConfig(expectedStudyConfig);
-        jarPath = getExecutionPath();
+        jarPath = getExecutionPath(expectedConfiguration);
         BamOutput bamOutput = BamOutput.builder()
                 .mkdupBam("sbamOutdir/sampleName.toolName.sorted.mkdup.bam")
                 .mkdupMetric("sbamOutdir/sampleName.toolName.sorted.mkdup.metrics")

@@ -59,7 +59,7 @@ public class SCRNASeqDoubletDetectionTest extends AbstractTest {
         commonOutdir.createDirectory();
         constructConfiguration(commonOutdir);
         scrnaSeqDoubletDetection = new SCRNASeqDoubletDetection(sample1);
-        jarPath = getExecutionPath();
+        jarPath = getExecutionPath(expectedConfiguration);
     }
 
     @Test

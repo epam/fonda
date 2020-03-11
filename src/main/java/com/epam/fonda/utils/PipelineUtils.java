@@ -29,6 +29,9 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -71,11 +74,21 @@ public final class PipelineUtils {
      *
      * @return absolute path of type {@link String}
      **/
-    public static String getExecutionPath() {
-        String absolutePath = PipelineUtils.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        return absolutePath
-                .substring(0, absolutePath.lastIndexOf('/'))
-                .replace("%20", " ");
+    public static String getExecutionPath(final Configuration configuration) {
+        if (StringUtils.isNotBlank(configuration.getGlobalConfig().getToolConfig().getSrcPath())) {
+            final String srcPath = configuration.getGlobalConfig().getToolConfig().getSrcPath();
+            if (srcPath.endsWith("/")) {
+                return StringUtils.chop(srcPath);
+            }
+            return srcPath;
+        }
+        final String executionPath = PipelineUtils.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        try {
+            return StringUtils.chop(URLDecoder.decode(executionPath, StandardCharsets.UTF_8.name()));
+        } catch (UnsupportedEncodingException e) {
+            log.error("Could not decode execution path: " + executionPath);
+        }
+        return StringUtils.chop(executionPath);
     }
 
     /**
@@ -107,7 +120,7 @@ public final class PipelineUtils {
      * @throws IOException throws when file cannot be written or be created properly
      **/
     public static void writeToFile(final String path, final String source, final EOLMarker eol) throws IOException {
-        Files.write(Paths.get(path), Collections.singleton(normalize(source, eol)));
+        Files.write(Paths.get(path), normalize(source, eol).getBytes());
     }
 
     /**
