@@ -1,9 +1,7 @@
 .gradle/
 .idea/
 build/
-fonda-new/build/
-fonda-new/out/
-fonda-new/logs/
-fonda-old/build/
 out/
 logs/
+*.class
+*.log

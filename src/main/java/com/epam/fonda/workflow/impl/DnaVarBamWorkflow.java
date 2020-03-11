@@ -63,7 +63,7 @@ public class DnaVarBamWorkflow implements BamWorkflow {
                 .process(flag, configuration, TEMPLATE_ENGINE) + cleanUpTmpDir(bamResult.getCommand().getTempDirs());
         printShell(configuration, resultCmd, sample.getName(), null);
 
-        log.debug(String.format("Successful step: the %s sample was processed.", sample.getName()));
+        log.debug(String.format("Successful Step: the %s sample was processed.", sample.getName()));
     }
 
     @Override

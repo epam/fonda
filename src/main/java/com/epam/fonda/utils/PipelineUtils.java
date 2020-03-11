@@ -73,9 +73,9 @@ public final class PipelineUtils {
      **/
     public static String getExecutionPath() {
         String absolutePath = PipelineUtils.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        absolutePath = absolutePath.substring(0, absolutePath.lastIndexOf('/'));
-        absolutePath = absolutePath.replaceAll("%20", " ");
-        return absolutePath;
+        return absolutePath
+                .substring(0, absolutePath.lastIndexOf('/'))
+                .replace("%20", " ");
     }
 
     /**

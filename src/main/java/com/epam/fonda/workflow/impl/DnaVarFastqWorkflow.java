@@ -72,7 +72,7 @@ public class DnaVarFastqWorkflow implements FastqWorkflow {
             alignFastq(configuration, sample, isPairedFastq, fastqs1, fastqs2, bamsToMerge, i);
         }
         processPostAlignment(configuration, sample, fastqs1, bamsToMerge);
-        log.debug(String.format("Successful step: the %s sample was processed.", sample.getName()));
+        log.debug(String.format("Successful Step: the %s sample was processed.", sample.getName()));
     }
 
     @Override

@@ -35,9 +35,10 @@ To launch all unit and integration tests, to perform the source code analysis (v
 To build Fonda run the command:
 
 ``` bash
-./gradlew build zip
+./gradlew clean build zip
 ```
 
+- **`clean`** - deletes the Fonda `build` directory for a fresh compile
 - **`build`** - creates Fonda `.jar` file and `src` folder in `build/libs`
 - **`zip`** - packs Fonda `.jar` and `src` folder into a zip file located in `build/distributions`
 
