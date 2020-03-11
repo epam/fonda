@@ -66,7 +66,7 @@ public class RnaExpressionFastqWorkflow implements FastqWorkflow {
         final String cmd = bamResult.getCommand().getToolCommand() + secondaryAnalysis +
                 cleanUpTmpDir(bamResult.getCommand().getTempDirs());
         printShell(configuration, cmd, sample.getName(), null);
-        log.debug(String.format("Successful step: the %s sample was processed.", sample.getName()));
+        log.debug(String.format("Successful Step: the %s sample was processed.", sample.getName()));
     }
 
     @Override

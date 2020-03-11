@@ -65,7 +65,7 @@ public class TcrRepertoireFastqWorkflow implements FastqWorkflow {
         }
         cmd.append(cleanUpTmpDir(tmpDir));
         printShell(configuration, cmd.toString(), sample.getName(), null);
-        log.debug(String.format("Successful step: the %s sample was processed.", sample.getName()));
+        log.debug(String.format("Successful Step: the %s sample was processed.", sample.getName()));
     }
 
     @Override

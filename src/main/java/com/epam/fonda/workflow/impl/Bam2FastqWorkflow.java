@@ -68,7 +68,7 @@ public class Bam2FastqWorkflow implements BamWorkflow {
         Collections.addAll(bamResult.getCommand().getTempDirs(), sample.getTmpOutdir());
         cmd.append(cleanUpTmpDir(bamResult.getCommand().getTempDirs()));
         printShell(configuration, cmd.toString(), sample.getName(), null);
-        log.debug(String.format("Successful step: the %s sample was processed.", sample.getName()));
+        log.debug(String.format("Successful Step: the %s sample was processed.", sample.getName()));
     }
 
     @Override

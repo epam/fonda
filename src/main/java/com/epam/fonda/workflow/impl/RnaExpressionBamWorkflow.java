@@ -61,7 +61,7 @@ public class RnaExpressionBamWorkflow implements BamWorkflow {
                 .process(flag, configuration, TEMPLATE_ENGINE);
         final String cmd = secondaryAnalysis + cleanUpTmpDir(Collections.singleton(sample.getTmpOutdir()));
         printShell(configuration, cmd, sample.getName(), null);
-        log.debug(String.format("Successful step: the %s sample was processed.", sample.getName()));
+        log.debug(String.format("Successful Step: the %s sample was processed.", sample.getName()));
     }
 
     @Override
