@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,9 @@ import com.beust.jcommander.Parameter;
 import lombok.Data;
 
 import java.util.LinkedHashSet;
+
+import static com.epam.fonda.entity.configuration.EOLMarker.CRLF;
+import static com.epam.fonda.entity.configuration.EOLMarker.LF;
 
 /**
  * The <tt>GlobalConfig</tt> class represents the user specified workflow parameters from global config file
@@ -194,6 +197,8 @@ public class GlobalConfig {
         private String sequenza;
         @Parameter(names = GlobalConfigFormat.EXOMECNV)
         private String exomecnv;
+        @Parameter(names = GlobalConfigFormat.SRC_SCRIPTS_FOLDER_PATH)
+        private String srcPath;
     }
 
     @Data
@@ -230,5 +235,7 @@ public class GlobalConfig {
         private boolean flagXenome;
         @Parameter(names = GlobalConfigFormat.READ_TYPE)
         private String readType;
+        @Parameter(names = GlobalConfigFormat.LINE_ENDING, converter = EOLConverter.class, arity = 1)
+        private EOLMarker lineEnding = System.lineSeparator().equalsIgnoreCase(CRLF.getLineSeparator()) ? CRLF : LF;
     }
 }

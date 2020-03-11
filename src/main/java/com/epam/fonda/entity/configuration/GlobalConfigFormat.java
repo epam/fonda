@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -104,6 +104,7 @@ public final class GlobalConfigFormat {
     public static final String FREEBAYES = "freebayes";
     public static final String SEQUENZA = "sequenza";
     public static final String EXOMECNV = "exomecnv";
+    public static final String SRC_SCRIPTS_FOLDER_PATH = "src_scripts";
 
     // [cellranger]
     public static final String CELLRANGER_EXPECTED_CELLS = "cellranger_EXPECTED_CELLS";
@@ -122,4 +123,5 @@ public final class GlobalConfigFormat {
     public static final String TOOLSET = "toolset";
     public static final String FLAG_XENOME = "flag_xenome";
     public static final String READ_TYPE = "read_type";
+    public static final String LINE_ENDING = "line_ending";
 }

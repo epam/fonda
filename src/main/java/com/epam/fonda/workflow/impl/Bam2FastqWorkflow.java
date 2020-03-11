@@ -72,7 +72,7 @@ public class Bam2FastqWorkflow implements BamWorkflow {
     }
 
     @Override
-    public void postProcess(Configuration configuration, List<BamFileSample> samples) {
+    public void postProcess(Configuration configuration, List<BamFileSample> samples) throws IOException {
         List<FastqFileSample> fastqFileSamples = samples.stream()
                 .map(s -> FastqFileSample.builder()
                             .name(s.getName())

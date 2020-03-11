@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.epam.fonda.tools.impl;
 
 import com.epam.fonda.entity.configuration.Configuration;
@@ -28,6 +27,7 @@ import lombok.NonNull;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,7 +47,7 @@ public class FastqListAnalysis implements PostProcessTool {
      * @param templateEngine the {@link TemplateEngine}.
      **/
     @Override
-    public void generate(Configuration configuration, TemplateEngine templateEngine) {
+    public void generate(Configuration configuration, TemplateEngine templateEngine) throws IOException {
         FastqListAnalysisFields toolFields = initFastqListAnalysisFields(configuration);
         String fastqPath = String.format("%s/%s-%s-%s-FastqPaths.txt", toolFields.outdir, toolFields.project,
                 toolFields.runID, toolFields.date);
@@ -57,7 +57,8 @@ public class FastqListAnalysis implements PostProcessTool {
         context.setVariable("outDir", toolFields.outdir);
         context.setVariable("readType", toolFields.readType);
         String defineOfFileWithFastq = templateEngine.process(FASTQ_LIST_ANALYSIS_TEMPLATE, context);
-        PipelineUtils.writeToFile(fastqPath, defineOfFileWithFastq);
+        PipelineUtils.writeToFile(fastqPath, defineOfFileWithFastq,
+                configuration.getGlobalConfig().getPipelineInfo().getLineEnding());
     }
 
     @Data
