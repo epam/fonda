@@ -132,7 +132,7 @@ public class SCRnaAnalysis implements PostProcessTool {
     String expressData(Configuration configuration, TemplateEngine templateEngine) {
         checkConfiguration(configuration);
         SCRnaAnalysis.SCRnaAnalysisFields scRnaAnalysisFields = new SCRnaAnalysis.SCRnaAnalysisFields();
-        scRnaAnalysisFields.jarPath = PipelineUtils.getExecutionPath();
+        scRnaAnalysisFields.jarPath = PipelineUtils.getExecutionPath(configuration);
         scRnaAnalysisFields.sampleList = getSampleFileListReference(configuration.getStudyConfig());
         scRnaAnalysisFields.rScript = validate(configuration.getGlobalConfig().getToolConfig().getRScript(),
                 GlobalConfigFormat.R_SCRIPT);

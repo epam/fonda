@@ -100,8 +100,7 @@ task integrationTest(type: Test) {
         classDumpDir = file("$buildDir/jacoco/classpathdumps")
     }
 }
-build.dependsOn integrationTest
-check.dependsOn integrationTest
+test.dependsOn integrationTest
 
 idea {
     module {
@@ -118,7 +117,7 @@ test {
     }
 }
 
-jacoco{
+jacoco {
     toolVersion = "0.8.4"
 }
 
@@ -128,6 +127,7 @@ jacocoTestCoverageVerification {
         rule {
             element = 'CLASS'
             excludes = ['com.epam.fonda.workflow.Workflow',
+                        'com.epam.fonda.entity.configuration.EOLConverter',
                         'com.epam.fonda.OptionNames',
                         'com.epam.fonda.Main',
                         'com.epam.fonda.Executor']

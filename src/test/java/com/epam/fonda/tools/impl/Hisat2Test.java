@@ -86,7 +86,7 @@ class Hisat2Test extends AbstractTest {
         expectedConfiguration.setGlobalConfig(expectedGlobalConfig);
         expectedStudyConfig = new StudyConfig();
         expectedConfiguration.setStudyConfig(expectedStudyConfig);
-        jarPath = getExecutionPath();
+        jarPath = getExecutionPath(expectedConfiguration);
         fastqOutput = FastqOutput.builder()
                 .mergedFastq1("mergedFastq1")
                 .mergedFastq2("mergedFastq2")

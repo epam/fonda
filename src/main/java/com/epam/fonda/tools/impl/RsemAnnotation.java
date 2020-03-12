@@ -76,7 +76,7 @@ public class RsemAnnotation implements Tool<RsemResult> {
         RsemAnnotationFields rsemExpressionFields = new RsemAnnotationFields();
         rsemExpressionFields.annotGeneSaf = validate(
                 configuration.getGlobalConfig().getDatabaseConfig().getAnnotgenesaf(), GlobalConfigFormat.ANNOTGENESAF);
-        rsemExpressionFields.jarPath = PipelineUtils.getExecutionPath();
+        rsemExpressionFields.jarPath = PipelineUtils.getExecutionPath(configuration);
         rsemExpressionFields.python = validate(configuration.getGlobalConfig().getToolConfig().getPython(),
                 GlobalConfigFormat.PYTHON);
         rsemExpressionFields.rsemGeneResult = rsemResult.getRsemOutput().getRsemGeneResult();

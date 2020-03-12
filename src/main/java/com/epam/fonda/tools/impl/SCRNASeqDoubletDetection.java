@@ -88,7 +88,7 @@ public class SCRNASeqDoubletDetection {
      */
     private DoubleDetectionFields constructFields(Configuration configuration) {
         DoubleDetectionFields doubleDetectionFields = new DoubleDetectionFields();
-        doubleDetectionFields.jarPath = PipelineUtils.getExecutionPath();
+        doubleDetectionFields.jarPath = PipelineUtils.getExecutionPath(configuration);
         doubleDetectionFields.python = validate(configuration.getGlobalConfig().getToolConfig().getPython(),
                 GlobalConfigFormat.PYTHON);
         doubleDetectionFields.doubleDetectionPythonPath = validate(

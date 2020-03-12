@@ -152,7 +152,7 @@ public final class RnaAnalysisUtils {
     private static Context buildContext(final Configuration configuration, final String task) {
         RnaAnalysisFields rnaAnalysisFields = new RnaAnalysisFields();
         rnaAnalysisFields.toolName = task;
-        rnaAnalysisFields.jarPath = PipelineUtils.getExecutionPath();
+        rnaAnalysisFields.jarPath = PipelineUtils.getExecutionPath(configuration);
         rnaAnalysisFields.outdir = configuration.getCommonOutdir().getRootOutdir();
         rnaAnalysisFields.sampleList = getSampleFileListReference(configuration.getStudyConfig());
         rnaAnalysisFields.rScript = validate(configuration.getGlobalConfig().getToolConfig().getRScript(),

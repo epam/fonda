@@ -159,8 +159,7 @@ public class RNASeQC implements Tool<MetricsResult> {
                 GlobalConfigFormat.ANNOTGENE);
         databaseFields.genome = validate(configuration.getGlobalConfig().getDatabaseConfig().getGenome(),
                 GlobalConfigFormat.GENOME);
-        databaseFields.rRnaBed = validate(configuration.getGlobalConfig().getDatabaseConfig().getRRNABED(),
-                GlobalConfigFormat.R_RNABED);
+        databaseFields.rRnaBed = configuration.getGlobalConfig().getDatabaseConfig().getRRNABED();
         return databaseFields;
     }
 
@@ -177,7 +176,7 @@ public class RNASeQC implements Tool<MetricsResult> {
         additionalQcFields.sqcOutdir = sample.getQcOutdir();
         additionalQcFields.stmpOutdir = sample.getTmpOutdir();
         additionalQcFields.sampleName = sample.getName();
-        additionalQcFields.jarPath = getExecutionPath();
+        additionalQcFields.jarPath = getExecutionPath(configuration);
         additionalQcFields.readType = validate(configuration.getGlobalConfig().getPipelineInfo().getReadType(),
                 GlobalConfigFormat.READ_TYPE);
         additionalQcFields.project = validate(configuration.getStudyConfig().getProject(), StudyConfigFormat.PROJECT);

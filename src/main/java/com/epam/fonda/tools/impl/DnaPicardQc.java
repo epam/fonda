@@ -360,7 +360,7 @@ public class DnaPicardQc implements Tool<MetricsResult> {
             additionalFields.mkdupBam = metricsResult.getBamOutput().getMkdupBam();
         }
         additionalFields.date = validate(configuration.getStudyConfig().getDate(), StudyConfigFormat.DATE);
-        additionalFields.jarPath = getExecutionPath();
+        additionalFields.jarPath = getExecutionPath(configuration);
         additionalFields.project = validate(configuration.getStudyConfig().getProject(), StudyConfigFormat.PROJECT);
         additionalFields.readType = validate(configuration.getGlobalConfig().getPipelineInfo().getReadType(),
                 GlobalConfigFormat.READ_TYPE);

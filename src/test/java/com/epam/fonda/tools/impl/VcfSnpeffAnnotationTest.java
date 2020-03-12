@@ -70,7 +70,7 @@ class VcfSnpeffAnnotationTest extends AbstractTest {
         VcfSnpeffAnnotation vcfSnpeffAnnotation = new VcfSnpeffAnnotation(expectedSample.getName(),
                 expectedVariantsVcfResult);
         Context context = new Context();
-        context.setVariable("jarPath", getExecutionPath());
+        context.setVariable("jarPath", getExecutionPath(expectedConfiguration));
         String expectedCmd = expectedTemplateEngine.process(VCF_SNPEFF_ANNOTATION_TOOL_TEST_TEMPLATE_NAME, context);
         vcfScnpeffAnnonationResult = vcfSnpeffAnnotation.generate(expectedConfiguration, expectedTemplateEngine);
         assertEquals(expectedCmd, vcfScnpeffAnnonationResult.getCommand().getToolCommand());

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,11 +32,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class RNASeQCTest extends AbstractTest {
     private static final String RNASEQC_TOOL_TEST_TEMPLATE_NAME = "RNASeQC_tool_test_output_data";
+    private static final String RNASEQC_TOOL_TEST_TEMPLATE_NAME_WITHOUT_RNABED =
+            "RNASeQC_tool_test_output_data_without_RNABED";
     private Configuration expectedConfiguration;
     private FastqFileSample expectedSample;
     private TemplateEngine expectedTemplateEngine = TemplateEngineUtils.init();
     private String jarPath;
     private BamOutput bamOutput;
+    private RNASeQC rnaSeQC;
+    private Context context;
 
     @BeforeEach
     void setup() {
@@ -70,20 +74,31 @@ class RNASeQCTest extends AbstractTest {
         expectedStudyConfig.setRun("run");
         expectedConfiguration.setStudyConfig(expectedStudyConfig);
         expectedSample.setName("sampleName");
-        jarPath = getExecutionPath();
+        jarPath = getExecutionPath(expectedConfiguration);
 
         bamOutput = BamOutput.builder()
                 .mkdupBam("sbamOutdir/sampleName.toolName.sorted.mkdup.bam")
                 .mkdupMetric("sbamOutdir/sampleName.toolName.sorted.mkdup.metrics")
                 .build();
+        rnaSeQC = new RNASeQC(expectedSample, bamOutput);
+        context = new Context();
+        context.setVariable("jarPath", jarPath);
+
     }
 
     @Test
     void shouldGenerate() {
-        RNASeQC rnaSeQC = new RNASeQC(expectedSample, bamOutput);
-        Context context = new Context();
-        context.setVariable("jarPath", jarPath);
         final String expectedCmd = expectedTemplateEngine.process(RNASEQC_TOOL_TEST_TEMPLATE_NAME, context);
+        final String actualCmd = rnaSeQC.generate(expectedConfiguration, expectedTemplateEngine).getCommand()
+                .getToolCommand();
+        assertEquals(expectedCmd, actualCmd);
+    }
+
+    @Test
+    void shouldGenerateWithoutRRNABED() {
+        final String expectedCmd = expectedTemplateEngine.process(RNASEQC_TOOL_TEST_TEMPLATE_NAME_WITHOUT_RNABED,
+                context);
+        expectedConfiguration.getGlobalConfig().getDatabaseConfig().setRRNABED(null);
         final String actualCmd = rnaSeQC.generate(expectedConfiguration, expectedTemplateEngine).getCommand()
                 .getToolCommand();
         assertEquals(expectedCmd, actualCmd);

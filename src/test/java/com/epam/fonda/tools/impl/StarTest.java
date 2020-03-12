@@ -92,7 +92,7 @@ class StarTest extends AbstractTest {
         expectedSample.setBamOutdir("sbamOutdir");
         expectedSample.setTmpOutdir("stmpOutdir");
         expectedSample.setQcOutdir("sqcOutdir");
-        jarPath = getExecutionPath();
+        jarPath = getExecutionPath(expectedConfiguration);
 
         fastqOutput = FastqOutput.builder()
                 .mergedFastq1("mergedFastq1")

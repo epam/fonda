@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.epam.fonda.utils;
 
 import com.epam.fonda.entity.command.AbstractCommand;
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.EOLMarker;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.results.FastqOutput;
 import com.epam.fonda.tools.results.FastqResult;
@@ -29,6 +29,9 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -71,11 +74,21 @@ public final class PipelineUtils {
      *
      * @return absolute path of type {@link String}
      **/
-    public static String getExecutionPath() {
-        String absolutePath = PipelineUtils.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        return absolutePath
-                .substring(0, absolutePath.lastIndexOf('/'))
-                .replace("%20", " ");
+    public static String getExecutionPath(final Configuration configuration) {
+        if (StringUtils.isNotBlank(configuration.getGlobalConfig().getToolConfig().getSrcPath())) {
+            final String srcPath = configuration.getGlobalConfig().getToolConfig().getSrcPath();
+            if (srcPath.endsWith("/")) {
+                return StringUtils.chop(srcPath);
+            }
+            return srcPath;
+        }
+        final String executionPath = PipelineUtils.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        try {
+            return StringUtils.chop(URLDecoder.decode(executionPath, StandardCharsets.UTF_8.name()));
+        } catch (UnsupportedEncodingException e) {
+            log.error("Could not decode execution path: " + executionPath);
+        }
+        return StringUtils.chop(executionPath);
     }
 
     /**
@@ -95,8 +108,8 @@ public final class PipelineUtils {
         Context context = new Context();
         context.setVariable(VARIABLES_MAP, variablesMap);
         String staticShell = TEMPLATE_ENGINE.process(STATIC_SHELL_TEMPLATE_NAME, context);
-        Files.write(Paths.get(String.valueOf(variablesMap.get("shellToSubmit"))), Collections
-                .singleton(staticShell + cmd));
+        writeToFile(String.valueOf(variablesMap.get("shellToSubmit")), staticShell + cmd,
+                configuration.getGlobalConfig().getPipelineInfo().getLineEnding());
     }
 
     /**
@@ -106,12 +119,8 @@ public final class PipelineUtils {
      * @param source is the type or {@link String} and contains the file itself.
      * @throws IOException throws when file cannot be written or be created properly
      **/
-    public static void writeToFile(String path, String source) {
-        try {
-            Files.write(Paths.get(path), Collections.singleton(source));
-        } catch (IOException e) {
-            log.error(format("Could not write to file %s", path), e);
-        }
+    public static void writeToFile(final String path, final String source, final EOLMarker eol) throws IOException {
+        Files.write(Paths.get(path), normalize(source, eol).getBytes());
     }
 
     /**
@@ -168,7 +177,8 @@ public final class PipelineUtils {
         context.setVariable(VARIABLES_MAP, variablesMap);
         String staticShell = TEMPLATE_ENGINE.process(STATIC_SHELL_TEMPLATE_NAME, context);
 
-        Files.write(Paths.get(shellToSubmit), Collections.singleton(staticShell + cmd + JOB_FINISH));
+        writeToFile(shellToSubmit, format("%s%s%s", staticShell, cmd, JOB_FINISH),
+                configuration.getGlobalConfig().getPipelineInfo().getLineEnding());
 
         if (configuration.isTestMode()) {
             return;
@@ -294,5 +304,9 @@ public final class PipelineUtils {
      */
     public static boolean checkSampleType(String type) {
         return TUMOR.equals(type) || CASE.equals(type);
+    }
+
+    private static String normalize(final String string, final EOLMarker eol) {
+        return string.replace(System.lineSeparator(), eol.getLineSeparator());
     }
 }
