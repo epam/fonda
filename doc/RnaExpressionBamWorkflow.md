@@ -183,14 +183,14 @@ PE = PE
 SPECIES = human
 GENOME_BUILD = GRCh38
 ANNOTGENE =  /cloud-data/test-fonda/Annotation/Gencode_v26/gencode.v26.annotation.gtf
-GENOME = /data/test-fonda/Sequence/GRCh38.genome.fa
-TRANSCRIPTOME = /data/test-fonda/Sequence/GRCh38.gencode.v26.pc_transcripts.fa
-STARINDEX = /data/test-fonda/Index/STAR_gc26
-ANNOTGENESAF = /data/test-fonda/Annotation/Gencode_v26/gencode.v26.annotation.saf
+GENOME = /cloud-data/test-fonda/Sequence/GRCh38.genome.fa
+TRANSCRIPTOME = /cloud-data/test-fonda/Sequence/GRCh38.gencode.v26.pc_transcripts.fa
+STARINDEX = /cloud-data/test-fonda/Index/STAR_gc26
+ANNOTGENESAF = /cloud-data/test-fonda/Annotation/Gencode_v26/gencode.v26.annotation.knowntrx.exon.level1-2.trxlevel1-3.saf
 ADAPTER_FWD = AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC
 ADAPTER_REV = AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT
-ADAPTER_SEQ = /data/test-fonda/trim_adapters
-RSEMINDEX = /data/test-fonda/Index/RSEM_gc26/GRCh38.genome
+ADAPTER_SEQ = /cloud-data/test-fonda/trim_adapters
+RSEMINDEX = /cloud-data/test-fonda/Index/RSEM_gc26/GRCh38.genome
 
 [all_tools]
 star = /opt/STAR/STAR-STAR_2.4.0h1/bin/Linux_x86_64/STAR
