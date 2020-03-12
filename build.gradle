@@ -100,8 +100,7 @@ task integrationTest(type: Test) {
         classDumpDir = file("$buildDir/jacoco/classpathdumps")
     }
 }
-build.dependsOn integrationTest
-check.dependsOn integrationTest
+test.dependsOn integrationTest
 
 idea {
     module {
@@ -116,12 +115,6 @@ test {
         events "SKIPPED", "FAILED"
         showStandardStreams = true
     }
-}
-
-if (project.hasProperty("skipTest")) {
-    gradle.startParameter.excludedTaskNames += "test"
-    gradle.startParameter.excludedTaskNames += "integrationTest"
-    gradle.startParameter.excludedTaskNames += "jacocoTestCoverageVerification"
 }
 
 jacoco {
