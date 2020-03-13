@@ -115,7 +115,7 @@ Examples of the **global_config** files you can see [here](example/global_config
 > For example, `global_config_RnaExpression_Fastq_v1.1.txt` may list out the databases, tools and parameters for a particular `RnaExpression_Fastq` pipeline version 1. Later on, `global_config_RnaExpression_Fastq_v1.2.txt` may be prepared for another `RnaExpression_Fastq` pipeline version 2. In the second config the required databases, tools and parameters might be quite different from the first one.  
 > Therefore, all potential databases, tools and parameter options for each available workflow shall be listed out to make sure users can take the full advantage of using Fonda in different projects.
 
-To control the line-endings behavior the `line_ending` option was introduced in the `[Pipeline_Info]` section. The option can be specified as `LF` (Unix-style end-of-line marker) or `CRLF` (Windows-style end-of-line marker) value. If the option is not specified, the system line separator was set as the default one.
+To control the line-endings behavior the `line_ending` option was introduced in the `[Pipeline_Info]` section. The option can be specified as `LF` (Unix-style end-of-line marker) or `CRLF` (Windows-style end-of-line marker) value. If the option is not specified, the `LF` line separator was set as the default one.
 
 **`-study_config`** file - sets a configuration file for a particular study - for cases when a specific study is selected to perform the NGS data analysis. In this config file, there is 1 section - [Series_Info].  
 Required parameters for each workflow:

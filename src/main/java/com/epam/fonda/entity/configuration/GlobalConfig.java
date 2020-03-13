@@ -21,7 +21,6 @@ import lombok.Data;
 
 import java.util.LinkedHashSet;
 
-import static com.epam.fonda.entity.configuration.EOLMarker.CRLF;
 import static com.epam.fonda.entity.configuration.EOLMarker.LF;
 
 /**
@@ -236,6 +235,6 @@ public class GlobalConfig {
         @Parameter(names = GlobalConfigFormat.READ_TYPE)
         private String readType;
         @Parameter(names = GlobalConfigFormat.LINE_ENDING, converter = EOLConverter.class, arity = 1)
-        private EOLMarker lineEnding = System.lineSeparator().equalsIgnoreCase(CRLF.getLineSeparator()) ? CRLF : LF;
+        private EOLMarker lineEnding = LF;
     }
 }
