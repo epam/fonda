@@ -40,15 +40,10 @@ jar {
 
 task copySrc(type: Copy, dependsOn: 'build') {
     group = 'build'
-    copy {
-        from "$project.projectDir/src/main/python"
-        into "$project.buildDir/libs/src/python"
-    }
-
-    copy {
-        from "$project.projectDir/src/main/R"
-        into "$project.buildDir/libs/src/R"
-    }
+    from "$project.projectDir/src/main"
+    into "$project.buildDir/libs/src"
+    include "python/**"
+    include "R/**"
 }
 
 task zip(type: Zip, dependsOn: ['build', 'copySrc']) {
