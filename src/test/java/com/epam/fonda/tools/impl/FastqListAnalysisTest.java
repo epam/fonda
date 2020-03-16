@@ -35,6 +35,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import static com.epam.fonda.entity.configuration.EOLMarker.CRLF;
+import static com.epam.fonda.entity.configuration.EOLMarker.LF;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FastqListAnalysisTest extends AbstractTest {
@@ -111,6 +113,7 @@ class FastqListAnalysisTest extends AbstractTest {
         GlobalConfig.PipelineInfo pipelineInfo = new GlobalConfig.PipelineInfo();
         pipelineInfo.setWorkflow("Bam2Fastq");
         pipelineInfo.setReadType(readType);
+        pipelineInfo.setLineEnding(System.lineSeparator().equalsIgnoreCase(CRLF.getLineSeparator()) ? CRLF : LF);
         globalConfig.setPipelineInfo(pipelineInfo);
         configuration.setStudyConfig(studyConfig);
         configuration.setGlobalConfig(globalConfig);

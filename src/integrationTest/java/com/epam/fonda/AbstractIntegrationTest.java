@@ -16,6 +16,7 @@
 package com.epam.fonda;
 
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.EOLMarker;
 import com.epam.fonda.entity.configuration.GlobalConfig;
 import com.epam.fonda.utils.TemplateEngineUtils;
 import com.epam.fonda.workflow.TaskContainer;
@@ -34,7 +35,10 @@ import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.Objects;
 
+import static com.epam.fonda.entity.configuration.EOLMarker.CRLF;
+import static com.epam.fonda.entity.configuration.EOLMarker.LF;
 import static com.epam.fonda.utils.PipelineUtils.getExecutionPath;
+import static com.epam.fonda.utils.PipelineUtils.writeToFile;
 
 /**
  * Helper class to provide common functionality of integration tests
@@ -89,7 +93,11 @@ public abstract class AbstractIntegrationTest {
         try {
             globalConfig = Paths.get(this.getClass().getClassLoader().getResource(globalConfigName).toURI()).toString();
             studyConfig = Paths.get(this.getClass().getClassLoader().getResource(studyConfigName).toURI()).toString();
-        } catch (URISyntaxException e) {
+            EOLMarker lineSeparator = System.lineSeparator().equalsIgnoreCase(CRLF.getLineSeparator()) ? CRLF : LF;
+            final String source = new String(Files.readAllBytes(Paths.get(globalConfig))) +
+                    String.format("\nline_ending = %s", lineSeparator.getLineSeparator());
+            writeToFile(globalConfig, source, lineSeparator);
+        } catch (URISyntaxException | IOException e) {
             throw new IllegalArgumentException("Cannot parse globalConfig or StudyConfig " + e);
         }
         String[] arg = new String[]{"-test", "-global_config", globalConfig, "-study_config", studyConfig};
