@@ -16,7 +16,6 @@
 package com.epam.fonda.entity.configuration;
 
 import com.beust.jcommander.IStringConverter;
-import org.apache.commons.lang3.StringUtils;
 
 import static com.epam.fonda.entity.configuration.EOLMarker.CRLF;
 import static com.epam.fonda.entity.configuration.EOLMarker.LF;
@@ -28,9 +27,7 @@ public class EOLConverter implements IStringConverter<EOLMarker> {
 
     @Override
     public EOLMarker convert(final String value) {
-        if (StringUtils.isBlank(value)) {
-            return System.lineSeparator().equalsIgnoreCase(CRLF.getLineSeparator()) ? CRLF : LF;
-        } else if (value.equalsIgnoreCase(CRLF.name())) {
+        if (value.equalsIgnoreCase(CRLF.name())) {
             return CRLF;
         }
         return LF;
