@@ -18,7 +18,7 @@ cd build/resources/integrationTest/output
 echo `date` Begin the job execution...
 
 echo `date` Begin Step: Featurecounts...
-feature_count -F SAF -M -s 0 -a /common/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.annotation.saf -o build/resources/integrationTest/output/GA5/feature_count/GA5_featureCount_gene.txt -Q 20 -T 4 /ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_003.bam
+/opt/subread/subread-1.4.5-p1-Linux-x86_64/bin/featureCounts -F SAF -M -s 0 -a /common/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.annotation.saf -o build/resources/integrationTest/output/GA5/feature_count/GA5_featureCount_gene.txt -Q 20 -T 4 /ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_003.bam
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Run featureCount.

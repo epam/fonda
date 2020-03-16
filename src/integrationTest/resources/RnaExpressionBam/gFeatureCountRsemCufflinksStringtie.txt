@@ -37,4 +37,3 @@ workflow = RnaExpression_Bam
 toolset = featureCount+rsem+cufflinks+stringtie
 flag_xenome = no
 read_type = paired
-feature_count = feature_count
