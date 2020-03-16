@@ -95,7 +95,7 @@ public abstract class AbstractIntegrationTest {
             studyConfig = Paths.get(this.getClass().getClassLoader().getResource(studyConfigName).toURI()).toString();
             EOLMarker lineSeparator = System.lineSeparator().equalsIgnoreCase(CRLF.getLineSeparator()) ? CRLF : LF;
             final String source = new String(Files.readAllBytes(Paths.get(globalConfig))) +
-                    String.format("\nline_ending = %s", lineSeparator.getLineSeparator());
+                    String.format("\nline_ending = %s", lineSeparator.name());
             writeToFile(globalConfig, source, lineSeparator);
         } catch (URISyntaxException | IOException e) {
             throw new IllegalArgumentException("Cannot parse globalConfig or StudyConfig " + e);
