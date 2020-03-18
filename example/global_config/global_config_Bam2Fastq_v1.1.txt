@@ -20,3 +20,4 @@ workflow = Bam2Fastq
 toolset = picard
 flag_xenome = no
 read_type = paired
+line_ending = LF
