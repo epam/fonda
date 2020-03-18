@@ -42,6 +42,8 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.epam.fonda.Executor.execute;
+import static com.epam.fonda.entity.configuration.EOLMarker.CRLF;
+import static com.epam.fonda.entity.configuration.EOLMarker.LF;
 import static java.lang.String.format;
 
 @Slf4j
@@ -307,6 +309,8 @@ public final class PipelineUtils {
     }
 
     private static String normalize(final String string, final EOLMarker eol) {
-        return string.replace(System.lineSeparator(), eol.getLineSeparator());
+        final String sysEOL = System.lineSeparator();
+        return string.replace(sysEOL, eol.getLineSeparator())
+                .replace("\r", sysEOL.equalsIgnoreCase(CRLF.getLineSeparator()) ? "\r" : LF.getLineSeparator());
     }
 }
