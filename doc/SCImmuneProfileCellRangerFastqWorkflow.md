@@ -106,7 +106,7 @@ The following command will generate a build folder in the current directory. In 
 ./gradlew build zip
 ```
 
-Please make sure `src` folder and `.jar` file are put in the same parental directory for proper usages. Fonda needs to call some external scripts from the `src` folder (`python` and `R` subfolders) in some pipeline usages.
+If the `src_scripts` option in global config is not set, please make sure `src` folder and `.jar` file are put in the same parental directory for proper usages. Fonda needs to call some external scripts from the `src` folder (`python` and `R` subfolders) in some pipeline usages.
 
 ### Workflow launching
 
