@@ -309,8 +309,7 @@ public final class PipelineUtils {
     }
 
     private static String normalize(final String string, final EOLMarker eol) {
-        final String sysEOL = System.lineSeparator();
-        return string.replace(sysEOL, eol.getLineSeparator())
-                .replace("\r", sysEOL.equalsIgnoreCase(CRLF.getLineSeparator()) ? "\r" : LF.getLineSeparator());
+        return string.replace(System.lineSeparator(), eol.getLineSeparator())
+                .replace("\r", eol == CRLF ? "\r" : LF.getLineSeparator());
     }
 }
