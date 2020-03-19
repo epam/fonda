@@ -60,6 +60,7 @@ public final class PipelineUtils {
     private static final String MERGED_FASTQ_2_NAME = "mergedFastq2";
     private static final String JOB_FINISH = "echo `date` Finish the job execution!\n";
     private static final String VARIABLES_MAP = "variablesMap";
+    private static final String SLASH = "/";
 
     private PipelineUtils() {
     }
@@ -79,18 +80,19 @@ public final class PipelineUtils {
     public static String getExecutionPath(final Configuration configuration) {
         if (StringUtils.isNotBlank(configuration.getGlobalConfig().getToolConfig().getSrcPath())) {
             final String srcPath = configuration.getGlobalConfig().getToolConfig().getSrcPath();
-            if (srcPath.endsWith("/")) {
+            if (srcPath.endsWith(SLASH)) {
                 return StringUtils.chop(srcPath);
             }
             return srcPath;
         }
         final String executionPath = PipelineUtils.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        final String path = executionPath.substring(0, executionPath.lastIndexOf(SLASH));
         try {
-            return StringUtils.chop(URLDecoder.decode(executionPath, StandardCharsets.UTF_8.name()));
+            return URLDecoder.decode(path, StandardCharsets.UTF_8.name());
         } catch (UnsupportedEncodingException e) {
             log.error("Could not decode execution path: " + executionPath);
         }
-        return StringUtils.chop(executionPath);
+        return path;
     }
 
     /**
