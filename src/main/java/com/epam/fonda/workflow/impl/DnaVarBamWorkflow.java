@@ -19,7 +19,6 @@ import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.samples.bam.BamFileSample;
 import com.epam.fonda.tools.impl.DnaAnalysis;
-import com.epam.fonda.tools.impl.QcSummary;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.utils.TemplateEngineUtils;
@@ -67,12 +66,7 @@ public class DnaVarBamWorkflow implements BamWorkflow {
     }
 
     @Override
-    public void postProcess(final Configuration configuration, final List<BamFileSample> samples) throws IOException {
-        List<String> sampleNames = samples.stream()
-                .filter(s -> !isNotCaseOrTumor(s.getSampleType()))
-                .map(BamFileSample::getName)
-                .collect(Collectors.toList());
-        new QcSummary(flag, sampleNames).generate(configuration, TEMPLATE_ENGINE);
+    public void postProcess(final Configuration configuration, final List<BamFileSample> samples) {
         final List<BamFileSample> samplesWithCheckedTypes = samples.stream()
                 .filter(s -> !isNotCaseOrTumor(s.getSampleType())).collect(Collectors.toList());
         if (CollectionUtils.isEmpty(samplesWithCheckedTypes)) {

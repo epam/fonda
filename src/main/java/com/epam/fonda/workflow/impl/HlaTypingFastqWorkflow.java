@@ -18,7 +18,6 @@ package com.epam.fonda.workflow.impl;
 import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.impl.OptiType;
-import com.epam.fonda.tools.impl.QcSummary;
 import com.epam.fonda.tools.results.FastqResult;
 import com.epam.fonda.tools.results.OptiTypeResult;
 import com.epam.fonda.utils.PipelineUtils;
@@ -33,7 +32,6 @@ import org.thymeleaf.TemplateEngine;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.epam.fonda.utils.PipelineUtils.cleanUpTmpDir;
 import static com.epam.fonda.utils.PipelineUtils.printShell;
@@ -65,8 +63,7 @@ public class HlaTypingFastqWorkflow implements FastqWorkflow {
     }
 
     @Override
-    public void postProcess(Configuration configuration, List<FastqFileSample> samples) throws IOException {
-        List<String> sampleNames = samples.stream().map(FastqFileSample::getName).collect(Collectors.toList());
-        new QcSummary(flag, sampleNames).generate(configuration, TEMPLATE_ENGINE);
+    public void postProcess(Configuration configuration, List<FastqFileSample> samples) {
+        //no op
     }
 }
