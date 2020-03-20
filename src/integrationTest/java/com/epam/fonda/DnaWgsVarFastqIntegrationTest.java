@@ -42,8 +42,6 @@ public class DnaWgsVarFastqIntegrationTest extends AbstractIntegrationTest {
         "output/sh_files/DnaWgsVar_Fastq_mergeMutation_for_cohort_analysis.sh";
     private static final String DNA_WGS_VAR_FASTQ_POSTALIGNMENT_FOR_GA5_SH_FILE_PATH =
         "output/sh_files/DnaWgsVar_Fastq_postalignment_for_GA5_analysis.sh";
-    private static final String DNA_WGS_VAR_FASTQ_QCSUMMARY_FOR_COHORT_SH_FILE_PATH =
-        "output/sh_files/DnaWgsVar_Fastq_qcsummary_for_cohort_analysis.sh";
 
     private static final String DNA_WGS_VAR_FASTQ_ALIGNMENT_FOR_GA_5_1_TEMPLATE_PATH =
         "DnaWgsVarFastq/DnaWgsVar_Fastq_alignment_for_GA5_1_analysis_template.txt";
@@ -53,8 +51,6 @@ public class DnaWgsVarFastqIntegrationTest extends AbstractIntegrationTest {
         "DnaWgsVarFastq/DnaWgsVar_Fastq_mergeMutation_for_cohort_analysis_template.txt";
     private static final String DNA_WGS_VAR_FASTQ_POSTALIGNMENT_FOR_GA5_TEMPLATE_PATH =
         "DnaWgsVarFastq/DnaWgsVar_Fastq_postalignment_for_GA5_analysis_template.txt";
-    private static final String DNA_WGS_VAR_FASTQ_QCSUMMARY_FOR_COHORT_TEMPLATE_PATH =
-        "DnaWgsVarFastq/DnaWgsVar_Fastq_qcsummary_for_cohort_analysis_template.txt";
 
     public static final String DNA_WGS_VAR_FASTQ_GLOBAL_CONFIG_PATH =
         "DnaWgsVarFastq/global_config_DnaWgsVar_Fastq_v1.1.txt";
@@ -78,9 +74,7 @@ public class DnaWgsVarFastqIntegrationTest extends AbstractIntegrationTest {
             Arguments.of(DNA_WGS_VAR_FASTQ_MERGE_MUTATION_FOR_COHORT_TEMPLATE_PATH,
                 DNA_WGS_VAR_FASTQ_MERGE_MUTATION_FOR_COHORT_SH_FILE_PATH),
             Arguments.of(DNA_WGS_VAR_FASTQ_POSTALIGNMENT_FOR_GA5_TEMPLATE_PATH,
-                DNA_WGS_VAR_FASTQ_POSTALIGNMENT_FOR_GA5_SH_FILE_PATH),
-            Arguments.of(DNA_WGS_VAR_FASTQ_QCSUMMARY_FOR_COHORT_TEMPLATE_PATH,
-                DNA_WGS_VAR_FASTQ_QCSUMMARY_FOR_COHORT_SH_FILE_PATH)
+                DNA_WGS_VAR_FASTQ_POSTALIGNMENT_FOR_GA5_SH_FILE_PATH)
         );
     }
 
