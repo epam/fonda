@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.epam.fonda.tools.impl;
 
 import com.epam.fonda.entity.command.AbstractCommand;
@@ -159,6 +158,8 @@ public class RNASeQC implements Tool<MetricsResult> {
                 GlobalConfigFormat.ANNOTGENE);
         databaseFields.genome = validate(configuration.getGlobalConfig().getDatabaseConfig().getGenome(),
                 GlobalConfigFormat.GENOME);
+        // Note: if rRNABED is not set the output command will consists -rRNA flag without argument.
+        // It has been done to avoid RNA-SeQC tool RuntimeException if -rRNA flag is not set.
         databaseFields.rRnaBed = configuration.getGlobalConfig().getDatabaseConfig().getRRNABED();
         return databaseFields;
     }
@@ -189,6 +190,7 @@ public class RNASeQC implements Tool<MetricsResult> {
      * This method initializes fields of the MetricFields {@link MetricFields} class.
      *
      * @param additionalQcFields is the type of {@link AdditionalQcFields} which contains
+     *                             its fields: bam, mkdupBam, sbamOutdir, sqcOutdir, sampleName.
      *                             its fields: bam, mkdupBam, sbamOutdir, sqcOutdir, sampleName.
      * @return {@link MetricFields} with its fields.
      **/
