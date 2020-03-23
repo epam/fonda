@@ -1,5 +1,5 @@
 echo `date` Begin Step: RNA QC metrics...
-rnaSeqcJava -Xmx16g -jar rnaSeqc -r genome -t annotgene -n 1000 -s 'sampleName|sbamOutdir/sampleName.toolName.sorted.mkdup.bam|RNASEQC analysis' -o sqcOutdir VALIDATION_STRINGENCY=SILENT TMP_DIR=stmpOutdir
+rnaSeqcJava -Xmx16g -jar rnaSeqc -r genome -t annotgene -n 1000 -s 'sampleName|sbamOutdir/sampleName.toolName.sorted.mkdup.bam|RNASEQC analysis' -o sqcOutdir -rRNA  VALIDATION_STRINGENCY=SILENT TMP_DIR=stmpOutdir
 java -Xmx16g -jar picard CollectGcBiasMetrics REFERENCE_SEQUENCE=genome INPUT=sbamOutdir/sampleName.toolName.sorted.mkdup.bam OUTPUT=sqcOutdir/sampleName.toolName.sorted.mkdup.gcbias.metrics SUMMARY_OUTPUT=sqcOutdir/sampleName.toolName.sorted.mkdup.gc.summary.metrics CHART=sqcOutdir/sampleName.toolName.sorted.mkdup.gcbias.pdf VALIDATION_STRINGENCY=SILENT TMP_DIR=stmpOutdir
 if [ $? -eq 0 ]
 then
