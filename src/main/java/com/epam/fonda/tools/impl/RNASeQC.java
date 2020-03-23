@@ -191,7 +191,6 @@ public class RNASeQC implements Tool<MetricsResult> {
      *
      * @param additionalQcFields is the type of {@link AdditionalQcFields} which contains
      *                             its fields: bam, mkdupBam, sbamOutdir, sqcOutdir, sampleName.
-     *                             its fields: bam, mkdupBam, sbamOutdir, sqcOutdir, sampleName.
      * @return {@link MetricFields} with its fields.
      **/
     private MetricFields initializeMetricsFields(AdditionalQcFields additionalQcFields) {
