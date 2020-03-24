@@ -7,7 +7,7 @@ PE = -pe threaded
 [Databases]
 SPECIES = human
 GENOME_BUILD = GRCh38
-ANNOTGENE = /ngs/data/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.annotation.knowntrx.exon.level1-2.trxlevel1-3.gtf
+ANNOTGENE = /ngs/data/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.annotation.gtf
 GENOME = /ngs/data/reference_genome/GRCh38/Sequence/GRCh38.genome.fa
 STARINDEX = /ngs/data/reference_genome/GRCh38/Index/STAR_gc26
 STARFUSIONLIB = /ngs/data/reference_genome/GRCh38/Index/CTAT_lib_gc24
@@ -21,6 +21,10 @@ starFusion = /ngs/data/tools/STAR-Fusion/STAR-Fusion/STAR-Fusion
 python = /ngs/data/app/python/v2.7.2/bin/python
 Rscript = /ngs/data/app/R/v3.5.0/bin/Rscript
 doubletdetection_python = /ngs/data/py/versions/3.5.2/bin/python
+java = /ngs/data/app/java/v1.8.0u121/bin/java
+picard = /ngs/data/app/picard/v2.10.3/picard.jar
+samtools = /ngs/data/app/samtools/v0.1.19/samtools
+trimmomatic = /ngs/data/tools/Trimmomatic/v0.36/trimmomatic-0.36.jar
 
 [Pipeline_Info]
 workflow = RnaFusion_Fastq
