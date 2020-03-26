@@ -222,50 +222,50 @@ Example template of the **scRnaExpression_Fastq** workflow **global\_config** fi
 
 ``` bash
 [Queue_Parameters]
-NUMTHREADS = 4
+NUMTHREADS = 2
 MAXMEM = 24g
 QUEUE = all.q
 PE = -pe threaded
+
 [Databases]
 SPECIES = human
 GENOME_BUILD = GRCh38
-ANNOTGENE = /data/test-fonda/Annotation/Gencode_v26/gencode.v26.annotation.gtf
-GENOME = /data/test-fonda/Sequence/GRCh38.genome.fa
-TRANSCRIPTOME = /data/test-fonda/Sequence/GRCh38.gencode.v26.pc_transcripts.fa
-STARINDEX = /data/test-fonda/Index/STAR_gc26
-ANNOTGENESAF = /data/test-fonda/Annotation/Gencode_v26/gencode.v26.annotation.saf
-rRNABED = /data/test-fonda/Annotation/Gencode_v26/gencode.v26.rRNA.list
+ANNOTGENE = /cloud-data/test-fonda/Annotation/Gencode_v26/gencode.v26.annotation.knowntrx.exon.level1-2.trxlevel1-3.gtf
+GENOME = /cloud-data/test-fonda/Sequence/GRCh38.genome.fa
+BED = /cloud-data/test-fonda/bed/S07604514_Padded_hg38.bed
+BED_WITH_HEADER = /cloud-data/test-fonda/bed/intervalList_hg38.txt
+BED_FOR_COVERAGE =  /cloud-data/test-fonda/bed/intervalList_hg38.txt
+TRANSCRIPTOME = /cloud-data/test-fonda/Sequence/GRCh38.gencode.v26.pc_transcripts.fa
+STARINDEX = /cloud-data/test-fonda/Index/STAR_gc26
+ANNOTGENESAF = /cloud-data/test-fonda/Annotation/Gencode_v26/gencode.v26.annotation.knowntrx.exon.level1-2.trxlevel1-3.saf
 ADAPTER_FWD = AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC
 ADAPTER_REV = AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT
-RSEMINDEX = /data/test-fonda/Index/RSEM_gc26/GRCh38.genome
-MOUSEXENOMEINDEX = /data/test-fonda/Index/Xenome/GRCh38.genome
-ADAPTER_SEQ = /data/test-fonda/trim_adapters
-HISAT2INDEX = /data/test-fonda/Index/HISAT2_gc26/GRCh38.genome
-SALMONINDEX = /data/test-fonda/Index/salmon_index
+RSEMINDEX = /cloud-data/test-fonda/Index/RSEM_gc26/GRCh38.genome
+MOUSEXENOMEINDEX = /cloud-data/test-fonda/Index/Xenome/GRCh38.genome
+HISAT2INDEX = /cloud-data/test-fonda/Index/HISAT2_gc26/GRCh38.genome
+SALMONINDEX = /root/fonda/salmon_index
 
 [all_tools]
 star = /opt/STAR/STAR-STAR_2.4.0h1/bin/Linux_x86_64/STAR
 seqpurge = /opt/ngs_bits/ngs-bits/bin/SeqPurge
 cufflinks = /opt/cufflinks/cufflinks-2.2.1.Linux_x86_64/cufflinks
 feature_count = /opt/subread/subread-1.4.5-p1-Linux-x86_64/bin/featureCounts
-java = /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
-rnaseqc_java = /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/java
+java = /usr/lib/jvm/java-8-openjdk-amd64/bin/java
 samtools = /opt/samtools/samtools-0.1.19/samtools
 picard = /opt/picard/picard.jar
 rnaseqc = /opt/rnaseqc/RNA-SeQC_v1.1.8.jar
-python = /opt/python
-Rscript = /opt/Rscript
-doubletdetection_python = /ngs/data/py/versions/3.5.2/bin/python
-rsem = /opt/RSEM/
+python = /usr/bin/python
+Rscript = /usr/bin/Rscript
+rsem = /opt/RSEM
+xenome = /opt/xenome-1.0.1-r/xenome
 trimmomatic = /opt/trimmomatic/trimmomatic-0.38.jar
 hisat2 = /opt/hisat2-2.1.0/hisat2
 stringtie = /opt/stringtie-2.0.6/stringtie
-xenome = /opt/xenome-1.0.1-r/xenome
-salmon = /opt/stringtie-2.0.6/salmon-latest_linux_x86_64/bin/salmon
+salmon = /opt/salmon-latest_linux_x86_64/bin/salmon
 
 [Pipeline_Info]
 workflow = scRnaExpression_Fastq
-toolset = seqpurge+star+qc+featureCount+cufflinks+conversion
+toolset = trimmomatic+salmon+stringtie
 flag_xenome = no
 read_type = paired
 ```
