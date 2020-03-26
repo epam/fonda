@@ -7,7 +7,8 @@ This document contains a description of the installation requirements, the steps
 
 ### Overall workflow description
 
-**scRnaExpression_Fastq** RNA sequencing data for gene expression analysis using fastq data.
+**scRnaExpression_Fastq** RNA sequencing data for gene expression analysis using fastq data with 
+specific input parameters.
 
 The workflow provides the following available tools for each analytic step:
  
@@ -16,15 +17,15 @@ The workflow provides the following available tools for each analytic step:
 - sequence alignment: **star**, **hisat2**
 - expression estimation: **cufflinks**, **stringtie**, **rsem**, **salmon** 
 - read count: **feature_count**
-- qc: **qc**, **rnaseqc**
-- data processing: **samtools**, **picard**
+- qc: **qc**
+- data processing: **samtools**
 - expression data combination: **conversion**
 
 A workflow toolset could contain the following popular options:
 
-- `toolset=star+qc+featureCount+cufflinks+conversion`  
-- `toolset=star+qc+featureCount+rsem+conversion`  
-- `toolset=hisat2+qc+featureCount+stringtie`  
+- `toolset=star+rsem`  
+- `toolset=seqpurge+star+featureCount`  
+- `toolset=hisat2+cufflinks`  
 - `toolset=star+qc` (specific for bam reads QC examination)
 
 ### Software requirements
@@ -165,12 +166,6 @@ wget -q "https://ayera.dl.sourceforge.net/project/subread/subread-1.4.5-p1/subre
 tar -xzf subread-1.4.5-p1-Linux-x86_64.tar.gz
 ```
 
--  Install **rnaseqc**:
-``` bash
-cd /opt  && \
-wget -q "http://www.broadinstitute.org/cancer/cga/tools/rnaseqc/RNA-SeQC_v1.1.8.jar"
-```
-
 -  Install **samtools**:
 
 ``` bash
@@ -222,7 +217,7 @@ Example template of the **scRnaExpression_Fastq** workflow **global\_config** fi
 
 ``` bash
 [Queue_Parameters]
-NUMTHREADS = 2
+NUMTHREADS = 4
 MAXMEM = 24g
 QUEUE = all.q
 PE = -pe threaded
@@ -230,42 +225,42 @@ PE = -pe threaded
 [Databases]
 SPECIES = human
 GENOME_BUILD = GRCh38
-ANNOTGENE = /cloud-data/test-fonda/Annotation/Gencode_v26/gencode.v26.annotation.knowntrx.exon.level1-2.trxlevel1-3.gtf
-GENOME = /cloud-data/test-fonda/Sequence/GRCh38.genome.fa
-BED = /cloud-data/test-fonda/bed/S07604514_Padded_hg38.bed
-BED_WITH_HEADER = /cloud-data/test-fonda/bed/intervalList_hg38.txt
-BED_FOR_COVERAGE =  /cloud-data/test-fonda/bed/intervalList_hg38.txt
-TRANSCRIPTOME = /cloud-data/test-fonda/Sequence/GRCh38.gencode.v26.pc_transcripts.fa
-STARINDEX = /cloud-data/test-fonda/Index/STAR_gc26
-ANNOTGENESAF = /cloud-data/test-fonda/Annotation/Gencode_v26/gencode.v26.annotation.knowntrx.exon.level1-2.trxlevel1-3.saf
+ANNOTGENE = /ngs/data/Annotation/Gencode_v26/gencode.v26.annotation.knowntrx.exon.level1-2.trxlevel1-3.gtf
+GENOME = /ngs/data/Sequence/GRCh38.genome.fa
+BED = /ngs/data/bed/S07604514_Padded_hg38.bed
+BED_WITH_HEADER = /ngs/data/bed/intervalList_hg38.txt
+BED_FOR_COVERAGE =  /ngs/data/bed/intervalList_hg38.txt
+TRANSCRIPTOME = /ngs/data/Sequence/GRCh38.gencode.v26.pc_transcripts.fa
+STARINDEX = /ngs/data/Index/STAR_gc26
+ANNOTGENESAF = /ngs/data/Annotation/Gencode_v26/gencode.v26.annotation.knowntrx.exon.level1-2.trxlevel1-3.saf
 ADAPTER_FWD = AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC
 ADAPTER_REV = AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT
-RSEMINDEX = /cloud-data/test-fonda/Index/RSEM_gc26/GRCh38.genome
-MOUSEXENOMEINDEX = /cloud-data/test-fonda/Index/Xenome/GRCh38.genome
-HISAT2INDEX = /cloud-data/test-fonda/Index/HISAT2_gc26/GRCh38.genome
-SALMONINDEX = /root/fonda/salmon_index
+RSEMINDEX = /ngs/data/Index/RSEM_gc26/GRCh38.genome
+MOUSEXENOMEINDEX = /ngs/data/Index/Xenome/GRCh38.genome
+HISAT2INDEX = /ngs/data/Index/HISAT2_gc26/GRCh38.genome
+SALMONINDEX = /ngs/data/fonda/salmon_index
 
 [all_tools]
-star = /opt/STAR/STAR-STAR_2.4.0h1/bin/Linux_x86_64/STAR
-seqpurge = /opt/ngs_bits/ngs-bits/bin/SeqPurge
-cufflinks = /opt/cufflinks/cufflinks-2.2.1.Linux_x86_64/cufflinks
-feature_count = /opt/subread/subread-1.4.5-p1-Linux-x86_64/bin/featureCounts
+star = /ngs/data/tools/STAR/STAR-STAR_2.4.0h1/bin/Linux_x86_64/STAR
+seqpurge = /ngs/data/tools/ngs_bits/ngs-bits/bin/SeqPurge
+cufflinks = /ngs/data/tools/cufflinks/cufflinks-2.2.1.Linux_x86_64/cufflinks
+feature_count = /ngs/data/tools/subread/subread-1.4.5-p1-Linux-x86_64/bin/featureCounts
 java = /usr/lib/jvm/java-8-openjdk-amd64/bin/java
-samtools = /opt/samtools/samtools-0.1.19/samtools
-picard = /opt/picard/picard.jar
-rnaseqc = /opt/rnaseqc/RNA-SeQC_v1.1.8.jar
+samtools = /ngs/data/tools/samtools/samtools-0.1.19/samtools
+picard = /ngs/data/tools/picard/picard.jar
+rnaseqc = /ngs/data/tools/rnaseqc/RNA-SeQC_v1.1.8.jar
 python = /usr/bin/python
 Rscript = /usr/bin/Rscript
-rsem = /opt/RSEM
-xenome = /opt/xenome-1.0.1-r/xenome
-trimmomatic = /opt/trimmomatic/trimmomatic-0.38.jar
-hisat2 = /opt/hisat2-2.1.0/hisat2
-stringtie = /opt/stringtie-2.0.6/stringtie
-salmon = /opt/salmon-latest_linux_x86_64/bin/salmon
+rsem = /ngs/data/tools/RSEM
+xenome = /ngs/data/tools/xenome-1.0.1-r/xenome
+trimmomatic = /ngs/data/tools/trimmomatic/trimmomatic-0.38.jar
+hisat2 = /ngs/data/tools/hisat2-2.1.0/hisat2
+stringtie = /ngs/data/tools/stringtie-2.0.6/stringtie
+salmon = /ngs/data/tools/salmon-latest_linux_x86_64/bin/salmon
 
 [Pipeline_Info]
 workflow = scRnaExpression_Fastq
-toolset = trimmomatic+salmon+stringtie
+toolset = hisat2+stringtie
 flag_xenome = no
 read_type = paired
 ```
@@ -276,11 +271,11 @@ Example template of the **scRnaExpression_Fastq** workflow **study\_config** fil
 ``` bash
 [Series_Info]
 job_name = pe_job
-dir_out = /home/fonda/scRnaExpression_Fastq_test
-fastq_list = /home/fonda/RnaExpression_RNASeq_SampleFastqPaths.txt
+dir_out = /ngs/data/demo/test/scRnaExpression_Fastq_test
+fastq_list = /ngs/data/demo/test/RnaExpression_RNASeq_SampleFastqPaths.txt
 LibraryType = RNASeq_Paired
 DataGenerationSource = Internal
-Date = 20191224
+Date = 20200326
 Project = Example_project
 Run = run1234
 Cufflinks.library_type = fr-unstranded  
