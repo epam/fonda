@@ -18,7 +18,7 @@ A workflow toolset could contain the following popular options:
 
 - `toolset=featureCount+conversion`
 - `toolset=rsem+conversion`
-- `toolset=stringtie+conversion` ('conversion' tool is starts RnaAnalysis)
+- `toolset=stringtie+conversion` ('conversion' tool is responsible for RnaAnalysis)
 
 ### Software requirements
 
@@ -144,23 +144,18 @@ GENOME_BUILD = GRCh38
 ANNOTGENE =  /ngs/data/Annotation/Gencode_v26/gencode.v26.annotation.gtf
 GENOME = /ngs/data/Sequence/GRCh38.genome.fa
 TRANSCRIPTOME = /ngs/data/Sequence/GRCh38.gencode.v26.pc_transcripts.fa
-STARINDEX = /ngs/data/Index/STAR_gc26
-ANNOTGENESAF = /ngs/data/Annotation/Gencode_v26/gencode.v26.annotation.knowntrx.exon.level1-2.trxlevel1-3.saf
+ANNOTGENESAF = /ngs/data/Annotation/Gencode_v26/gencode.v26.annotation.saf
 ADAPTER_FWD = AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC
 ADAPTER_REV = AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT
 ADAPTER_SEQ = /ngs/data/trim_adapters
 RSEMINDEX = /ngs/data/Index/RSEM_gc26/GRCh38.genome
 
 [all_tools]
-star = /ngs/data/tools/STAR/STAR-STAR_2.4.0h1/bin/Linux_x86_64/STAR
-seqpurge = /ngs/data/tools/ngs_bits/ngs-bits/bin/SeqPurge
 cufflinks = /ngs/data/tools/cufflinks/cufflinks-2.2.1.Linux_x86_64/cufflinks
 feature_count = /ngs/data/tools/subread/subread-1.4.5-p1-Linux-x86_64/bin/featureCounts
 java = /usr/lib/jvm/java-8-openjdk-amd64/bin/java
-rnaseqc_java = /usr/lib/jvm/java-7-openjdk-amd64/bin/java
 samtools = /ngs/data/tools/samtools/samtools-0.1.19/samtools
 picard = /ngs/data/tools/picard/picard.jar
-rnaseqc = /ngs/data/tools/rnaseqc/RNA-SeQC_v1.1.8.jar
 python = /ngs/data/tools/python
 Rscript = /ngs/data/tools/Rscript
 rsem = /ngs/data/tools/RSEM/
