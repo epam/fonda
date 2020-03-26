@@ -191,13 +191,6 @@ cd /opt  && \
 wget -q "https://github.com/broadinstitute/picard/releases/download/2.10.3/picard.jar"
 ```
 
--  Install **xenome**:
-
-``` bash
-cd /opt  && \
-wget -q "https://github.com/broadinstitute/picard/releases/download/2.10.3/picard.jar"
-```
-
 ### Building Fonda 
 
 Fonda package contains two major components:
