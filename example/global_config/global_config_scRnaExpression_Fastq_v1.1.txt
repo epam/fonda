@@ -14,6 +14,10 @@ STARINDEX = /ngs/data/reference_genome/GRCh38/Index/STAR_gc26
 ANNOTGENESAF = /ngs/data/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.annotation.knowntrx.exon.level1-2.trxlevel1-3.saf
 ADAPTER_FWD = AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC
 ADAPTER_REV = AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT
+RSEMINDEX = /ngs/data/Index/RSEM_gc26/GRCh38.genome
+MOUSEXENOMEINDEX = /ngs/data/Index/Xenome/GRCh38.genome
+HISAT2INDEX = /ngs/data/Index/HISAT2_gc26/GRCh38.genome
+SALMONINDEX = /ngs/data/fonda/salmon_index
 
 [all_tools]
 star = /ngs/data/tools/STAR/v2.4.0h1/bin/Linux_x86_64/STAR
