@@ -10,15 +10,15 @@ This document contains a description of the installation requirements, the steps
 **RnaExpression_Bam** workflow is responsible for RNA sequencing data for gene expression analysis using bam data
 
 The workflow provides the following available tools for each analytic step:
-- sequence trimming: **seqpurge**
 - expression estimation: **cufflinks**, **stringtie**, **rsem**
 - read count: **feature_count**
-- qc: **rnaseqc**
-- data processing: **samtools**, **picard**, **python**, **Rscript**
+- expression data combination: **conversion**
 
 A workflow toolset could contain the following popular options:
 
-- `toolset=featureCount+rsem+cufflinks+stringtie`
+- `toolset=featureCount+conversion`
+- `toolset=rsem+conversion`
+- `toolset=stringtie+conversion`
 
 ### Software requirements
 
@@ -58,38 +58,6 @@ wget https://bootstrap.pypa.io/get-pip.py -O ./get-pip.py && \
 python3.7 ./get-pip.py
 ```
 
--  Install **R** package:
-
-``` bash
-echo "deb http://cran.rstudio.com/bin/linux/ubuntu xenial/" | tee -a /etc/apt/sources.list && \ 
-gpg --keyserver keyserver.ubuntu.com --recv-key E084DAB9 && \ 
-gpg -a --export E084DAB9 | apt-key add - && \ 
-apt-get update && \ 
-apt-get install r-base r-base-dev 
-
-#[install R packages] 
-#[enter to R environment and run]
-install.packages("plyr", repos="http://cran.r-project.org") 
-```
-
--  Install **seqpurge** _(ngs-bits)_:
-
-``` bash
-# Install 3rd party dependencies
-apt-get install -y g++ \
-                   qt5-default \
-                   libqt5xmlpatterns5-dev \
-                   libqt5sql5-mysql \
-                   python-matplotlib
-cd /opt  && \
-git clone --recursive https://github.com/imgag/ngs-bits.git && \
-cd ngs-bits && \
-git checkout 2019_03 && \
-git submodule update --recursive --init && \
-make -j$(nproc) build_3rdparty && \
-make -j$(nproc) build_tools_release
-```
-
 -  Install **cufflinks**:
 
 ``` bash
@@ -114,40 +82,6 @@ cd /opt  && \
 git clone https://github.com/deweylab/RSEM.git && \
 cd RSEM && \
 make install
-```
-
--  Install **Subread** (_feature_count_):
-
-``` bash
-cd /opt  && \
-wget -q "https://ayera.dl.sourceforge.net/project/subread/subread-1.4.5-p1/subread-1.4.5-p1-Linux-x86_64.tar.gz" && \
-tar -xzf subread-1.4.5-p1-Linux-x86_64.tar.gz
-```
-
--  Install **rnaseqc**:
-``` bash
-cd /opt  && \
-wget -q "http://www.broadinstitute.org/cancer/cga/tools/rnaseqc/RNA-SeQC_v1.1.8.jar"
-```
-
--  Install **samtools**:
-
-``` bash
-# Install 3rd party dependencies
-apt-get install -y bzip2 && \
-cd /opt  && \
-wget -q "https://netix.dl.sourceforge.net/project/samtools/samtools/0.1.19/samtools-0.1.19.tar.bz2" && \
-tar -xf samtools-0.1.19.tar.bz2 && \
-rm -f samtools-0.1.19.tar.bz2 && \
-cd samtools-0.1.19 && \
-make -j$(nproc)
-```
-
--  Install **picard**:
-
-``` bash
-cd /opt  && \
-wget -q "https://github.com/broadinstitute/picard/releases/download/2.10.3/picard.jar"
 ```
 
 ### Building Fonda 
@@ -209,10 +143,9 @@ stringtie = /opt/stringtie-2.0.6/stringtie
 
 [Pipeline_Info]
 workflow = RnaExpression_Bam
-toolset = featureCount+rsem+cufflinks+stringtie
+toolset = featureCount+conversion
 flag_xenome = no
 read_type = paired
-feature_count = feature_count 
 ```
 
 Prepare **study_config** file that represents a configuration file for a particular study for a specific the NGS data analysis.  
@@ -225,7 +158,7 @@ dir_out = /ngs/data/demo/test/RnaExpressionBam_test
 bam_list = /ngs/data/demo/test/example/DnaCaptureVar_WES_SampleBamPaths.txt
 LibraryType = DNA
 DataGenerationSource = Internal
-Date = 031814
+Date = 20200326
 Project = Example_project
 Run = run1234
 Cufflinks.library_type = fr-unstranded
