@@ -13,6 +13,7 @@ STARINDEX = /ngs/data/reference_genome/GRCh38/Index/STAR_gc26
 STARFUSIONLIB = /ngs/data/reference_genome/GRCh38/Index/CTAT_lib_gc24
 ADAPTER_FWD = AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC
 ADAPTER_REV = AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT
+ADAPTER_SEQ =  /ngs/data/tools/Trimmomatic/v0.36/adapters/TruSeq3-PE-2.fa
 
 [all_tools]
 star = /ngs/data/tools/STAR/v2.4.0h1/bin/Linux_x86_64/STAR
