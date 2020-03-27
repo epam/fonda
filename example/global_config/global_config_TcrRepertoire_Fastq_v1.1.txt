@@ -7,15 +7,17 @@ PE = -pe threaded
 [Databases]
 SPECIES = human
 GENOME_BUILD = GRCh38
-ANNOTGENE = /ngs/data/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.annotation.knowntrx.exon.level1-2.trxlevel1-3.gtf
+ANNOTGENE = /ngs/data/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.annotation.gtf
 GENOME = /ngs/data/reference_genome/GRCh38/Sequence/GRCh38.genome.fa
 TRANSCRIPTOME = /ngs/data/reference_genome/GRCh38/Sequence/GRCh38.gencode.v26.pc_transcripts.fa
 STARINDEX = /ngs/data/reference_genome/GRCh38/Index/STAR_gc26
 BOWTIEINDEX = /ngs/data/reference_genome/GRCh38/Index/Bowtie
 STARFUSIONLIB = /ngs/data/reference_genome/GRCh38/Index/CTAT_lib_gc24
-ANNOTGENESAF = /ngs/data/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.annotation.knowntrx.exon.level1-2.trxlevel1-3.saf
+ANNOTGENESAF = /ngs/data/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.annotation.saf
 ADAPTER_FWD = AGATCGGAAGAGCGGTTCAGCAGGAATGCCGAGACCGATCTCGTATGCCGTCTTCTGCTTG
 ADAPTER_REV = AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT
+ADAPTER_SEQ =  /ngs/data/tools/Trimmomatic/v0.36/adapters/TruSeq3-PE-2.fa
+MOUSEXENOMEINDEX = /ngs/data/XenomeIndex/hg19.genome
 
 [all_tools]
 star = /ngs/data/tools/STAR/v2.4.0h1/bin/Linux_x86_64/STAR
@@ -26,6 +28,8 @@ samtools = /ngs/data/tools/samtools/v0.1.19/samtools
 python = /ngs/data/app/python/v2.7.2/bin/python
 Rscript = /ngs/data/app/R/v3.5.0/bin/Rscript
 doubletdetection_python = /ngs/data/py/versions/3.5.2/bin/python
+trimmomatic = /ngs/data/tools/Trimmomatic/v0.36/trimmomatic-0.36.jar
+xenome = /ngs/data/tools/xenome/v1.0.1-r/xenome
 
 [Pipeline_Info]
 workflow = TcrRepertoire_Fastq
