@@ -7,8 +7,7 @@ This document contains a description of the installation requirements, the steps
 
 ### Overall workflow description
 
-**scRnaExpression_Fastq** RNA sequencing data for gene expression analysis using fastq data with 
-specific input parameters.
+**scRnaExpression_Fastq** single cell RNA sequencing data for gene expression analysis using fastq data
 
 The workflow provides the following available tools for each analytic step:
  
@@ -18,8 +17,10 @@ The workflow provides the following available tools for each analytic step:
 - expression estimation: **cufflinks**, **stringtie**, **rsem**, **salmon** 
 - read count: **feature_count**
 - qc: **qc**
-- data processing: **samtools**
+- data processing: **samtools**, **picard**, **python**, **Rscript**
 - expression data combination: **conversion**
+
+An hisat2 is not compatible with rsem.
 
 A workflow toolset could contain the following popular options:
 
@@ -186,13 +187,6 @@ cd /opt  && \
 wget -q "https://github.com/broadinstitute/picard/releases/download/2.10.3/picard.jar"
 ```
 
--  Install **xenome**:
-
-``` bash
-cd /opt  && \
-wget -q "https://github.com/broadinstitute/picard/releases/download/2.10.3/picard.jar"
-```
-
 ### Building Fonda 
 
 Fonda package contains two major components:
@@ -225,14 +219,14 @@ PE = -pe threaded
 [Databases]
 SPECIES = human
 GENOME_BUILD = GRCh38
-ANNOTGENE = /ngs/data/Annotation/Gencode_v26/gencode.v26.annotation.knowntrx.exon.level1-2.trxlevel1-3.gtf
+ANNOTGENE = /ngs/data/Annotation/Gencode_v26/gencode.v26.annotation.gtf
 GENOME = /ngs/data/Sequence/GRCh38.genome.fa
 BED = /ngs/data/bed/S07604514_Padded_hg38.bed
 BED_WITH_HEADER = /ngs/data/bed/intervalList_hg38.txt
 BED_FOR_COVERAGE =  /ngs/data/bed/intervalList_hg38.txt
 TRANSCRIPTOME = /ngs/data/Sequence/GRCh38.gencode.v26.pc_transcripts.fa
 STARINDEX = /ngs/data/Index/STAR_gc26
-ANNOTGENESAF = /ngs/data/Annotation/Gencode_v26/gencode.v26.annotation.knowntrx.exon.level1-2.trxlevel1-3.saf
+ANNOTGENESAF = /ngs/data/Annotation/Gencode_v26/gencode.v26.annotation.saf
 ADAPTER_FWD = AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC
 ADAPTER_REV = AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT
 RSEMINDEX = /ngs/data/Index/RSEM_gc26/GRCh38.genome
