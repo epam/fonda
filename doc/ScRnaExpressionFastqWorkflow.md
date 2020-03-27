@@ -7,7 +7,7 @@ This document contains a description of the installation requirements, the steps
 
 ### Overall workflow description
 
-**scRnaExpression_Fastq** single cell RNA sequencing data for gene expression analysis using fastq data
+**scRnaExpression_Fastq** is single cell RNA sequencing data for gene expression analysis using fastq data
 
 The workflow provides the following available tools for each analytic step:
  
@@ -20,7 +20,7 @@ The workflow provides the following available tools for each analytic step:
 - data processing: **samtools**, **picard**, **python**, **Rscript**
 - expression data combination: **conversion**
 
-An hisat2 is not compatible with rsem.
+**_Note_**: `hisat2` tool is not compatible with `rsem` tool.
 
 A workflow toolset could contain the following popular options:
 
@@ -266,7 +266,7 @@ Example template of the **scRnaExpression_Fastq** workflow **study\_config** fil
 [Series_Info]
 job_name = pe_job
 dir_out = /ngs/data/demo/test/scRnaExpression_Fastq_test
-fastq_list = /ngs/data/demo/test/RnaExpression_RNASeq_SampleFastqPaths.txt
+fastq_list = /ngs/data/demo/test/sRnaExpression_RNASeq_SampleFastqPaths.txt
 LibraryType = RNASeq_Paired
 DataGenerationSource = Internal
 Date = 20200326
