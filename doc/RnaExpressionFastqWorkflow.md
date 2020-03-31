@@ -7,7 +7,7 @@ This document contains a description of the installation requirements, the steps
 
 ### Overall workflow description
 
-**RnaExpression_Fastq** RNA sequencing data for gene expression analysis using fastq data.
+**RnaExpression_Fastq** workflow works with RNA sequencing data for gene expression analysis using fastq data.
 
 The workflow provides the following available tools for each analytic step:
  

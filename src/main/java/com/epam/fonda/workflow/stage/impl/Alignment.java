@@ -107,10 +107,6 @@ public class Alignment implements Stage {
             bamResult = new Hisat2(sample, fastqResult.getOut()).generate(configuration, templateEngine);
             bamResult = markDuplicate(flag, sample, configuration, templateEngine);
             qcCheck(flag, sample, configuration, templateEngine);
-        } else if (flag.isSalmon()) {
-            SalmonResult salmonResult = new Salmon(sample, fastqResult).generate(configuration, templateEngine);
-            bamResult.setCommand(mergeCommands(salmonResult.getCommand()));
-            return bamResult;
         } else if (flag.isStarFusion()) {
             StarFusionResult starFusionResult = new StarFusion(sample, fastqResult.getOut())
                     .generate(configuration, templateEngine);
@@ -123,7 +119,11 @@ public class Alignment implements Stage {
             bamResult = new NovoalignSort(sample, fastqResult.getOut().getMergedFastq1(),
                     fastqResult.getOut().getMergedFastq2(), index).generate(configuration, templateEngine);
         }
-
+        if (flag.isSalmon()) {
+            SalmonResult salmonResult = new Salmon(sample, fastqResult).generate(configuration, templateEngine);
+            bamResult.setCommand(mergeCommands(salmonResult.getCommand()));
+            return bamResult;
+        }
         mergeCommands(bamResult.getCommand());
         return bamResult;
     }
