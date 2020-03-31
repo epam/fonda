@@ -7,10 +7,10 @@ PE = -pe threaded
 [Databases]
 SPECIES = human
 GENOME_BUILD = GRCh38
-ANNOTGENE = /ngs/data/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.annotation.knowntrx.exon.level1-2.trxlevel1-3.gtf
+ANNOTGENE = /ngs/data/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.annotation.gtf
 GENOME = /ngs/data/reference_genome/GRCh38/Sequence/GRCh38.genome.fa
 TRANSCRIPTOME = /ngs/data/reference_genome/GRCh38/Sequence/GRCh38.gencode.v26.pc_transcripts.fa
-ANNOTGENESAF = /ngs/data/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.annotation.knowntrx.exon.level1-2.trxlevel1-3.saf
+ANNOTGENESAF = /ngs/data/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.annotation.saf
 
 [all_tools]
 cufflinks = /ngs/data/tools/cufflinks/v2.2.1/cufflinks

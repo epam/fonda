@@ -1,13 +1,13 @@
 # Fonda workflows
 
-## RnaExpression_Bam workflow
+## scRnaExpression_Bam workflow
 
-The following documentation describes the Fonda **RnaExpression_Bam** workflow launching.  
-This document contains a description of the installation requirements, the steps of Fonda building and the launch of the **RnaExpression_Bam** workflow.
+The following documentation describes the Fonda **scRnaExpression_Bam** workflow launching.  
+This document contains a description of the installation requirements, the steps of Fonda building and the launch of the **scRnaExpression_Bam** workflow.
 
 ### Overall workflow description
 
-**RnaExpression_Bam** workflow works with RNA sequencing data for gene expression analysis using bam data
+**scRnaExpression_Bam** workflow works with single cell RNA sequencing data for gene expression analysis using bam data
 
 The workflow provides the following available tools for each analytic step:
 - expression estimation: **cufflinks**, **stringtie**, **rsem**
@@ -129,7 +129,7 @@ Please make sure `src` folder and `.jar` file are put in the same parental direc
 -   Set required input parameters:
 
 Prepare **global_config** file that represents a configuration file for a particular pipeline version.  
-Example template of the **RnaExpression_Bam** workflow **global\_config** file:
+Example template of the **scRnaExpression_Bam** workflow **global\_config** file:
 
 ``` bash
 [Queue_Parameters]
@@ -162,30 +162,30 @@ rsem = /ngs/data/tools/RSEM/
 stringtie = /ngs/data/tools/stringtie-2.0.6/stringtie
 
 [Pipeline_Info]
-workflow = RnaExpression_Bam
+workflow = scRnaExpression_Bam
 toolset = featureCount+conversion
 flag_xenome = no
 read_type = paired
 ```
 
 Prepare **study_config** file that represents a configuration file for a particular study for a specific the NGS data analysis.  
-Example template of the **RnaExpression_Bam** workflow **study\_config** file:
+Example template of the **scRnaExpression_Bam** workflow **study\_config** file:
 
 ``` bash
 [Series_Info]
 job_name = pe_job
-dir_out = /ngs/data/demo/test/RnaExpressionBam_test
-bam_list = /ngs/data/demo/test/example/RnaExpression_SampleBamPaths.txt
+dir_out = /ngs/data/demo/test/scRnaExpressionBam_test
+bam_list = /ngs/data/demo/test/example/scRnaExpression_SampleBamPaths.txt
 LibraryType = RNASeq_Paired
 DataGenerationSource = Internal
-Date = 20200326
+Date = 20200331
 Project = Example_project
 Run = run1234
 Cufflinks.library_type = fr-unstranded
 ```
 
-- Run **RnaExpression_Bam** workflow in the **_local machine mode_**:
+- Run **scRnaExpression_Bam** workflow in the **_local machine mode_**:
 
 ``` bash
-java -jar fonda-<VERSION>.jar -global_config gFeatureCountRsemCufflinksStringtie.txt -study_config sRnaExpressionBam.txt -local
+java -jar fonda-<VERSION>.jar -global_config global_config_scRnaExpression_Bam.txt -study_config config_scRnaExpression_Bam_test.txt -local
 ```
