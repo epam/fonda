@@ -32,7 +32,7 @@ Rscript = /ngs/data/app/R/v3.5.0/bin/Rscript
 doubletdetection_python = /ngs/data/py/versions/3.5.2/bin/python
 
 [Pipeline_Info]
-workflow = DnaCaptureVar_Fastq
+workflow = RnaCaptureVar_Fastq
 toolset = star+gatk_realign+picard+qc+gatkHaplotypeCaller
 flag_xenome = no
 read_type = paired
