@@ -10,11 +10,15 @@ This document contains a description of the installation requirements, the steps
 **DnaWgsVar_Bam** workflow is responsible for DNA whole genome sequencing data for genomic variant detection using bam data.
 The workflow provides the following available tools for each analysis step:
 
-- data processing: **strelka2**
+- variant detection: **gatk**, **mutect**, **lofreq**, **strelka2**, **freebayes**
+- contamination estimation: **contEst**
+- data processing: **samtools**, **picard**
 
 A workflow toolset could contain the following popular option:
 
 - `toolset=strelka2`
+- `toolset=lofreq`
+- `toolset=gatkHaplotypeCaller+freebayes`
 
 ### Software requirements
 
@@ -29,10 +33,43 @@ apt-get install -y wget curl openjdk-8-jdk unzip git libigraph0-dev \
 libssl-dev libcrypto++-dev libxml2-dev libgmp-dev zlib1g-dev
 ```
 
-- Install strelka2
-```bash
+-  Install **samtools**:
 
+``` bash
+# Install 3rd party dependencies
+apt-get install -y bzip2 && \
+cd /opt  && \
+wget -q "https://netix.dl.sourceforge.net/project/samtools/samtools/0.1.19/samtools-0.1.19.tar.bz2" && \
+tar -xf samtools-0.1.19.tar.bz2 && \
+rm -f samtools-0.1.19.tar.bz2 && \
+cd samtools-0.1.19 && \
+make -j$(nproc)
 ```
+
+-  Install **picard**:
+
+``` bash
+cd /opt  && \
+wget -q "https://github.com/broadinstitute/picard/releases/download/2.10.3/picard.jar"
+```
+
+- Install **strelka2**
+```bash
+wget https://github.com/Illumina/strelka/releases/download/v2.9.2/strelka-2.9.2.centos6_x86_64.tar.bz2  && \
+tar xvjf strelka-2.9.2.centos6_x86_64.tar.bz2
+```
+
+- Install **lofreq**
+```bash
+cd /opt  && \
+git clone https://github.com/CSB5/lofreq.git && \
+cd lofreq && \
+./configure && \
+make && \
+make install
+```
+**Note:** You can find lofreq in /usr/local/bin/lofreq
+
 ### Building Fonda
 
 Fonda package contains two major components:
