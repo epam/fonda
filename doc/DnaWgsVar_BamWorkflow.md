@@ -10,7 +10,7 @@ This document contains a description of the installation requirements, the steps
 **DnaWgsVar_Bam** workflow is responsible for DNA whole genome sequencing data for genomic variant detection using bam data.
 The workflow provides the following available tools for each analysis step:
 
-- variant detection: **gatk**, **mutect**, **lofreq**, **strelka2**, **freebayes**
+- variant detection: **gatk**, **mutect2**, **lofreq**, **strelka2**, **freebayes**
 - contamination estimation: **contEst**
 - data processing: **samtools**, **picard**
 
@@ -27,10 +27,38 @@ Before the Fonda launch, it is necessary to prepare execution environment for su
 - Install common:
 
 ``` bash
-sudo su && \
-apt-get update -y && \
-apt-get install -y wget curl openjdk-8-jdk unzip git libigraph0-dev \
-libssl-dev libcrypto++-dev libxml2-dev libgmp-dev zlib1g-dev
+sudo su && \ 
+apt-get update -y && \ 
+apt-get install -y wget \
+                   curl \
+                   openjdk-8-jdk \
+                   openjdk-7-jdk \
+                   unzip \
+                   git \
+                   cmake \
+                   libigraph0-dev \
+                   gcc \
+                   libssl-dev \
+                   libcrypto++-dev \
+                   libxml2-dev \
+                   libgmp-dev \
+                   zlib1g-dev \
+                   make \
+                   g++ \
+                   qt5-default \
+                   libqt5xmlpatterns5-dev \
+                   libqt5sql5-mysql \
+                   libbz2-dev \
+                   liblzma-dev \
+                   libncurses5-dev \
+                   libncursesw5-dev \
+                   python \
+                   python-pip \
+                   software-properties-common \
+                   python-software-properties \
+                   libdb-dev \
+                   pkg-config \
+                   libjsoncpp-dev
 ```
 
 -  Install **samtools**:
@@ -133,8 +161,6 @@ transvar = /usr/local/bin/transvar
 gatk = /usr/bin/gatk
 freebayes = /usr/bin/freebayes
 lofreq = /usr/bin/lofreq
-mutect = /opt/mutect/mutect-1.1.7.jar
-mutect_java = /usr/lib/jvm/java-8-openjdk-amd64/bin/java
 
 [Databases]
 SPECIES = human
@@ -164,7 +190,6 @@ DataGenerationSource = Internal
 Date = 200403
 Project = Example_project
 Run = run1234
-
 ```
 
 - Run **DnaWgsVar_Bam** workflow in the **_local machine mode_**:
