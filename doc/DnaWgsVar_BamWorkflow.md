@@ -54,12 +54,14 @@ wget -q "https://github.com/broadinstitute/picard/releases/download/2.10.3/picar
 ```
 
 - Install **strelka2**
+
 ```bash
 wget https://github.com/Illumina/strelka/releases/download/v2.9.2/strelka-2.9.2.centos6_x86_64.tar.bz2  && \
 tar xvjf strelka-2.9.2.centos6_x86_64.tar.bz2
 ```
 
 - Install **lofreq**
+
 ```bash
 cd /opt  && \
 git clone https://github.com/CSB5/lofreq.git && \
@@ -69,6 +71,23 @@ make && \
 make install
 ```
 **Note:** You can find lofreq in /usr/local/bin/lofreq
+
+- Install **freebayes**
+
+```bash
+cd /opt  && \
+git clone --recursive git://github.com/ekg/freebayes.git && \
+cd freebayes && \
+make
+```
+
+- Install **gatk**
+
+```bash
+cd /opt  && \
+wget https://storage.cloud.google.com/gatk-software/package-archive/gatk/GenomeAnalysisTK-3.7-0-gcfedb67.tar.bz2 && \
+tar -xf package-archive_gatk_GenomeAnalysisTK-3.7-0-gcfedb67.tar
+```
 
 ### Building Fonda
 
@@ -102,59 +121,32 @@ QUEUE = main.q
 PE = -pe threaded
 
 [all_tools]
-star = /opt/STAR/STAR-STAR_2.4.0h1/bin/Linux_x86_64/STAR
-seqpurge = /opt/ngs_bits/ngs-bits/bin/SeqPurge
-cufflinks = /opt/cufflinks/cufflinks-2.2.1.Linux_x86_64/cufflinks
-feature_count = /opt/subread/subread-1.4.5-p1-Linux-x86_64/bin/featureCounts
 java = /usr/lib/jvm/java-8-openjdk-amd64/bin/java
 rnaseqc_java = /usr/lib/jvm/java-7-openjdk-amd64/bin/java
 samtools = /opt/samtools/samtools-0.1.19/samtools
 picard = /opt/picard/picard.jar
 rnaseqc = /opt/rnaseqc/RNA-SeQC_v1.1.8.jar
 python = /usr/bin/python
-vardict = /opt/VardictJava/VarDictJava/
 Rscript = /usr/bin/Rscript
 bwa = /opt/bwa/bwa
-trimmomatic = /opt/trimmomatic/trimmomatic-0.38.jar
-novoalign = /usr/bin/novoalign
-xenome = /usr/bin/xenome
 transvar = /usr/local/bin/transvar
-snpsift = /opt/snpEff/snpEff/SnpSift.jar 
 gatk = /usr/bin/gatk
 freebayes = /usr/bin/freebayes
 lofreq = /usr/bin/lofreq
 mutect = /opt/mutect/mutect-1.1.7.jar
 mutect_java = /usr/lib/jvm/java-8-openjdk-amd64/bin/java
-scalpel = /opt/scalpel
-strelka2 = /opt/strelka2/strelka-2.9.2.centos6_x86_64/bin/
-abra2 = /opt/abra2/abra2-2.12.jar
-bedtools = /opt/bedtools/bin/bedtools
 
 [Databases]
 SPECIES = human
 GENOME_BUILD = genome.build
-GENOME = /ngs/data/genome
-NOVOINDEX = /ngs/data/novoindexDB/novoindex.nix
-BED = /ngs/data/S03723314_Padded.bed
-BED_WITH_HEADER = /ngs/data/S03723314_Padded_decoy.txt
-BED_FOR_COVERAGE = /ngs/data/S03723314_Padded_decoy.txt
-BED_PRIMER = /ngs/data/S03723314_Padded_decoy.txt
 ADAPTER_FWD = AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC
 ADAPTER_REV = AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT
 ADAPTER_SEQ = AGATCGGAAGAT
-MOUSEXENOMEINDEX = /ngs/data/xenomeIdx/xenome.idx
-DBSNP = /ngs/data/db/mutect.dbsnp
-COSMIC = /ngs/data/db/cosmic
-MUTECT_NORMAL_PANEL = /ngs/data/db/mormal_panel
-KNOWN_INDELS_MILLS = 10
-KNOWN_INDELS_PHASE1 = 100
-CONTEST_POPAF = 100
-SNPSIFTDB = /path/to/snpsiftdb
-CANONICAL_TRANSCRIPT = /path/to/canonical/transcript
+CONTEST_POPAF = /ngs/data/hg19_population_stratified_af_hapmap_3.3.vcf
 
 [Pipeline_Info]
 workflow = DnaWgsVar_Bam
-toolset = strelka2
+toolset = lofreq
 read_type = single
 flag_xenome = no
 ```
@@ -169,7 +161,7 @@ dir_out = build/resources/integrationTest/output
 bam_list = build/resources/integrationTest/bamlist.txt
 LibraryType = DNAWholeExomeSeq_Single
 DataGenerationSource = Internal
-Date = 200320
+Date = 200403
 Project = Example_project
 Run = run1234
 
