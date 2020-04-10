@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.epam.fonda.tools.impl;
 
 import com.epam.fonda.entity.configuration.Configuration;
@@ -37,6 +36,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import static com.epam.fonda.utils.DnaUtils.isWgsWorkflow;
 import static com.epam.fonda.utils.PipelineUtils.CASE;
 import static com.epam.fonda.utils.PipelineUtils.TUMOR;
 
@@ -76,7 +76,7 @@ public class DnaAnalysis implements PostProcessTool {
      **/
     @Override
     public void generate(Configuration configuration, TemplateEngine templateEngine) {
-        if (!checkToolset(flag)) {
+        if (!checkToolset(flag) || isWgsWorkflow(configuration)) {
             return;
         }
 

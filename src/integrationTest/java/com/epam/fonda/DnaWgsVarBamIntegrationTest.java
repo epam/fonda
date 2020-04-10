@@ -104,18 +104,11 @@ public class DnaWgsVarBamIntegrationTest extends AbstractIntegrationTest {
     private static final String CONTEST_TASK_NAME = "contEst";
     private static final String MUTECT_2_TASK_NAME = "mutect2";
 
-    private static final String TEST_SHELL_SCRIPT_PATH_MERGE_MUTATION =
-        "output/sh_files/DnaWgsVar_Bam_mergeMutation_for_cohort_analysis.sh";
-    private static final String DNA_WGA_VAR_BAN_MERGE_MUTATION_FOR_COHORT_ANALYSES_NA_TEMPLATE_PATH =
-        "DnaWgsVarBam/DnaWgsVar_Bam_mergeMutation_for_cohort_analysis_NA_template.txt";
-    private static final String DNA_WGA_VAR_BAN_MERGE_MUTATION_FOR_COHORT_ANALYSES_NOT_NA_TEMPLATE_PATH =
-        "DnaWgsVarBam/DnaWgsVar_Bam_mergeMutation_for_cohort_analysis_not_NA_template.txt";
-
     @ParameterizedTest
     @MethodSource("initParameters")
     void testControlSample(String globalConfigPath, String studyConfigPath, String taskName,
         String suffixForFilePath, String templatePath, String variantDetectionTemplatePath,
-        String variantDetectionFilePath, String mergeMutationTemplatePath) throws IOException, URISyntaxException {
+        String variantDetectionFilePath) throws IOException, URISyntaxException {
         startAppWithConfigs(globalConfigPath, studyConfigPath);
 
         String filePath = format("%s%s%s", FIRST_PART_OF_THE_TEST_SHELL_SCRIPT_PATH, taskName, suffixForFilePath);
@@ -124,10 +117,6 @@ public class DnaWgsVarBamIntegrationTest extends AbstractIntegrationTest {
 
         expectedCmd = templateEngine.process(variantDetectionTemplatePath, context);
         assertEquals(expectedCmd.trim(), getCmd(variantDetectionFilePath).trim());
-
-        expectedCmd = templateEngine.process(mergeMutationTemplatePath, context);
-        assertEquals(expectedCmd.trim(), getCmd(TEST_SHELL_SCRIPT_PATH_MERGE_MUTATION).trim());
-
     }
 
     @SuppressWarnings("PMD")
@@ -145,8 +134,7 @@ public class DnaWgsVarBamIntegrationTest extends AbstractIntegrationTest {
                 SUFFIX_FOR_GA5_TEST_SHELL_SCRIPT_PATH,
                 DNA_WGS_VAR_BAM_STRELKA2_FOR_GA5_ANALYSIS_TEMPLATE_PATH,
                 DNA_WGS_VAR_BAM_VARIANT_DETECTION_FOR_GA5_ANALYSIS_TEMPLATE_PATH,
-                TEST_SHELL_SCRIPT_PATH_VARIANT_DETECTION_FOR_GA5,
-                DNA_WGA_VAR_BAN_MERGE_MUTATION_FOR_COHORT_ANALYSES_NA_TEMPLATE_PATH
+                TEST_SHELL_SCRIPT_PATH_VARIANT_DETECTION_FOR_GA5
             ),
             Arguments.of(
                 DNA_WGS_VAR_BAM_G_ALL_TASKS_SAMPLE_NA_TXT_GLOBAL_CONFIG_PATH,
@@ -155,8 +143,7 @@ public class DnaWgsVarBamIntegrationTest extends AbstractIntegrationTest {
                 SUFFIX_FOR_GA5_TEST_SHELL_SCRIPT_PATH,
                 DNA_WGS_VAR_BAM_FREEBAYES_FOR_GA5_ANALYSIS_TEMPLATE_PATH,
                 DNA_WGS_VAR_BAM_VARIANT_DETECTION_FOR_GA5_ANALYSIS_TEMPLATE_PATH,
-                TEST_SHELL_SCRIPT_PATH_VARIANT_DETECTION_FOR_GA5,
-                DNA_WGA_VAR_BAN_MERGE_MUTATION_FOR_COHORT_ANALYSES_NA_TEMPLATE_PATH
+                TEST_SHELL_SCRIPT_PATH_VARIANT_DETECTION_FOR_GA5
             ),
             Arguments.of(
                 DNA_WGS_VAR_BAM_G_ALL_TASKS_SAMPLE_NA_TXT_GLOBAL_CONFIG_PATH,
@@ -165,8 +152,7 @@ public class DnaWgsVarBamIntegrationTest extends AbstractIntegrationTest {
                 SUFFIX_FOR_GA5_TEST_SHELL_SCRIPT_PATH,
                 DNA_WGS_VAR_BAM_GATK_HAPLOTYPE_CALLER_FOR_GA5_ANALYSIS_TEMPLATE_PATH,
                 DNA_WGS_VAR_BAM_VARIANT_DETECTION_FOR_GA5_ANALYSIS_TEMPLATE_PATH,
-                TEST_SHELL_SCRIPT_PATH_VARIANT_DETECTION_FOR_GA5,
-                DNA_WGA_VAR_BAN_MERGE_MUTATION_FOR_COHORT_ANALYSES_NA_TEMPLATE_PATH
+                TEST_SHELL_SCRIPT_PATH_VARIANT_DETECTION_FOR_GA5
             ),
             Arguments.of(
                 DNA_WGS_VAR_BAM_G_ALL_TASKS_SAMPLE_NA_TXT_GLOBAL_CONFIG_PATH,
@@ -175,8 +161,7 @@ public class DnaWgsVarBamIntegrationTest extends AbstractIntegrationTest {
                 SUFFIX_FOR_GA5_TEST_SHELL_SCRIPT_PATH,
                 DNA_WGS_VAR_BAM_LOFREQ_FOR_GA5_ANALYSIS_TEMPLATE_PATH,
                 DNA_WGS_VAR_BAM_VARIANT_DETECTION_FOR_GA5_ANALYSIS_TEMPLATE_PATH,
-                TEST_SHELL_SCRIPT_PATH_VARIANT_DETECTION_FOR_GA5,
-                DNA_WGA_VAR_BAN_MERGE_MUTATION_FOR_COHORT_ANALYSES_NA_TEMPLATE_PATH
+                TEST_SHELL_SCRIPT_PATH_VARIANT_DETECTION_FOR_GA5
             )
         );
     }
@@ -190,8 +175,7 @@ public class DnaWgsVarBamIntegrationTest extends AbstractIntegrationTest {
                 SUFFIX_FOR_GA51_TEST_SHELL_SCRIPT_PATH,
                 DNA_WGS_VAR_BAM_CONTEST_FOR_GA51_ANALYSIS_TEMPLATE_PATH,
                 DNA_WGS_VAR_BAM_VARIANT_DETECTION_FOR_GA51_ANALYSIS_TEMPLATE_PATH,
-                TEST_SHELL_SCRIPT_PATH_VARIANT_DETECTION_FOR_GA51,
-                DNA_WGA_VAR_BAN_MERGE_MUTATION_FOR_COHORT_ANALYSES_NOT_NA_TEMPLATE_PATH
+                TEST_SHELL_SCRIPT_PATH_VARIANT_DETECTION_FOR_GA51
             ),
             Arguments.of(
                 DNA_WGS_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA_GLOBAL_CONFIG_PATH,
@@ -200,8 +184,7 @@ public class DnaWgsVarBamIntegrationTest extends AbstractIntegrationTest {
                 SUFFIX_FOR_GA51_TEST_SHELL_SCRIPT_PATH,
                 DNA_WGS_VAR_BAM_MUTEC2_FOR_GA51_ANALYSIS_TEMPLATE_PATH,
                 DNA_WGS_VAR_BAM_VARIANT_DETECTION_FOR_GA51_ANALYSIS_TEMPLATE_PATH,
-                TEST_SHELL_SCRIPT_PATH_VARIANT_DETECTION_FOR_GA51,
-                DNA_WGA_VAR_BAN_MERGE_MUTATION_FOR_COHORT_ANALYSES_NOT_NA_TEMPLATE_PATH
+                TEST_SHELL_SCRIPT_PATH_VARIANT_DETECTION_FOR_GA51
             ),
             Arguments.of(
                 DNA_WGS_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA_GLOBAL_CONFIG_PATH,
@@ -210,8 +193,7 @@ public class DnaWgsVarBamIntegrationTest extends AbstractIntegrationTest {
                 SUFFIX_FOR_GA51_TEST_SHELL_SCRIPT_PATH,
                 DNA_WGS_VAR_BAM_STRELKA2_FOR_GA51_ANALYSIS_TEMPLATE_PATH,
                 DNA_WGS_VAR_BAM_VARIANT_DETECTION_FOR_GA51_ANALYSIS_TEMPLATE_PATH,
-                TEST_SHELL_SCRIPT_PATH_VARIANT_DETECTION_FOR_GA51,
-                DNA_WGA_VAR_BAN_MERGE_MUTATION_FOR_COHORT_ANALYSES_NOT_NA_TEMPLATE_PATH
+                TEST_SHELL_SCRIPT_PATH_VARIANT_DETECTION_FOR_GA51
             ),
             Arguments.of(
                 DNA_WGS_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA_GLOBAL_CONFIG_PATH,
@@ -220,8 +202,7 @@ public class DnaWgsVarBamIntegrationTest extends AbstractIntegrationTest {
                 SUFFIX_FOR_GA51_TEST_SHELL_SCRIPT_PATH,
                 DNA_WGS_VAR_BAM_LOFREQ_FOR_GA51_ANALYSIS_TEMPLATE_PATH,
                 DNA_WGS_VAR_BAM_VARIANT_DETECTION_FOR_GA51_ANALYSIS_TEMPLATE_PATH,
-                TEST_SHELL_SCRIPT_PATH_VARIANT_DETECTION_FOR_GA51,
-                DNA_WGA_VAR_BAN_MERGE_MUTATION_FOR_COHORT_ANALYSES_NOT_NA_TEMPLATE_PATH
+                TEST_SHELL_SCRIPT_PATH_VARIANT_DETECTION_FOR_GA51
             )
 
         );
@@ -236,8 +217,7 @@ public class DnaWgsVarBamIntegrationTest extends AbstractIntegrationTest {
                 SUFFIX_FOR_GA52_TEST_SHELL_SCRIPT_PATH,
                 DNA_WGS_VAR_BAM_CONTEST_FOR_GA52_ANALYSIS_TEMPLATE_PATH,
                 DNA_WGS_VAR_BAM_VARIANT_DETECTION_FOR_GA52_ANALYSIS_TEMPLATE_PATH,
-                TEST_SHELL_SCRIPT_PATH_VARIANT_DETECTION_FOR_GA52,
-                DNA_WGA_VAR_BAN_MERGE_MUTATION_FOR_COHORT_ANALYSES_NOT_NA_TEMPLATE_PATH
+                TEST_SHELL_SCRIPT_PATH_VARIANT_DETECTION_FOR_GA52
             ),
             Arguments.of(
                 DNA_WGS_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA_GLOBAL_CONFIG_PATH,
@@ -246,8 +226,7 @@ public class DnaWgsVarBamIntegrationTest extends AbstractIntegrationTest {
                 SUFFIX_FOR_GA52_TEST_SHELL_SCRIPT_PATH,
                 DNA_WGS_VAR_BAM_MUTEC2_FOR_GA52_ANALYSIS_TEMPLATE_PATH,
                 DNA_WGS_VAR_BAM_VARIANT_DETECTION_FOR_GA52_ANALYSIS_TEMPLATE_PATH,
-                TEST_SHELL_SCRIPT_PATH_VARIANT_DETECTION_FOR_GA52,
-                DNA_WGA_VAR_BAN_MERGE_MUTATION_FOR_COHORT_ANALYSES_NOT_NA_TEMPLATE_PATH
+                TEST_SHELL_SCRIPT_PATH_VARIANT_DETECTION_FOR_GA52
             ),
             Arguments.of(
                 DNA_WGS_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA_GLOBAL_CONFIG_PATH,
@@ -256,8 +235,7 @@ public class DnaWgsVarBamIntegrationTest extends AbstractIntegrationTest {
                 SUFFIX_FOR_GA52_TEST_SHELL_SCRIPT_PATH,
                 DNA_WGS_VAR_BAM_STRELKA2_FOR_GA52_ANALYSIS_TEMPLATE_PATH,
                 DNA_WGS_VAR_BAM_VARIANT_DETECTION_FOR_GA52_ANALYSIS_TEMPLATE_PATH,
-                TEST_SHELL_SCRIPT_PATH_VARIANT_DETECTION_FOR_GA52,
-                DNA_WGA_VAR_BAN_MERGE_MUTATION_FOR_COHORT_ANALYSES_NOT_NA_TEMPLATE_PATH
+                TEST_SHELL_SCRIPT_PATH_VARIANT_DETECTION_FOR_GA52
             ),
             Arguments.of(
                 DNA_WGS_VAR_BAM_G_ALL_TASKS_SAMPLE_NOT_NA_GLOBAL_CONFIG_PATH,
@@ -266,8 +244,7 @@ public class DnaWgsVarBamIntegrationTest extends AbstractIntegrationTest {
                 SUFFIX_FOR_GA52_TEST_SHELL_SCRIPT_PATH,
                 DNA_WGS_VAR_BAM_LOFREQ_FOR_GA52_ANALYSIS_TEMPLATE_PATH,
                 DNA_WGS_VAR_BAM_VARIANT_DETECTION_FOR_GA52_ANALYSIS_TEMPLATE_PATH,
-                TEST_SHELL_SCRIPT_PATH_VARIANT_DETECTION_FOR_GA52,
-                DNA_WGA_VAR_BAN_MERGE_MUTATION_FOR_COHORT_ANALYSES_NOT_NA_TEMPLATE_PATH
+                TEST_SHELL_SCRIPT_PATH_VARIANT_DETECTION_FOR_GA52
             )
         );
     }
