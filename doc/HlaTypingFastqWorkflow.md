@@ -7,7 +7,7 @@ This document contains a description of the installation requirements, the steps
 
 ### Overall workflow description
 
-**HlaTyping_Fastq** is DNA sequencing data for genomic HLA type prediction using fastq data.
+**HlaTyping_Fastq** works with DNA sequencing data for genomic HLA type prediction using fastq data.
 
 The workflow provides the following available tools for each analytic step:
 

@@ -7,7 +7,7 @@ This document contains a description of the installation requirements, the steps
 
 ### Overall workflow description
 
-**DnaWgsVar_Bam** workflow is responsible for DNA whole genome sequencing data for genomic variant detection using bam data.
+**DnaWgsVar_Bam** workflow works with DNA whole genome sequencing data for genomic variant detection using bam data.
 The workflow provides the following available tools for each analysis step:
 
 - variant detection: **gatk**, **mutect2**, **lofreq**, **strelka2**, **freebayes**
@@ -26,7 +26,7 @@ Before the Fonda launch, it is necessary to prepare execution environment for su
 
 - Install common:
 
-``` bash
+```bash
 sudo su && \ 
 apt-get update -y && \ 
 apt-get install -y wget \
@@ -63,7 +63,7 @@ apt-get install -y wget \
 
 -  Install **samtools**:
 
-``` bash
+```bash
 # Install 3rd party dependencies
 apt-get install -y bzip2 && \
 cd /opt  && \
@@ -76,7 +76,7 @@ make -j$(nproc)
 
 -  Install **picard**:
 
-``` bash
+```bash
 cd /opt  && \
 wget -q "https://github.com/broadinstitute/picard/releases/download/2.10.3/picard.jar"
 ```
@@ -84,6 +84,7 @@ wget -q "https://github.com/broadinstitute/picard/releases/download/2.10.3/picar
 - Install **strelka2**
 
 ```bash
+cd /opt  && \
 wget https://github.com/Illumina/strelka/releases/download/v2.9.2/strelka-2.9.2.centos6_x86_64.tar.bz2  && \
 tar xvjf strelka-2.9.2.centos6_x86_64.tar.bz2
 ```
@@ -126,7 +127,7 @@ Fonda package contains two major components:
 
 The following command will generate a build folder in the current directory. In the build folder, the user can find a `libs` folder, which contains the Fonda `.jar` file and the `src` directory:
 
-``` bash
+```bash
 ./gradlew build zip
 ```
 
@@ -141,7 +142,7 @@ in the same parental directory for proper usages. Fonda needs to call some exter
 Prepare **global_config** file that represents a configuration file for a particular pipeline version.  
 Example template of the **DnaWgsVar_Bam** workflow **global\_config** file:
 
-``` bash
+```bash
 [Queue_Parameters]
 NUMTHREADS = 4
 MAXMEM = 8g
@@ -180,7 +181,7 @@ flag_xenome = no
 Prepare **study_config** file that represents a configuration file for a particular study for a specific the NGS data analysis.  
 Example template of the **DnaWgsVar_Bam** workflow **study\_config** file:
 
-``` bash
+```bash
 [Series_Info]
 job_name = DnaWgsVar_Bam
 dir_out = build/resources/integrationTest/output
@@ -194,6 +195,6 @@ Run = run1234
 
 - Run **DnaWgsVar_Bam** workflow in the **_local machine mode_**:
 
-``` bash
+```bash
 java -jar fonda-<VERSION>.jar -global_config global_config_DnaWgsVar_Bam_v1.1.txt -study_config config_DnaWgsVar_Bam_test.txt -local
 ```
