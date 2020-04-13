@@ -7,7 +7,7 @@ This document contains a description of the installation requirements, the steps
 
 ### Overall workflow description
 
-**RnaFusion_Fastq** is RNA sequencing data for gene fusion detection using fastq data.
+**RnaFusion_Fastq** workflow works with RNA sequencing data for gene fusion detection using fastq data.
 
 The workflow provides the following available tools for each analytic step:
  

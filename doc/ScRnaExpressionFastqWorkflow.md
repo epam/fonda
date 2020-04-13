@@ -7,7 +7,7 @@ This document contains a description of the installation requirements, the steps
 
 ### Overall workflow description
 
-**scRnaExpression_Fastq** is single cell RNA sequencing data for gene expression analysis using fastq data
+**scRnaExpression_Fastq** workflow works with single cell RNA sequencing data for gene expression analysis using fastq data
 
 The workflow provides the following available tools for each analytic step:
  

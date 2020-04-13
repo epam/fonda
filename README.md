@@ -125,7 +125,7 @@ Required parameters for each workflow:
 | **job_name** | Sets the job ID |
 | **dir_out** | Sets the output directory for the analysis |
 | **fastq_list** / **bam_list** | Sets the path to the input manifest file |
-| **LibraryType** | Sets the sequencing library type - _DNAWholeExomeSeq\_Paired_, _DNAWholeExomeSeq\_Single_, _DNATargetSeq\_Paired_, _DNATargetSeq\_Single_, etc. |
+| **LibraryType** | Sets the sequencing library type - _DNAWholeExomeSeq\_Paired_, _DNAWholeExomeSeq\_Single_, _DNATargetSeq\_Paired_, _DNATargetSeq\_Single_, _DNAAmpliconSeq\_Paired_, _RNASeq\_Paired_, _RNASeq\_Single_, etc. |
 | **DataGenerationSource** | Sets the data generation source - _Internal_, _IGR_, _Broad_, etc. |
 | **Date** | Sets the sequencing run date |
 | **Project** | Sets the project ID |

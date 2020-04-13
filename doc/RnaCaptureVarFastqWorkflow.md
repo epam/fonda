@@ -141,10 +141,7 @@ wget -q "https://github.com/broadinstitute/picard/releases/download/2.10.3/picar
 apt-get install -y libevent-dev && \
 pip install transvar && \
 transvar config --download_anno --refversion [reference name] && \
-transvar config --download_ref --refversion [reference name] && \
-cd /opt  && \
-wget -q "https://console.cloud.google.com/storage/browser/_details/gatk-software/package-archive/gatk/GenomeAnalysisTK-3.7-0-gcfedb67.tar.bz2" && \
-tar -xf GenomeAnalysisTK-3.7-0-gcfedb67.tar.bz2
+transvar config --download_ref --refversion [reference name]
 ```
 
 -  Install **gatk**:

@@ -7,7 +7,7 @@ This document contains a description of the installation requirements, the steps
 
 ### Overall workflow description
 
-**TcrRepertoire_Fastq** is workflow responsible for DNA or RNA sequencing data for TCR or BCR repertoire detection using fastq data.
+**TcrRepertoire_Fastq** workflow works with DNA or RNA sequencing data for TCR or BCR repertoire detection using fastq data.
 
 The workflow provides the following available tools for each analytic step:
 

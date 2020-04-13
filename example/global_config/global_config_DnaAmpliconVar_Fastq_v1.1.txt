@@ -7,17 +7,21 @@ PE = -pe threaded
 [Databases]
 SPECIES = human
 GENOME_BUILD = hg19
-GENOME = /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa
-NOVOINDEX = /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.nix
-DBSNP = /ngs/data/public_data/dbSNP/dbsnp_138.hg19_decoy.vcf
-COSMIC = /ngs/data/public_data/cosmic/hg19_cosmic_v69_290514_decoy.vcf
-MUTECT_NORMAL_PANEL = /ngs/data/public_data/mutect_normal_panel/refseq_exome_hg19_1kg_normal_panel_decoy.vcf
-BED_PRIMER = /ngs/data/amplicon/CHP2/CHP2_amplicon_regions_including_primer.bed
-BED = /ngs/data/amplicon/CHP2/CHP2_target_regions.bed
-BED_WITH_HEADER = /ngs/data/amplicon/CHP2/CHP2_target_regions_hg19_20171214.interval_list
-BED_FOR_COVERAGE = /ngs/data/amplicon/CHP2/CHP2_target_regions_hg19_20120806_interval_for_coverage.txt
-SNPSIFTDB = /ngs/data/tools/SnpEff/snpEff_v4.3p/snpEff/db
-CANONICAL_TRANSCRIPT = /ngs/data/reference_genome/GRCh37/Annotation/prefer_ensembl_transcript.txt
+GENOME = /ngs/test/data/hg19.decoy.fa
+NOVOINDEX = /ngs/test/data/hg19.decoy.nix
+DBSNP = /ngs/test/data/dbsnp_138.hg19_decoy.vcf
+COSMIC = /ngs/test/data/hg19_cosmic_v69_decoy.vcf
+MUTECT_NORMAL_PANEL = /ngs/test/data/refseq_exome_hg19_1kg_normal_panel_decoy.vcf
+BED_PRIMER = /ngs/test/data/CHP2_amplicon_regions_including_primer.bed
+BED = /ngs/test/data/data_padded.bed
+BED_WITH_HEADER = /ngs/test/data/CHP2_target_regions_hg19.interval_list
+BED_FOR_COVERAGE = /ngs/test/data/CHP2_target_regions_hg19_interval_for_coverage.txt
+SNPSIFTDB = /opt/SnpEff/snpEff_v4.3p/snpEff/db
+CANONICAL_TRANSCRIPT = /ngs/test/data/prefer_ensembl_transcript.txt
+KNOWN_INDELS_MILLS = /ngs/test/data/Mills_and_1000G_gold_standard.indels.hg19_decoy.vcf
+KNOWN_INDELS_PHASE1 = /ngs/test/data/1000G_phase1.indels.hg19_decoy.vcf
+CONTEST_POPAF = /ngs/test/data/hg19_population_stratified_af_hapmap_3.3.vcf
+SEQUENZA_GC50 = /opt/sequenza/hg19.decoy.gc50Base.txt.gz
 
 [all_tools]
 bedtools = /ngs/data/tools/bedtools2/v2.2.1/bin/bedtools
@@ -32,7 +36,13 @@ mutect = /ngs/data/tools/MuTect/v1.1.7/mutect-1.1.7.jar
 scalpel = /ngs/data/tools/scalpel/v0.5.3
 python = /ngs/data/app/python/v2.7.2/bin/python
 Rscript = /ngs/data/app/R/v3.5.0/bin/Rscript
-doubletdetection_python = /ngs/data/py/versions/3.5.2/bin/python
+abra2 = /opt/abra2/v2.16/abra2-2.16.jar
+bwa = /opt/bwa/bwa-0.7.12/bwa
+gatk = /opt/GATK/v3.7/GenomeAnalysisTK.jar
+vardict = /opt/VarDictJava/v1.5.0
+lofreq = /opt/lofreq/v2.1.2/bin/lofreq
+freebayes = /opt/freebayes/bin/freebayes
+strelka2 = /opt/strelka2/v2.9.6/bin
 
 [Pipeline_Info]
 workflow = DnaAmpliconVar_Fastq
