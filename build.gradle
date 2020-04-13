@@ -54,8 +54,8 @@ task zip(type: Zip, dependsOn: ['build', 'copySrc']) {
 }
 
 configurations {
-    integrationTestCompile { extendsFrom testCompile }
-    integrationTestRuntime { extendsFrom testRuntime }
+    integrationTestCompile.extendsFrom testCompile
+    integrationTestRuntime.extendsFrom testRuntime
 }
 
 dependencies {
@@ -83,6 +83,7 @@ sourceSets {
         }
     }
 }
+
 task integrationTest(type: Test) {
     useJUnitPlatform()
     description 'Runs all integration tests in project'
@@ -95,7 +96,6 @@ task integrationTest(type: Test) {
         classDumpDir = file("$buildDir/jacoco/classpathdumps")
     }
 }
-test.dependsOn integrationTest
 
 idea {
     module {
@@ -135,7 +135,7 @@ jacocoTestCoverageVerification {
     }
 }
 
-check.dependsOn jacocoTestCoverageVerification
+check.dependsOn integrationTest, jacocoTestCoverageVerification
 
 pmd {
     ruleSetFiles = files("$rootDir/config/pmd/pmd-ruleset.xml")
@@ -152,4 +152,12 @@ jacocoTestReport {
 task wrapper(type: Wrapper) {
     gradleVersion = '4.10.2'
     distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
+}
+
+task startBuild(type: GradleBuild) {
+    StartParameter startParameter = project.gradle.startParameter
+    if (startParameter.getExcludedTaskNames().contains("test")) {
+        startParameter.excludedTaskNames += "jacocoTestCoverageVerification"
+        startParameter.excludedTaskNames += "integrationTest"
+    }
 }
