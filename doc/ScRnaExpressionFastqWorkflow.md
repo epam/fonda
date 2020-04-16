@@ -224,7 +224,6 @@ GENOME = /ngs/data/Sequence/GRCh38.genome.fa
 BED = /ngs/data/bed/S07604514_Padded_hg38.bed
 BED_WITH_HEADER = /ngs/data/bed/intervalList_hg38.txt
 BED_FOR_COVERAGE =  /ngs/data/bed/intervalList_hg38.txt
-TRANSCRIPTOME = /ngs/data/Sequence/GRCh38.gencode.v26.pc_transcripts.fa
 STARINDEX = /ngs/data/Index/STAR_gc26
 ANNOTGENESAF = /ngs/data/Annotation/Gencode_v26/gencode.v26.annotation.saf
 ADAPTER_FWD = AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC
