@@ -1,32 +1,28 @@
 # Fonda workflows
 
-## DnaAmpliconVar_Fastq workflow
+## DnaAmpliconVar_Bam workflow
 
-The following documentation describes the Fonda **DnaAmpliconVar_Fastq** workflow launching.  
-This document contains a description of the installation requirements, the steps of Fonda building and the launch of the **DnaAmpliconVar_Fastq** workflow.
+The following documentation describes the Fonda **DnaAmpliconVar_Bam** workflow launching.  
+This document contains a description of the installation requirements, the steps of Fonda building and the launch of the **DnaAmpliconVar_Bam** workflow.
 
 ### Overall workflow description
 
-**DnaAmpliconVar_Fastq** works with DNA Amplicon sequencing data for genomic variant detection using fastq data.
+**DnaAmpliconVar_Bam** works with DNA Amplicon sequencing data for genomic variant detection using bam data.
 
 The workflow provides the following available tools for each analytic step:
  
-- mouse sequence detection: **xenome**  
-- sequence trimming: **trimmomatic**, **seqpurge**
-- sequence alignment: **bwa**, **novoalign**
-- sequence realignment: **abra2**, **gatk**
-- variant detection: **gatk** (is **gatkHaplotypeCaller** in the toolset) , **mutect** (is **mutect1** in the toolset), **mutect2**, **vardict**, **lofreq**, **strelka2**, **freebayes**, **scalpel**
+- variant detection: **gatk** (is **gatkHaplotypeCaller** in the toolset), **mutect**  (is **mutect1** in the toolset), **mutect2**, **vardict**, **lofreq**, **strelka2**, **freebayes**, **scalpel**
 - CNV detection: **sequenza**, **exomecnv**
 - contamination estimation: **contEst**
 - variant annotation: **snpsift** (associate with transvar)
 - qc: **qc**
-- data processing: **samtools**, **picard**
+- data processing: **samtools**
 
 A workflow toolset could contain the following popular options:
 
-- `toolset=novoalign+abra_realign+picard+vardict+mutect1`  
-- `toolset=bwa+abra_realign+picard+vardict+strelka2`  
-- `toolset=bwa+abra_realign+picard+qc+gatkHaplotypeCaller` (specific for bam reads QC examination)
+- `toolset=vardict+mutect1+gatkHaplotypeCaller`  
+- `toolset=mutect2+strelka2`  
+- `toolset=mutect1+scalpel`
 
 ### Software requirements
 
@@ -83,68 +79,12 @@ apt-get install r-base r-base-dev
 install.packages("plyr", repos="http://cran.r-project.org") 
 ```
 
--  Install **trimmomatic**:
-
-```bash
-cd /opt  && \
-wget -q "http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmomatic-0.38.zip" && \
-unzip Trimmomatic-0.38.zip
-```
-
--  Install **seqpurge** _(ngs-bits)_:
-
-```bash
-# Install 3rd party dependencies
-apt-get install -y g++ \
-                   qt5-default \
-                   libqt5xmlpatterns5-dev \
-                   libqt5sql5-mysql \
-                   python-matplotlib
-cd /opt  && \
-git clone --recursive https://github.com/imgag/ngs-bits.git && \
-cd ngs-bits && \
-git checkout 2019_03 && \
-git submodule update --recursive --init && \
-make -j$(nproc) build_3rdparty && \
-make -j$(nproc) build_tools_release
-```
-
--  Install **bwa**:
-
-```bash
-cd /opt  && \
-wget -q "https://sourceforge.net/projects/bio-bwa/files/bwa-0.7.12.tar.bz2" && \
-bunzip2 bwa-0.7.12.tar.bz2 && \
-tar xvf bwa-0.7.12.tar && \
-cd bwa-0.7.12 && \
-make && \
-```
-
--  Install **novoalign**:
-
-```bash
-cd /opt  && \
-# Download novocraftXXXXX.tar.gz file
-tar zxvf novocraftXXXXX.tar.gz && \
-cd novocraft_folder/ && \
-./novoalign
-```
-
 -  Install **gatk**:
 
 ```bash
 cd /opt  && \
 wget -q "https://console.cloud.google.com/storage/browser/_details/gatk-software/package-archive/gatk/GenomeAnalysisTK-3.7-0-gcfedb67.tar.bz2" && \
 tar -xf GenomeAnalysisTK-3.7-0-gcfedb67.tar.bz2
-```
-
--  Install **abra2**:
-
-```bash
-cd /opt  && \
-git clone --recursive https://github.com/mozack/abra.git && \
-cd abra && \
-make
 ```
 
 -  Install **vardict**:
@@ -299,11 +239,11 @@ Prepare **global_config** file that represents a configuration file for a partic
 | Section | Parameters |
 | --- | --- |
 | **\[Queue_Parameters\]** | NUMTHREADS (4)<br/>MAXMEM (8g)<br/>QUEUE (all.q/c32.q)<br/>PE (-pe threaded) |
-| **\[all\_tools\]**<br/>need to install properly before running Fonda pipeline | bwa, novoalign, seqpurge, trimmomatic, java, python, Rscript, gatk, abra2, vardict, mutect1, mutect2, lofreq, strelka2, freebayes, samtools, picard, transvar, snpsift, xenome, src_scripts |
-| **\[Databases\]**<br/>need to download/prepare properly before running Fonda pipeline | SPECIES (human/mouse)<br/>BED<br/>BED_WITH_HEADER<br/>BED_FOR_COVERAGE<br/>SNPSIFTDB (for snpsift)<br/>MOUSEXENOMEINDEX (for xenome)<br/>CONTEST_POPAF (for contest)<br/>CANONICAL_TRANSCRIPT<br/>GENOME<br/>GENOME_BUILD (hg19/GRCh38/mm10)<br/>KNOWN_INDELS_MILLS (for gatk_realign)<br/>KNOWN_INDELS_PHASE1 (for gatk_realign)<br/>DBSNP (for gatk_realign)<br/>COSMIC (for gatk_realign)<br/>NOVOINDEX (for novoalign)<br/>ADAPTER_SEQ (for seqpurge)<br/>ADAPTER_FWD (for trimmomatic)<br/>ADAPTER_REV (for trimmomatic) |
+| **\[all\_tools\]**<br/>need to install properly before running Fonda pipeline | java, python, Rscript, gatk, vardict, mutect, lofreq, strelka2, freebayes, samtools, picard, transvar, snpsift, xenome, src_scripts |
+| **\[Databases\]**<br/>need to download/prepare properly before running Fonda pipeline | SPECIES (human/mouse)<br/>BED<br/>BED_WITH_HEADER<br/>BED_FOR_COVERAGE<br/>SNPSIFTDB (for snpsift)<br/>CONTEST_POPAF (for contEst)<br/>CANONICAL_TRANSCRIPT<br/>GENOME<br/>GENOME_BUILD (hg19/GRCh38/mm10)<br/> |
 | **\[Pipeline_Info\]** | workflow<br/>toolset<br/>flag_xenome (yes/no)<br/>read_type (paired/single) |
 
-Example template of the **DnaAmpliconVar_Fastq** workflow **global\_config** file:
+Example template of the **DnaAmpliconVar_Bam** workflow **global\_config** file:
 
 ```bash
 [Queue_Parameters]
@@ -315,10 +255,7 @@ PE = -pe threaded
 [Databases]
 SPECIES = human
 GENOME_BUILD = hg19
-GENOME = /ngs/test/data/hg19.decoy.fa
-NOVOINDEX = /ngs/test/data/hg19.decoy.nix
-DBSNP = /ngs/test/data/dbsnp_138.hg19_decoy.vcf
-COSMIC = /ngs/test/data/hg19_cosmic_v69_decoy.vcf
+GENOME = /ngs/test/data/hg19.decoy.fa]
 MUTECT_NORMAL_PANEL = /ngs/test/data/refseq_exome_hg19_1kg_normal_panel_decoy.vcf
 BED_PRIMER = /ngs/test/data/CHP2_amplicon_regions_including_primer.bed
 BED = /ngs/test/data/data_padded.bed
@@ -326,14 +263,11 @@ BED_WITH_HEADER = /ngs/test/data/CHP2_target_regions_hg19.interval_list
 BED_FOR_COVERAGE = /ngs/test/data/CHP2_target_regions_hg19_interval_for_coverage.txt
 SNPSIFTDB = /opt/SnpEff/snpEff_v4.3p/snpEff/db
 CANONICAL_TRANSCRIPT = /ngs/test/data/prefer_ensembl_transcript.txt
-KNOWN_INDELS_MILLS = /ngs/test/data/Mills_and_1000G_gold_standard.indels.hg19_decoy.vcf
-KNOWN_INDELS_PHASE1 = /ngs/test/data/1000G_phase1.indels.hg19_decoy.vcf
 CONTEST_POPAF = /ngs/test/data/hg19_population_stratified_af_hapmap_3.3.vcf
 SEQUENZA_GC50 = /opt/sequenza/hg19.decoy.gc50Base.txt.gz
 
 [all_tools]
 bedtools = /opt/bedtools2/v2.2.1/bin/bedtools
-novoalign = /opt/novoalign/v3.09.00/novoalign
 java = /usr/lib/jvm/java-8-openjdk-amd64/bin/java
 mutect_java = /usr/lib/jvm/java-7-openjdk-amd64/bin/java
 samtools = /opt/samtools/v0.1.19/samtools
@@ -344,8 +278,6 @@ mutect = /opt/MuTect/v1.1.7/mutect-1.1.7.jar
 scalpel = /opt/scalpel/v0.5.3
 python = /usr/bin/python
 Rscript = /usr/bin/Rscript
-abra2 = /opt/abra2/v2.16/abra2-2.16.jar
-bwa = /opt/bwa/bwa-0.7.12/bwa
 gatk = /opt/GATK/v3.7/GenomeAnalysisTK.jar
 vardict = /opt/VarDictJava/v1.5.0
 lofreq = /opt/lofreq/v2.1.2/bin/lofreq
@@ -355,21 +287,21 @@ exomecnv = /opt/exomecnv
 strelka2 = /opt/strelka2/v2.9.6/bin
 
 [Pipeline_Info]
-workflow = DnaAmpliconVar_Fastq
-toolset = novoalign+abra_realign+picard+qc+scalpel+mutect1
+workflow = DnaAmpliconVar_Bam
+toolset = mutect1+scalpel
 flag_xenome = no
 read_type = single
 ```
 
 Prepare **study_config** file that represents a configuration file for a particular study for a specific the NGS data analysis.  
-Example template of the **DnaAmpliconVar_Fastq** workflow **study\_config** file:
+Example template of the **DnaAmpliconVar_Bam** workflow **study\_config** file:
 
 ```bash
 [Series_Info]
 job_name = pe_job
-dir_out = /home/fonda/DnaAmpliconVar_Fastq_test
-fastq_list = /home/fonda/DnaAmplicon_SampleFastqPaths.txt
-LibraryType = DNAAmpliconSeq_Paired
+dir_out = /home/fonda/DnaAmpliconVar_Bam_test
+bam_list = /home/fonda/DnaAmplicon_SampleBamPaths.txt
+LibraryType = DNAAmpliconSeq_Single
 DataGenerationSource = Internal
 Date = 20200401
 Project = Example_project
@@ -377,8 +309,8 @@ Run = run1234
 Cufflinks.library_type = fr-unstranded  
 ```
 
-- Run **DnaAmpliconVar_Fastq** workflow in the **_local machine mode_**:
+- Run **DnaAmpliconVar_Bam** workflow in the **_local machine mode_**:
 
 ``` bash
-java -jar fonda-<VERSION>.jar -global_config global_config_DnaAmpliconVar_Fastq.txt -study_config config_DnaAmpliconVar_Fastq_test.txt -local
+java -jar fonda-<VERSION>.jar -global_config global_config_DnaAmpliconVar_Bam.txt -study_config config_DnaAmpliconVar_Bam_test.txt -local
 ```
