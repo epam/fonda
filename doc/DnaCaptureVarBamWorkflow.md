@@ -1,13 +1,13 @@
 # Fonda workflows
 
-## DnaAmpliconVar_Bam workflow
+## DnaCaptureVar_Bam workflow
 
-The following documentation describes the Fonda **DnaAmpliconVar_Bam** workflow launching.  
-This document contains a description of the installation requirements, the steps of Fonda building and the launch of the **DnaAmpliconVar_Bam** workflow.
+The following documentation describes the Fonda **DnaCaptureVar_Bam** workflow launching.  
+This document contains a description of the installation requirements, the steps of Fonda building and the launch of the **DnaCaptureVar_Bam** workflow.
 
 ### Overall workflow description
 
-**DnaAmpliconVar_Bam** works with DNA Amplicon sequencing data for genomic variant detection using bam data.
+**DnaCaptureVar_Bam** works with DNA Captured sequencing data for genomic variant detection using bam data.
 
 The workflow provides the following available tools for each analytic step:
  
@@ -243,7 +243,7 @@ Prepare **global_config** file that represents a configuration file for a partic
 | **\[Databases\]**<br/>need to download/prepare properly before running Fonda pipeline | SPECIES (human/mouse)<br/>BED<br/>BED_WITH_HEADER<br/>BED_FOR_COVERAGE<br/>SNPSIFTDB (for snpsift)<br/>CONTEST_POPAF (for contEst)<br/>CANONICAL_TRANSCRIPT<br/>GENOME<br/>GENOME_BUILD (hg19/GRCh38/mm10)<br/> |
 | **\[Pipeline_Info\]** | workflow<br/>toolset<br/>flag_xenome (yes/no)<br/>read_type (paired/single) |
 
-Example template of the **DnaAmpliconVar_Bam** workflow **global\_config** file:
+Example template of the **DnaCaptureVar_Bam** workflow **global\_config** file:
 
 ```bash
 [Queue_Parameters]
@@ -257,7 +257,7 @@ SPECIES = human
 GENOME_BUILD = hg19
 GENOME = /ngs/test/data/hg19.decoy.fa
 MUTECT_NORMAL_PANEL = /ngs/test/data/refseq_exome_hg19_1kg_normal_panel_decoy.vcf
-BED_PRIMER = /ngs/test/data/CHP2_amplicon_regions_including_primer.bed
+BED_PRIMER = /ngs/test/data/CHP2_Capture_regions_including_primer.bed
 BED = /ngs/test/data/data_padded.bed
 BED_WITH_HEADER = /ngs/test/data/CHP2_target_regions_hg19.interval_list
 BED_FOR_COVERAGE = /ngs/test/data/CHP2_target_regions_hg19_interval_for_coverage.txt
@@ -287,30 +287,30 @@ exomecnv = /opt/exomecnv
 strelka2 = /opt/strelka2/v2.9.6/bin
 
 [Pipeline_Info]
-workflow = DnaAmpliconVar_Bam
-toolset = mutect1+scalpel
+workflow = DnaCaptureVar_Bam
+toolset = vardict
 flag_xenome = no
-read_type = single
+read_type = paired
 ```
 
 Prepare **study_config** file that represents a configuration file for a particular study for a specific the NGS data analysis.  
-Example template of the **DnaAmpliconVar_Bam** workflow **study\_config** file:
+Example template of the **DnaCaptureVar_Bam** workflow **study\_config** file:
 
 ```bash
 [Series_Info]
 job_name = pe_job
-dir_out = /home/fonda/DnaAmpliconVar_Bam_test
-bam_list = /home/fonda/DnaAmplicon_SampleBamPaths.txt
-LibraryType = DNAAmpliconSeq_Single
+dir_out = /home/fonda/DnaCaptureVar_Bam_test
+bam_list = /home/fonda/DnaCapture_SampleBamPaths.txt
+LibraryType = DNATargetSeq_Paired
 DataGenerationSource = Internal
-Date = 20200401
+Date = 202004016
 Project = Example_project
 Run = run1234
 Cufflinks.library_type = fr-unstranded  
 ```
 
-- Run **DnaAmpliconVar_Bam** workflow in the **_local machine mode_**:
+- Run **DnaCaptureVar_Bam** workflow in the **_local machine mode_**:
 
 ``` bash
-java -jar fonda-<VERSION>.jar -global_config global_config_DnaAmpliconVar_Bam.txt -study_config config_DnaAmpliconVar_Bam_test.txt -local
+java -jar fonda-<VERSION>.jar -global_config global_config_DnaCaptureVar_Bam.txt -study_config config_DnaCaptureVar_Bam_test.txt -local
 ```
