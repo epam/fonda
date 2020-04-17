@@ -131,7 +131,9 @@ public class VcfSnpeffAnnotation implements Tool<VcfScnpeffAnnonationResult> {
      *
      * @return {@link AdditionalFields} with its fields.
      *
-     * @param configuration*/
+     * @param configuration is the type of {@link Configuration} which contains
+     *                      its fields: snpsiftDb, genomeBuild, canonicalTranscript.
+     **/
     private AdditionalFields initializeAdditionalFields(final Configuration configuration) {
         AdditionalFields additionalFields = new AdditionalFields();
         additionalFields.jarPath = getExecutionPath(configuration);
