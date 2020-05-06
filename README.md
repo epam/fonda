@@ -4,7 +4,7 @@
 
 # Fonda
 
-Fonda is a framework which offers scalable and automatic analysis of multiple **NGS** sequencing data types.
+Fonda is a framework that offers a scalable and automatic analysis of multiple **NGS** sequencing data types.
 
 - [Required environment setup](#required-environment-setup)
 - [Build Fonda](#build-fonda)

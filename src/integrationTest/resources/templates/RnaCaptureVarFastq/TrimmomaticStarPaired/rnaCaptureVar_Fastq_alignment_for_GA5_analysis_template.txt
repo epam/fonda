@@ -2,6 +2,7 @@
 
 # --- SGE options --- #
 
+#$ -V
 #$ -wd build/resources/integrationTest/output
 #$ -N RnaCaptureVar_Fastq_alignment_for_GA5_analysis
 #$ -o build/resources/integrationTest/output/log_files/RnaCaptureVar_Fastq_alignment_for_GA5_analysis.log

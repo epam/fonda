@@ -1,4 +1,4 @@
-# Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+# Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -100,8 +100,8 @@ for (i in 1:length(sampleList)){
         exp.dat<-exp.dat[order(exp.dat$gene_id),]
         if (i==1){
           dim(exp.mat)[1]<-nrow(exp.dat)
-          rownames(exp.mat)<-exp.dat$gene_id
-          exp.mat.gname<-exp.dat$gene_short_name
+          rownames(exp.mat)<-paste(exp.dat$tracking_id, exp.dat$gene_id, exp.dat$gene_short_name, exp.dat$locus, sep = '|')
+          exp.mat.gname<-paste(exp.dat$tracking_id, exp.dat$gene_id, exp.dat$gene_short_name, exp.dat$locus, sep = '|')
           exp.mat<-cbind(exp.mat,exp.dat$FPKM)
           exp.mat.colname<-append(exp.mat.colname,sample)
         }else{

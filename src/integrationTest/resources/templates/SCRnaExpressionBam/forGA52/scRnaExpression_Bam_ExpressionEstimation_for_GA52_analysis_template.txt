@@ -2,6 +2,7 @@
 
 # --- SGE options --- #
 
+#$ -V
 #$ -wd build/resources/integrationTest/output
 #$ -N scRnaExpression_Bam_ExpressionEstimation_for_GA52_analysis
 #$ -o build/resources/integrationTest/output/log_files/scRnaExpression_Bam_ExpressionEstimation_for_GA52_analysis.log

@@ -2,6 +2,7 @@
 
 # --- SGE options --- #
 
+#$ -V
 #$ -wd build/resources/integrationTest/output
 #$ -N DnaCaptureVar_Fastq_strelka2_for_GA5_analysis
 #$ -o build/resources/integrationTest/output/log_files/DnaCaptureVar_Fastq_strelka2_for_GA5_analysis.log

@@ -1,5 +1,5 @@
 echo `date` Begin Step: Mark duplicates...
-[(${toolFields.java})] -Xmx16g -jar [(${toolFields.picard})] MarkDuplicates INPUT=[(${bam})] OUTPUT=[(${additionalPicardMarkDuplicateFields.mkdupBam})] METRICS_FILE=[(${additionalPicardMarkDuplicateFields.mkdupMetric})] ASSUME_SORTED=true REMOVE_DUPLICATES=false VALIDATION_STRINGENCY=SILENT TMP_DIR=[(${additionalPicardMarkDuplicateFields.stmpOutdir})]
+[(${toolFields.java})] -Xmx16g -jar [# th:if = "${toolFields.oldPicardVersion}"][(${toolFields.picard})]/MarkDuplicates.jar[/][# th:unless = "${toolFields.oldPicardVersion}"][(${toolFields.picard})] MarkDuplicates[/] INPUT=[(${bam})] OUTPUT=[(${additionalPicardMarkDuplicateFields.mkdupBam})] METRICS_FILE=[(${additionalPicardMarkDuplicateFields.mkdupMetric})] ASSUME_SORTED=true REMOVE_DUPLICATES=false VALIDATION_STRINGENCY=SILENT TMP_DIR=[(${additionalPicardMarkDuplicateFields.stmpOutdir})]
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Mark duplicates.

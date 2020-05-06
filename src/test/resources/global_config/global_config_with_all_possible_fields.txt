@@ -37,6 +37,7 @@ seqpurge = /output/SeqPurge
 novoalign = /output/novoalign
 java = /output/bin/java
 samtools = /output/v0.1.19/samtools
+picard_version = v2.10.3
 picard = /output/v2.10.3/picard.jar
 snpsift = /output/SnpSift.jar
 transvar = /output/transvar

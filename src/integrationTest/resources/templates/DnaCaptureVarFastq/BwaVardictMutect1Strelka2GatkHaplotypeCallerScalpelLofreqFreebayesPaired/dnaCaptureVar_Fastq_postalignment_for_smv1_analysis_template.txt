@@ -2,6 +2,7 @@
 
 # --- SGE options --- #
 
+#$ -V
 #$ -wd build/resources/integrationTest/output
 #$ -N DnaCaptureVar_Fastq_postalignment_for_smv1_analysis
 #$ -o build/resources/integrationTest/output/log_files/DnaCaptureVar_Fastq_postalignment_for_smv1_analysis.log
@@ -24,7 +25,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (BWA alignment|Index bam))|(Successful Step: Index bam))" $logFile;)
+	str=$(grep -Ei "((Error Step: (BWA alignment|Index bam))|(Successful Step: Index bam))" $logFile;)
 fi
 	echo Waiting for step: Index bam
 	sleep 60
@@ -73,7 +74,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Index rmdup bam))|(Successful Step: Index rmdup bam))" $logFile;)
+	str=$(grep -Ei "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Index rmdup bam))|(Successful Step: Index rmdup bam))" $logFile;)
 fi
 	echo Waiting for step: Index rmdup bam
 	sleep 60

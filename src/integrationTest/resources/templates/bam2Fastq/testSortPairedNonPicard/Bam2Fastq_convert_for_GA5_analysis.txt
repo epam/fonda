@@ -2,6 +2,7 @@
 
 # --- SGE options --- #
 
+#$ -V
 #$ -wd build/resources/integrationTest/output
 #$ -N Bam2Fastq_convert_for_GA5_analysis
 #$ -o build/resources/integrationTest/output/log_files/Bam2Fastq_convert_for_GA5_analysis.log
