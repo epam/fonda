@@ -2,6 +2,7 @@
 
 # --- SGE options --- #
 
+#$ -V
 #$ -wd build/resources/integrationTest/output
 #$ -N scImmuneProfile_CellRanger_Fastq_alignment_for_pbmc4k_analysis
 #$ -o build/resources/integrationTest/output/log_files/scImmuneProfile_CellRanger_Fastq_alignment_for_pbmc4k_analysis.log

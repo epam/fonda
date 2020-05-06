@@ -2,6 +2,7 @@
 
 # --- SGE options --- #
 
+#$ -V
 #$ -wd build/resources/integrationTest/output
 #$ -N HlaTyping_Fastq_hlatyping_for_smv1_analysis
 #$ -o build/resources/integrationTest/output/log_files/HlaTyping_Fastq_hlatyping_for_smv1_analysis.log

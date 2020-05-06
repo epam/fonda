@@ -187,6 +187,7 @@ public class CmdParserTest extends AbstractTest {
         globalConfig.getToolConfig().setNovoalign(format("/%s/novoalign", ROOT_OUTDIR));
         globalConfig.getToolConfig().setJava(format("/%s/java", ROOT_OUTDIR));
         globalConfig.getToolConfig().setSamTools(format("/%s/samtools", ROOT_OUTDIR));
+        globalConfig.getToolConfig().setPicardVersion("v2.10.3");
         globalConfig.getToolConfig().setPicard(format("/%s/picard.jar", ROOT_OUTDIR));
         globalConfig.getToolConfig().setSnpsift(format("/%s/SnpSift.jar", ROOT_OUTDIR));
         globalConfig.getToolConfig().setTransvar(format("/%s/transvar", ROOT_OUTDIR));
@@ -243,6 +244,7 @@ public class CmdParserTest extends AbstractTest {
         globalConfig.getToolConfig().setNovoalign(format("/%s/novoalign", ROOT_OUTDIR));
         globalConfig.getToolConfig().setJava(format("/%s/bin/java", ROOT_OUTDIR));
         globalConfig.getToolConfig().setSamTools(format("/%s/v0.1.19/samtools", ROOT_OUTDIR));
+        globalConfig.getToolConfig().setPicardVersion("v2.10.3");
         globalConfig.getToolConfig().setPicard(format("/%s/v2.10.3/picard.jar", ROOT_OUTDIR));
         globalConfig.getToolConfig().setSnpsift(format("/%s/SnpSift.jar", ROOT_OUTDIR));
         globalConfig.getToolConfig().setTransvar(format("/%s/transvar", ROOT_OUTDIR));

@@ -78,6 +78,7 @@ class Hisat2Test extends AbstractTest {
         expectedToolConfig.setHisat2("hisat2");
         expectedToolConfig.setSamTools("samtools");
         expectedToolConfig.setJava("java");
+        expectedToolConfig.setPicardVersion("v2.10.3");
         expectedToolConfig.setPicard("picard");
         expectedGlobalConfig.setToolConfig(expectedToolConfig);
         expectedGlobalConfig.setQueueParameters(expectedQueueParameters);

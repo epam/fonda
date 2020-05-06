@@ -2,6 +2,7 @@
 
 # --- SGE options --- #
 
+#$ -V
 #$ -wd build/resources/integrationTest/output
 #$ -N DnaAmpliconVar_Bam_mergeMutation_for_cohort_analysis
 #$ -o build/resources/integrationTest/output/log_files/DnaAmpliconVar_Bam_mergeMutation_for_cohort_analysis.log
@@ -23,7 +24,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (Vardict detection|SnpEff annotation|Remove temporary directories|Run vardict|Contamination estimation|Run contEst|Strelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: SnpEff annotation))" $logFile;)
+	str=$(grep -Ei "((Error Step: (Vardict detection|SnpEff annotation|Remove temporary directories|Run vardict|Contamination estimation|Run contEst|Strelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: SnpEff annotation))" $logFile;)
 fi
 	echo Waiting for step: SnpEff annotation
 	sleep 60
@@ -43,7 +44,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (Vardict detection|SnpEff annotation|Remove temporary directories|Run vardict|Contamination estimation|Run contEst|Strelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: SnpEff annotation))" $logFile;)
+	str=$(grep -Ei "((Error Step: (Vardict detection|SnpEff annotation|Remove temporary directories|Run vardict|Contamination estimation|Run contEst|Strelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: SnpEff annotation))" $logFile;)
 fi
 	echo Waiting for step: SnpEff annotation
 	sleep 60
@@ -63,7 +64,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (Vardict detection|SnpEff annotation|Remove temporary directories|Run vardict|Contamination estimation|Run contEst|Strelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: SnpEff annotation))" $logFile;)
+	str=$(grep -Ei "((Error Step: (Vardict detection|SnpEff annotation|Remove temporary directories|Run vardict|Contamination estimation|Run contEst|Strelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: SnpEff annotation))" $logFile;)
 fi
 	echo Waiting for step: SnpEff annotation
 	sleep 60
@@ -83,7 +84,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (Vardict detection|SnpEff annotation|Remove temporary directories|Run vardict|Contamination estimation|Run contEst|Strelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: SnpEff annotation))" $logFile;)
+	str=$(grep -Ei "((Error Step: (Vardict detection|SnpEff annotation|Remove temporary directories|Run vardict|Contamination estimation|Run contEst|Strelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: SnpEff annotation))" $logFile;)
 fi
 	echo Waiting for step: SnpEff annotation
 	sleep 60
@@ -103,7 +104,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (Vardict detection|SnpEff annotation|Remove temporary directories|Run vardict|Contamination estimation|Run contEst|Strelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: SnpEff annotation))" $logFile;)
+	str=$(grep -Ei "((Error Step: (Vardict detection|SnpEff annotation|Remove temporary directories|Run vardict|Contamination estimation|Run contEst|Strelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: SnpEff annotation))" $logFile;)
 fi
 	echo Waiting for step: SnpEff annotation
 	sleep 60
@@ -123,7 +124,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (Vardict detection|SnpEff annotation|Remove temporary directories|Run vardict|Contamination estimation|Run contEst|Strelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: SnpEff annotation))" $logFile;)
+	str=$(grep -Ei "((Error Step: (Vardict detection|SnpEff annotation|Remove temporary directories|Run vardict|Contamination estimation|Run contEst|Strelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: SnpEff annotation))" $logFile;)
 fi
 	echo Waiting for step: SnpEff annotation
 	sleep 60
@@ -143,7 +144,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (Vardict detection|SnpEff annotation|Remove temporary directories|Run vardict|Contamination estimation|Run contEst|Strelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: SnpEff annotation))" $logFile;)
+	str=$(grep -Ei "((Error Step: (Vardict detection|SnpEff annotation|Remove temporary directories|Run vardict|Contamination estimation|Run contEst|Strelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: SnpEff annotation))" $logFile;)
 fi
 	echo Waiting for step: SnpEff annotation
 	sleep 60
@@ -163,7 +164,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (Vardict detection|SnpEff annotation|Remove temporary directories|Run vardict|Contamination estimation|Run contEst|Strelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: SnpEff annotation))" $logFile;)
+	str=$(grep -Ei "((Error Step: (Vardict detection|SnpEff annotation|Remove temporary directories|Run vardict|Contamination estimation|Run contEst|Strelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: SnpEff annotation))" $logFile;)
 fi
 	echo Waiting for step: SnpEff annotation
 	sleep 60
@@ -183,7 +184,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (Vardict detection|SnpEff annotation|Remove temporary directories|Run vardict|Contamination estimation|Run contEst|Strelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: SnpEff annotation))" $logFile;)
+	str=$(grep -Ei "((Error Step: (Vardict detection|SnpEff annotation|Remove temporary directories|Run vardict|Contamination estimation|Run contEst|Strelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: SnpEff annotation))" $logFile;)
 fi
 	echo Waiting for step: SnpEff annotation
 	sleep 60
@@ -203,7 +204,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (Vardict detection|SnpEff annotation|Remove temporary directories|Run vardict|Contamination estimation|Run contEst|Strelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: SnpEff annotation))" $logFile;)
+	str=$(grep -Ei "((Error Step: (Vardict detection|SnpEff annotation|Remove temporary directories|Run vardict|Contamination estimation|Run contEst|Strelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: SnpEff annotation))" $logFile;)
 fi
 	echo Waiting for step: SnpEff annotation
 	sleep 60

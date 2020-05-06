@@ -73,6 +73,7 @@ public final class GlobalConfigFormat {
     public static final String NOVOALIGN = "novoalign";
     public static final String JAVA = "java";
     public static final String SAMTOOLS = "samtools";
+    public static final String PICARD_VERSION = "picard_version";
     public static final String PICARD = "picard";
     public static final String SNPSIFT = "snpsift";
     public static final String TRANSVAR = "transvar";

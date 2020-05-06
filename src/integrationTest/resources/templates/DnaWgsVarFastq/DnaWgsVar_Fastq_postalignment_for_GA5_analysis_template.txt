@@ -2,6 +2,7 @@
 
 # --- SGE options --- #
 
+#$ -V
 #$ -wd build/resources/integrationTest/output
 #$ -N DnaWgsVar_Fastq_postalignment_for_GA5_analysis
 #$ -o build/resources/integrationTest/output/log_files/DnaWgsVar_Fastq_postalignment_for_GA5_analysis.log
@@ -24,7 +25,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (Novoalign alignment|Index bam))|(Successful Step: Index bam))" $logFile;)
+	str=$(grep -Ei "((Error Step: (Novoalign alignment|Index bam))|(Successful Step: Index bam))" $logFile;)
 fi
 	echo Waiting for step: Index bam
 	sleep 60
@@ -171,7 +172,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (Novoalign alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|Remove duplicates|Index rmdup bam|DNA QC metrics|Merge DNA QC|ABRA realignment))|(Successful Step: Index rmdup bam))" $logFile;)
+	str=$(grep -Ei "((Error Step: (Novoalign alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|Remove duplicates|Index rmdup bam|DNA QC metrics|Merge DNA QC|ABRA realignment))|(Successful Step: Index rmdup bam))" $logFile;)
 fi
 	echo Waiting for step: Index rmdup bam
 	sleep 60

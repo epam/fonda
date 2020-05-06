@@ -2,6 +2,7 @@
 
 # --- SGE options --- #
 
+#$ -V
 #$ -wd build/resources/integrationTest/output
 #$ -N scImmuneProfile_CellRanger_Fastq_qcsummary_for_cohort_analysis
 #$ -o build/resources/integrationTest/output/log_files/scImmuneProfile_CellRanger_Fastq_qcsummary_for_cohort_analysis.log
@@ -23,7 +24,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (Cellranger vdj analysis|Remove temporary directories))|(Successful Step: Cellranger vdj analysis))" $logFile;)
+	str=$(grep -Ei "((Error Step: (Cellranger vdj analysis|Remove temporary directories))|(Successful Step: Cellranger vdj analysis))" $logFile;)
 fi
 	echo Waiting for step: Cellranger vdj analysis
 	sleep 60

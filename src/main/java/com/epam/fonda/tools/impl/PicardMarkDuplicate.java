@@ -41,6 +41,7 @@ import static com.epam.fonda.utils.ToolUtils.validate;
 public class PicardMarkDuplicate implements Tool<BamResult> {
 
     private static final String MKDUP_TOOL_TEMPLATE_NAME = "picard_mark_duplicates_tool_template";
+    private static final double THE_LAST_OLD_PICARD_VERSION = 1.123;
     @NonNull
     private FastqFileSample sample;
     @NonNull
@@ -48,6 +49,7 @@ public class PicardMarkDuplicate implements Tool<BamResult> {
 
     @Data
     private class ToolFields {
+        private boolean oldPicardVersion;
         private String picard;
         private String java;
         private String samtools;
@@ -129,6 +131,14 @@ public class PicardMarkDuplicate implements Tool<BamResult> {
     private ToolFields initializeToolFields(Configuration configuration) {
         ToolFields toolFields = new ToolFields();
         toolFields.java = validate(configuration.getGlobalConfig().getToolConfig().getJava(), GlobalConfigFormat.JAVA);
+        final String validatedPicardVersion = validate(
+                configuration.getGlobalConfig().getToolConfig().getPicardVersion(), GlobalConfigFormat.PICARD_VERSION);
+        final String picardVersion = validatedPicardVersion.startsWith("v")
+                ? validatedPicardVersion.split("v")[1]
+                : validatedPicardVersion;
+        toolFields.oldPicardVersion = Double.parseDouble(picardVersion.split("\\.").length < 3
+                ? picardVersion
+                : picardVersion.substring(0, picardVersion.lastIndexOf('.'))) <= THE_LAST_OLD_PICARD_VERSION;
         toolFields.picard = validate(configuration.getGlobalConfig().getToolConfig().getPicard(),
                 GlobalConfigFormat.PICARD);
         toolFields.samtools = validate(configuration.getGlobalConfig().getToolConfig().getSamTools(),

@@ -22,6 +22,7 @@ feature_count = /opt/subread/subread-1.4.5-p1-Linux-x86_64/bin/featureCounts
 java = /usr/lib/jvm/java-8-openjdk-amd64/bin/java
 rnaseqc_java = /usr/lib/jvm/java-7-openjdk-amd64/bin/java
 samtools = /opt/samtools/samtools-0.1.19/samtools
+picard_version = v2.10.3
 picard = /opt/picard/picard.jar
 rnaseqc = /opt/rnaseqc/RNA-SeQC_v1.1.8.jar
 python = /usr/bin/python

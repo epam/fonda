@@ -71,6 +71,7 @@ class StarTest extends AbstractTest {
         expectedPipelineInfo.setWorkflow("RnaExpression");
         expectedGlobalConfig.setPipelineInfo(expectedPipelineInfo);
         expectedToolConfig.setJava("java");
+        expectedToolConfig.setPicardVersion("v2.10.3");
         expectedToolConfig.setPicard("picard");
         expectedToolConfig.setStar("star");
         expectedToolConfig.setSamTools("samtools");

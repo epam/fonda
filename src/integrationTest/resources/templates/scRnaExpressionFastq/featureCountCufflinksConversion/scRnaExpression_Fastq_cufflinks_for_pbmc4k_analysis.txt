@@ -2,6 +2,7 @@
 
 # --- SGE options --- #
 
+#$ -V
 #$ -wd build/resources/integrationTest/output
 #$ -N scRnaExpression_Fastq_cufflinks_for_pbmc4k_analysis
 #$ -o build/resources/integrationTest/output/log_files/scRnaExpression_Fastq_cufflinks_for_pbmc4k_analysis.log
