@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.epam.fonda.utils.ToolUtils.validate;
+import static com.epam.fonda.utils.ToolUtils.validateOldPicardVersion;
 
 @RequiredArgsConstructor
 public class PicardMergeDnaBam implements Tool<BamResult> {
@@ -43,6 +44,7 @@ public class PicardMergeDnaBam implements Tool<BamResult> {
     @Data
     private class ToolFields {
         private String java;
+        private boolean oldPicardVersion;
         private String picard;
         private String samtools;
     }
@@ -100,6 +102,7 @@ public class PicardMergeDnaBam implements Tool<BamResult> {
     private ToolFields initializeToolFields(Configuration configuration) {
         ToolFields toolFields = new ToolFields();
         toolFields.java = validate(configuration.getGlobalConfig().getToolConfig().getJava(), GlobalConfigFormat.JAVA);
+        toolFields.oldPicardVersion = validateOldPicardVersion(configuration);
         toolFields.picard = validate(configuration.getGlobalConfig().getToolConfig().getPicard(),
                 GlobalConfigFormat.PICARD);
         toolFields.samtools = validate(configuration.getGlobalConfig().getToolConfig().getSamTools(),

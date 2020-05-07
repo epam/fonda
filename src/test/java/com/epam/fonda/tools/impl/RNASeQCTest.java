@@ -54,6 +54,7 @@ class RNASeQCTest extends AbstractTest {
         GlobalConfig.ToolConfig expectedToolConfig = new GlobalConfig.ToolConfig();
         GlobalConfig.DatabaseConfig expectedDatabaseConfig = new GlobalConfig.DatabaseConfig();
         expectedToolConfig.setJava("java");
+        expectedToolConfig.setPicardVersion("v2.10.3");
         expectedToolConfig.setPicard("picard");
         expectedToolConfig.setRnaseqc("rnaSeqc");
         expectedToolConfig.setRnaseqcJava("rnaSeqcJava");

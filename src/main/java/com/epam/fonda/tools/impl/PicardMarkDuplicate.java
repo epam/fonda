@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.epam.fonda.utils.ToolUtils.validate;
+import static com.epam.fonda.utils.ToolUtils.validateOldPicardVersion;
 
 @RequiredArgsConstructor
 @Data
@@ -131,14 +132,7 @@ public class PicardMarkDuplicate implements Tool<BamResult> {
     private ToolFields initializeToolFields(Configuration configuration) {
         ToolFields toolFields = new ToolFields();
         toolFields.java = validate(configuration.getGlobalConfig().getToolConfig().getJava(), GlobalConfigFormat.JAVA);
-        final String validatedPicardVersion = validate(
-                configuration.getGlobalConfig().getToolConfig().getPicardVersion(), GlobalConfigFormat.PICARD_VERSION);
-        final String picardVersion = validatedPicardVersion.startsWith("v")
-                ? validatedPicardVersion.split("v")[1]
-                : validatedPicardVersion;
-        toolFields.oldPicardVersion = Double.parseDouble(picardVersion.split("\\.").length < 3
-                ? picardVersion
-                : picardVersion.substring(0, picardVersion.lastIndexOf('.'))) <= THE_LAST_OLD_PICARD_VERSION;
+        toolFields.oldPicardVersion = validateOldPicardVersion(configuration);
         toolFields.picard = validate(configuration.getGlobalConfig().getToolConfig().getPicard(),
                 GlobalConfigFormat.PICARD);
         toolFields.samtools = validate(configuration.getGlobalConfig().getToolConfig().getSamTools(),
