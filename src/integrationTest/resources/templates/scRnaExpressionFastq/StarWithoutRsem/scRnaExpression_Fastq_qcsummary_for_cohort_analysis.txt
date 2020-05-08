@@ -2,6 +2,7 @@
 
 # --- SGE options --- #
 
+#$ -V
 #$ -wd build/resources/integrationTest/output
 #$ -N scRnaExpression_Fastq_qcsummary_for_cohort_analysis
 #$ -o build/resources/integrationTest/output/log_files/scRnaExpression_Fastq_qcsummary_for_cohort_analysis.log
@@ -23,7 +24,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (Merge fastqs|STAR alignment|Sort bam|Index bam|Mark duplicates|Index mkdup bam|Remove duplicates|Index rmdup bam|RNA QC metrics|Merge RNA QC|Remove temporary directories))|(Successful Step: Merge RNA QC))" $logFile;)
+	str=$(grep -Ei "((Error Step: (Merge fastqs|STAR alignment|Sort bam|Index bam|Mark duplicates|Index mkdup bam|Remove duplicates|Index rmdup bam|RNA QC metrics|Merge RNA QC|Remove temporary directories))|(Successful Step: Merge RNA QC))" $logFile;)
 fi
 	echo Waiting for step: Merge RNA QC
 	sleep 60

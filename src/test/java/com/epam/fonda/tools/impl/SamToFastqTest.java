@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,6 +75,7 @@ class SamToFastqTest extends AbstractTest {
     private Configuration buildConfiguration(String readType) {
         GlobalConfig.ToolConfig expectedTool = new GlobalConfig.ToolConfig();
         expectedTool.setJava("java");
+        expectedTool.setPicardVersion("v2.10.3");
         expectedTool.setPicard("picard");
         GlobalConfig.PipelineInfo expectedPipelineInfo = new GlobalConfig.PipelineInfo();
         expectedPipelineInfo.setReadType(readType);

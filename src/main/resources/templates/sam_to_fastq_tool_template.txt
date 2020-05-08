@@ -1,5 +1,5 @@
 echo `date` Begin Step: Convert bam to fastq...
-[(${toolFields.java})] -jar [(${toolFields.picard})] SamToFastq INPUT=[(${toolFields.bam})] FASTQ=[(${fastq1})][# th:if = "${fastq2 != null}"] SECOND_END_FASTQ=[(${fastq2})] UNPAIRED_FASTQ=[(${unpairFastq})] INCLUDE_NON_PRIMARY_ALIGNMENTS=false VALIDATION_STRINGENCY=SILENT[/][# th:unless = "${fastq2 != null}"] INCLUDE_NON_PRIMARY_ALIGNMENTS=false[/]
+[(${toolFields.java})] -jar [# th:if = "${toolFields.oldPicardVersion}"][(${toolFields.picard})]/SamToFastq.jar[/][# th:unless = "${toolFields.oldPicardVersion}"][(${toolFields.picard})] SamToFastq[/] INPUT=[(${toolFields.bam})] FASTQ=[(${fastq1})][# th:if = "${fastq2 != null}"] SECOND_END_FASTQ=[(${fastq2})] UNPAIRED_FASTQ=[(${unpairFastq})] INCLUDE_NON_PRIMARY_ALIGNMENTS=false VALIDATION_STRINGENCY=SILENT[/][# th:unless = "${fastq2 != null}"] INCLUDE_NON_PRIMARY_ALIGNMENTS=false[/]
 gzip [(${fastq1})][# th:if = "${fastq2 != null}"]
 gzip [(${fastq2})]
 gzip [(${unpairFastq})][/]

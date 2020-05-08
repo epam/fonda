@@ -2,6 +2,7 @@
 
 # --- SGE options --- #
 
+#$ -V
 #$ -wd build/resources/integrationTest/output
 #$ -N DnaCaptureVar_Fastq_mutect1_for_smv1_analysis
 #$ -o build/resources/integrationTest/output/log_files/DnaCaptureVar_Fastq_mutect1_for_smv1_analysis.log

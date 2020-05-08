@@ -1,5 +1,5 @@
 echo `date` Begin Step: Merge DNA bams...
-[(${toolFields.java})] -Xmx10g -jar [(${toolFields.picard})] MergeSamFiles O=[(${additionalFields.mergedBam})] I=[(${additionalFields.bamList})] VALIDATION_STRINGENCY=SILENT
+[(${toolFields.java})] -Xmx10g -jar [# th:if = "${toolFields.oldPicardVersion}"][(${toolFields.picard})]/MergeSamFiles.jar[/][# th:unless = "${toolFields.oldPicardVersion}"][(${toolFields.picard})] MergeSamFiles[/] O=[(${additionalFields.mergedBam})] I=[(${additionalFields.bamList})] VALIDATION_STRINGENCY=SILENT
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Merge DNA bams.

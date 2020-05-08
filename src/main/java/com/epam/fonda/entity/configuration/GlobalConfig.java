@@ -132,6 +132,8 @@ public class GlobalConfig {
         private String java;
         @Parameter(names = GlobalConfigFormat.SAMTOOLS)
         private String samTools;
+        @Parameter(names = GlobalConfigFormat.PICARD_VERSION)
+        private String picardVersion;
         @Parameter(names = GlobalConfigFormat.PICARD)
         private String picard;
         @Parameter(names = GlobalConfigFormat.SNPSIFT)

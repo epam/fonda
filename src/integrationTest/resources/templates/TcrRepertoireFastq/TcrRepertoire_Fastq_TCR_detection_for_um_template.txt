@@ -2,6 +2,7 @@
 
 # --- SGE options --- #
 
+#$ -V
 #$ -wd build/resources/integrationTest/output
 #$ -N TcrRepertoire_Fastq_TCR_detection_for_um_analysis
 #$ -o build/resources/integrationTest/output/log_files/TcrRepertoire_Fastq_TCR_detection_for_um_analysis.log

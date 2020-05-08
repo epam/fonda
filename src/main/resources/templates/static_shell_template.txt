@@ -2,6 +2,7 @@
 
 [# th:if = "${variablesMap.get('local').equals('false')}"]# --- SGE options --- #
 
+#$ -V
 #$ -wd [(${variablesMap.get('outdir')})]
 #$ -N [(${variablesMap.get('fileName')})]
 #$ -o [(${variablesMap.get('outdir')})]/log_files/[(${variablesMap.get('fileName')})].log

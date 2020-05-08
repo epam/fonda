@@ -1,5 +1,5 @@
 echo `date` Begin Step: Sort bam...
-[(${toolFields.java})] -jar [(${toolFields.picard})] SortSam INPUT=[(${bam})] OUTPUT=[(${sortedBam})] SORT_ORDER=queryname VALIDATION_STRINGENCY=SILENT
+[(${toolFields.java})] -jar [# th:if = "${toolFields.oldPicardVersion}"][(${toolFields.picard})]/SortSam.jar[/][# th:unless = "${toolFields.oldPicardVersion}"][(${toolFields.picard})] SortSam[/] INPUT=[(${bam})] OUTPUT=[(${sortedBam})] SORT_ORDER=queryname VALIDATION_STRINGENCY=SILENT
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Sort bam.

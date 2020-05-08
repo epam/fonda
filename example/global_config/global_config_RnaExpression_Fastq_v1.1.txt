@@ -24,6 +24,7 @@ feature_count = /ngs/data/tools/subread/v1.4.5-p1/bin/featureCounts
 java = /ngs/data/app/java/v1.8.0u121/bin/java
 rnaseqc_java = /ngs/data/tools/java/jre1.7.0_60/bin/java
 samtools = /ngs/data/tools/samtools/v0.1.19/samtools
+picard_version = v2.10.3
 picard = /ngs/data/tools/picard/v2.10.3/picard.jar
 rnaseqc = /ngs/data/tools/RNA-SeQC/v1.1.8/RNA-SeQC_v1.1.8.jar
 python = /ngs/data/app/python/v2.7.2/bin/python

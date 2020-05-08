@@ -2,6 +2,7 @@
 
 # --- SGE options --- #
 
+#$ -V
 #$ -wd build/resources/integrationTest/output
 #$ -N DnaWgsVar_Bam_lofreq_for_GA52_analysis
 #$ -o build/resources/integrationTest/output/log_files/DnaWgsVar_Bam_lofreq_for_GA52_analysis.log

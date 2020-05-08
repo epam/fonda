@@ -2,6 +2,7 @@
 
 # --- SGE options --- #
 
+#$ -V
 #$ -wd build/resources/integrationTest/output
 #$ -N DnaAmpliconVar_Bam_contEst_for_GA52_analysis
 #$ -o build/resources/integrationTest/output/log_files/DnaAmpliconVar_Bam_contEst_for_GA52_analysis.log

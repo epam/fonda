@@ -33,6 +33,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import static com.epam.fonda.utils.ToolUtils.validate;
+import static com.epam.fonda.utils.ToolUtils.validateOldPicardVersion;
 
 @Data
 public class SamToFastq implements Tool<FastqResult> {
@@ -42,6 +43,7 @@ public class SamToFastq implements Tool<FastqResult> {
     @Builder
     private static class ToolFields {
         private String java;
+        private boolean oldPicardVersion;
         private String picard;
         private String readType;
         private String bam;
@@ -119,6 +121,7 @@ public class SamToFastq implements Tool<FastqResult> {
                 .java(validate(configuration.getGlobalConfig().getToolConfig().getJava(), GlobalConfigFormat.JAVA))
                 .picard(validate(configuration.getGlobalConfig().getToolConfig().getPicard(),
                         GlobalConfigFormat.PICARD))
+                .oldPicardVersion(validateOldPicardVersion(configuration))
                 .readType(validate(configuration.getGlobalConfig().getPipelineInfo().getReadType(),
                         GlobalConfigFormat.READ_TYPE))
                 .bam(validate(bamResult.getBamOutput().getBam(), ToolUtils.BAM))

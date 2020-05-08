@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.epam.fonda.utils.ToolUtils.validate;
+import static com.epam.fonda.utils.ToolUtils.validateOldPicardVersion;
 import static java.lang.String.format;
 
 @RequiredArgsConstructor
@@ -49,6 +50,7 @@ public class Star implements Tool<BamResult> {
     private class ToolFields {
         private String star;
         private String java;
+        private boolean oldPicardVersion;
         private String picard;
         private String samtools;
     }
@@ -165,6 +167,7 @@ public class Star implements Tool<BamResult> {
     private ToolFields initializeToolFields(Configuration configuration) {
         ToolFields toolFields = new ToolFields();
         toolFields.java = validate(configuration.getGlobalConfig().getToolConfig().getJava(), GlobalConfigFormat.JAVA);
+        toolFields.oldPicardVersion = validateOldPicardVersion(configuration);
         toolFields.picard = validate(configuration.getGlobalConfig().getToolConfig().getPicard(),
                 GlobalConfigFormat.PICARD);
         toolFields.samtools = validate(configuration.getGlobalConfig().getToolConfig().getSamTools(),

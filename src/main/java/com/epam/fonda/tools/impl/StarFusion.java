@@ -34,6 +34,7 @@ import org.thymeleaf.context.Context;
 import java.util.Arrays;
 
 import static com.epam.fonda.utils.ToolUtils.validate;
+import static com.epam.fonda.utils.ToolUtils.validateOldPicardVersion;
 
 @Data
 public class StarFusion implements Tool<StarFusionResult> {
@@ -43,6 +44,7 @@ public class StarFusion implements Tool<StarFusionResult> {
     private class ToolFields {
         private String star;
         private String java;
+        private boolean oldPicardVersion;
         private String picard;
         private String samtools;
     }
@@ -146,6 +148,7 @@ public class StarFusion implements Tool<StarFusionResult> {
     private ToolFields initializeToolFields(Configuration configuration) {
         ToolFields toolFields = new ToolFields();
         toolFields.java = validate(configuration.getGlobalConfig().getToolConfig().getJava(), GlobalConfigFormat.JAVA);
+        toolFields.oldPicardVersion = validateOldPicardVersion(configuration);
         toolFields.picard = validate(configuration.getGlobalConfig().getToolConfig().getPicard(),
                 GlobalConfigFormat.PICARD);
         toolFields.samtools = validate(configuration.getGlobalConfig().getToolConfig().getSamTools(),

@@ -2,6 +2,7 @@
 
 # --- SGE options --- #
 
+#$ -V
 #$ -wd build/resources/integrationTest/output
 #$ -N DnaAmpliconVar_Fastq_qcsummary_for_cohort_analysis
 #$ -o build/resources/integrationTest/output/log_files/DnaAmpliconVar_Fastq_qcsummary_for_cohort_analysis.log
@@ -23,7 +24,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|DNA QC metrics|Merge DNA QC|ABRA realignment|GATK realignment|GATK recalibration|Remove temporary directories))|(Successful Step: Merge DNA QC))" $logFile;)
+	str=$(grep -Ei "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|DNA QC metrics|Merge DNA QC|ABRA realignment|GATK realignment|GATK recalibration|Remove temporary directories))|(Successful Step: Merge DNA QC))" $logFile;)
 fi
 	echo Waiting for step: Merge DNA QC
 	sleep 60

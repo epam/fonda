@@ -36,6 +36,7 @@ import java.util.Arrays;
 
 import static com.epam.fonda.utils.PipelineUtils.getExecutionPath;
 import static com.epam.fonda.utils.ToolUtils.validate;
+import static com.epam.fonda.utils.ToolUtils.validateOldPicardVersion;
 
 @RequiredArgsConstructor
 @Data
@@ -53,6 +54,7 @@ public class RNASeQC implements Tool<MetricsResult> {
     private class ToolFields {
         private String rnaSeqcJava;
         private String rnaSeqc;
+        private boolean oldPicardVersion;
         private String picard;
         private String java;
         private String python;
@@ -134,6 +136,7 @@ public class RNASeQC implements Tool<MetricsResult> {
     private ToolFields initializeToolFields(Configuration configuration) {
         ToolFields toolFields = new ToolFields();
         toolFields.java = validate(configuration.getGlobalConfig().getToolConfig().getJava(), GlobalConfigFormat.JAVA);
+        toolFields.oldPicardVersion = validateOldPicardVersion(configuration);
         toolFields.picard = validate(configuration.getGlobalConfig().getToolConfig().getPicard(),
                 GlobalConfigFormat.PICARD);
         toolFields.python = validate(configuration.getGlobalConfig().getToolConfig().getPython(),

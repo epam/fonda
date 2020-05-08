@@ -34,6 +34,7 @@ import org.thymeleaf.context.Context;
 import java.util.Arrays;
 
 import static com.epam.fonda.utils.ToolUtils.validate;
+import static com.epam.fonda.utils.ToolUtils.validateOldPicardVersion;
 
 @Data
 public class SortBamByReadName implements Tool<BamResult> {
@@ -43,6 +44,7 @@ public class SortBamByReadName implements Tool<BamResult> {
     @Builder
     private static class ToolFields {
         private String java;
+        private boolean oldPicardVersion;
         private String picard;
         private String samtools;
     }
@@ -99,6 +101,7 @@ public class SortBamByReadName implements Tool<BamResult> {
         return ToolFields.builder()
                 .java(validate(configuration.getGlobalConfig().getToolConfig().getJava(),
                         GlobalConfigFormat.JAVA))
+                .oldPicardVersion(validateOldPicardVersion(configuration))
                 .picard(validate(configuration.getGlobalConfig().getToolConfig().getPicard(),
                         GlobalConfigFormat.PICARD))
                 .samtools(validate(configuration.getGlobalConfig().getToolConfig().getSamTools(),

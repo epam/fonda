@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,6 +78,7 @@ class Hisat2Test extends AbstractTest {
         expectedToolConfig.setHisat2("hisat2");
         expectedToolConfig.setSamTools("samtools");
         expectedToolConfig.setJava("java");
+        expectedToolConfig.setPicardVersion("v2.10.3");
         expectedToolConfig.setPicard("picard");
         expectedGlobalConfig.setToolConfig(expectedToolConfig);
         expectedGlobalConfig.setQueueParameters(expectedQueueParameters);

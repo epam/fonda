@@ -2,6 +2,7 @@
 
 # --- SGE options --- #
 
+#$ -V
 #$ -wd build/resources/integrationTest/output
 #$ -N scRnaExpression_Fastq_cufflinks_for_cohort_analysis
 #$ -o build/resources/integrationTest/output/log_files/scRnaExpression_Fastq_cufflinks_for_cohort_analysis.log
@@ -23,7 +24,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -E "((Error Step: (Merge fastqs|Seqpurge trimming|STAR alignment|Sort bam|Index bam|Mark duplicates|Index mkdup bam|Remove duplicates|Index rmdup bam|RNA QC metrics|Merge RNA QC|Featurecounts|Remove temporary directories|Run featureCount|Cufflinks|Run cufflinks))|(Successful Step: cufflinks))" $logFile;)
+	str=$(grep -Ei "((Error Step: (Merge fastqs|Seqpurge trimming|STAR alignment|Sort bam|Index bam|Mark duplicates|Index mkdup bam|Remove duplicates|Index rmdup bam|RNA QC metrics|Merge RNA QC|Featurecounts|Remove temporary directories|Run featureCount|Cufflinks|Run cufflinks))|(Successful Step: cufflinks))" $logFile;)
 fi
 	echo Waiting for step: cufflinks
 	sleep 60
