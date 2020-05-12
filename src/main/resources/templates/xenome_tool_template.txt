@@ -1,13 +1,13 @@
 echo `date` Begin Step: Xenome classification...
-[(${xenomeFields.xenome})] classify -T 8 -P [(${xenomeFields.mouseXenomeIndex})] --pairs --graft-name human --host-name mouse --output-filename-prefix [(${xenomeFields.prefix})] --tmp-dir [(${xenomeFields.stmpOutdir})] -i [(${xenomeFields.fastq1})] -i [(${xenomeFields.fastq2})]
-awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' [(${xenomeFields.humanFastq1})] > [(${xenomeFields.convertHumanFastq1})]
-awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' [(${xenomeFields.humanFastq2})] > [(${xenomeFields.convertHumanFastq2})]
-awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' [(${xenomeFields.bothFastq1})] > [(${xenomeFields.convertBothFastq1})]
-awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' [(${xenomeFields.bothFastq2})] > [(${xenomeFields.convertBothFastq2})]
-awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' [(${xenomeFields.ambiguousFastq1})] > [(${xenomeFields.convertAmbiguousFastq1})]
-awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' [(${xenomeFields.ambiguousFastq2})] > [(${xenomeFields.convertAmbiguousFastq2})]
-cat [(${xenomeFields.convertHumanFastq1})] [(${xenomeFields.convertBothFastq1})] [(${xenomeFields.convertAmbiguousFastq1})] | gzip -c > [(${xenomeFields.humanMergedFastq1})]
-cat [(${xenomeFields.convertHumanFastq2})] [(${xenomeFields.convertBothFastq2})] [(${xenomeFields.convertAmbiguousFastq2})] | gzip -c > [(${xenomeFields.humanMergedFastq2})]
+[(${xenomeFields.xenome})] classify -T 8 -P [(${xenomeFields.mouseXenomeIndex})][# th:if = "${xenomeFields.humanMergedFastq2 != null}"] --pairs[/] --graft-name human --host-name mouse --output-filename-prefix [(${xenomeFields.prefix})] --tmp-dir [(${xenomeFields.stmpOutdir})] -i [(${xenomeFields.fastq1})][# th:if = "${xenomeFields.humanMergedFastq2 != null}"] -i [(${xenomeFields.fastq2})][/]
+awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' [(${xenomeFields.humanFastq1})] > [(${xenomeFields.convertHumanFastq1})][# th:if = "${xenomeFields.humanMergedFastq2 != null}"]
+awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' [(${xenomeFields.humanFastq2})] > [(${xenomeFields.convertHumanFastq2})][/]
+awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' [(${xenomeFields.bothFastq1})] > [(${xenomeFields.convertBothFastq1})][# th:if = "${xenomeFields.humanMergedFastq2 != null}"]
+awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' [(${xenomeFields.bothFastq2})] > [(${xenomeFields.convertBothFastq2})][/]
+awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' [(${xenomeFields.ambiguousFastq1})] > [(${xenomeFields.convertAmbiguousFastq1})][# th:if = "${xenomeFields.humanMergedFastq2 != null}"]
+awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' [(${xenomeFields.ambiguousFastq2})] > [(${xenomeFields.convertAmbiguousFastq2})][/]
+cat [(${xenomeFields.convertHumanFastq1})] [(${xenomeFields.convertBothFastq1})] [(${xenomeFields.convertAmbiguousFastq1})] | gzip -c > [(${xenomeFields.humanMergedFastq1})][# th:if = "${xenomeFields.humanMergedFastq2 != null}"]
+cat [(${xenomeFields.convertHumanFastq2})] [(${xenomeFields.convertBothFastq2})] [(${xenomeFields.convertAmbiguousFastq2})] | gzip -c > [(${xenomeFields.humanMergedFastq2})][/]
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Xenome classification.

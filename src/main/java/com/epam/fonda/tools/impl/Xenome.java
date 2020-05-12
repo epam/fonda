@@ -28,6 +28,7 @@ import com.epam.fonda.workflow.TaskContainer;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -122,28 +123,41 @@ public class Xenome implements Tool<FastqResult> {
                     .getName(), xenomeFields.index);
             xenomeFields.humanMergedFastq1 = format("%s/%s_%s_classified_R1.fq.gz",
                     sample.getFastqOutdir(), sample.getName(), xenomeFields.index);
-            xenomeFields.humanMergedFastq2 = format("%s/%s_%s_classified_R2.fq.gz",
-                    sample.getFastqOutdir(), sample.getName(), xenomeFields.index);
+            xenomeFields.humanMergedFastq2 = StringUtils.isBlank(xenomeFields.fastq2) ? null
+                    : format("%s/%s_%s_classified_R2.fq.gz", sample.getFastqOutdir(), sample.getName(),
+                    xenomeFields.index);
         } else {
             xenomeFields.prefix = format("%s/%s", xenomeFields.stmpOutDir, sample.getName());
             xenomeFields.humanMergedFastq1 = format("%s/%s_classified_R1.fq.gz", sample.getFastqOutdir(),
                     sample.getName());
-            xenomeFields.humanMergedFastq2 = format("%s/%s_classified_R2.fq.gz", sample.getFastqOutdir(),
-                    sample.getName());
+            xenomeFields.humanMergedFastq2 = StringUtils.isBlank(xenomeFields.fastq2) ? null
+                    : format("%s/%s_classified_R2.fq.gz", sample.getFastqOutdir(), sample.getName());
         }
-        xenomeFields.humanFastq1 = format("%s_human_1.fastq", xenomeFields.prefix);
-        xenomeFields.humanFastq2 = format("%s_human_2.fastq", xenomeFields.prefix);
-        xenomeFields.bothFastq1 = format("%s_both_1.fastq", xenomeFields.prefix);
-        xenomeFields.bothFastq2 = format("%s_both_2.fastq", xenomeFields.prefix);
-        xenomeFields.ambiguousFastq1 = format("%s_ambiguous_1.fastq", xenomeFields.prefix);
-        xenomeFields.ambiguousFastq2 = format("%s_ambiguous_2.fastq", xenomeFields.prefix);
-        xenomeFields.convertHumanFastq1 = format("%s_convert_human_1.fastq", xenomeFields.prefix);
-        xenomeFields.convertHumanFastq2 = format("%s_convert_human_2.fastq", xenomeFields.prefix);
-        xenomeFields.convertBothFastq1 = format("%s_convert_both_1.fastq", xenomeFields.prefix);
-        xenomeFields.convertBothFastq2 = format("%s_convert_both_2.fastq", xenomeFields.prefix);
-        xenomeFields.convertAmbiguousFastq1 = format("%s_convert_ambiguous_1.fastq", xenomeFields.prefix);
-        xenomeFields.convertAmbiguousFastq2 = format("%s_convert_ambiguous_2.fastq", xenomeFields.prefix);
 
+        xenomeFields.humanFastq1 = StringUtils.isBlank(xenomeFields.fastq2)
+                ? format("%s_human.fastq", xenomeFields.prefix)
+                : format("%s_human_1.fastq", xenomeFields.prefix);
+        xenomeFields.humanFastq2 = StringUtils.isBlank(xenomeFields.fastq2) ? null
+                : format("%s_human_2.fastq", xenomeFields.prefix);
+        xenomeFields.bothFastq1 = StringUtils.isBlank(xenomeFields.fastq2)
+                ? format("%s_both.fastq", xenomeFields.prefix)
+                : format("%s_both_1.fastq", xenomeFields.prefix);
+        xenomeFields.bothFastq2 = StringUtils.isBlank(xenomeFields.fastq2) ? null
+                : format("%s_both_2.fastq", xenomeFields.prefix);
+        xenomeFields.ambiguousFastq1 = StringUtils.isBlank(xenomeFields.fastq2)
+                ? format("%s_ambiguous.fastq", xenomeFields.prefix)
+                : format("%s_ambiguous_1.fastq", xenomeFields.prefix);
+        xenomeFields.ambiguousFastq2 = StringUtils.isBlank(xenomeFields.fastq2) ? null
+                : format("%s_ambiguous_2.fastq", xenomeFields.prefix);
+        xenomeFields.convertHumanFastq1 = format("%s_convert_human_1.fastq", xenomeFields.prefix);
+        xenomeFields.convertHumanFastq2 = StringUtils.isBlank(xenomeFields.fastq2) ? null
+                : format("%s_convert_human_2.fastq", xenomeFields.prefix);
+        xenomeFields.convertBothFastq1 = format("%s_convert_both_1.fastq", xenomeFields.prefix);
+        xenomeFields.convertBothFastq2 = StringUtils.isBlank(xenomeFields.fastq2) ? null
+                : format("%s_convert_both_2.fastq", xenomeFields.prefix);
+        xenomeFields.convertAmbiguousFastq1 = format("%s_convert_ambiguous_1.fastq", xenomeFields.prefix);
+        xenomeFields.convertAmbiguousFastq2 = StringUtils.isBlank(xenomeFields.fastq2) ? null
+                : format("%s_convert_ambiguous_2.fastq", xenomeFields.prefix);
         return xenomeFields;
     }
 }
