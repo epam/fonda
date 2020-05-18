@@ -79,68 +79,47 @@ def parse_arguments(script_name, argv):
 
         if not species:
             print('Species (-s <species>) is required')
-            print(
-                script_name + ' -s <species> -t <read_type> -j <job_name> -d <dir_out> -f <fastq_list> '
-                              '-c <cufflinks_library_type> -l <library_type> -p <project> -r <run> -n <toolset>')
+            usage()
             sys.exit(2)
         if not read_type:
             print('Read type (-t <read_type>) is required')
-            print(
-                script_name + ' -s <species> -t <read_type> -j <job_name> -d <dir_out> -f <fastq_list> '
-                              '-c <cufflinks_library_type> -l <library_type> -p <project> -r <run> -n <toolset>')
+            usage()
             sys.exit(2)
         if not fastq_list:
             print('The path to the input manifest fastq file (-f <fastq_list>) is required')
-            print(
-                script_name + ' -s <species> -t <read_type> -j <job_name> -d <dir_out> -f <fastq_list> '
-                              '-c <cufflinks_library_type> -l <library_type> -p <project> -r <run> -n <toolset>')
+            usage()
             sys.exit(2)
         if not job_name:
             print('The job ID (-j <job_name>) is required')
-            print(
-                script_name + ' -s <species> -t <read_type> -j <job_name> -d <dir_out> -f <fastq_list> '
-                              '-c <cufflinks_library_type> -l <library_type> -p <project> -r <run> -n <toolset>')
+            usage()
             sys.exit(2)
         if not dir_out:
             print('The output directory for the analysis (-d <dir_out>) is required')
-            print(
-                script_name + ' -s <species> -t <read_type> -j <job_name> -d <dir_out> -f <fastq_list> '
-                              '-c <cufflinks_library_type> -l <library_type> -p <project> -r <run> -n <toolset>')
+            usage()
             sys.exit(2)
         if not cufflinks_library_type:
             print('The cufflinks library type (-c <cufflinks_library_type>) is required')
-            print(
-                script_name + ' -s <species> -t <read_type> -j <job_name> -d <dir_out> -f <fastq_list> '
-                              '-c <cufflinks_library_type> -l <library_type> -p <project> -r <run> -n <toolset>')
+            usage()
             sys.exit(2)
         if not library_type:
             print('The sequencing library type (-l <library_type>) is required')
-            print(
-                script_name + ' -s <species> -t <read_type> -j <job_name> -d <dir_out> -f <fastq_list> '
-                              '-c <cufflinks_library_type> -l <library_type> -p <project> -r <run> -n <toolset>')
+            usage()
             sys.exit(2)
         if not project:
             print('The project ID (-p <project>) is required')
-            print(
-                script_name + ' -s <species> -t <read_type> -j <job_name> -d <dir_out> -f <fastq_list> '
-                              '-c <cufflinks_library_type> -l <library_type> -p <project> -r <run> -n <toolset>')
+            usage()
             sys.exit(2)
         if not run:
             print('The run ID (-r <run>) is required')
-            print(
-                script_name + ' -s <species> -t <read_type> -j <job_name> -d <dir_out> -f <fastq_list> '
-                              '-c <cufflinks_library_type> -l <library_type> -p <project> -r <run> -n <toolset>')
+            usage()
             sys.exit(2)
         if not toolset:
             print('The set of tools (-n <toolset>) is required')
-            print(
-                script_name + ' -s <species> -t <read_type> -j <job_name> -d <dir_out> -f <fastq_list> '
-                              '-c <cufflinks_library_type> -l <library_type> -p <project> -r <run> -n <toolset>')
+            usage()
             sys.exit(2)
         return species, read_type, job_name, dir_out, fastq_list, cufflinks_library_type, library_type, project, run, toolset
     except getopt.GetoptError:
-        print('rna_expression_fastq.py -s <species> -t <read_type> -j <job_name> -d <dir_out> -f <fastq_list> '
-              '-c <cufflinks_library_type> -l <library_type> -p <project> -r <run> -n <toolset>')
+        usage()
         sys.exit(2)
 
 
