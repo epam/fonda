@@ -2,7 +2,7 @@
 name: Bug report
 about: Create a report to help improve the Fonda
 title: ''
-labels: kind/bug
+labels: bug
 assignees: ''
 
 ---
