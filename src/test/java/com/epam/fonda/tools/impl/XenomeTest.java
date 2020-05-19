@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,10 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 class XenomeTest extends AbstractTest {
     private static final String XENOME_TEST_OUTPUT_DATA_PATH = "templates/xenome_tool_test_output_data.txt";
     private static final String XENOME_TEST_OUTPUT_DATA_INDEX_PATH = "templates/xenome_tool_test_output_data_index.txt";
+    private static final String XENOME_TEST_SINGLE_OUTPUT_DATA_PATH =
+            "templates/xenome_tool_test_single_output_data.txt";
     private Xenome xenome;
+    private Xenome xenomeSingle;
     private Configuration expectedConfiguration;
     private GlobalConfig expectedGlobalConfig;
     private GlobalConfig.ToolConfig expectedToolConfig;
@@ -48,6 +51,7 @@ class XenomeTest extends AbstractTest {
     private String expectedCmd;
     private TemplateEngine expectedTemplateEngine = TemplateEngineUtils.init();
     private FastqResult fastqResult;
+    private FastqResult fastqResultSingle;
 
     @BeforeEach
     void setup() throws URISyntaxException, IOException {
@@ -60,8 +64,13 @@ class XenomeTest extends AbstractTest {
                 .mergedFastq1("merged_fastq1")
                 .mergedFastq2("merged_fastq2")
                 .build();
+        FastqOutput fastqOutputSingle = FastqOutput.builder()
+                .mergedFastq1("merged_fastq1")
+                .build();
         fastqResult = FastqResult.builder().command(BashCommand.withTool("")).out(fastqOutput).build();
+        fastqResultSingle = FastqResult.builder().command(BashCommand.withTool("")).out(fastqOutputSingle).build();
         xenome = new Xenome(expectedSample, fastqResult, null);
+        xenomeSingle = new Xenome(expectedSample, fastqResultSingle, null);
         expectedConfiguration = new Configuration();
         expectedToolConfig = new GlobalConfig.ToolConfig();
         expectedToolConfig.setXenome("xenome");
@@ -105,5 +114,16 @@ class XenomeTest extends AbstractTest {
         String actualCmd = xenome.generate(expectedConfiguration, expectedTemplateEngine).getCommand().getToolCommand();
 
         assertEquals(expectedCmd, actualCmd);
+    }
+
+    @Test
+    void testGenerateSingle() throws URISyntaxException, IOException {
+        Path path = Paths.get(Objects.requireNonNull(this.getClass().getClassLoader()
+                .getResource(XENOME_TEST_SINGLE_OUTPUT_DATA_PATH)).toURI());
+        byte[] fileBytes = Files.readAllBytes(path);
+        final String singleExpectedCmd = new String(fileBytes);
+        final String actualCmd = xenomeSingle.generate(expectedConfiguration, expectedTemplateEngine).getCommand()
+                .getToolCommand();
+        assertEquals(singleExpectedCmd, actualCmd);
     }
 }

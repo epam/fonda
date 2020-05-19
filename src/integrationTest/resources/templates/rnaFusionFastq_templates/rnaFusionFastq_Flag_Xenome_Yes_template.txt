@@ -37,12 +37,8 @@ echo `date` Begin Step: Xenome classification...
 xenome classify -T 8 -P MOUSEXENOMEINDEX --pairs --graft-name human --host-name mouse --output-filename-prefix build/resources/integrationTest/output/smv1/tmp/smv1 --tmp-dir build/resources/integrationTest/output/smv1/tmp -i build/resources/integrationTest/output/smv1/fastq/smv1.merged_R1.fastq.gz -i build/resources/integrationTest/output/smv1/fastq/smv1.merged_R2.fastq.gz
 awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' build/resources/integrationTest/output/smv1/tmp/smv1_human_1.fastq > build/resources/integrationTest/output/smv1/tmp/smv1_convert_human_1.fastq
 awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' build/resources/integrationTest/output/smv1/tmp/smv1_human_2.fastq > build/resources/integrationTest/output/smv1/tmp/smv1_convert_human_2.fastq
-awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' build/resources/integrationTest/output/smv1/tmp/smv1_both_1.fastq > build/resources/integrationTest/output/smv1/tmp/smv1_convert_both_1.fastq
-awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' build/resources/integrationTest/output/smv1/tmp/smv1_both_2.fastq > build/resources/integrationTest/output/smv1/tmp/smv1_convert_both_2.fastq
-awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' build/resources/integrationTest/output/smv1/tmp/smv1_ambiguous_1.fastq > build/resources/integrationTest/output/smv1/tmp/smv1_convert_ambiguous_1.fastq
-awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' build/resources/integrationTest/output/smv1/tmp/smv1_ambiguous_2.fastq > build/resources/integrationTest/output/smv1/tmp/smv1_convert_ambiguous_2.fastq
-cat build/resources/integrationTest/output/smv1/tmp/smv1_convert_human_1.fastq build/resources/integrationTest/output/smv1/tmp/smv1_convert_both_1.fastq build/resources/integrationTest/output/smv1/tmp/smv1_convert_ambiguous_1.fastq | gzip -c > build/resources/integrationTest/output/smv1/fastq/smv1_classified_R1.fq.gz
-cat build/resources/integrationTest/output/smv1/tmp/smv1_convert_human_2.fastq build/resources/integrationTest/output/smv1/tmp/smv1_convert_both_2.fastq build/resources/integrationTest/output/smv1/tmp/smv1_convert_ambiguous_2.fastq | gzip -c > build/resources/integrationTest/output/smv1/fastq/smv1_classified_R2.fq.gz
+cat build/resources/integrationTest/output/smv1/tmp/smv1_convert_human_1.fastq | gzip -c > build/resources/integrationTest/output/smv1/fastq/smv1_classified_R1.fq.gz
+cat build/resources/integrationTest/output/smv1/tmp/smv1_convert_human_2.fastq | gzip -c > build/resources/integrationTest/output/smv1/fastq/smv1_classified_R2.fq.gz
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Xenome classification.

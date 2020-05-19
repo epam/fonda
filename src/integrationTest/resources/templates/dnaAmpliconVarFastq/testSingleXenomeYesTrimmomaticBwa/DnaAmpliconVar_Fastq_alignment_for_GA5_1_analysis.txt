@@ -21,9 +21,7 @@ echo `date` Begin the job execution...
 echo `date` Begin Step: Xenome classification...
 /usr/bin/xenome classify -T 8 -P /ngs/data/xenomeIdx/xenome.idx --graft-name human --host-name mouse --output-filename-prefix build/resources/integrationTest/output/GA5/tmp/GA5_1 --tmp-dir build/resources/integrationTest/output/GA5/tmp -i /ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_001.fastq.gz
 awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' build/resources/integrationTest/output/GA5/tmp/GA5_1_human.fastq > build/resources/integrationTest/output/GA5/tmp/GA5_1_convert_human_1.fastq
-awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' build/resources/integrationTest/output/GA5/tmp/GA5_1_both.fastq > build/resources/integrationTest/output/GA5/tmp/GA5_1_convert_both_1.fastq
-awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' build/resources/integrationTest/output/GA5/tmp/GA5_1_ambiguous.fastq > build/resources/integrationTest/output/GA5/tmp/GA5_1_convert_ambiguous_1.fastq
-cat build/resources/integrationTest/output/GA5/tmp/GA5_1_convert_human_1.fastq build/resources/integrationTest/output/GA5/tmp/GA5_1_convert_both_1.fastq build/resources/integrationTest/output/GA5/tmp/GA5_1_convert_ambiguous_1.fastq | gzip -c > build/resources/integrationTest/output/GA5/fastq/GA5_1_classified_R1.fq.gz
+cat build/resources/integrationTest/output/GA5/tmp/GA5_1_convert_human_1.fastq | gzip -c > build/resources/integrationTest/output/GA5/fastq/GA5_1_classified_R1.fq.gz
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Xenome classification.
