@@ -11,8 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import os
 import subprocess
+import sys
 from pathlib import Path
 
 
@@ -30,6 +31,11 @@ class Launcher:
         """
         if not jar_folder:
             jar_folder = "{}/build/libs/".format(Path(__file__).parent.parent.parent.parent.absolute())
+            if not os.path.isfile('{}fonda-{}.jar'.format(jar_folder, Launcher.FONDA_VERSION)):
+                jar_folder = "{}/".format(Path(__file__).parent.parent.parent.absolute())
+                if not os.path.isfile('{}fonda-{}.jar'.format(jar_folder, Launcher.FONDA_VERSION)):
+                    print('Jar file was not found! Please put the jar file in a {} folder' + jar_folder)
+                    sys.exit(2)
         elif jar_folder is not None and not str(jar_folder).endswith("/"):
             jar_folder += "/"
         cmd = "java -jar {}fonda-{}.jar -global_config {} -study_config {} {} > fonda_launch_out.txt"\
