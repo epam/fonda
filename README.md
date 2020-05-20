@@ -6,12 +6,17 @@
 
 Fonda is a framework that offers a scalable and automatic analysis of multiple **NGS** sequencing data types.
 
+- [Fonda Prebuilt binaries](#fonda-prebuilt-binaries)
 - [Required environment setup](#required-environment-setup)
 - [Build Fonda](#build-fonda)
 - [Fonda installation](#fonda-installation)
 - [Available workflows in Fonda](#available-workflows-in-fonda)
 - [Before running Fonda…](#before-running-fonda)
 - [Run Fonda](#run-fonda-actual-example-for-rnaexpressionfastq-workflow)
+
+## Fonda Prebuilt binaries
+
+All the binaries, built by the CI process (described in [CONTRIBUTING.md](CONTRIBUTING.md#ci-process-description)) are available via the [Download page](https://fonda-oss-builds.s3.amazonaws.com/web/index.html)
 
 ## Required environment setup
 
