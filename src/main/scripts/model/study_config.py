@@ -30,6 +30,8 @@ class StudyConfig:
         self.date = datetime.date(datetime.now())
 
     def parse(self, workflow):
+        if not self.cufflinks_library_type:
+            self.cufflinks_library_type = "fr-unstranded"
         args_to_json = {"job_name": self.job_name,
                         "dir_out": self.dir_out,
                         "fastq_list": self.fastq_list,

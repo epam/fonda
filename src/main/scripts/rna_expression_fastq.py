@@ -20,6 +20,7 @@ from launcher import Launcher
 from model.study_config import StudyConfig
 
 WORKFLOW_NAME = "RnaExpression_Fastq"
+TEMPLATE = "global_template_RnaExpressionFastq.txt"
 GLOBAL_CONFIG_TOOL_TEMPLATE_NAME = "RnaExpression_tool"
 
 
@@ -37,6 +38,7 @@ def usage():
           'RNASeq_Single, etc.\n')
     print('	-p <project> (required)          The project ID.\n')
     print('	-r <run> (required)              The run ID.\n')
+    print('	-n <toolset> (required)          A number of tools to run in a specific pipeline.\n')
 
 
 def parse_arguments(script_name, argv):
@@ -130,8 +132,8 @@ def main(script_name, argv):
     species, read_type, job_name, dir_out, fastq_list, cufflinks_library_type, library_type, project, run, toolset = \
         parse_arguments(script_name, argv)
 
-    global_config = GlobalConfig(species, read_type, GLOBAL_CONFIG_TOOL_TEMPLATE_NAME, WORKFLOW_NAME, toolset)
-    global_config_path = global_config.create(flag_xenome=False)
+    global_config = GlobalConfig(species, read_type, TEMPLATE, WORKFLOW_NAME, toolset)
+    global_config_path = global_config.create(GLOBAL_CONFIG_TOOL_TEMPLATE_NAME, None, flag_xenome=False)
     study_config = StudyConfig(job_name, dir_out, fastq_list, cufflinks_library_type, library_type, project, run)
     study_config_path = study_config.parse(workflow=WORKFLOW_NAME)
     Launcher.launch(global_config_path, study_config_path)

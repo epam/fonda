@@ -20,22 +20,25 @@ from jinja2 import Environment, FileSystemLoader
 
 class GlobalConfig:
 
-    def __init__(self, species, read_type, config_json, workflow, toolset):
+    def __init__(self, species, read_type, template, workflow, toolset):
         self.species = species
         self.read_type = read_type
-        self.config_json = config_json
+        self.template = template
         self.workflow = workflow
         self.toolset = toolset
         self.genome_build = None
 
-    def create(self, flag_xenome=False):
+    def create(self, config_json, additional_options, flag_xenome=False):
         if not self.workflow:
             print("Workflow name is required")
             sys.exit(2)
         if not self.toolset:
             print("Toolset is required")
             sys.exit(2)
-        if not self.config_json:
+        if not self.template:
+            print("Template file is required")
+            sys.exit(2)
+        if not config_json:
             print("Configuration json file is required")
             sys.exit(2)
 
@@ -51,12 +54,14 @@ class GlobalConfig:
                         "toolset": self.toolset,
                         "flag_xenome": flag_xenome}
 
-        with open("{}/config_templates/global_config/{}".format(os.getcwd(), self.config_json)) as file:
+        with open("{}/config_templates/global_config/{}".format(os.getcwd(), config_json)) as file:
             data = json.load(file)
             data.update(args_to_json)
+            if additional_options:
+                data.update(additional_options)
 
         env = Environment(loader=FileSystemLoader("config_templates/templates"), trim_blocks=True, lstrip_blocks=True)
-        global_template = env.get_template('global_template.txt')
+        global_template = env.get_template(self.template)
 
         with open("global_template_{}.txt".format(self.workflow), "w") as f:
             f.write(global_template.render(data))
