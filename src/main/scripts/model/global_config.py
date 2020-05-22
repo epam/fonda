@@ -46,7 +46,7 @@ class GlobalConfig:
             self.genome_build = "GRCh38"
         else:
             self.genome_build = "mm10"
-        flag_xenome = "yes" if flag_xenome else "no"
+        flag_xenome = "yes" if flag_xenome == "True" or flag_xenome == "true" else "no"
         args_to_json = {"workflow": self.workflow,
                         "species": self.species,
                         "genome_build": self.genome_build,
@@ -65,5 +65,5 @@ class GlobalConfig:
 
         with open("global_template_{}.txt".format(self.workflow), "w") as f:
             f.write(global_template.render(data))
-
+            f.close()
         return "{}/global_template_{}.txt".format(os.getcwd(), self.workflow)

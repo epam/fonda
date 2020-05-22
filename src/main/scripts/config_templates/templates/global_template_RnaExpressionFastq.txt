@@ -15,6 +15,7 @@ ANNOTGENESAF = {{annotgenesaf}}
 rRNABED = {{rRNABED}}
 ADAPTER_FWD = {{adapter_fwd}}
 ADAPTER_REV = {{adapter_rev}}
+MOUSEXENOMEINDEX = {{mousexenomeindex}}
 
 [all_tools]
 star = {{star}}
@@ -29,6 +30,7 @@ picard = {{picard}}
 rnaseqc = {{rnaseqc}}
 python = {{python}}
 Rscript = {{Rscript}}
+xenome = {{xenome}}
 
 [Pipeline_Info]
 workflow = {{workflow}}

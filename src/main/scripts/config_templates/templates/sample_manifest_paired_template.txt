@@ -1,0 +1,4 @@
+parameterType   shortName   Parameter1  Parameter2
+{% for file in files %}
+{{parameter_type}}{{tab}}{{file.sample_name}}{{tab}}{{file.parameter_1}}{{tab}}{{file.parameter_2}}
+{% endfor %}

@@ -19,7 +19,7 @@ from jinja2 import Environment, FileSystemLoader
 
 class StudyConfig:
 
-    def __init__(self, job_name, dir_out, fastq_list, cufflinks_library_type, library_type, project, run):
+    def __init__(self, job_name, dir_out, fastq_list, cufflinks_library_type, library_type, run, project=None):
         self.job_name = job_name
         self.dir_out = dir_out
         self.fastq_list = fastq_list
@@ -46,5 +46,5 @@ class StudyConfig:
 
         with open("study_template_{}.txt".format(workflow), "w") as f:
             f.write(global_template.render(args_to_json))
-
+            f.close()
         return "{}/study_template_{}.txt".format(os.getcwd(), workflow)

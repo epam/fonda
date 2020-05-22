@@ -4,6 +4,7 @@
   "transcriptome": "/ngs/data/reference_genome/GRCh38/Sequence/GRCh38.gencode.v26.pc_transcripts.fa",
   "rRNABED": "/ngs/data/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.rRNA.list",
   "adapter_rev": "AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT",
+  "mousexenomeindex": "/ngs/data/Index/Xenome/GRCh38.genome",
   "Rscript": "/ngs/data/app/R/v3.5.0/bin/Rscript",
   "annotgene": "/ngs/data/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.annotation.gtf",
   "cufflinks": "/ngs/data/tools/cufflinks/v2.2.1/cufflinks",
@@ -18,5 +19,6 @@
   "java": "/ngs/data/app/java/v1.8.0u121/bin/java",
   "picard_version": "v2.10.3",
   "starindex": "/ngs/data/reference_genome/GRCh38/Index/STAR_gc26",
-  "python": "/ngs/data/app/python/v2.7.2/bin/python"
+  "python": "/ngs/data/app/python/v2.7.2/bin/python",
+  "xenome": "/opt/xenome/xenome-1.0.1-r/xenome"
 }

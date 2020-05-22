@@ -13,8 +13,10 @@
 # limitations under the License.
 
 import getopt
+import os
 import sys
 
+from model.fastq_sample_manifest import FastqSampleManifest
 from model.global_config import GlobalConfig
 from launcher import Launcher
 from model.study_config import StudyConfig
@@ -28,7 +30,7 @@ def usage():
     print('Usage:\n')
     print(' -s <species> (required)          The species (human/mouse).\n')
     print('	-t <read_type> (required)        The read type (paired/single).\n')
-    print('	-j <job_name> (required)         The job ID.\n')
+    print('	-j <job_name>                    The job ID.\n')
     print('	-o <dir_out> (required)          The output directory for the analysis.\n')
     print('	-l <fastq_list> (required)       The path to the input manifest file.\n')
     print('	-e <expected_cells> (required)   The expected number of recovered cells.\n')
@@ -38,8 +40,8 @@ def usage():
     print(' -R <r1_length> (required)        Hard-trim the input R1 sequence to this length.\n')
     print(' -r <r2_length>                   Hard-trim the input R2 sequence to this length.\n')
     print(' -d <detect_doublet>              If enabled, doubletdetection step will be added to the toolset.\n')
-    print('	-p <project> (required)          The project ID.\n')
-    print('	-u <run> (required)              The run ID.\n')
+    print('	-p <project>                     The project ID.\n')
+    print('	-u <run>                         The run ID.\n')
     print('	-n <toolset> (required)          A number of tools to run in a specific pipeline.\n')
 
 
@@ -112,10 +114,6 @@ def parse_arguments(script_name, argv):
             print('The path to the input manifest fastq file (-l <fastq_list>) is required')
             usage()
             sys.exit(2)
-        if not job_name:
-            print('The job ID (-j <job_name>) is required')
-            usage()
-            sys.exit(2)
         if not dir_out:
             print('The output directory for the analysis (-o <dir_out>) is required')
             usage()
@@ -140,14 +138,6 @@ def parse_arguments(script_name, argv):
             print('The length parameter of hard-trim the input R2 sequence (-r <r2_length>) is required')
             usage()
             sys.exit(2)
-        if not project:
-            print('The project ID (-p <project>) is required')
-            usage()
-            sys.exit(2)
-        if not run:
-            print('The run ID (-u <run>) is required')
-            usage()
-            sys.exit(2)
         if not toolset:
             print('The set of tools (-n <toolset>) is required')
             usage()
@@ -170,9 +160,16 @@ def main(script_name, argv):
     if detect_doublet and "doubletdetection" not in toolset:
         toolset += "+doubletdetection"
 
+    library_type = "RNASeq"
+    if not job_name:
+        job_name = "{}_job".format(library_type)
+    if not run:
+        run = "{}_run".format(library_type)
     global_config = GlobalConfig(species, read_type, TEMPLATE, WORKFLOW_NAME, toolset)
     global_config_path = global_config.create(GLOBAL_CONFIG_TOOL_TEMPLATE_NAME, additional_options)
-    study_config = StudyConfig(job_name, dir_out, fastq_list, None, "RNASeq_Paired", project, run)
+    if os.path.isdir(fastq_list):
+        fastq_list = FastqSampleManifest(read_type).create(fastq_list, WORKFLOW_NAME, library_type)
+    study_config = StudyConfig(job_name, dir_out, fastq_list, None, library_type, run, project=project)
     study_config_path = study_config.parse(workflow=WORKFLOW_NAME)
     Launcher.launch(global_config_path, study_config_path)
 
