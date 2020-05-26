@@ -1,7 +1,6 @@
 {
   "seqpurge": "/ngs/data/app/ngs-bits/v1.0/bin/SeqPurge",
   "rnaseqc_java": "/ngs/data/tools/java/jre1.7.0_60/bin/java",
-  "transcriptome": "/ngs/data/reference_genome/GRCh38/Sequence/GRCh38.gencode.v26.pc_transcripts.fa",
   "rRNABED": "/ngs/data/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.rRNA.list",
   "adapter_rev": "AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT",
   "mousexenomeindex": "/ngs/data/Index/Xenome/GRCh38.genome",

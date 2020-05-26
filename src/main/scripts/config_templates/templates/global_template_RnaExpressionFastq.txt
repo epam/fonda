@@ -9,7 +9,6 @@ SPECIES = {{species}}
 GENOME_BUILD = {{genome_build}}
 ANNOTGENE = {{annotgene}}
 GENOME = {{genome}}
-TRANSCRIPTOME = {{transcriptome}}
 STARINDEX = {{starindex}}
 ANNOTGENESAF = {{annotgenesaf}}
 rRNABED = {{rRNABED}}
