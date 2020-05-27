@@ -30,12 +30,16 @@ class Launcher:
             Entry point to workflow launching
         """
         if not jar_folder:
-            jar_folder = "{}/build/libs/".format(Path(__file__).parent.parent.parent.parent.absolute())
-            if not os.path.isfile('{}fonda-{}.jar'.format(jar_folder, Launcher.FONDA_VERSION)):
-                jar_folder = "{}/".format(Path(__file__).parent.parent.parent.absolute())
+            if os.environ.get('FONDA_HOME') is not None:
+                jar_folder = os.environ['FONDA_HOME'] if str(jar_folder).endswith("/") \
+                    else os.environ['FONDA_HOME'] + '/'
+            else:
+                jar_folder = "{}/build/libs/".format(Path(__file__).parent.parent.parent.parent.absolute())
                 if not os.path.isfile('{}fonda-{}.jar'.format(jar_folder, Launcher.FONDA_VERSION)):
-                    print('Jar file was not found! Please put the jar file in a {} folder' + jar_folder)
-                    sys.exit(2)
+                    jar_folder = "{}/".format(Path(__file__).parent.parent.parent.absolute())
+                    if not os.path.isfile('{}fonda-{}.jar'.format(jar_folder, Launcher.FONDA_VERSION)):
+                        print('Jar file was not found! Please put the jar file in a {} folder' + jar_folder)
+                        sys.exit(2)
         elif jar_folder is not None and not str(jar_folder).endswith("/"):
             jar_folder += "/"
         cmd = "java -jar {}fonda-{}.jar -global_config {} -study_config {} {} > fonda_launch_out.txt"\
