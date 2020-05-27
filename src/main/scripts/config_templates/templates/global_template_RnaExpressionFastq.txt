@@ -1,0 +1,38 @@
+[Queue_Parameters]
+NUMTHREADS = 4
+MAXMEM = 24g
+QUEUE = all.q
+PE = -pe threaded
+
+[Databases]
+SPECIES = {{species}}
+GENOME_BUILD = {{genome_build}}
+ANNOTGENE = {{annotgene}}
+GENOME = {{genome}}
+STARINDEX = {{starindex}}
+ANNOTGENESAF = {{annotgenesaf}}
+rRNABED = {{rRNABED}}
+ADAPTER_FWD = {{adapter_fwd}}
+ADAPTER_REV = {{adapter_rev}}
+MOUSEXENOMEINDEX = {{mousexenomeindex}}
+
+[all_tools]
+star = {{star}}
+seqpurge = {{seqpurge}}
+cufflinks = {{cufflinks}}
+feature_count = {{feature_count}}
+java = {{java}}
+rnaseqc_java = {{rnaseqc_java}}
+samtools = {{samtools}}
+picard_version = {{picard_version}}
+picard = {{picard}}
+rnaseqc = {{rnaseqc}}
+python = {{python}}
+Rscript = {{Rscript}}
+xenome = {{xenome}}
+
+[Pipeline_Info]
+workflow = {{workflow}}
+toolset = {{toolset}}
+flag_xenome = {{flag_xenome}}
+read_type = {{read_type}}

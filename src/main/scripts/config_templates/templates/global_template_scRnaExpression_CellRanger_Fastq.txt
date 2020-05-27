@@ -1,0 +1,34 @@
+[Queue_Parameters]
+NUMTHREADS = 4
+MAXMEM = 24g
+QUEUE = all.q
+PE = -pe threaded
+
+[Databases]
+SPECIES = {{species}}
+GENOME_BUILD = {{genome_build}}
+GENOME = {{genome}}
+TRANSCRIPTOME = {{transcriptome}}
+
+[all_tools]
+cellranger = {{cellranger}}
+java = {{java}}
+python = {{python}}
+Rscript = {{Rscript}}
+doubletdetection_python = {{doubletdetection_python}}
+
+[cellranger]
+cellranger_EXPECTED_CELLS = {{expected_cells}}
+cellranger_FORCED_CELLS = {{forced_cells}}
+cellranger_NOSECONDARY = FALSE
+cellranger_CHEMISTRY = {{chemistry}}
+cellranger_R1-LENGTH = {{r1_length}}
+cellranger_R2-LENGTH = {{r2_length}}
+cellranger_LANES = NA
+cellranger_INDICES = NA
+
+[Pipeline_Info]
+workflow = scRnaExpression_CellRanger_Fastq
+toolset = {{toolset}}
+flag_xenome = no
+read_type = {{read_type}}

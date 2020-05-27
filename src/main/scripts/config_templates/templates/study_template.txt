@@ -1,0 +1,10 @@
+[Series_Info]
+job_name = {{job_name}}
+dir_out = {{dir_out}}
+fastq_list = {{fastq_list}}
+LibraryType = {{library_type}}
+DataGenerationSource = Internal
+Date = {{date}}
+Project = {{project}}
+Run = {{run}}
+Cufflinks.library_type = {{cufflinks_library_type}}

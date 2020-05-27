@@ -1,0 +1,53 @@
+[Queue_Parameters]
+NUMTHREADS = 4
+MAXMEM = 24g
+QUEUE = all.q
+PE = -pe threaded
+
+[Databases]
+SPECIES = {{species}}
+GENOME_BUILD = {{genome_build}}
+GENOME = {{genome}}
+NOVOINDEX = {{novoindex}}
+DBSNP = {{dbsnp}}
+COSMIC = {{cosmic}}
+MUTECT_NORMAL_PANEL = {{mutect_normal_panel}}
+BED_PRIMER = {{bed_primer}}
+BED = {{bed}}
+BED_WITH_HEADER = {{bed_with_header}}
+BED_FOR_COVERAGE = {{bed_with_coverage}}
+SNPSIFTDB = {{snpsiftdb}}
+CANONICAL_TRANSCRIPT = {{canonical_transcript}}
+KNOWN_INDELS_MILLS = {{known_indels_mills}}
+KNOWN_INDELS_PHASE1 = {{known_indels_phase1}}
+MOUSEXENOMEINDEX = {{mousexenomeindex}}
+
+[all_tools]
+seqpurge = {{seqpurge}}
+bedtools = {{bedtools}}
+novoalign = {{novoalign}}
+java = {{java}}
+mutect_java = {{mutect_java}}
+samtools = {{samtools}}
+picard_version = {{picard_version}}
+picard = {{picard}}
+snpsift = {{snpsift}}
+python = {{python}}
+Rscript = {{Rscript}}
+xenome = {{xenome}}
+transvar = {{transvar}}
+mutect = {{mutect}}
+scalpel = {{scalpel}}
+abra2 = {{abra2}}
+bwa = {{bwa}}
+gatk = {{gatk}}
+vardict = {{vardict}}
+lofreq = {{lofreq}}
+freebayes = {{freebayes}}
+strelka2 = {{strelka2}}
+
+[Pipeline_Info]
+workflow = DnaCaptureVar_Fastq
+toolset = {{toolset}}
+flag_xenome = {{flag_xenome}}
+read_type = {{read_type}}

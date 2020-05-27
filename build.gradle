@@ -44,6 +44,7 @@ task copySrc(type: Copy, dependsOn: 'build') {
     into "$project.buildDir/libs/src"
     include "python/**"
     include "R/**"
+    include "scripts/**"
 }
 
 task zip(type: Zip, dependsOn: ['build', 'copySrc']) {
