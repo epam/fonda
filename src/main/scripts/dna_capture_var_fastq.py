@@ -32,7 +32,9 @@ def usage():
     print('	-t <read_type> (required)        The read type (paired/single).\n')
     print('	-j <job_name>                    The job ID.\n')
     print('	-d <dir_out> (required)          The output directory for the analysis.\n')
-    print('	-f <fastq_list> (required)       The path to the input manifest file.\n')
+    print('	-f <fastq_list> (required)       The path to the input manifest file or fastq folder '
+          'or comma-delimited fastq file list for R1.\n')
+    print('	-q <fastq_list_r2>               The comma-delimited fastq file list for R2.\n')
     print('	-l <library_type> (required)     The sequencing library type: DNAWholeExomeSeq_Paired, '
           'DNAWholeExomeSeq_Single, DNATargetSeq_Paired, DNATargetSeq_Single, DNAAmpliconSeq_Paired, etc.\n')
     print('	-p <project>                     The project ID.\n')
@@ -47,19 +49,22 @@ def parse_arguments(script_name, argv):
     job_name = None
     dir_out = None
     fastq_list = None
+    fastq_list_r2 = None
     library_type = None
     project = None
     run = None
     toolset = None
     flag_xenome = None
     try:
-        opts, args = getopt.getopt(argv, "hs:t:j:d:f:l:p:r:n:x:", ["help", "species=", "read_type=", "job_name=",
-                                                                   "dir_out=", "fastq_list=", "library_type=",
-                                                                   "project=", "run=", "toolset=", "flag_xenome="])
+        opts, args = getopt.getopt(argv, "hs:t:j:d:f:q:l:p:r:n:x:", ["help", "species=", "read_type=", "job_name=",
+                                                                     "dir_out=", "fastq_list=", "fastq_list_r2",
+                                                                     "library_type=", "project=", "run=", "toolset=",
+                                                                     "flag_xenome="])
         for opt, arg in opts:
             if opt == '-h':
                 print(script_name + ' -s <species> -t <read_type> -j <job_name> -d <dir_out> -f <fastq_list> '
-                                    '-l <library_type> -p <project> -r <run> -n <toolset> -x <flag_xenome>')
+                                    '-q <fastq_list_r2> -l <library_type> -p <project> -r <run> -n <toolset> '
+                                    '-x <flag_xenome>')
                 sys.exit()
             elif opt in ("-s", "--species"):
                 species = arg
@@ -71,6 +76,8 @@ def parse_arguments(script_name, argv):
                 dir_out = arg
             elif opt in ("-f", "--fastq_list"):
                 fastq_list = arg
+            elif opt in ("-q", "--fastq_list_r2"):
+                fastq_list_r2 = arg
             elif opt in ("-l", "--library_type"):
                 library_type = arg
             elif opt in ("-p", "--project"):
@@ -105,16 +112,16 @@ def parse_arguments(script_name, argv):
             print('The library type (-l <library_type>) is required')
             usage()
             sys.exit(2)
-        return species, read_type, job_name, dir_out, fastq_list, library_type, project, run, \
-            toolset, flag_xenome
+        return species, read_type, job_name, dir_out, fastq_list, fastq_list_r2, library_type, project, run, toolset, \
+            flag_xenome
     except getopt.GetoptError:
         usage()
         sys.exit(2)
 
 
 def main(script_name, argv):
-    species, read_type, job_name, dir_out, fastq_list, library_type, project, run, toolset, flag_xenome = \
-        parse_arguments(script_name, argv)
+    species, read_type, job_name, dir_out, fastq_list, fastq_list_r2, library_type, project, run, toolset, \
+        flag_xenome = parse_arguments(script_name, argv)
 
     if not job_name:
         job_name = "{}_job".format(library_type)
@@ -124,7 +131,10 @@ def main(script_name, argv):
     global_config_path = global_config.create(GLOBAL_CONFIG_TOOL_TEMPLATE_NAME, None, flag_xenome=flag_xenome)
     if os.path.isdir(fastq_list):
         fastq_list = FastqSampleManifest(read_type).create_by_folder(fastq_list, WORKFLOW_NAME, library_type)
-
+    elif 'fastq.gz' in str(fastq_list).split(',')[0]:
+        fastq_list = FastqSampleManifest(read_type).create_by_list(list(str(fastq_list).split(',')),
+                                                                   list(str(fastq_list_r2).split(',')),
+                                                                   WORKFLOW_NAME, library_type)
     study_config = StudyConfig(job_name, dir_out, fastq_list, None, library_type, run, project=project)
     study_config_path = study_config.parse(workflow=WORKFLOW_NAME)
     Launcher.launch(global_config_path, study_config_path)

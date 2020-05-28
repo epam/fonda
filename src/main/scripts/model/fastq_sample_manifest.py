@@ -26,7 +26,7 @@ class FastqSampleManifest(SampleManifest):
 
     def create_by_folder(self, sample_dir, workflow_name, library_type):
         r1_gz_files = [f for f in listdir(sample_dir) if isfile(join(sample_dir, f)) and (EXTENSION and 'R1' in f)]
-        return self.write(EXTENSION, sample_dir, r1_gz_files, workflow_name, library_type)
+        return self.write_from_dir(EXTENSION, sample_dir, r1_gz_files, workflow_name, library_type)
 
     def create_by_list(self, fastq_list_r1, fastq_list_r2, workflow_name, library_type):
         return self.write_from_list(EXTENSION, fastq_list_r1, fastq_list_r2, workflow_name, library_type)

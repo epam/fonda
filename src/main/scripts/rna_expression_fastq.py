@@ -43,7 +43,7 @@ def usage():
     print('	-p <project>                     The project ID.\n')
     print('	-r <run>                         The run ID.\n')
     print('	-n <toolset> (required)          A number of tools to run in a specific pipeline.\n')
-    print('	-x <flag_xenome>                 A flag (yes/no) to add xenome tool to the toolset.\n')
+    print('	-x <flag_xenome>                 A flag (true/false) to add xenome tool to the toolset.\n')
 
 
 def parse_arguments(script_name, argv):
@@ -61,9 +61,9 @@ def parse_arguments(script_name, argv):
     flag_xenome = None
     try:
         opts, args = getopt.getopt(argv, "hs:t:j:d:f:q:c:l:p:r:n:x:", ["help", "species=", "read_type=", "job_name=",
-                                                                     "dir_out=", "fastq_list=", "fastq_list_r2"
-                                                                     "cufflinks_library_type=", "library_type=",
-                                                                     "project=", "run=", "toolset=", "flag_xenome="])
+                                                                       "dir_out=", "fastq_list=", "fastq_list_r2",
+                                                                       "cufflinks_library_type=", "library_type=",
+                                                                       "project=", "run=", "toolset=", "flag_xenome="])
         for opt, arg in opts:
             if opt == '-h':
                 print(script_name + ' -s <species> -t <read_type> -j <job_name> -d <dir_out> -f <fastq_list> '
@@ -127,7 +127,7 @@ def parse_arguments(script_name, argv):
 
 def main(script_name, argv):
     species, read_type, job_name, dir_out, fastq_list, fastq_list_r2, cufflinks_library_type, library_type, project, \
-    run, toolset, flag_xenome = parse_arguments(script_name, argv)
+        run, toolset, flag_xenome = parse_arguments(script_name, argv)
 
     if not library_type:
         library_type = "RNASeq"

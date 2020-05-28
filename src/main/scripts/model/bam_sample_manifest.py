@@ -16,6 +16,8 @@ from os.path import isfile, join
 
 from model.sample_manifest import SampleManifest
 
+EXTENSION = 'bam'
+
 
 class BamSampleManifest(SampleManifest):
 
@@ -23,6 +25,8 @@ class BamSampleManifest(SampleManifest):
         super(BamSampleManifest, self).__init__("single", "bamFile")
 
     def create_by_folder(self, sample_dir, workflow_name, library_type):
-        extension = 'bam'
-        bam_files = [f for f in listdir(sample_dir) if isfile(join(sample_dir, f)) and extension in f]
-        return self.write(extension, sample_dir, bam_files, workflow_name, library_type)
+        bam_files = [f for f in listdir(sample_dir) if isfile(join(sample_dir, f)) and EXTENSION in f]
+        return self.write_from_dir(EXTENSION, sample_dir, bam_files, workflow_name, library_type)
+
+    def create_by_list(self, file_list_1, file_list_2, workflow_name, library_type):
+        return self.write_from_list(EXTENSION, file_list_1, None, workflow_name, library_type)
