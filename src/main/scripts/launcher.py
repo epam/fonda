@@ -11,10 +11,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import logging
 import os
 import subprocess
 import sys
 from pathlib import Path
+
+LOG_FORMAT = "%(levelname)s: %(message)s"
 
 
 class Launcher:
@@ -25,10 +28,14 @@ class Launcher:
         pass
 
     @staticmethod
-    def launch(global_config, study_config, mode=None, jar_folder=None):
+    def launch(global_config, study_config, mode=None, jar_folder=None, verbose=False):
         """
             Entry point to workflow launching
         """
+        if verbose:
+            logging.basicConfig(format=LOG_FORMAT, level=logging.DEBUG)
+        else:
+            logging.basicConfig(format=LOG_FORMAT)
         if not jar_folder:
             if os.environ.get('FONDA_HOME') is not None:
                 jar_folder = os.environ['FONDA_HOME'] if str(jar_folder).endswith("/") \
@@ -38,7 +45,7 @@ class Launcher:
                 if not os.path.isfile('{}fonda-{}.jar'.format(jar_folder, Launcher.FONDA_VERSION)):
                     jar_folder = "{}/".format(Path(__file__).parent.parent.parent.absolute())
                     if not os.path.isfile('{}fonda-{}.jar'.format(jar_folder, Launcher.FONDA_VERSION)):
-                        print('Jar file was not found! Please put the jar file in a {} folder' + jar_folder)
+                        logging.error('Jar file was not found! Please put the jar file in a {} folder' + jar_folder)
                         sys.exit(2)
         elif jar_folder is not None and not str(jar_folder).endswith("/"):
             jar_folder += "/"
@@ -47,6 +54,7 @@ class Launcher:
         proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         o, e = proc.communicate()
-        print('Output: ' + o.decode('ascii'))
-        print('Error: ' + e.decode('ascii'))
-        print('code: ' + str(proc.returncode))
+        logging.debug('Output: ' + o.decode('ascii'))
+        if e.decode('ascii'):
+            logging.error('Error: ' + e.decode('ascii'))
+        logging.debug('code: ' + str(proc.returncode))

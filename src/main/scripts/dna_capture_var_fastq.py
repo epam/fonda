@@ -41,6 +41,7 @@ def usage():
     print('	-r <run>                         The run ID.\n')
     print('	-n <toolset> (required)          A number of tools to run in a specific pipeline.\n')
     print('	-x <flag_xenome>                 A flag (yes/no) to add xenome tool to the toolset.\n')
+    print('	-v <verbose>                     The enable debug verbosity output.\n')
 
 
 def parse_arguments(script_name, argv):
@@ -55,16 +56,17 @@ def parse_arguments(script_name, argv):
     run = None
     toolset = None
     flag_xenome = None
+    verbose = None
     try:
-        opts, args = getopt.getopt(argv, "hs:t:j:d:f:q:l:p:r:n:x:", ["help", "species=", "read_type=", "job_name=",
-                                                                     "dir_out=", "fastq_list=", "fastq_list_r2",
-                                                                     "library_type=", "project=", "run=", "toolset=",
-                                                                     "flag_xenome="])
+        opts, args = getopt.getopt(argv, "hs:t:j:d:f:q:l:p:r:n:x:v", ["help", "species=", "read_type=", "job_name=",
+                                                                      "dir_out=", "fastq_list=", "fastq_list_r2",
+                                                                      "library_type=", "project=", "run=", "toolset=",
+                                                                      "flag_xenome=", "verbose="])
         for opt, arg in opts:
             if opt == '-h':
                 print(script_name + ' -s <species> -t <read_type> -j <job_name> -d <dir_out> -f <fastq_list> '
                                     '-q <fastq_list_r2> -l <library_type> -p <project> -r <run> -n <toolset> '
-                                    '-x <flag_xenome>')
+                                    '-x <flag_xenome> -v <verbose>')
                 sys.exit()
             elif opt in ("-s", "--species"):
                 species = arg
@@ -88,6 +90,8 @@ def parse_arguments(script_name, argv):
                 toolset = arg
             elif opt in ("-x", "--flag_xenome"):
                 flag_xenome = arg
+            elif opt in ("-v", "--verbose"):
+                verbose = 'True'
         if not species:
             print('Species (-s <species>) is required')
             usage()
@@ -113,7 +117,7 @@ def parse_arguments(script_name, argv):
             usage()
             sys.exit(2)
         return species, read_type, job_name, dir_out, fastq_list, fastq_list_r2, library_type, project, run, toolset, \
-            flag_xenome
+            flag_xenome, verbose
     except getopt.GetoptError:
         usage()
         sys.exit(2)
@@ -121,7 +125,7 @@ def parse_arguments(script_name, argv):
 
 def main(script_name, argv):
     species, read_type, job_name, dir_out, fastq_list, fastq_list_r2, library_type, project, run, toolset, \
-        flag_xenome = parse_arguments(script_name, argv)
+        flag_xenome, verbose = parse_arguments(script_name, argv)
 
     if not job_name:
         job_name = "{}_job".format(library_type)
@@ -137,7 +141,7 @@ def main(script_name, argv):
                                                                    WORKFLOW_NAME, library_type)
     study_config = StudyConfig(job_name, dir_out, fastq_list, None, library_type, run, project=project)
     study_config_path = study_config.parse(workflow=WORKFLOW_NAME)
-    Launcher.launch(global_config_path, study_config_path)
+    Launcher.launch(global_config_path, study_config_path, verbose=verbose)
 
 
 if __name__ == "__main__":
