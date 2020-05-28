@@ -53,14 +53,15 @@ class GlobalConfig:
                         "read_type": self.read_type,
                         "toolset": self.toolset,
                         "flag_xenome": flag_xenome}
-
-        with open("{}/config_templates/global_config/{}".format(os.getcwd(), config_json)) as file:
+        main_dir = os.path.dirname(os.path.realpath(__import__("__main__").__file__))
+        with open("{}/config_templates/global_config/{}".format(main_dir, config_json)) as file:
             data = json.load(file)
             data.update(args_to_json)
             if additional_options:
                 data.update(additional_options)
 
-        env = Environment(loader=FileSystemLoader("config_templates/templates"), trim_blocks=True, lstrip_blocks=True)
+        env = Environment(loader=FileSystemLoader("{}/config_templates/templates".format(main_dir)), trim_blocks=True,
+                          lstrip_blocks=True)
         global_template = env.get_template(self.template)
 
         with open("global_template_{}.txt".format(self.workflow), "w") as f:

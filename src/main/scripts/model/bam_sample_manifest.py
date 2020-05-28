@@ -22,7 +22,7 @@ class BamSampleManifest(SampleManifest):
     def __init__(self):
         super(BamSampleManifest, self).__init__("single", "bamFile")
 
-    def create(self, sample_dir, workflow_name, library_type):
+    def create_by_folder(self, sample_dir, workflow_name, library_type):
         extension = 'bam'
         bam_files = [f for f in listdir(sample_dir) if isfile(join(sample_dir, f)) and extension in f]
         return self.write(extension, sample_dir, bam_files, workflow_name, library_type)

@@ -123,7 +123,7 @@ def main(script_name, argv):
     global_config = GlobalConfig(species, read_type, TEMPLATE, WORKFLOW_NAME, toolset)
     global_config_path = global_config.create(GLOBAL_CONFIG_TOOL_TEMPLATE_NAME, None, flag_xenome=flag_xenome)
     if os.path.isdir(fastq_list):
-        fastq_list = FastqSampleManifest(read_type).create(fastq_list, WORKFLOW_NAME, library_type)
+        fastq_list = FastqSampleManifest(read_type).create_by_folder(fastq_list, WORKFLOW_NAME, library_type)
 
     study_config = StudyConfig(job_name, dir_out, fastq_list, None, library_type, run, project=project)
     study_config_path = study_config.parse(workflow=WORKFLOW_NAME)

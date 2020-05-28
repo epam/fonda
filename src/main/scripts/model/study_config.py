@@ -40,8 +40,9 @@ class StudyConfig:
                         "project": self.project,
                         "run": self.run,
                         "date": self.date}
-
-        env = Environment(loader=FileSystemLoader("config_templates/templates"), trim_blocks=True, lstrip_blocks=True)
+        main_dir = os.path.dirname(os.path.realpath(__import__("__main__").__file__))
+        env = Environment(loader=FileSystemLoader("{}/config_templates/templates".format(main_dir)), trim_blocks=True,
+                          lstrip_blocks=True)
         global_template = env.get_template('study_template.txt')
 
         with open("study_template_{}.txt".format(workflow), "w") as f:

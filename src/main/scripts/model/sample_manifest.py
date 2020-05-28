@@ -59,7 +59,8 @@ class SampleManifest(ABC):
             "tab": '\t'
         }
         sample_type = 'Fastq' if extension.split('.')[0] == 'fastq' else 'Bam'
-        env = Environment(loader=FileSystemLoader("config_templates/templates"), trim_blocks=True,
+        main_dir = os.path.dirname(os.path.realpath(__import__("__main__").__file__))
+        env = Environment(loader=FileSystemLoader("{}/config_templates/templates".format(main_dir)), trim_blocks=True,
                           lstrip_blocks=True)
         template = "sample_manifest_paired_template.txt" \
             if self.read_type == 'paired' and self.parameter_type == "fastqFile"\
@@ -72,6 +73,58 @@ class SampleManifest(ABC):
 
         return "{}/{}".format(os.getcwd(), list_path)
 
+    def write_from_list(self, extension, list_r1, list_r2, workflow_name, library_type):
+        sample_dir = os.path.dirname(list_r1[0])
+        if basename(normpath(sample_dir)).split('Sample_')[1] in list_r1[0]:
+            self.sample_name = basename(normpath(sample_dir)).split('Sample_')[1]
+        else:
+            self.sample_name = list_r1[0].split('_')[0]
+        files = []
+        for i, f in enumerate(list_r1):
+            if self.read_type == 'paired' and self.parameter_type == "fastqFile":
+                if 'None' in list_r2:
+                    print('The comma-delimited fastq file list for R2 is required for paired mode.')
+                    sys.exit(2)
+                if len(list_r2) != len(list_r1):
+                    print('The comma-delimited fastq file lists for R1 and R2 are not the same size.')
+                    sys.exit(2)
+                files.append(
+                    {
+                        "sample_name": self.sample_name,
+                        "parameter_1": f,
+                        "parameter_2": list_r2[i]
+                    }
+                )
+            else:
+                files.append(
+                    {
+                        "sample_name": self.sample_name,
+                        "parameter_1": f
+                    }
+                )
+        data = {
+            "parameter_type": self.parameter_type,
+            "files": files,
+            "tab": '\t'
+        }
+        sample_type = 'Fastq' if extension.split('.')[0] == 'fastq' else 'Bam'
+        main_dir = os.path.dirname(os.path.realpath(__import__("__main__").__file__))
+        env = Environment(loader=FileSystemLoader("{}/config_templates/templates".format(main_dir)), trim_blocks=True,
+                          lstrip_blocks=True)
+        template = "sample_manifest_paired_template.txt" \
+            if self.read_type == 'paired' and self.parameter_type == "fastqFile" \
+            else "sample_manifest_single_template.txt"
+        global_template = env.get_template(template)
+        list_path = "{}_{}_Sample{}Paths.txt".format(workflow_name, library_type, sample_type)
+        with open(list_path, "w") as f:
+            f.write(global_template.render(data))
+            f.close()
+        return "{}/{}".format(os.getcwd(), list_path)
+
     @abstractmethod
-    def create(self, sample_dir, workflow_name, library_type):
+    def create_by_folder(self, sample_dir, workflow_name, library_type):
+        pass
+
+    @abstractmethod
+    def create_by_list(self, file_list_1, file_list_2, workflow_name, library_type):
         pass
