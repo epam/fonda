@@ -14,9 +14,11 @@
 import os
 import sys
 from abc import abstractmethod, ABC
-from os.path import join, exists, basename, normpath
+from os.path import join, exists
 
 from jinja2 import Environment, FileSystemLoader
+
+from model.sample_utilities import get_sample_name
 
 
 class SampleManifest(ABC):
@@ -26,43 +28,18 @@ class SampleManifest(ABC):
         self.parameter_type = parameter_type
         self.sample_name = None
 
-    def write(self, extension, sample_dir, sample_files, workflow_name, library_type):
-        if basename(normpath(sample_dir)).split('Sample_')[1] in sample_files[0]:
-            self.sample_name = basename(normpath(sample_dir)).split('Sample_')[1]
-        else:
-            self.sample_name = sample_files[0].split('_')[0]
-        files = []
-        for f in sample_files:
-            parameter1 = join(sample_dir, f)
-            if self.read_type == 'paired' and self.parameter_type == "fastqFile":
-                parameter2 = join(sample_dir, f.replace('R1', 'R2'))
-                if not exists(parameter2):
-                    print("{} fastq file for paired mode is not found".format(parameter2))
-                    sys.exit(2)
-                files.append(
-                    {
-                        "sample_name": self.sample_name,
-                        "parameter_1": parameter1,
-                        "parameter_2": parameter2
-                    }
-                )
-            else:
-                files.append(
-                    {
-                        "sample_name": self.sample_name,
-                        "parameter_1": parameter1
-                    }
-                )
+    def write(self, extension, files, workflow_name, library_type):
         data = {
             "parameter_type": self.parameter_type,
             "files": files,
             "tab": '\t'
         }
         sample_type = 'Fastq' if extension.split('.')[0] == 'fastq' else 'Bam'
-        env = Environment(loader=FileSystemLoader("config_templates/templates"), trim_blocks=True,
+        main_dir = os.path.dirname(os.path.realpath(__import__("__main__").__file__))
+        env = Environment(loader=FileSystemLoader("{}/config_templates/templates".format(main_dir)), trim_blocks=True,
                           lstrip_blocks=True)
         template = "sample_manifest_paired_template.txt" \
-            if self.read_type == 'paired' and self.parameter_type == "fastqFile"\
+            if self.read_type == 'paired' and self.parameter_type == "fastqFile" \
             else "sample_manifest_single_template.txt"
         global_template = env.get_template(template)
         list_path = "{}_{}_Sample{}Paths.txt".format(workflow_name, library_type, sample_type)
@@ -72,6 +49,57 @@ class SampleManifest(ABC):
 
         return "{}/{}".format(os.getcwd(), list_path)
 
+    def write_from_list(self, extension, list_r1, list_r2, workflow_name, library_type):
+        sample_dir = os.path.dirname(list_r1[0])
+        self.sample_name = get_sample_name(list_r1, sample_dir)
+        files = []
+        for i, f in enumerate(list_r1):
+            if self.read_type == 'paired' and self.parameter_type == "fastqFile":
+                if 'None' in list_r2:
+                    print('The comma-delimited fastq file list for R2 is required for paired mode.')
+                    sys.exit(2)
+                if len(list_r2) != len(list_r1):
+                    print('The comma-delimited fastq file lists for R1 and R2 are not the same size.')
+                    sys.exit(2)
+                self.add_sample(files, f, list_r2[i])
+            else:
+                self.add_sample(files, f, None)
+        return self.write(extension, files, workflow_name, library_type)
+
+    def write_from_dir(self, extension, sample_dir, sample_files, workflow_name, library_type):
+        self.sample_name = get_sample_name(sample_files, sample_dir)
+        files = []
+        for f in sample_files:
+            parameter1 = join(sample_dir, f)
+            if self.read_type == 'paired' and self.parameter_type == "fastqFile":
+                parameter2 = join(sample_dir, f.replace('R1', 'R2'))
+                if not exists(parameter2):
+                    print("{} fastq file for paired mode is not found".format(parameter2))
+                    sys.exit(2)
+                self.add_sample(files, parameter1, parameter2)
+            else:
+                self.add_sample(files, parameter1, None)
+        return self.write(extension, files, workflow_name, library_type)
+
+    def add_sample(self, files, parameter1, parameter2):
+        if parameter2 is None:
+            files.append(
+                {
+                    "sample_name": self.sample_name,
+                    "parameter_1": parameter1
+                })
+            return
+        files.append(
+            {
+                "sample_name": self.sample_name,
+                "parameter_1": parameter1,
+                "parameter_2": parameter2
+            })
+
     @abstractmethod
-    def create(self, sample_dir, workflow_name, library_type):
+    def create_by_folder(self, sample_dir, workflow_name, library_type):
+        pass
+
+    @abstractmethod
+    def create_by_list(self, file_list_1, file_list_2, workflow_name, library_type):
         pass

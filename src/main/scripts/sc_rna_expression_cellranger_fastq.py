@@ -32,7 +32,9 @@ def usage():
     print('	-t <read_type> (required)        The read type (paired/single).\n')
     print('	-j <job_name>                    The job ID.\n')
     print('	-o <dir_out> (required)          The output directory for the analysis.\n')
-    print('	-l <fastq_list> (required)       The path to the input manifest file.\n')
+    print('	-l <fastq_list> (required)       The path to the input manifest file or fastq folder '
+          'or comma-delimited fastq file list for R1.\n')
+    print('	-q <fastq_list_r2>               The comma-delimited fastq file list for R2.\n')
     print('	-e <expected_cells> (required)   The expected number of recovered cells.\n')
     print(' -f <forced_cells> (required)     Force pipeline to use this number of cells, '
           'bypassing the cell detection algorithm.\n')
@@ -43,6 +45,8 @@ def usage():
     print('	-p <project>                     The project ID.\n')
     print('	-u <run>                         The run ID.\n')
     print('	-n <toolset> (required)          A number of tools to run in a specific pipeline.\n')
+    print('	-k <cores_per_sample>            A number of cores per sample for sge cluster.\n')
+    print('	-v <verbose>                     The enable debug verbosity output.\n')
 
 
 def parse_arguments(script_name, argv):
@@ -51,6 +55,7 @@ def parse_arguments(script_name, argv):
     job_name = None
     dir_out = None
     fastq_list = None
+    fastq_list_r2 = None
     expected_cells = None
     forced_cells = None
     chemistry = None
@@ -60,18 +65,23 @@ def parse_arguments(script_name, argv):
     project = None
     run = None
     toolset = None
+    cores_per_sample = None
+    verbose = None
     try:
-        opts, args = getopt.getopt(argv, "hs:t:j:o:l:e:f:c:R:r:d:p:u:n:", ["help", "species=", "read_type=",
-                                                                           "job_name=", "dir_out=", "fastq_list=",
-                                                                           "expected_cells=", "forced_cells=",
-                                                                           "chemistry=", "r1_length=", "r2_length=",
-                                                                           "detect_doublet=", "project=", "run=",
-                                                                           "toolset="])
+        opts, args = getopt.getopt(argv, "hs:t:j:o:l:q:e:f:c:R:r:d:p:u:n:k:v", ["help", "species=", "read_type=",
+                                                                                "job_name=", "dir_out=", "fastq_list=",
+                                                                                "fastq_list_r2", "expected_cells=",
+                                                                                "forced_cells=", "chemistry=",
+                                                                                "r1_length=", "r2_length=",
+                                                                                "detect_doublet=", "project=", "run=",
+                                                                                "toolset=", "cores_per_sample=",
+                                                                                "verbose="])
         for opt, arg in opts:
             if opt == '-h':
                 print(script_name + ' -s <species> -t <read_type> -j <job_name> -o <dir_out> -l <fastq_list> '
-                                    '-e <expected_cells> -f <forced_cells> -c <chemistry> -R <r1_length> -r <r2_length>'
-                                    ' -d <detect_doublet> -p <project> -u <run> -n <toolset>')
+                                    '-q <fastq_list_r2> -e <expected_cells> -f <forced_cells> -c <chemistry> '
+                                    '-R <r1_length> -r <r2_length> -d <detect_doublet> -p <project> -u <run> '
+                                    '-n <toolset> -k <cores_per_sample> -v <verbose>')
                 sys.exit()
             elif opt in ("-s", "--species"):
                 species = arg
@@ -83,6 +93,8 @@ def parse_arguments(script_name, argv):
                 dir_out = arg
             elif opt in ("-l", "--fastq_list"):
                 fastq_list = arg
+            elif opt in ("-q", "--fastq_list_r2"):
+                fastq_list_r2 = arg
             elif opt in ("-e", "--expected_cells"):
                 expected_cells = arg
             elif opt in ("-f", "--forced_cells"):
@@ -101,7 +113,10 @@ def parse_arguments(script_name, argv):
                 run = arg
             elif opt in ("-n", "--toolset"):
                 toolset = arg
-
+            elif opt in ("-k", "--cores_per_sample"):
+                cores_per_sample = arg
+            elif opt in ("-v", "--verbose"):
+                verbose = 'True'
         if not species:
             print('Species (-s <species>) is required')
             usage()
@@ -142,16 +157,17 @@ def parse_arguments(script_name, argv):
             print('The set of tools (-n <toolset>) is required')
             usage()
             sys.exit(2)
-        return species, read_type, job_name, dir_out, fastq_list, expected_cells, forced_cells, chemistry, r1_length, \
-            r2_length, detect_doublet, project, run, toolset
+        return species, read_type, job_name, dir_out, fastq_list, fastq_list_r2, expected_cells, forced_cells, \
+            chemistry, r1_length, r2_length, detect_doublet, project, run, toolset, cores_per_sample, verbose
     except getopt.GetoptError:
         usage()
         sys.exit(2)
 
 
 def main(script_name, argv):
-    species, read_type, job_name, dir_out, fastq_list, expected_cells, forced_cells, chemistry, r1_length, r2_length, \
-        detect_doublet, project, run, toolset = parse_arguments(script_name, argv)
+    species, read_type, job_name, dir_out, fastq_list, fastq_list_r2, expected_cells, forced_cells, chemistry, \
+        r1_length, r2_length, detect_doublet, project, run, toolset, cores_per_sample, verbose = \
+        parse_arguments(script_name, argv)
     additional_options = {"expected_cells": expected_cells,
                           "forced_cells": forced_cells,
                           "chemistry": chemistry,
@@ -166,12 +182,17 @@ def main(script_name, argv):
     if not run:
         run = "{}_run".format(library_type)
     global_config = GlobalConfig(species, read_type, TEMPLATE, WORKFLOW_NAME, toolset)
-    global_config_path = global_config.create(GLOBAL_CONFIG_TOOL_TEMPLATE_NAME, additional_options)
+    global_config_path = global_config.create(GLOBAL_CONFIG_TOOL_TEMPLATE_NAME, additional_options,
+                                              cores_per_sample=cores_per_sample)
     if os.path.isdir(fastq_list):
-        fastq_list = FastqSampleManifest(read_type).create(fastq_list, WORKFLOW_NAME, library_type)
+        fastq_list = FastqSampleManifest(read_type).create_by_folder(fastq_list, WORKFLOW_NAME, library_type)
+    elif 'fastq.gz' in str(fastq_list).split(',')[0]:
+        fastq_list = FastqSampleManifest(read_type).create_by_list(list(str(fastq_list).split(',')),
+                                                                   list(str(fastq_list_r2).split(',')),
+                                                                   WORKFLOW_NAME, library_type)
     study_config = StudyConfig(job_name, dir_out, fastq_list, None, library_type, run, project=project)
     study_config_path = study_config.parse(workflow=WORKFLOW_NAME)
-    Launcher.launch(global_config_path, study_config_path)
+    Launcher.launch(global_config_path, study_config_path, verbose=verbose)
 
 
 if __name__ == "__main__":

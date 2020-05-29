@@ -16,13 +16,17 @@ from os.path import isfile, join
 
 from model.sample_manifest import SampleManifest
 
+EXTENSION = 'fastq.gz'
+
 
 class FastqSampleManifest(SampleManifest):
 
     def __init__(self, read_type):
         super().__init__(read_type, "fastqFile")
 
-    def create(self, sample_dir, workflow_name, library_type):
-        extension = 'fastq.gz'
-        r1_gz_files = [f for f in listdir(sample_dir) if isfile(join(sample_dir, f)) and (extension and 'R1' in f)]
-        return self.write(extension, sample_dir, r1_gz_files, workflow_name, library_type)
+    def create_by_folder(self, sample_dir, workflow_name, library_type):
+        r1_gz_files = [f for f in listdir(sample_dir) if isfile(join(sample_dir, f)) and (EXTENSION and 'R1' in f)]
+        return self.write_from_dir(EXTENSION, sample_dir, r1_gz_files, workflow_name, library_type)
+
+    def create_by_list(self, fastq_list_r1, fastq_list_r2, workflow_name, library_type):
+        return self.write_from_list(EXTENSION, fastq_list_r1, fastq_list_r2, workflow_name, library_type)
