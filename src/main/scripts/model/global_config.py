@@ -28,7 +28,7 @@ class GlobalConfig:
         self.toolset = toolset
         self.genome_build = None
 
-    def create(self, config_json, additional_options, flag_xenome=False):
+    def create(self, config_json, additional_options, flag_xenome=False, cores_per_sample=4):
         if not self.workflow:
             print("Workflow name is required")
             sys.exit(2)
@@ -41,7 +41,8 @@ class GlobalConfig:
         if not config_json:
             print("Configuration json file is required")
             sys.exit(2)
-
+        if not cores_per_sample:
+            cores_per_sample = 4
         if self.species == "human":
             self.genome_build = "GRCh38"
         else:
@@ -52,7 +53,8 @@ class GlobalConfig:
                         "genome_build": self.genome_build,
                         "read_type": self.read_type,
                         "toolset": self.toolset,
-                        "flag_xenome": flag_xenome}
+                        "flag_xenome": flag_xenome,
+                        "numthreads": cores_per_sample}
         main_dir = os.path.dirname(os.path.realpath(__import__("__main__").__file__))
         with open("{}/config_templates/global_config/{}".format(main_dir, config_json)) as file:
             data = json.load(file)

@@ -15,6 +15,7 @@ from os.path import basename, normpath
 
 
 def get_sample_name(list_r1, sample_dir):
-    if basename(normpath(sample_dir)).split('Sample_')[1] in list_r1[0]:
+    if len(basename(normpath(sample_dir)).split('Sample_')) > 1 and \
+            basename(normpath(sample_dir)).split('Sample_')[1] in list_r1[0]:
         return basename(normpath(sample_dir)).split('Sample_')[1]
     return list_r1[0].split('_')[0]

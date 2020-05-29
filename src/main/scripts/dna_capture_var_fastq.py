@@ -41,6 +41,7 @@ def usage():
     print('	-r <run>                         The run ID.\n')
     print('	-n <toolset> (required)          A number of tools to run in a specific pipeline.\n')
     print('	-x <flag_xenome>                 A flag (yes/no) to add xenome tool to the toolset.\n')
+    print('	-k <cores_per_sample>            A number of cores per sample for sge cluster.\n')
     print('	-v <verbose>                     The enable debug verbosity output.\n')
 
 
@@ -56,17 +57,19 @@ def parse_arguments(script_name, argv):
     run = None
     toolset = None
     flag_xenome = None
+    cores_per_sample = None
     verbose = None
     try:
-        opts, args = getopt.getopt(argv, "hs:t:j:d:f:q:l:p:r:n:x:v", ["help", "species=", "read_type=", "job_name=",
-                                                                      "dir_out=", "fastq_list=", "fastq_list_r2",
-                                                                      "library_type=", "project=", "run=", "toolset=",
-                                                                      "flag_xenome=", "verbose="])
+        opts, args = getopt.getopt(argv, "hs:t:j:d:f:q:l:p:r:n:x:k:v", ["help", "species=", "read_type=", "job_name=",
+                                                                        "dir_out=", "fastq_list=", "fastq_list_r2",
+                                                                        "library_type=", "project=", "run=", "toolset=",
+                                                                        "flag_xenome=", "cores_per_sample=",
+                                                                        "verbose="])
         for opt, arg in opts:
             if opt == '-h':
                 print(script_name + ' -s <species> -t <read_type> -j <job_name> -d <dir_out> -f <fastq_list> '
                                     '-q <fastq_list_r2> -l <library_type> -p <project> -r <run> -n <toolset> '
-                                    '-x <flag_xenome> -v <verbose>')
+                                    '-x <flag_xenome> -k <cores_per_sample> -v <verbose>')
                 sys.exit()
             elif opt in ("-s", "--species"):
                 species = arg
@@ -90,6 +93,8 @@ def parse_arguments(script_name, argv):
                 toolset = arg
             elif opt in ("-x", "--flag_xenome"):
                 flag_xenome = arg
+            elif opt in ("-k", "--cores_per_sample"):
+                cores_per_sample = arg
             elif opt in ("-v", "--verbose"):
                 verbose = 'True'
         if not species:
@@ -117,7 +122,7 @@ def parse_arguments(script_name, argv):
             usage()
             sys.exit(2)
         return species, read_type, job_name, dir_out, fastq_list, fastq_list_r2, library_type, project, run, toolset, \
-            flag_xenome, verbose
+            flag_xenome, cores_per_sample, verbose
     except getopt.GetoptError:
         usage()
         sys.exit(2)
@@ -125,14 +130,15 @@ def parse_arguments(script_name, argv):
 
 def main(script_name, argv):
     species, read_type, job_name, dir_out, fastq_list, fastq_list_r2, library_type, project, run, toolset, \
-        flag_xenome, verbose = parse_arguments(script_name, argv)
+        flag_xenome, cores_per_sample, verbose = parse_arguments(script_name, argv)
 
     if not job_name:
         job_name = "{}_job".format(library_type)
     if not run:
         run = "{}_run".format(library_type)
     global_config = GlobalConfig(species, read_type, TEMPLATE, WORKFLOW_NAME, toolset)
-    global_config_path = global_config.create(GLOBAL_CONFIG_TOOL_TEMPLATE_NAME, None, flag_xenome=flag_xenome)
+    global_config_path = global_config.create(GLOBAL_CONFIG_TOOL_TEMPLATE_NAME, None, flag_xenome=flag_xenome,
+                                              cores_per_sample=cores_per_sample)
     if os.path.isdir(fastq_list):
         fastq_list = FastqSampleManifest(read_type).create_by_folder(fastq_list, WORKFLOW_NAME, library_type)
     elif 'fastq.gz' in str(fastq_list).split(',')[0]:
