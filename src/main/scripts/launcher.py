@@ -21,14 +21,13 @@ LOG_FORMAT = "%(levelname)s: %(message)s"
 
 
 class Launcher:
-
     FONDA_VERSION = "2.0.0"
 
     def __init__(self):
         pass
 
     @staticmethod
-    def launch(global_config, study_config, mode=None, jar_folder=None, verbose=False):
+    def launch(global_config, study_config, sync, mode='', jar_folder=None, verbose=False):
         """
             Entry point to workflow launching
         """
@@ -49,8 +48,9 @@ class Launcher:
                         sys.exit(2)
         elif jar_folder is not None and not str(jar_folder).endswith("/"):
             jar_folder += "/"
-        cmd = "java -jar {}fonda-{}.jar -global_config {} -study_config {} -sync {} > fonda_launch_out.txt"\
-            .format(jar_folder, Launcher.FONDA_VERSION, global_config, study_config, mode)
+        sync = '-sync' if sync is None else ''
+        cmd = "java -jar {}fonda-{}.jar -global_config {} -study_config {} {} {} > fonda_launch_out.txt" \
+            .format(jar_folder, Launcher.FONDA_VERSION, global_config, study_config, sync, mode)
         proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         o, e = proc.communicate()
