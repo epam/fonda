@@ -45,6 +45,7 @@ def usage():
     print('	-n <toolset> (required)          A number of tools to run in a specific pipeline.\n')
     print('	-x <flag_xenome>                 A flag (true/false) to add xenome tool to the toolset.\n')
     print('	-k <cores_per_sample>            A number of cores per sample for sge cluster.\n')
+    print('	-y <sync>                        Disable "-sync" option.\n')
     print('	-v <verbose>                     The enable debug verbosity output.\n')
 
 
@@ -62,19 +63,21 @@ def parse_arguments(script_name, argv):
     toolset = None
     flag_xenome = None
     cores_per_sample = None
+    sync = None
     verbose = None
     try:
-        opts, args = getopt.getopt(argv, "hs:t:j:d:f:q:c:l:p:r:n:x:k:v", ["help", "species=", "read_type=", "job_name=",
-                                                                          "dir_out=", "fastq_list=", "fastq_list_r2",
-                                                                          "cufflinks_library_type=", "library_type=",
-                                                                          "project=", "run=", "toolset=",
-                                                                          "flag_xenome=", "cores_per_sample=",
-                                                                          "verbose="])
+        opts, args = getopt.getopt(argv, "hs:t:j:d:f:q:c:l:p:r:n:x:k:yv", ["help", "species=", "read_type=",
+                                                                           "job_name=", "dir_out=", "fastq_list=",
+                                                                           "fastq_list_r2", "cufflinks_library_type=",
+                                                                           "library_type=", "project=", "run=",
+                                                                           "toolset=", "flag_xenome=",
+                                                                           "cores_per_sample=", "sync=", "verbose="])
         for opt, arg in opts:
             if opt == '-h':
                 print(script_name + ' -s <species> -t <read_type> -j <job_name> -d <dir_out> -f <fastq_list> '
                                     '-q <fastq_list_r2> -c <cufflinks_library_type> -l <library_type> -p <project> '
-                                    '-r <run> -n <toolset> -x <flag_xenome> -k <cores_per_sample> -v <verbose>')
+                                    '-r <run> -n <toolset> -x <flag_xenome> -k <cores_per_sample> -y <sync> '
+                                    '-v <verbose>')
                 sys.exit()
             elif opt in ("-s", "--species"):
                 species = arg
@@ -102,6 +105,8 @@ def parse_arguments(script_name, argv):
                 flag_xenome = arg
             elif opt in ("-k", "--cores_per_sample"):
                 cores_per_sample = arg
+            elif opt in ("-y", "--sync"):
+                sync = 'False'
             elif opt in ("-v", "--verbose"):
                 verbose = 'True'
         if not species:
@@ -129,7 +134,7 @@ def parse_arguments(script_name, argv):
             usage()
             sys.exit(2)
         return species, read_type, job_name, dir_out, fastq_list, fastq_list_r2, cufflinks_library_type, library_type, \
-            project, run, toolset, flag_xenome, cores_per_sample, verbose
+            project, run, toolset, flag_xenome, cores_per_sample, verbose, sync
     except getopt.GetoptError:
         usage()
         sys.exit(2)
@@ -137,7 +142,7 @@ def parse_arguments(script_name, argv):
 
 def main(script_name, argv):
     species, read_type, job_name, dir_out, fastq_list, fastq_list_r2, cufflinks_library_type, library_type, project, \
-        run, toolset, flag_xenome, cores_per_sample, verbose = parse_arguments(script_name, argv)
+        run, toolset, flag_xenome, cores_per_sample, verbose, sync = parse_arguments(script_name, argv)
     if not library_type:
         library_type = "RNASeq"
     if not job_name:
@@ -156,7 +161,7 @@ def main(script_name, argv):
     study_config = StudyConfig(job_name, dir_out, fastq_list, cufflinks_library_type, library_type, run,
                                project=project)
     study_config_path = study_config.parse(workflow=WORKFLOW_NAME)
-    Launcher.launch(global_config_path, study_config_path, verbose=verbose)
+    Launcher.launch(global_config_path, study_config_path, sync, verbose=verbose)
 
 
 if __name__ == "__main__":
