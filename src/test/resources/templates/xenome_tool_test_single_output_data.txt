@@ -1,0 +1,15 @@
+echo `date` Begin Step: Xenome classification...
+xenome classify -T 8 -P MOUSEXENOMEINDEX --graft-name human --host-name mouse --output-filename-prefix stmpOutdir/sampleName --tmp-dir stmpOutdir -i merged_fastq1
+awk '{if (NR % 4 == 1) print "@"$0; else if (NR % 4 == 3) print "+"$0; else print $0 }' stmpOutdir/sampleName_human.fastq > stmpOutdir/sampleName_convert_human_1.fastq
+cat stmpOutdir/sampleName_convert_human_1.fastq | gzip -c > sfqOutdir/sampleName_classified_R1.fq.gz
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Xenome classification.
+	sleep 8
+else
+	echo `date` Error Step: Xenome classification.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
