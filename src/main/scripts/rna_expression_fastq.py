@@ -28,25 +28,25 @@ GLOBAL_CONFIG_TOOL_TEMPLATE_NAME = "RnaExpression_tool"
 
 def usage():
     print('Usage:\n')
-    print(' -s <species> (required)          The species (human/mouse).\n')
-    print('	-t <read_type> (required)        The read type (paired/single).\n')
-    print('	-j <job_name>                    The job ID.\n')
-    print('	-d <dir_out> (required)          The output directory for the analysis.\n')
-    print('	-f <fastq_list> (required)       The path to the input manifest file or fastq folder '
+    print('-s <species> (required)         The species (human/mouse).\n')
+    print('-t <read_type> (required)       The read type (paired/single).\n')
+    print('-j <job_name>                   The job ID.\n')
+    print('-d <dir_out> (required)         The output directory for the analysis.\n')
+    print('-f <fastq_list> (required)      The path to the input manifest file or fastq folder '
           'or comma-delimited fastq file list for R1.\n')
-    print('	-q <fastq_list_r2>               The comma-delimited fastq file list for R2.\n')
-    print('	-c <cufflinks_library_type> (required)          '
+    print('-q <fastq_list_r2>              The comma-delimited fastq file list for R2.\n')
+    print('-c <cufflinks_library_type> (required)          '
           'The cufflinks library type (fr-unstranded/fr-firststrand/fr-secondstrand).\n')
-    print('	-l <library_type>                The sequencing library type: DNAWholeExomeSeq_Paired, '
+    print('-l <library_type>               The sequencing library type: DNAWholeExomeSeq_Paired, '
           'DNAWholeExomeSeq_Single, DNATargetSeq_Paired, DNATargetSeq_Single, DNAAmpliconSeq_Paired, RNASeq_Paired, '
           'RNASeq_Single, etc.\n')
-    print('	-p <project>                     The project ID.\n')
-    print('	-r <run>                         The run ID.\n')
-    print('	-n <toolset> (required)          A number of tools to run in a specific pipeline.\n')
-    print('	-x <flag_xenome>                 A flag (true/false) to add xenome tool to the toolset.\n')
-    print('	-k <cores_per_sample>            A number of cores per sample for sge cluster.\n')
-    print('	-y <sync>                        Disable "-sync" option.\n')
-    print('	-v <verbose>                     The enable debug verbosity output.\n')
+    print('-p <project>                    The project ID.\n')
+    print('-r <run>                        The run ID.\n')
+    print('-n <toolset> (required)         A number of tools to run in a specific pipeline.\n')
+    print('-x <flag_xenome>                A flag (true/false) to add xenome tool to the toolset.\n')
+    print('-k <cores_per_sample>           A number of cores per sample for sge cluster.\n')
+    print('--sync                          A flag (true/false) enable or disable "-sync" option ("true" by default).\n')
+    print('-v <verbose>                    The enable debug verbosity output.\n')
 
 
 def parse_arguments(script_name, argv):
@@ -66,17 +66,17 @@ def parse_arguments(script_name, argv):
     sync = None
     verbose = None
     try:
-        opts, args = getopt.getopt(argv, "hs:t:j:d:f:q:c:l:p:r:n:x:k:yv", ["help", "species=", "read_type=",
-                                                                           "job_name=", "dir_out=", "fastq_list=",
-                                                                           "fastq_list_r2", "cufflinks_library_type=",
-                                                                           "library_type=", "project=", "run=",
-                                                                           "toolset=", "flag_xenome=",
-                                                                           "cores_per_sample=", "sync=", "verbose="])
+        opts, args = getopt.getopt(argv, "hs:t:j:d:f:q:c:l:p:r:n:x:k:v", ["help", "species=", "read_type=",
+                                                                          "job_name=", "dir_out=", "fastq_list=",
+                                                                          "fastq_list_r2", "cufflinks_library_type=",
+                                                                          "library_type=", "project=", "run=",
+                                                                          "toolset=", "flag_xenome=",
+                                                                          "cores_per_sample=", "sync=", "verbose"])
         for opt, arg in opts:
             if opt == '-h':
                 print(script_name + ' -s <species> -t <read_type> -j <job_name> -d <dir_out> -f <fastq_list> '
                                     '-q <fastq_list_r2> -c <cufflinks_library_type> -l <library_type> -p <project> '
-                                    '-r <run> -n <toolset> -x <flag_xenome> -k <cores_per_sample> -y <sync> '
+                                    '-r <run> -n <toolset> -x <flag_xenome> -k <cores_per_sample> <sync> '
                                     '-v <verbose>')
                 sys.exit()
             elif opt in ("-s", "--species"):
@@ -105,8 +105,8 @@ def parse_arguments(script_name, argv):
                 flag_xenome = arg
             elif opt in ("-k", "--cores_per_sample"):
                 cores_per_sample = arg
-            elif opt in ("-y", "--sync"):
-                sync = 'False'
+            elif opt in "--sync":
+                sync = arg
             elif opt in ("-v", "--verbose"):
                 verbose = 'True'
         if not species:

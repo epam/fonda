@@ -46,7 +46,8 @@ def usage():
     print('	-u <run>                         The run ID.\n')
     print('	-n <toolset> (required)          A number of tools to run in a specific pipeline.\n')
     print('	-k <cores_per_sample>            A number of cores per sample for sge cluster.\n')
-    print('	-y <sync>                        Disable "-sync" option.\n')
+    print(' --sync                           A flag (true/false) enable or disable "-sync" option '
+          '("true" by default).\n')
     print('	-v <verbose>                     The enable debug verbosity output.\n')
 
 
@@ -70,20 +71,20 @@ def parse_arguments(script_name, argv):
     sync = None
     verbose = None
     try:
-        opts, args = getopt.getopt(argv, "hs:t:j:o:l:q:e:f:c:R:r:d:p:u:n:k:yv", ["help", "species=", "read_type=",
-                                                                                 "job_name=", "dir_out=", "fastq_list=",
-                                                                                 "fastq_list_r2", "expected_cells=",
-                                                                                 "forced_cells=", "chemistry=",
-                                                                                 "r1_length=", "r2_length=",
-                                                                                 "detect_doublet=", "project=", "run=",
-                                                                                 "toolset=", "cores_per_sample=",
-                                                                                 "sync=", "verbose="])
+        opts, args = getopt.getopt(argv, "hs:t:j:o:l:q:e:f:c:R:r:d:p:u:n:k:v", ["help", "species=", "read_type=",
+                                                                                "job_name=", "dir_out=", "fastq_list=",
+                                                                                "fastq_list_r2", "expected_cells=",
+                                                                                "forced_cells=", "chemistry=",
+                                                                                "r1_length=", "r2_length=",
+                                                                                "detect_doublet=", "project=", "run=",
+                                                                                "toolset=", "cores_per_sample=",
+                                                                                "sync=", "verbose"])
         for opt, arg in opts:
             if opt == '-h':
                 print(script_name + ' -s <species> -t <read_type> -j <job_name> -o <dir_out> -l <fastq_list> '
                                     '-q <fastq_list_r2> -e <expected_cells> -f <forced_cells> -c <chemistry> '
                                     '-R <r1_length> -r <r2_length> -d <detect_doublet> -p <project> -u <run> '
-                                    '-n <toolset> -k <cores_per_sample> -y <sync> -v <verbose>')
+                                    '-n <toolset> -k <cores_per_sample> <sync> -v <verbose>')
                 sys.exit()
             elif opt in ("-s", "--species"):
                 species = arg
@@ -117,8 +118,8 @@ def parse_arguments(script_name, argv):
                 toolset = arg
             elif opt in ("-k", "--cores_per_sample"):
                 cores_per_sample = arg
-            elif opt in ("-y", "--sync"):
-                sync = 'False'
+            elif opt in "--sync":
+                sync = arg
             elif opt in ("-v", "--verbose"):
                 verbose = 'True'
         if not species:
