@@ -28,6 +28,7 @@ import com.epam.fonda.workflow.TaskContainer;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -72,7 +73,7 @@ public class SeqPurge implements Tool<FastqResult> {
     @Override
     public FastqResult generate(Configuration configuration, TemplateEngine templateEngine) {
         SeqPurgeFields seqPurgeFields = constructFieldsByIndex(configuration);
-        if (seqPurgeFields.fastq1 == null || seqPurgeFields.fastq2 == null) {
+        if (StringUtils.isBlank(seqPurgeFields.fastq1) || StringUtils.isBlank(seqPurgeFields.fastq2)) {
             throw new IllegalArgumentException(
             "Error Step: In seqpurge: SeqPurge can only be applied to trim paired-end reads.");
         }

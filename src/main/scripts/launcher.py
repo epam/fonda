@@ -54,7 +54,13 @@ class Launcher:
         proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         o, e = proc.communicate()
+
+        exit_code = proc.wait()
+        if exit_code != 0:
+            exec_err_msg = 'Command \'%s\' execution has failed.\n Out: %s\n %s Exit code: %s' % \
+                           (cmd, o.decode('ascii'), 'Err: %s.\n' % (e.decode('ascii')) if e else '',
+                            exit_code)
+            logging.error(exec_err_msg)
+            raise RuntimeError(exec_err_msg)
         logging.debug('Output: ' + o.decode('ascii'))
-        if e.decode('ascii'):
-            logging.error('Error: ' + e.decode('ascii'))
-        logging.debug('code: ' + str(proc.returncode))
+        logging.debug('Exit code: ' + str(exit_code))

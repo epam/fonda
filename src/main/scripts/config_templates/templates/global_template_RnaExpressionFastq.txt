@@ -15,6 +15,7 @@ rRNABED = {{rRNABED}}
 ADAPTER_FWD = {{adapter_fwd}}
 ADAPTER_REV = {{adapter_rev}}
 MOUSEXENOMEINDEX = {{mousexenomeindex}}
+ADAPTER_SEQ = {{adapter_seq}}
 
 [all_tools]
 star = {{star}}
@@ -30,6 +31,7 @@ rnaseqc = {{rnaseqc}}
 python = {{python}}
 Rscript = {{Rscript}}
 xenome = {{xenome}}
+trimmomatic = {{trimmomatic}}
 
 [Pipeline_Info]
 workflow = {{workflow}}
