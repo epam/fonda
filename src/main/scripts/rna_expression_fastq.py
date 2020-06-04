@@ -23,7 +23,7 @@ from model.study_config import StudyConfig
 
 WORKFLOW_NAME = "RnaExpression_Fastq"
 TEMPLATE = "global_template_RnaExpressionFastq.txt"
-GLOBAL_CONFIG_TOOL_TEMPLATE_NAME = "RnaExpression_tool"
+GLOBAL_CONFIG_TOOL_TEMPLATE_NAME = "RnaExpression_tool.json"
 
 
 def usage():

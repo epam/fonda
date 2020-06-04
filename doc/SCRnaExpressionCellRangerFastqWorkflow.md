@@ -162,7 +162,7 @@ doubletdetection_python = /path/python3
 [cellranger]
 cellranger_EXPECTED_CELLS = 100
 cellranger_FORCED_CELLS = NA
-cellranger_NOSECONDARY = FALS
+cellranger_NOSECONDARY = FALSE
 cellranger_CHEMISTRY = SC3Pv2
 cellranger_R1-LENGTH = NA
 cellranger_R2-LENGTH = NA

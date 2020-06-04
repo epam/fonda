@@ -22,33 +22,33 @@ from launcher import Launcher
 from model.study_config import StudyConfig
 
 WORKFLOW_NAME = "scRnaExpression_CellRanger_Fastq"
-GLOBAL_CONFIG_TOOL_TEMPLATE_NAME = "ScRnaExpression_CellRanger_Fastq_tool"
+GLOBAL_CONFIG_TOOL_TEMPLATE_NAME = "ScRnaExpression_CellRanger_Fastq_tool.json"
 TEMPLATE = "global_template_scRnaExpression_CellRanger_Fastq.txt"
 
 
 def usage():
     print('Usage:\n')
-    print(' -s <species> (required)          The species (human/mouse).\n')
-    print('	-t <read_type> (required)        The read type (paired/single).\n')
-    print('	-j <job_name>                    The job ID.\n')
-    print('	-o <dir_out> (required)          The output directory for the analysis.\n')
-    print('	-l <fastq_list> (required)       The path to the input manifest file or fastq folder '
+    print('-s <species> (required)          The species (human/mouse).\n')
+    print('-t <read_type> (required)        The read type (paired/single).\n')
+    print('-j <job_name>                    The job ID.\n')
+    print('-o <dir_out> (required)          The output directory for the analysis.\n')
+    print('-l <fastq_list> (required)       The path to the input manifest file or fastq folder '
           'or comma-delimited fastq file list for R1.\n')
-    print('	-q <fastq_list_r2>               The comma-delimited fastq file list for R2.\n')
-    print('	-e <expected_cells> (required)   The expected number of recovered cells.\n')
-    print(' -f <forced_cells> (required)     Force pipeline to use this number of cells, '
+    print('-q <fastq_list_r2>               The comma-delimited fastq file list for R2.\n')
+    print('-e <expected_cells> (required)   The expected number of recovered cells.\n')
+    print('-f <forced_cells> (required)     Force pipeline to use this number of cells, '
           'bypassing the cell detection algorithm.\n')
-    print(' -c <chemistry> (required)        Assay configuration.\n')
-    print(' -R <r1_length> (required)        Hard-trim the input R1 sequence to this length.\n')
-    print(' -r <r2_length>                   Hard-trim the input R2 sequence to this length.\n')
-    print(' -d <detect_doublet>              If enabled, doubletdetection step will be added to the toolset.\n')
-    print('	-p <project>                     The project ID.\n')
-    print('	-u <run>                         The run ID.\n')
-    print('	-n <toolset> (required)          A number of tools to run in a specific pipeline.\n')
-    print('	-k <cores_per_sample>            A number of cores per sample for sge cluster.\n')
-    print(' --sync                           A flag (true/false) enable or disable "-sync" option '
+    print('-c <chemistry> (required)        Assay configuration.\n')
+    print('-R <r1_length> (required)        Hard-trim the input R1 sequence to this length.\n')
+    print('-r <r2_length>                   Hard-trim the input R2 sequence to this length.\n')
+    print('-d <detect_doublet>              If enabled, doubletdetection step will be added to the toolset.\n')
+    print('-p <project>                     The project ID.\n')
+    print('-u <run>                         The run ID.\n')
+    print('-n <toolset> (required)          A number of tools to run in a specific pipeline.\n')
+    print('-k <cores_per_sample>            A number of cores per sample for sge cluster.\n')
+    print('--sync                           A flag (true/false) enable or disable "-sync" option '
           '("true" by default).\n')
-    print('	-v <verbose>                     The enable debug verbosity output.\n')
+    print('-v <verbose>                     The enable debug verbosity output.\n')
 
 
 def parse_arguments(script_name, argv):

@@ -22,29 +22,29 @@ from launcher import Launcher
 from model.study_config import StudyConfig
 
 WORKFLOW_NAME = "DnaCaptureVar_Fastq"
-GLOBAL_CONFIG_TOOL_TEMPLATE_NAME = "DnaCaptureVar_Fastq_tool"
+GLOBAL_CONFIG_TOOL_TEMPLATE_NAME = "DnaCaptureVar_Fastq_tool.json"
 TEMPLATE = "global_template_DnaCaptureVar_Fastq.txt"
 
 
 def usage():
     print('Usage:\n')
-    print(' -s <species> (required)          The species (human/mouse).\n')
-    print('	-t <read_type> (required)        The read type (paired/single).\n')
-    print('	-j <job_name>                    The job ID.\n')
-    print('	-d <dir_out> (required)          The output directory for the analysis.\n')
-    print('	-f <fastq_list> (required)       The path to the input manifest file or fastq folder '
+    print('-s <species> (required)          The species (human/mouse).\n')
+    print('-t <read_type> (required)        The read type (paired/single).\n')
+    print('-j <job_name>                    The job ID.\n')
+    print('-d <dir_out> (required)          The output directory for the analysis.\n')
+    print('-f <fastq_list> (required)       The path to the input manifest file or fastq folder '
           'or comma-delimited fastq file list for R1.\n')
-    print('	-q <fastq_list_r2>               The comma-delimited fastq file list for R2.\n')
-    print('	-l <library_type> (required)     The sequencing library type: DNAWholeExomeSeq_Paired, '
+    print('-q <fastq_list_r2>               The comma-delimited fastq file list for R2.\n')
+    print('-l <library_type> (required)     The sequencing library type: DNAWholeExomeSeq_Paired, '
           'DNAWholeExomeSeq_Single, DNATargetSeq_Paired, DNATargetSeq_Single, DNAAmpliconSeq_Paired, etc.\n')
-    print('	-p <project>                     The project ID.\n')
-    print('	-r <run>                         The run ID.\n')
-    print('	-n <toolset> (required)          A number of tools to run in a specific pipeline.\n')
-    print('	-x <flag_xenome>                 A flag (yes/no) to add xenome tool to the toolset.\n')
-    print('	-k <cores_per_sample>            A number of cores per sample for sge cluster.\n')
-    print(' --sync                           A flag (true/false) enable or disable "-sync" option '
+    print('-p <project>                     The project ID.\n')
+    print('-r <run>                         The run ID.\n')
+    print('-n <toolset> (required)          A number of tools to run in a specific pipeline.\n')
+    print('-x <flag_xenome>                 A flag (yes/no) to add xenome tool to the toolset.\n')
+    print('-k <cores_per_sample>            A number of cores per sample for sge cluster.\n')
+    print('--sync                           A flag (true/false) enable or disable "-sync" option '
           '("true" by default).\n')
-    print('	-v <verbose>                     The enable debug verbosity output.\n')
+    print('-v <verbose>                     The enable debug verbosity output.\n')
 
 
 def parse_arguments(script_name, argv):
