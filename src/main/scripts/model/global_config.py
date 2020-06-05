@@ -27,6 +27,7 @@ class GlobalConfig:
         self.workflow = workflow
         self.toolset = toolset
         self.genome_build = None
+        self.java_path = None
 
     def create(self, config_json, additional_options, flag_xenome=False, cores_per_sample=4):
         if not self.workflow:
@@ -58,6 +59,7 @@ class GlobalConfig:
         main_dir = os.path.dirname(os.path.realpath(__import__("__main__").__file__))
         with open("{}/config_templates/global_config/{}".format(main_dir, config_json)) as file:
             data = json.load(file)
+            self.java_path = data['java']
             data.update(args_to_json)
             if additional_options:
                 data.update(additional_options)

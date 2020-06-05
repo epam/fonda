@@ -197,7 +197,7 @@ def main(script_name, argv):
                                                                    WORKFLOW_NAME, library_type)
     study_config = StudyConfig(job_name, dir_out, fastq_list, None, library_type, run, project=project)
     study_config_path = study_config.parse(workflow=WORKFLOW_NAME)
-    Launcher.launch(global_config_path, study_config_path, sync, verbose=verbose)
+    Launcher.launch(global_config_path, study_config_path, sync, java_path=global_config.java_path, verbose=verbose)
 
 
 if __name__ == "__main__":
