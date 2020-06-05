@@ -27,7 +27,7 @@ class Launcher:
         pass
 
     @staticmethod
-    def launch(global_config, study_config, sync, mode='', jar_folder=None, verbose=False):
+    def launch(global_config, study_config, sync, java_path, mode='', jar_folder=None, verbose=False):
         """
             Entry point to workflow launching
         """
@@ -49,8 +49,8 @@ class Launcher:
         elif jar_folder is not None and not str(jar_folder).endswith("/"):
             jar_folder += "/"
         sync = '-sync' if sync is None or sync == 'true' else ''
-        cmd = "java -jar {}fonda-{}.jar -global_config {} -study_config {} {} {} > fonda_launch_out.txt" \
-            .format(jar_folder, Launcher.FONDA_VERSION, global_config, study_config, sync, mode)
+        cmd = "{} -jar {}fonda-{}.jar -global_config {} -study_config {} {} {} > fonda_launch_out.txt" \
+            .format(java_path, jar_folder, Launcher.FONDA_VERSION, global_config, study_config, sync, mode)
         proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         o, e = proc.communicate()
