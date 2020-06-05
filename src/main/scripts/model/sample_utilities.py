@@ -14,8 +14,14 @@
 from os.path import basename, normpath
 
 
-def get_sample_name(list_r1, sample_dir):
-    if len(basename(normpath(sample_dir)).split('Sample_')) > 1 and \
-            basename(normpath(sample_dir)).split('Sample_')[1] in list_r1[0]:
-        return basename(normpath(sample_dir)).split('Sample_')[1]
-    return list_r1[0].split('_')[0]
+def get_sample_name(f, sample_dir):
+    last_folder = basename(normpath(sample_dir))
+    if not sample_dir.strip():
+        raise RuntimeError('Failed to extract directory path from %s fastq' % f)
+    if len(last_folder.split('Sample_')) > 1 and \
+            last_folder.split('Sample_')[1] in f:
+        return last_folder.split('Sample_')[1]
+    elif len(sample_dir.strip()) != 0 and len(f.split(sample_dir)) > 0:
+        sample_name = f.split(sample_dir)[1].split('_')[0]
+        return sample_name[1:] if str(sample_name).startswith('/') else sample_name
+    raise RuntimeError('Failed to extract sample name from %s fastq path' % f)
