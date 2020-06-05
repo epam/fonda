@@ -50,10 +50,10 @@ class SampleManifest(ABC):
         return "{}/{}".format(os.getcwd(), list_path)
 
     def write_from_list(self, extension, list_r1, list_r2, workflow_name, library_type):
-        sample_dir = os.path.dirname(list_r1[0])
-        self.sample_name = get_sample_name(list_r1, sample_dir)
         files = []
         for i, f in enumerate(list_r1):
+            sample_dir = os.path.dirname(list_r1[i])
+            self.sample_name = get_sample_name(f, sample_dir)
             if self.read_type == 'paired' and self.parameter_type == "fastqFile":
                 if 'None' in list_r2:
                     print('The comma-delimited fastq file list for R2 is required for paired mode.')
@@ -67,9 +67,9 @@ class SampleManifest(ABC):
         return self.write(extension, files, workflow_name, library_type)
 
     def write_from_dir(self, extension, sample_dir, sample_files, workflow_name, library_type):
-        self.sample_name = get_sample_name(sample_files, sample_dir)
         files = []
         for f in sample_files:
+            self.sample_name = get_sample_name(f, sample_dir)
             parameter1 = join(sample_dir, f)
             if self.read_type == 'paired' and self.parameter_type == "fastqFile":
                 parameter2 = join(sample_dir, f.replace('R1', 'R2'))
