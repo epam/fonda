@@ -15,7 +15,7 @@
   "genome": "/ngs/data/reference_genome/GRCh38/Sequence/GRCh38.genome.fa",
   "annotgenesaf": "/ngs/data/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.annotation.saf",
   "adapter_fwd": "AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC",
-  "java": "/ngs/data/app/java/v1.8.0u121/bin/java",
+  "java": "/usr/bin/java",
   "picard_version": "v2.10.3",
   "starindex": "/ngs/data/reference_genome/GRCh38/Index/STAR_gc26",
   "python": "/ngs/data/app/python/v2.7.2/bin/python",

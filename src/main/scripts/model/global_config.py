@@ -46,8 +46,13 @@ class GlobalConfig:
             cores_per_sample = 4
         if self.species == "human":
             self.genome_build = "GRCh38"
-        else:
+        elif self.species == "mouse":
             self.genome_build = "mm10"
+        elif self.species == "human,mouse":
+            self.genome_build = "hg19,mm10"
+        else:
+            raise RuntimeError(
+                'Failed to determine "species" parameter. Available species: "human"/"mouse"/"human,mouse"')
         flag_xenome = "yes" if flag_xenome == "True" or flag_xenome == "true" else "no"
         args_to_json = {"workflow": self.workflow,
                         "species": self.species,

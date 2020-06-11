@@ -23,7 +23,8 @@ from model.study_config import StudyConfig
 
 WORKFLOW_NAME = "RnaExpression_Fastq"
 TEMPLATE = "global_template_RnaExpressionFastq.txt"
-GLOBAL_CONFIG_TOOL_TEMPLATE_NAME = "RnaExpression_tool.json"
+GLOBAL_CONFIG_TOOL_TEMPLATE_NAME_HUMAN = "RnaExpression_tool_human.json"
+GLOBAL_CONFIG_TOOL_TEMPLATE_NAME_MOUSE = "RnaExpression_tool_mouse.json"
 
 
 def usage():
@@ -150,7 +151,9 @@ def main(script_name, argv):
     if not run:
         run = "{}_run".format(library_type)
     global_config = GlobalConfig(species, read_type, TEMPLATE, WORKFLOW_NAME, toolset)
-    global_config_path = global_config.create(GLOBAL_CONFIG_TOOL_TEMPLATE_NAME, None, flag_xenome=flag_xenome,
+    global_config_tool_template_name = GLOBAL_CONFIG_TOOL_TEMPLATE_NAME_HUMAN if species == "human" \
+        else GLOBAL_CONFIG_TOOL_TEMPLATE_NAME_MOUSE
+    global_config_path = global_config.create(global_config_tool_template_name, None, flag_xenome=flag_xenome,
                                               cores_per_sample=cores_per_sample)
     if os.path.isdir(fastq_list):
         fastq_list = FastqSampleManifest(read_type).create_by_folder(fastq_list, WORKFLOW_NAME, library_type)
