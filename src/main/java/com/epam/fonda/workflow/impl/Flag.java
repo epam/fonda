@@ -81,7 +81,7 @@ public class Flag {
                 .cufflinks(tasks.contains("cufflinks"))
                 .stringtie(tasks.contains("stringtie"))
                 .count(tasks.contains("count"))
-                .doubletDetection(tasks.contains("doubletDetection"))
+                .doubletDetection(tasks.contains("doubletdetection"))
                 .scrublet(tasks.contains("scrublet"))
                 .conversion(tasks.contains("conversion"))
                 .qc(tasks.contains("qc"))
