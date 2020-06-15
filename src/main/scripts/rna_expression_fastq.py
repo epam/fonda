@@ -151,8 +151,13 @@ def main(script_name, argv):
     if not run:
         run = "{}_run".format(library_type)
     global_config = GlobalConfig(species, read_type, TEMPLATE, WORKFLOW_NAME, toolset)
-    global_config_tool_template_name = GLOBAL_CONFIG_TOOL_TEMPLATE_NAME_HUMAN if species == "human" \
-        else GLOBAL_CONFIG_TOOL_TEMPLATE_NAME_MOUSE
+    if species == "human":
+        global_config_tool_template_name = GLOBAL_CONFIG_TOOL_TEMPLATE_NAME_HUMAN
+    elif species == "mouse":
+        global_config_tool_template_name = GLOBAL_CONFIG_TOOL_TEMPLATE_NAME_MOUSE
+    else:
+        raise RuntimeError('Failed to determine "species" parameter. Available species: "human"/"mouse"')
+
     global_config_path = global_config.create(global_config_tool_template_name, None, flag_xenome=flag_xenome,
                                               cores_per_sample=cores_per_sample)
     if os.path.isdir(fastq_list):
