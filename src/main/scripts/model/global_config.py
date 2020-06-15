@@ -26,7 +26,6 @@ class GlobalConfig:
         self.template = template
         self.workflow = workflow
         self.toolset = toolset
-        self.genome_build = None
         self.java_path = None
 
     def create(self, config_json, additional_options, flag_xenome=False, cores_per_sample=4):
@@ -44,14 +43,9 @@ class GlobalConfig:
             sys.exit(2)
         if not cores_per_sample:
             cores_per_sample = 4
-        if self.species == "human":
-            self.genome_build = "GRCh38"
-        else:
-            self.genome_build = "mm10"
         flag_xenome = "yes" if flag_xenome == "True" or flag_xenome == "true" else "no"
         args_to_json = {"workflow": self.workflow,
                         "species": self.species,
-                        "genome_build": self.genome_build,
                         "read_type": self.read_type,
                         "toolset": self.toolset,
                         "flag_xenome": flag_xenome,

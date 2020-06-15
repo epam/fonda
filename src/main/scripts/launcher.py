@@ -44,7 +44,7 @@ class Launcher:
                 if not os.path.isfile('{}fonda-{}.jar'.format(jar_folder, Launcher.FONDA_VERSION)):
                     jar_folder = "{}/".format(Path(__file__).parent.parent.parent.absolute())
                     if not os.path.isfile('{}fonda-{}.jar'.format(jar_folder, Launcher.FONDA_VERSION)):
-                        logging.error('Jar file was not found! Please put the jar file in a {} folder' + jar_folder)
+                        logging.error('Jar file was not found! Please put the jar file in a folder ' + jar_folder)
                         sys.exit(2)
         elif jar_folder is not None and not str(jar_folder).endswith("/"):
             jar_folder += "/"

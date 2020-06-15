@@ -1,4 +1,5 @@
 {
+  "genome_build": "GRCh38",
   "seqpurge": "/ngs/data/app/ngs-bits/v1.0/bin/SeqPurge",
   "bedtools": "/opt/bedtools2/v2.2.1/bin/bedtools",
   "mutect_java": "/usr/lib/jvm/java-7-openjdk-amd64/bin/java",

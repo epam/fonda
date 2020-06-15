@@ -1,9 +1,0 @@
-{
-    "genome": "/ngs/data/reference_genome/GRCh38/Sequence/GRCh38.genome.fa",
-    "transcriptome": "/ngs/data/reference_genome/GRCh38/Sequence/GRCh38.gencode.v26.pc_transcripts.fa",
-    "cellranger": "/ngs/data/tools/cellranger/v2.0.2/cellranger",
-    "java": "/ngs/data/app/java/v1.8.0u121/bin/java",
-    "python": "/ngs/data/app/python/v2.7.2/bin/python",
-    "Rscript": "/ngs/data/app/R/v3.5.0/bin/Rscript",
-    "doubletdetection_python": "/ngs/data/app/python/v3.5/bin/python3"
-}

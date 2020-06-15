@@ -1,0 +1,10 @@
+{
+    "genome_build": "mm10",
+    "genome": "/ngs/data/cellranger/references/refdata-cellranger-mm10-3.0.0",
+    "transcriptome": "/ngs/data/cellranger/references/refdata-cellranger-mm10-3.0.0",
+    "cellranger": "/ngs/data/tools/cellranger/v3.0.2/cellranger",
+    "java": "/usr/bin/java",
+    "python": "/ngs/data/app/python/v2.7.2/bin/python",
+    "Rscript": "/ngs/data/app/R/v3.5.0/bin/Rscript",
+    "doubletdetection_python": "/ngs/data/app/python/v3.5/bin/python3"
+}
