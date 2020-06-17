@@ -58,6 +58,7 @@ public class RNASeQC implements Tool<MetricsResult> {
         private String picard;
         private String java;
         private String python;
+        private String bwa;
     }
 
     @Data
@@ -145,6 +146,7 @@ public class RNASeQC implements Tool<MetricsResult> {
                 GlobalConfigFormat.RNA_SEQC);
         toolFields.rnaSeqcJava = validate(configuration.getGlobalConfig().getToolConfig().getRnaseqcJava(),
                 GlobalConfigFormat.RNA_SEQC_JAVA);
+        toolFields.bwa = configuration.getGlobalConfig().getToolConfig().getBwa();
         return toolFields;
     }
 
