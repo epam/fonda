@@ -30,6 +30,7 @@ rnaseqc = /ngs/data/tools/RNA-SeQC/v1.1.8/RNA-SeQC_v1.1.8.jar
 python = /ngs/data/app/python/v2.7.2/bin/python
 Rscript = /ngs/data/app/R/v3.5.0/bin/Rscript
 doubletdetection_python = /ngs/data/py/versions/3.5.2/bin/python
+bwa = /opt/bwa/bwa-0.7.9a/bwa
 
 [Pipeline_Info]
 workflow = RnaExpression_Fastq
