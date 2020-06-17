@@ -33,6 +33,7 @@ class RNASeQCTest extends AbstractTest {
     private static final String RNASEQC_TOOL_TEST_TEMPLATE_NAME = "RNASeQC_tool_test_output_data";
     private static final String RNASEQC_TOOL_TEST_TEMPLATE_NAME_WITHOUT_RNABED =
             "RNASeQC_tool_test_output_data_without_RNABED";
+    private static final String RNASEQC_TOOL_TEST_TEMPLATE_NAME_WITH_BWA = "RNASeQC_tool_test_output_data_with_bwa";
     private Configuration expectedConfiguration;
     private FastqFileSample expectedSample;
     private TemplateEngine expectedTemplateEngine = TemplateEngineUtils.init();
@@ -99,6 +100,15 @@ class RNASeQCTest extends AbstractTest {
         final String expectedCmd = expectedTemplateEngine.process(RNASEQC_TOOL_TEST_TEMPLATE_NAME_WITHOUT_RNABED,
                 context);
         expectedConfiguration.getGlobalConfig().getDatabaseConfig().setRRNABED(null);
+        final String actualCmd = rnaSeQC.generate(expectedConfiguration, expectedTemplateEngine).getCommand()
+                .getToolCommand();
+        assertEquals(expectedCmd, actualCmd);
+    }
+
+    @Test
+    void shouldGenerateWithBwa() {
+        final String expectedCmd = expectedTemplateEngine.process(RNASEQC_TOOL_TEST_TEMPLATE_NAME_WITH_BWA, context);
+        expectedConfiguration.getGlobalConfig().getToolConfig().setBwa("/opt/bwa/bwa-0.7.12/bwa");
         final String actualCmd = rnaSeQC.generate(expectedConfiguration, expectedTemplateEngine).getCommand()
                 .getToolCommand();
         assertEquals(expectedCmd, actualCmd);
