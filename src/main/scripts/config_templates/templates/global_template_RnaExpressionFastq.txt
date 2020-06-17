@@ -32,6 +32,7 @@ python = {{python}}
 Rscript = {{Rscript}}
 xenome = {{xenome}}
 trimmomatic = {{trimmomatic}}
+bwa = {{bwa}}
 
 [Pipeline_Info]
 workflow = {{workflow}}

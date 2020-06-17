@@ -22,5 +22,6 @@
   "python": "/ngs/data/app/python/v2.7.2/bin/python",
   "xenome": "/opt/xenome/xenome-1.0.1-r/xenome",
   "trimmomatic": "/ngs/data/tools/Trimmomatic/v0.36/trimmomatic-0.36.jar",
-  "adapter_seq": "/ngs/data/tools/Trimmomatic/v0.36/adapters/TruSeq3-PE-2.fa"
+  "adapter_seq": "/ngs/data/tools/Trimmomatic/v0.36/adapters/TruSeq3-PE-2.fa",
+  "bwa": "/opt/bwa/bwa-0.7.9a/bwa"
 }
