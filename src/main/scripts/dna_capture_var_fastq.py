@@ -35,7 +35,7 @@ def usage():
     print('-f <fastq_list> (required)       The path to the input manifest file or fastq folder '
           'or comma-delimited fastq file list for R1.\n')
     print('-q <fastq_list_r2>               The comma-delimited fastq file list for R2.\n')
-    print('-l <library_type> (required)     The sequencing library type: DNAWholeExomeSeq_Paired, '
+    print('-l <library_type>                The sequencing library type: DNAWholeExomeSeq_Paired, '
           'DNAWholeExomeSeq_Single, DNATargetSeq_Paired, DNATargetSeq_Single, DNAAmpliconSeq_Paired, etc.\n')
     print('-p <project>                     The project ID.\n')
     print('-r <run>                         The run ID.\n')
@@ -122,10 +122,6 @@ def parse_arguments(script_name, argv):
             print('The set of tools (-n <toolset>) is required')
             usage()
             sys.exit(2)
-        if not library_type:
-            print('The library type (-l <library_type>) is required')
-            usage()
-            sys.exit(2)
         return species, read_type, job_name, dir_out, fastq_list, fastq_list_r2, library_type, project, run, toolset, \
             flag_xenome, cores_per_sample, verbose, sync
     except getopt.GetoptError:
@@ -136,7 +132,8 @@ def parse_arguments(script_name, argv):
 def main(script_name, argv):
     species, read_type, job_name, dir_out, fastq_list, fastq_list_r2, library_type, project, run, toolset, \
         flag_xenome, cores_per_sample, verbose, sync = parse_arguments(script_name, argv)
-
+    if not library_type:
+        library_type = "DNASeq"
     if not job_name:
         job_name = "{}_job".format(library_type)
     if not run:
