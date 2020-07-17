@@ -4,11 +4,9 @@ job_name = pe_job
 
 dir_out = build/resources/integrationTest/output
 
-bam_list = build/resources/integrationTest/bamList.tsv
+fastq_list = build/resources/integrationTest/sc_fastq_list.txt
 
-fastq_list = build/resources/integrationTest/fastq_list.tsv
-
-LibraryType = DNA
+LibraryType = RNA
 
 DataGenerationSource = Internal
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,13 @@
 
 package com.epam.fonda.workflow.impl;
 
+import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.impl.QcSummary;
 import com.epam.fonda.tools.impl.SCRnaAnalysis;
+import com.epam.fonda.tools.impl.Vdj;
+import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.utils.TemplateEngineUtils;
 import com.epam.fonda.workflow.FastqWorkflow;
@@ -47,7 +50,18 @@ public class SCRnaExpressionCellRangerFastqWorkflow implements FastqWorkflow {
     @Override
     public void run(Configuration configuration, FastqFileSample sample) throws IOException {
         configuration.setCustTask("alignment");
-        BamResult bamResult = new Alignment().estimating(flag, sample, configuration, TEMPLATE_ENGINE);
+        BamResult bamResult;
+        if ("VDJ".equalsIgnoreCase(sample.getSampleType())) {
+            if (!flag.isVdj()) {
+                return;
+            }
+            bamResult = new Vdj(sample, BamResult.builder()
+                    .bamOutput(BamOutput.builder().build())
+                    .command(BashCommand.withTool("")).build())
+                    .generate(configuration, TEMPLATE_ENGINE);
+        } else {
+            bamResult = new Alignment().estimating(flag, sample, configuration, TEMPLATE_ENGINE);
+        }
 
         final String cmd = bamResult.getCommand().getToolCommand() +
                 cleanUpTmpDir(bamResult.getCommand().getTempDirs());

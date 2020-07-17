@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.epam.fonda.samples;
 
 import com.epam.fonda.entity.configuration.CommonOutdir;
@@ -41,6 +40,7 @@ public class SampleBuilderTest extends AbstractTest {
     private static final String BAM_FILE_LIST = "study_config/DnaCaptureVar_WES_SampleBamPaths.txt";
     private static final String BAM_FILE_LIST_NA = "study_config/DnaCaptureVar_WES_SampleBamPathsOnlyNA.txt";
     private static final String FASTQ_FILE_LIST = "study_config/RnaExpression_RNASeq_SampleFastqPaths.txt";
+    private static final String SC_FASTQ_FILE_LIST = "study_config/ScRnaExpression_SampleFastqPaths.txt";
     private static final String FASTQ_FILE_LIST_SINGLE = "study_config/RnaExpression_RNASeq_SampleFastqPathsSingle.txt";
     private static final String FASTQ_FILE_LIST_INCORRECT =
             "study_config/RnaExpression_RNASeq_SampleFastqPathsIncorrect.txt";
@@ -56,6 +56,19 @@ public class SampleBuilderTest extends AbstractTest {
         globalConfig = new GlobalConfig();
         CommonOutdir commonOutdir = new CommonOutdir("output");
         commonOutdir.createDirectory();
+    }
+
+    @Test
+    @SuppressWarnings("checkstyle:magicnumber")
+    void buildScFastqSamples() throws IOException {
+        globalConfig.getPipelineInfo().setReadType(PAIRED);
+        globalConfig.getPipelineInfo().setWorkflow(PipelineType.SC_RNA_EXPRESSION_CELLRANGER_FASTQ.getName());
+        studyConfig.setFastqList(new File(getClass().getClassLoader().
+                getResource(SC_FASTQ_FILE_LIST).getFile()).getAbsolutePath());
+        builder = new SampleBuilder(globalConfig, studyConfig);
+        List<FastqFileSample> sampleList = builder.buildFastqSamples(ROOT_DIR);
+
+        assertEquals(11, sampleList.size());
     }
 
     @Test

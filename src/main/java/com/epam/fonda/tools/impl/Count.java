@@ -23,7 +23,6 @@ import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
-import com.epam.fonda.utils.CellRangerUtils;
 import com.epam.fonda.utils.PipelineUtils;
 import com.epam.fonda.workflow.TaskContainer;
 import lombok.Data;
@@ -34,10 +33,17 @@ import org.apache.commons.lang3.Validate;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.lang.String.format;
+
 @Slf4j
 @RequiredArgsConstructor
 public class Count implements Tool<BamResult> {
     private static final String COUNT_TEMPLATE = "count_template";
+    private static final String LIBRARY_TEMPLATE = "library_csv_template";
     private static final String CELLRANGER_OUTPUT_FOLDER = "outs";
 
     @NonNull
@@ -51,8 +57,9 @@ public class Count implements Tool<BamResult> {
         private String cellRanger;
         private String rScript;
         private String sampleName;
-        private String fastqDir;
         private String transcriptome;
+        private String libraries;
+        private String featureRef;
         private String countOutdir;
         private String genomeBuild;
         private String expectedCells;
@@ -62,7 +69,6 @@ public class Count implements Tool<BamResult> {
         private String r1Length;
         private String r2Length;
         private String lanes;
-        private String indices;
         private String bam;
         private String matrixInfo;
         private int numThreads;
@@ -70,7 +76,7 @@ public class Count implements Tool<BamResult> {
 
     @Override
     public BamResult generate(Configuration configuration, TemplateEngine templateEngine) {
-        CountFields countFields = constructFields(configuration);
+        CountFields countFields = constructFields(configuration, templateEngine);
         Context context = new Context();
         context.setVariable("countFields", countFields);
         final String cmd = templateEngine.process(COUNT_TEMPLATE, context);
@@ -90,16 +96,17 @@ public class Count implements Tool<BamResult> {
      *                      logOutdir, rScript, fastqList, bamList.
      * @return type of {@link CountFields} with all set fields
      */
-    private CountFields constructFields(Configuration configuration) {
+    private CountFields constructFields(Configuration configuration, TemplateEngine templateEngine) {
         checkValues(configuration);
         CountFields countFields = new CountFields();
         countFields.jarPath = PipelineUtils.getExecutionPath(configuration);
         countFields.cellRanger = configuration.getGlobalConfig().getToolConfig().getCellranger();
         countFields.rScript = configuration.getGlobalConfig().getToolConfig().getRScript();
         countFields.sampleName = sample.getName();
-        countFields.fastqDir = String.join(",", CellRangerUtils.extractFastqDir(sample).getFastqDirs());
         countFields.transcriptome = configuration.getGlobalConfig().getDatabaseConfig().getTranscriptome();
-        countFields.countOutdir = String.format("%s/%s", configuration.getCommonOutdir().getRootOutdir(), "count");
+        countFields.libraries = createLibraryCsvFile(configuration, templateEngine);
+        countFields.featureRef = configuration.getGlobalConfig().getDatabaseConfig().getFeatureRef();
+        countFields.countOutdir = format("%s/%s", configuration.getCommonOutdir().getRootOutdir(), "count");
         PipelineUtils.createDir(countFields.countOutdir);
         countFields.genomeBuild = configuration.getGlobalConfig().getDatabaseConfig().getGenomeBuild();
         countFields.expectedCells = configuration.getGlobalConfig().getCellrangerConfig().getCellrangerExpectedCells();
@@ -109,13 +116,30 @@ public class Count implements Tool<BamResult> {
         countFields.r1Length = configuration.getGlobalConfig().getCellrangerConfig().getCellrangerR1Length();
         countFields.r2Length = configuration.getGlobalConfig().getCellrangerConfig().getCellrangerR2Length();
         countFields.lanes = configuration.getGlobalConfig().getCellrangerConfig().getCellrangerLanes();
-        countFields.indices = configuration.getGlobalConfig().getCellrangerConfig().getCellrangerIndices();
-        String samplePath = String.format("%s/%s", countFields.countOutdir, countFields.sampleName);
-        countFields.bam = String.format("%s/%s/possorted_genome_bam.bam", samplePath, CELLRANGER_OUTPUT_FOLDER);
-        countFields.matrixInfo = String.format("%s/%s/filtered_feature_bc_matrix", samplePath,
+        String samplePath = format("%s/%s", countFields.countOutdir, countFields.sampleName);
+        countFields.bam = format("%s/%s/possorted_genome_bam.bam", samplePath, CELLRANGER_OUTPUT_FOLDER);
+        countFields.matrixInfo = format("%s/%s/filtered_feature_bc_matrix", samplePath,
                 CELLRANGER_OUTPUT_FOLDER);
         countFields.numThreads = configuration.getGlobalConfig().getQueueParameters().getNumThreads();
         return countFields;
+    }
+
+    private String createLibraryCsvFile(final Configuration configuration, final TemplateEngine templateEngine) {
+        Context context = new Context();
+        final List<String> libraryFields = sample.getLibrary().stream()
+                .map(l -> String.join(",", l.getFastqDir(), l.getSampleName(), l.getLibraryType()))
+                .collect(Collectors.toList());
+        context.setVariable("libraries", libraryFields);
+        final String cmd = templateEngine.process(LIBRARY_TEMPLATE, context);
+        final String fileName = format("%s_library.txt", sample.getName());
+        final String path = format("%s/%s", configuration.getCommonOutdir().getShOutdir(), fileName);
+        try {
+            PipelineUtils.writeToFile(path, cmd,
+                    configuration.getGlobalConfig().getPipelineInfo().getLineEnding());
+            return path;
+        } catch (IOException e) {
+            throw new IllegalArgumentException(format("Cannot create %s file for count tool", fileName), e);
+        }
     }
 
     /**
@@ -132,6 +156,8 @@ public class Count implements Tool<BamResult> {
                 "RScript is not specified");
         Validate.notBlank(configuration.getGlobalConfig().getDatabaseConfig().getTranscriptome(),
                 "Transcriptome is not specified");
+        Validate.notBlank(configuration.getGlobalConfig().getDatabaseConfig().getFeatureRef(),
+                "Feature Reference CSV file is not specified");
         Validate.notBlank(configuration.getGlobalConfig().getDatabaseConfig().getGenomeBuild(),
                 "Genome build configuration is not specified");
         Validate.notBlank(cellrangerConfig.getCellrangerChemistry(), "CellRanger chemistry is not specified");
@@ -139,7 +165,6 @@ public class Count implements Tool<BamResult> {
                 "CellRanger expected is not specified");
         Validate.notBlank(cellrangerConfig.getCellrangerForcedCells(),
                 "CellRanger forced cells is not specified");
-        Validate.notBlank(cellrangerConfig.getCellrangerIndices(), "CellRanger indices is not specified");
         Validate.notBlank(cellrangerConfig.getCellrangerLanes(), "CellRanger lanes is not specified");
         Validate.notBlank(cellrangerConfig.getCellrangerNosecondary(),
                 "CellRanger nosecondary field is not specified");

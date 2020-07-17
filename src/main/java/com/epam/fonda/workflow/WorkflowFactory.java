@@ -25,7 +25,6 @@ import com.epam.fonda.workflow.impl.HlaTypingFastqWorkflow;
 import com.epam.fonda.workflow.impl.RnaExpressionBamWorkflow;
 import com.epam.fonda.workflow.impl.RnaExpressionFastqWorkflow;
 import com.epam.fonda.workflow.impl.RnaFusionFastqWorkflow;
-import com.epam.fonda.workflow.impl.SCImmuneProfileCellRangerFastqWorkflow;
 import com.epam.fonda.workflow.impl.SCRnaExpressionCellRangerFastqWorkflow;
 import com.epam.fonda.workflow.impl.TcrRepertoireFastqWorkflow;
 
@@ -47,7 +46,6 @@ public class WorkflowFactory {
             case SC_RNA_EXPRESSION_FASTQ: return new RnaExpressionFastqWorkflow(flag);
             case SC_RNA_EXPRESSION_CELLRANGER_FASTQ: return new SCRnaExpressionCellRangerFastqWorkflow(flag);
             case RNA_EXPRESSION_BAM: return new RnaExpressionBamWorkflow(flag);
-            case SC_IMMUNE_PROFILE_CELL_RANGER_FASTQ: return new SCImmuneProfileCellRangerFastqWorkflow(flag);
             case RNA_FUSION_FASTQ: return new RnaFusionFastqWorkflow(flag);
             case DNA_AMPLICON_VAR_FASTQ: return new DnaVarFastqWorkflow(flag, "Index mkdup bam");
             case DNA_CAPTURE_VAR_FASTQ: return new DnaVarFastqWorkflow(flag, "Index rmdup bam");

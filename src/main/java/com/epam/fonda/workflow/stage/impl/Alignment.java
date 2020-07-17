@@ -31,7 +31,6 @@ import com.epam.fonda.tools.impl.SCRNASeqDoubletDetection;
 import com.epam.fonda.tools.impl.Salmon;
 import com.epam.fonda.tools.impl.Star;
 import com.epam.fonda.tools.impl.StarFusion;
-import com.epam.fonda.tools.impl.Vdj;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.tools.results.FastqResult;
@@ -145,9 +144,6 @@ public class Alignment implements Stage {
         }
         if (flag.isDoubletDetection() || flag.isScrublet()) {
             result = new SCRNASeqDoubletDetection(sample).generate(configuration, templateEngine);
-        }
-        if (flag.isVdj()) {
-            bamResult = new Vdj(sample, bamResult).generate(configuration, templateEngine);
         }
 
         AbstractCommand command = bamResult.getCommand();

@@ -51,6 +51,7 @@ public final class GlobalConfigFormat {
     public static final String SNPSIFTDB = "SNPSIFTDB";
     public static final String ANNOTGENE = "ANNOTGENE";
     public static final String TRANSCRIPTOME = "TRANSCRIPTOME";
+    public static final String FEATURE_REFERENCE = "FEATURE_REFERENCE";
     public static final String ANNOTGENESAF = "ANNOTGENESAF";
     public static final String COSMIC = "COSMIC";
     public static final String MUTECT_NORMAL_PANEL = "MUTECT_NORMAL_PANEL";

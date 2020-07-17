@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,14 @@ package com.epam.fonda.samples.fastq;
 
 import com.epam.fonda.entity.configuration.DirectoryManager;
 import com.epam.fonda.samples.Sample;
+import com.epam.fonda.utils.CellRangerUtils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -54,6 +56,9 @@ public class FastqFileSample implements Sample, DirectoryManager {
     private String fastqOutdir;
     private String bamOutdir;
     private String qcOutdir;
+
+    // This field is only used for single-cell workflow
+    private List<LibraryCsv> library;
 
     /**
      * Add all fastq1 and fastq2 list of files to the source
@@ -91,5 +96,62 @@ public class FastqFileSample implements Sample, DirectoryManager {
     @Override
     public List<String> getDirs() {
         return Arrays.asList(sampleOutputDir, tmpOutdir, fastqOutdir, bamOutdir, qcOutdir);
+    }
+
+    /**
+     * Create library samples for single-cell workflow
+     * @param files primary built samples from a sample manifest
+     * @return library sample with {@link List<LibraryCsv>}
+     */
+    public static FastqFileSample mergeLibrarySamples(final List<FastqFileSample> files) {
+        final FastqFileSample sample = files.get(0);
+        List<LibraryCsv> libraries = new ArrayList<>();
+        final List<String> filesDirs = files.stream()
+                .map(f -> {
+                    List<String> dirs = CellRangerUtils.extractFastqDir(f).getFastqDirs();
+                    libraries.addAll(dirs.stream()
+                            .map(d -> LibraryCsv.builder()
+                                    .fastqDir(d)
+                                    .libraryType(mapLibraryType(f.getSampleType()))
+                                    .sampleName(f.getName())
+                                    .build())
+                            .collect(Collectors.toList()));
+                    return dirs;
+                })
+                .flatMap(Collection::stream)
+                .distinct()
+                .collect(Collectors.toList());
+        FastqFileSampleBuilder sampleBuilder = FastqFileSample.builder()
+                .name(sample.getControlName())
+                .sampleType("feature")
+                .fastqDirs(filesDirs)
+                .library(libraries)
+                .sampleOutputDir(sample.getSampleOutputDir())
+                .fastqOutdir(sample.getFastqOutdir())
+                .type(sample.getType())
+                .tmpOutdir(sample.getTmpOutdir())
+                .qcOutdir(sample.getQcOutdir())
+                .fastq1(files.stream()
+                        .map(FastqFileSample::getFastq1)
+                        .flatMap(Collection::stream)
+                        .collect(Collectors.toList()));
+        if (FastqReadType.PAIRED.equals(sample.getType())) {
+            sampleBuilder.fastq2(files.stream()
+                    .map(FastqFileSample::getFastq2)
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.toList()));
+        }
+        return sampleBuilder.build();
+    }
+
+    private static String mapLibraryType(final String sampleType) {
+        switch (sampleType) {
+            case "custom": return "Custom";
+            case "Antibody": return "Antibody Capture";
+            case "CRISPR Guide Capture": return "CRISPR Guide Capture";
+            case "GEX": return "Gene Expression";
+            default: throw new IllegalArgumentException(String.format("Requested %s library type is not allowed",
+                    sampleType));
+        }
     }
 }

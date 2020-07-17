@@ -90,6 +90,8 @@ public class GlobalConfig {
         private String annotgenesaf;
         @Parameter(names = GlobalConfigFormat.TRANSCRIPTOME)
         private String transcriptome;
+        @Parameter(names = GlobalConfigFormat.FEATURE_REFERENCE)
+        private String featureRef;
         @Parameter(names = GlobalConfigFormat.COSMIC)
         private String cosmic;
         @Parameter(names = GlobalConfigFormat.MUTECT_NORMAL_PANEL)
