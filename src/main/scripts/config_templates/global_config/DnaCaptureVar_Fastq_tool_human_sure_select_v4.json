@@ -1,5 +1,5 @@
 {
-  "genome_build": "GRCh38",
+  "genome_build": "hg19",
   "seqpurge": "/ngs/data/app/ngs-bits/v1.0/bin/SeqPurge",
   "bedtools": "/opt/bedtools2/v2.2.1/bin/bedtools",
   "mutect_java": "/usr/lib/jvm/java-7-openjdk-amd64/bin/java",
@@ -14,7 +14,7 @@
   "picard": "/ngs/data/tools/picard/v2.10.3/picard.jar",
   "picard_version": "v2.10.3",
   "gatk": "/opt/GATK/v3.7/GenomeAnalysisTK.jar",
-  "java": "/ngs/data/app/java/v1.8.0u121/bin/java",
+  "java": "/usr/bin/java",
   "vardict": "/opt/VarDictJava/v1.5.0",
   "samtools": "/ngs/data/tools/samtools/v0.1.19/samtools",
   "lofreq": "/opt/lofreq/v2.1.2/bin/lofreq",
@@ -28,12 +28,12 @@
   "cosmic": "/ngs/test/data/hg19_cosmic_v69_decoy.vcf",
   "mutect_normal_panel": "/ngs/test/data/refseq_exome_hg19_1kg_normal_panel_decoy.vcf",
   "bed_primer": "/ngs/test/data/CHP2_Capture_regions_including_primer.bed",
-  "bed": "/ngs/test/data/data_padded.bed",
-  "bed_with_header": "/ngs/test/data/CHP2_target_regions_hg19.interval_list",
-  "bed_with_coverage": "/ngs/test/data/CHP2_target_regions_hg19_interval_for_coverage.txt",
+  "bed": "/ngs/test/SureSelectHumanAllExon/v4/data_padded.bed",
+  "bed_with_header": "/ngs/test/data/SureSelectHumanAllExon/v4/padded_decoy_4.txt",
+  "bed_with_coverage": "/ngs/test/data/SureSelectHumanAllExon/v4/padded_decoy_4.txt",
   "snpsiftdb": "/opt/SnpEff/snpEff_v4.3p/snpEff/db",
   "canonical_transcript": "/ngs/test/data/prefer_ensembl_transcript.txt",
-  "mousexenomeindex": "/ngs/data/Index/Xenome/GRCh38.genome",
+  "mousexenomeindex": "/ngs/data/Index/Xenome/hg19.genome",
   "known_indels_mills": "/ngs/test/data/Mills_and_1000G_gold_standard.indels.hg19_decoy.vcf",
   "known_indels_phase1": "/ngs/test/data/1000G_phase1.indels.hg19_decoy.vcf"
 }
