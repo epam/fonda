@@ -1,3 +1,0 @@
-parameterType	shortName	Parameter1	Parameter2
-fastqFile	pbmc4k	/ngs/data/demo/test/fastq/pbmc4k_S1_L001_R1_001.fastq.gz	/ngs/data/demo/test/fastq/pbmc4k_S1_L001_R2_001.fastq.gz
-fastqFile	pbmc4k	/ngs/data/demo/test/fastq/pbmc4k_S1_L002_R1_001.fastq.gz	/ngs/data/demo/test/fastq/pbmc4k_S1_L002_R2_001.fastq.gz

@@ -9,6 +9,7 @@ SPECIES = human
 GENOME_BUILD = GRCh38
 GENOME = /ngs/data/tools/cellranger/references/GRCh38_2016_11_16
 TRANSCRIPTOME = /ngs/data/tools/cellranger/references/GRCh38_2016_11_16
+FEATURE_REFERENCE = /ngs/data/tools/cellranger/feature-ref-combined.csv
 
 [all_tools]
 cellranger = /ngs/data/tools/cellranger/v2.1.1/cellranger
@@ -23,7 +24,7 @@ doubletdetection_python = /ngs/data/py/versions/3.5.2/bin/python
 cellranger_EXPECTED_CELLS = 5000
 cellranger_FORCED_CELLS = NA
 cellranger_NOSECONDARY = FALSE
-cellranger_CHEMISTRY = auto
+cellranger_CHEMISTRY = SC5P-R2
 cellranger_R1-LENGTH = NA
 cellranger_R2-LENGTH = NA
 cellranger_LANES = NA
@@ -31,5 +32,5 @@ cellranger_INDICES = NA
 
 [Pipeline_Info]
 workflow = scRnaExpression_CellRanger_Fastq
-toolset = count+qc
+toolset = count+vdj+doubledetection+qc
 read_type = paired

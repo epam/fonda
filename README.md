@@ -75,8 +75,7 @@ For different pipeline utilities, the user needs to make sure the corresponding 
 | **RnaExpression_Fastq** | RNA sequencing data for gene expression analysis using fastq data |
 | **RnaExpression_Bam** | RNA sequencing data for gene expression analysis using bam data |
 | **scRnaExpression_Fastq** | single cell RNA sequencing data for gene expression analysis using fastq data |
-| **scRnaExpression_CellRanger_Fastq** | 10X single cell RNA sequencing data for gene expression analysis using fastq data |
-| **scRnaImmuneProfile_CellRanger_Fastq** | 10X single cell RNA/TCR/BCR sequencing data for immune profiling analysis using fastq data |
+| **scRnaExpression_CellRanger_Fastq** | 10X single cell RNA/TCR/BCR sequencing data for gene expression and immune profiling analysis using fastq data |
 | **scRnaExpression_Bam** | single cell RNA sequencing data for gene expression analysis using bam data |
 | **RnaFusion_Fastq** | RNA sequencing data for gene fusion detection using fastq data |
 | **TcrRepertoire_Fastq** | DNA or RNA sequencing data for TCR or BCR repertoire detection using fastq data |

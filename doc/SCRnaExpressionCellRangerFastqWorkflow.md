@@ -7,11 +7,12 @@ This document contains a description of the installation requirements, the steps
 
 ### Overall workflow description
 
-**SCRnaExpressionCellRangerFastq** workflow is 10X single cell RNA sequencing data analysis for gene expression used fastq data.
+**SCRnaExpressionCellRangerFastq** workflow is 10X single cell RNA/TCR/BCR sequencing data analysis for gene expression and immune profiling used fastq data.
 
 The workflow provides the following available tools for each analysis step:
 
 - sequence alignment and analysis: **count**
+- sequence assembly and paired clonotype calling: **cellranger vdj**
 - doublelet detection: **DoubletDetection**, **Scrublet**
 - qc: **qc**
 - data processing: **python**, **Rscript**
@@ -20,9 +21,11 @@ A workflow toolset could contain the following popular options:
 
 - `toolset=count`
 - `toolset=count+qc`
+- `toolset=count+vdj`
 - `toolset=count+doubletdetection+qc`
 - `toolset=count+scrublet+qc`
 - `toolset=count+doubletdetection+scrublet+qc`
+- `toolset=count+vdj+doubletdetection+qc`
 
 ### Software requirements
 
@@ -151,6 +154,7 @@ SPECIES = human,mouse
 GENOME_BUILD = hg19,mm10
 GENOME = /path/refdata-cellranger-hg19_and_mm10-1.2.0
 TRANSCRIPTOME = /path/refdata-cellranger-hg19_and_mm10-1.2.0
+FEATURE_REFERENCE = /ngs/data/tools/cellranger/feature-ref-combined.csv
 
 [all_tools]
 cellranger = /path/cellranger
@@ -171,9 +175,45 @@ cellranger_INDICES = NA
 
 [Pipeline_Info]
 workflow = scRnaExpression_CellRanger_Fastq
-toolset = count+qc+scrublet
+toolset = count+vdj+doubledetection+qc
 read_type = paired
 ```
+
+> Please note, that if you used **vdj** tool, **GENOME** folder should include regions.fa file. 
+
+Prepare input **sample_manifest** file that contains the sequencing FASTQ data.  
+Example template of the **SCRnaExpressionCellRangerFastq** workflow **sample_manifest.txt** file:
+
+``` bash
+parameterType	shortName	Parameter1	Parameter2	libtype master
+fastqFile	TestNode01GE	/fastq_data/TestNode01GE/TestNode01GE_S33_L001_R1_001.fastq.gz	/fastq_data/TestNode01GE/TestNode01GE_S33_L001_R2_001.fastq.gz	GEX	TestNode01
+fastqFile	TestNode01GE	/fastq_data/TestNode01GE/TestNode01GE_S33_L002_R1_001.fastq.gz	/fastq_data/TestNode01GE/TestNode01GE_S33_L002_R2_001.fastq.gz	GEX	TestNode01
+fastqFile	TestNode02GE	/fastq_data/TestNode02GE/TestNode02GE_S34_L001_R1_001.fastq.gz	/fastq_data/TestNode02GE/TestNode02GE_S34_L001_R2_001.fastq.gz	GEX	TestNode02
+fastqFile	TestNode02GE	/fastq_data/TestNode02GE/TestNode02GE_S34_L002_R1_001.fastq.gz	/fastq_data/TestNode02GE/TestNode02GE_S34_L002_R2_001.fastq.gz	GEX	TestNode02
+fastqFile	TestNode01dCode	/fastq_data/TestNode01dCode/TestNode01dCode_S1_L001_R1_001.fastq.gz	/fastq_data/TestNode01dCode/TestNode01dCode_S1_L001_R2_001.fastq.gz	custom	TestNode01
+fastqFile	TestNode01dCode	/fastq_data/TestNode01dCode/TestNode01dCode_S1_L002_R1_001.fastq.gz	/fastq_data/TestNode01dCode/TestNode01dCode_S1_L002_R2_001.fastq.gz	custom	TestNode01
+fastqFile	TestNode02dCode	/fastq_data/TestNode02dCode/TestNode02dCode_S2_L001_R1_001.fastq.gz	/fastq_data/TestNode02dCode/TestNode02dCode_S2_L001_R2_001.fastq.gz	custom	TestNode02
+fastqFile	TestNode02dCode	/fastq_data/TestNode02dCode/TestNode02dCode_S2_L002_R1_001.fastq.gz	/fastq_data/TestNode02dCode/TestNode02dCode_S2_L002_R2_001.fastq.gz	custom	TestNode02
+fastqFile	TestNode01VDJ	/fastq_data/TestNode01VDJ/TestNode01VDJ_S17_L001_R1_001.fastq.gz	/fastq_data/TestNode01VDJ/TestNode01VDJ_S17_L001_R2_001.fastq.gz	VDJ	TestNode01
+fastqFile	TestNode01VDJ	/fastq_data/TestNode01VDJ/TestNode01VDJ_S17_L002_R1_001.fastq.gz	/fastq_data/TestNode01VDJ/TestNode01VDJ_S17_L002_R2_001.fastq.gz	VDJ	TestNode01
+fastqFile	TestNode02VDJ	/fastq_data/TestNode02VDJ/TestNode02VDJ_S18_L001_R1_001.fastq.gz	/fastq_data/TestNode02VDJ/TestNode02VDJ_S18_L001_R2_001.fastq.gz	VDJ	TestNode02
+fastqFile	TestNode02VDJ	/fastq_data/TestNode02VDJ/TestNode02VDJ_S18_L002_R1_001.fastq.gz	/fastq_data/TestNode02VDJ/TestNode02VDJ_S18_L002_R2_001.fastq.gz	VDJ	TestNode02
+```
+
+This file outlines library information with the following columns:
+
+* **libtype** - specify to FONDA the library -  Antibody, custom, CRISPR Guide Capture, GEX, VDJ (only for **vdj** tool)
+
+The correspondence between the libtype in the sample manifest and the library_type in csv file for count tool:
+
+| libtype | library_type |
+| --- | --- |
+| _GEX_ | _Gene Expression_ |
+| _custom_ | _Custom_ |
+| _Antibody_ | _Antibody Capture_ |
+| _CRISPR Guide Capture_ | _CRISPR Guide Capture_ |
+
+* **master** - specify to FONDA the overall sample name
 
 Prepare **study_config** file that represents a configuration file for a particular study for a specific the NGS data analysis.  
 Example template of the **SCRnaExpressionCellRangerFastq** workflow **study\_config** file:

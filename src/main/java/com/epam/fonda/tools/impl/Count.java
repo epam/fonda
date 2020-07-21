@@ -69,6 +69,7 @@ public class Count implements Tool<BamResult> {
         private String r1Length;
         private String r2Length;
         private String lanes;
+        private String indices;
         private String bam;
         private String matrixInfo;
         private int numThreads;
@@ -116,6 +117,7 @@ public class Count implements Tool<BamResult> {
         countFields.r1Length = configuration.getGlobalConfig().getCellrangerConfig().getCellrangerR1Length();
         countFields.r2Length = configuration.getGlobalConfig().getCellrangerConfig().getCellrangerR2Length();
         countFields.lanes = configuration.getGlobalConfig().getCellrangerConfig().getCellrangerLanes();
+        countFields.indices = configuration.getGlobalConfig().getCellrangerConfig().getCellrangerIndices();
         String samplePath = format("%s/%s", countFields.countOutdir, countFields.sampleName);
         countFields.bam = format("%s/%s/possorted_genome_bam.bam", samplePath, CELLRANGER_OUTPUT_FOLDER);
         countFields.matrixInfo = format("%s/%s/filtered_feature_bc_matrix", samplePath,
@@ -161,11 +163,6 @@ public class Count implements Tool<BamResult> {
         Validate.notBlank(configuration.getGlobalConfig().getDatabaseConfig().getGenomeBuild(),
                 "Genome build configuration is not specified");
         Validate.notBlank(cellrangerConfig.getCellrangerChemistry(), "CellRanger chemistry is not specified");
-        Validate.notBlank(cellrangerConfig.getCellrangerExpectedCells(),
-                "CellRanger expected is not specified");
-        Validate.notBlank(cellrangerConfig.getCellrangerForcedCells(),
-                "CellRanger forced cells is not specified");
-        Validate.notBlank(cellrangerConfig.getCellrangerLanes(), "CellRanger lanes is not specified");
         Validate.notBlank(cellrangerConfig.getCellrangerNosecondary(),
                 "CellRanger nosecondary field is not specified");
         Validate.notBlank(cellrangerConfig.getCellrangerR1Length(), "CellRanger r1 length is not specified");
