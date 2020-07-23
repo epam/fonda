@@ -54,6 +54,8 @@ public class GlobalConfig {
         private String genomeBuild;
         @Parameter(names = GlobalConfigFormat.GENOME)
         private String genome;
+        @Parameter(names = GlobalConfigFormat.VDJ_GENOME)
+        private String vdjGenome;
         @Parameter(names = GlobalConfigFormat.STARINDEX)
         private String starIndex;
         @Parameter(names = GlobalConfigFormat.SALMONINDEX)

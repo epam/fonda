@@ -9,6 +9,7 @@ SPECIES = human
 GENOME_BUILD = GRCh38
 ANNOTGENE = /common/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.annotation.gtf
 GENOME = /common/reference_genome/GRCh38/Sequence/GRCh38.genome.fa
+VDJ_GENOME = /common/reference_genome/GRCh38/Sequence/refdata-cellranger-vdj-GRCm38-alts-ensembl-3.1.0
 TRANSCRIPTOME = /common/reference_genome/GRCh38/Sequence/GRCh38.gencode.v26.pc_transcripts.fa
 FEATURE_REFERENCE = /common/reference_genome/feature-ref-combined.csv
 STARINDEX = /common/reference_genome/GRCh38/Index/STAR_g26

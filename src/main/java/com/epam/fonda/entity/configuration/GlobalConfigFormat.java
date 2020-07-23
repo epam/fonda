@@ -61,6 +61,7 @@ public final class GlobalConfigFormat {
     public static final String MOUSE_XENOME_INDEX = "MOUSEXENOMEINDEX";
     public static final String SEQUENZA_GC50 = "SEQUENZA_GC50";
     public static final String CONTEST_POPAF = "CONTEST_POPAF";
+    public static final String VDJ_GENOME = "VDJ_GENOME";
 
     // [all_tools]
     public static final String BEDTOOLS = "bedtools";

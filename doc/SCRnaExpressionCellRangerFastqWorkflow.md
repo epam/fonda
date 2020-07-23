@@ -153,6 +153,7 @@ PE = -pe threaded
 SPECIES = human,mouse
 GENOME_BUILD = hg19,mm10
 GENOME = /path/refdata-cellranger-hg19_and_mm10-1.2.0
+VDJ_GENOME = /path/refdata-cellranger-vdj-hg19_and_mm10-1.2.0
 TRANSCRIPTOME = /path/refdata-cellranger-hg19_and_mm10-1.2.0
 FEATURE_REFERENCE = /ngs/data/tools/cellranger/feature-ref-combined.csv
 
