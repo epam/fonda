@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,11 +34,15 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.lang.String.format;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 
 /**
  * SampleBuilder is the one of the base configuration class
@@ -67,12 +71,13 @@ public class SampleBuilder {
         checkConfig(SampleType.FASTQ);
         final String fastqList = studyConfig.getFastqList();
         final Path filePath = checkSampleFile(fastqList);
-        return new ArrayList<>(Files.readAllLines(filePath).stream()
+        final ArrayList<FastqFileSample> fastqFileSamples = new ArrayList<>(Files.readAllLines(filePath).stream()
                 .skip(1)
                 .filter(StringUtils::isNotBlank)
                 .map(line -> parseFastqLine(line, rootOutdir))
                 .collect(Collectors.toMap(FastqFileSample::getName, s -> s, FastqFileSample::merge))
                 .values());
+        return isScWorkflow() ? buildScSamples(fastqFileSamples) : fastqFileSamples;
     }
 
     /**
@@ -89,7 +94,7 @@ public class SampleBuilder {
                 .skip(1)
                 .filter(StringUtils::isNotBlank)
                 .map(line -> parseBamLine(line, rootOutdir))
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     /**
@@ -141,6 +146,25 @@ public class SampleBuilder {
                 .matchControl(parameters.getMatchControl())
                 .controlName(parameters.getMatchControl())
                 .build();
+    }
+
+    private List<FastqFileSample> buildScSamples(final ArrayList<FastqFileSample> fastqFileSamples) {
+        final List<FastqFileSample> librarySamples = fastqFileSamples.stream()
+                .filter(s -> !"VDJ".equalsIgnoreCase(s.getSampleType()))
+                .collect(groupingBy(FastqFileSample::getControlName))
+                .values()
+                .stream()
+                .map(FastqFileSample::mergeLibrarySamples)
+                .collect(toList());
+        final List<FastqFileSample> vdjSamples = fastqFileSamples.stream()
+                .filter(s -> "VDJ".equalsIgnoreCase(s.getSampleType()))
+                .collect(toList());
+        return Stream.of(librarySamples, vdjSamples).flatMap(Collection::stream).collect(toList());
+    }
+
+    private boolean isScWorkflow() {
+        return PipelineType.SC_RNA_EXPRESSION_CELLRANGER_FASTQ.getName()
+                .equalsIgnoreCase(globalConfig.getPipelineInfo().getWorkflow());
     }
 
     /**

@@ -50,14 +50,14 @@ class SCRnaExpressionCellRangerFastqIntegrationTest extends AbstractIntegrationT
     private static final String SCRNA_EXPRESSION_FASTQ_STUDY_CONFIG =
             "scRnaExpressionCellRangerFastq/sscRnaExpressionCellRangerFastq.txt";
     private static final String TEST_SHELL_SCRIPT_TEMPLATE_PATH =
-            "output/sh_files/scRnaExpression_CellRanger_Fastq_alignment_for_smv1_analysis.sh";
+            "output/sh_files/scRnaExpression_CellRanger_Fastq_alignment_for_TestNode01_analysis.sh";
     private static final String SCRNA_EXPRESSION_FASTQ_COUNT_QC_GLOBAL_CONFIG =
             "scRnaExpressionCellRangerFastq/gCount.txt";
     private static final String SCRNA_EXPRESSION_FASTQ_COUNT_QC_DOUBLET_DETECTION_GLOBAL_CONFIG =
             "scRnaExpressionCellRangerFastq/gDoubletDetection.txt";
     private static final String SCRNA_EXPRESSION_FASTQ_COUNT_QC_SCRUBLET_GLOBAL_CONFIG =
             "scRnaExpressionCellRangerFastq/gScrublet.txt";
-    private static final String FASTQ_DIR = "/ngs/data/demo/test/fastq/smv1_GTGTTCTA_L004_R1_001.fastq.gz";
+    private static final String FASTQ_DIR = "/ngs/data/demo/test/fastq/TestNode01GE_GTGTTCTA_L004_R1_001.fastq.gz";
 
     private static final String FASTQ_1 = "fastq1";
     private static final String FASTQ_2 = "fastq2";

@@ -1,0 +1,3 @@
+fastqs,sample,library_type
+/path/to/sampleName,sampleName,Gene Expression
+

@@ -41,7 +41,6 @@ public enum PipelineType {
     RNA_EXPRESSION_BAM("RnaExpression_Bam"),
     RNA_CAPTURE_VAR_FASTQ("RnaCaptureVar_Fastq"),
     SC_RNA_EXPRESSION_CELLRANGER_FASTQ("scRnaExpression_CellRanger_Fastq"),
-    SC_IMMUNE_PROFILE_CELL_RANGER_FASTQ("scImmuneProfile_CellRanger_Fastq"),
     RNA_FUSION_FASTQ("RnaFusion_Fastq"),
     BAM_2_FASTQ("Bam2Fastq"),
     TCR_REPERTOIRE_FASTQ("TcrRepertoire_Fastq"),

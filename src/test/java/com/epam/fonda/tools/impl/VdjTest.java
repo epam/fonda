@@ -79,7 +79,7 @@ class VdjTest extends AbstractTest {
         GlobalConfig expectedGlobalConfig = new GlobalConfig();
         GlobalConfig.ToolConfig toolConfig = new GlobalConfig.ToolConfig();
         GlobalConfig.DatabaseConfig databaseConfig = new GlobalConfig.DatabaseConfig();
-        databaseConfig.setGenome("genome");
+        databaseConfig.setVdjGenome("genome");
         toolConfig.setCellranger("cellranger");
         expectedGlobalConfig.setToolConfig(toolConfig);
         expectedGlobalConfig.setDatabaseConfig(databaseConfig);

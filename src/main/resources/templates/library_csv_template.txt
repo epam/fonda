@@ -1,0 +1,3 @@
+fastqs,sample,library_type
+[# th:each="l : ${libraries}"][(${l})]
+[/]

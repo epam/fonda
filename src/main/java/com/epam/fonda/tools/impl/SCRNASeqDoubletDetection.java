@@ -81,7 +81,7 @@ public class SCRNASeqDoubletDetection {
     }
 
     /**
-     * This method initializes fields of the RSEM Expression {@link SCRNASeqDoubletDetection} class.
+     * This method initializes fields of the DoubleDetectionFields {@link SCRNASeqDoubletDetection} class.
      *
      * @param configuration
      * @return {@link DoubleDetectionFields} with set fields

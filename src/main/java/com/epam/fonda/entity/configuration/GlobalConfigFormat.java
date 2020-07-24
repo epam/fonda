@@ -51,6 +51,7 @@ public final class GlobalConfigFormat {
     public static final String SNPSIFTDB = "SNPSIFTDB";
     public static final String ANNOTGENE = "ANNOTGENE";
     public static final String TRANSCRIPTOME = "TRANSCRIPTOME";
+    public static final String FEATURE_REFERENCE = "FEATURE_REFERENCE";
     public static final String ANNOTGENESAF = "ANNOTGENESAF";
     public static final String COSMIC = "COSMIC";
     public static final String MUTECT_NORMAL_PANEL = "MUTECT_NORMAL_PANEL";
@@ -60,6 +61,7 @@ public final class GlobalConfigFormat {
     public static final String MOUSE_XENOME_INDEX = "MOUSEXENOMEINDEX";
     public static final String SEQUENZA_GC50 = "SEQUENZA_GC50";
     public static final String CONTEST_POPAF = "CONTEST_POPAF";
+    public static final String VDJ_GENOME = "VDJ_GENOME";
 
     // [all_tools]
     public static final String BEDTOOLS = "bedtools";

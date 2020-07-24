@@ -143,9 +143,6 @@ public class QcSummary implements PostProcessTool {
             case SC_RNA_EXPRESSION_CELLRANGER_FASTQ:
                 map.put(Variable.TAG, "Cellranger count");
                 break;
-            case SC_IMMUNE_PROFILE_CELL_RANGER_FASTQ:
-                map.put(Variable.TAG, "Cellranger vdj analysis");
-                break;
             default:
                 break;
         }

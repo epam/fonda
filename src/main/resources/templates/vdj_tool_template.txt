@@ -1,6 +1,6 @@
 echo `date` Begin Step: Cellranger vdj analysis...
 cd [(${sampleFields.vdjOutdir})]
-[(${vdjFields.cellranger})] vdj --localcores=[(${vdjFields.numThreads})] --id=[(${sampleFields.sampleName})] --reference=[(${vdjFields.genome})][# th:if = "${vdjFields.lanes != 'NA'}"] --lanes=[(${vdjFields.lanes})][/][# th:if = "${vdjFields.indices != 'NA'}"] --indices=[(${vdjFields.indices})][/][# th:if = "${vdjFields.denovo == 'TRUE'}"] --denovo=[(${vdjFields.denovo})][/] --fastqs=[(${sampleFields.fastqOutdir})] --sample=[(${sampleFields.sampleName})] --force-cells=[(${vdjFields.forcedCells})]
+[(${vdjFields.cellranger})] vdj --localcores=[(${vdjFields.numThreads})] --id=[(${sampleFields.sampleName})] --reference=[(${vdjFields.genome})][# th:if = "${vdjFields.lanes != 'NA'}"] --lanes=[(${vdjFields.lanes})][/][# th:if = "${vdjFields.indices != 'NA'}"] --indices=[(${vdjFields.indices})][/][# th:if = "${vdjFields.denovo == 'TRUE'}"] --denovo=[(${vdjFields.denovo})][/] --fastqs=[(${sampleFields.fastqOutdir})] --sample=[(${sampleFields.sampleName})] [# th:if = "${vdjFields.forcedCells != 'NA'}"]--force-cells=[(${vdjFields.forcedCells})][/]
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Cellranger vdj analysis.

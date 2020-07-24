@@ -22,6 +22,7 @@ import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.entity.configuration.GlobalConfig;
 import com.epam.fonda.entity.configuration.StudyConfig;
 import com.epam.fonda.samples.fastq.FastqFileSample;
+import com.epam.fonda.samples.fastq.LibraryCsv;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.utils.CellRangerUtils;
@@ -31,10 +32,14 @@ import org.junit.jupiter.api.Test;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collections;
 
 import static com.epam.fonda.utils.PipelineUtils.NA;
 import static com.epam.fonda.utils.PipelineUtils.getExecutionPath;
+import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -42,6 +47,7 @@ public class CountTest extends AbstractTest {
     private static final String COUNT_TEST_OUTPUT_DATA_PATH = "count_template_output";
     private static final String COUNT_TEST_OUTPUT_EXP_CELLS_DATA_PATH =
             "count_template_exp_cells_test_output";
+    private static final String LIBRARY_TEST_OUTPUT_DATA_PATH = "library_csv_template_output.txt";
     private Configuration expectedConfiguration;
     private Count count;
     private String jarPath;
@@ -52,10 +58,16 @@ public class CountTest extends AbstractTest {
     void init() {
         constructConfiguration();
         FastqFileSample expectedSample = new FastqFileSample();
-        expectedSample.setFastq1(Arrays.asList("fastq1", "fastq2"));
+        expectedSample.setFastq1(Arrays.asList("/path/to/sampleName/fastq1", "/path/to/sampleName/fastq2"));
         expectedSample.setName("sampleName");
         expectedSample.createDirectory();
         fastqDirs = String.join(",", CellRangerUtils.extractFastqDir(expectedSample).getFastqDirs());
+        final LibraryCsv libraryCsv = LibraryCsv.builder()
+                .sampleName("sampleName")
+                .fastqDir(fastqDirs)
+                .libraryType("Gene Expression")
+                .build();
+        expectedSample.setLibrary(Collections.singletonList(libraryCsv));
         BamOutput bamOutput = BamOutput.builder()
                 .bam("sampleName.toolName.sorted.bam")
                 .build();
@@ -68,15 +80,19 @@ public class CountTest extends AbstractTest {
     }
 
     @Test
-    void generate() {
+    void generate() throws IOException {
         Context context = new Context();
         context.setVariable("jarPath", jarPath);
         context.setVariable("fastqDirs", fastqDirs);
         final String expectedCmd = expectedTemplateEngine.process(COUNT_TEST_OUTPUT_DATA_PATH, context);
         final String actualCmd = count.generate(expectedConfiguration, expectedTemplateEngine).getCommand()
                 .getToolCommand();
+        final String expectedLibraryCsv = expectedTemplateEngine.process(LIBRARY_TEST_OUTPUT_DATA_PATH, context);
+        final String actualLibraryCsv = readFile(Paths.get(
+                format("%s/sampleName_library.txt", expectedConfiguration.getCommonOutdir().getShOutdir())));
 
         assertEquals(expectedCmd, actualCmd);
+        assertEquals(expectedLibraryCsv, actualLibraryCsv);
     }
 
     @Test
@@ -112,6 +128,7 @@ public class CountTest extends AbstractTest {
         expectedConfiguration.getGlobalConfig().getToolConfig().setRScript("rScript");
         expectedConfiguration.getStudyConfig().setFastqList("fastqList");
         expectedConfiguration.getGlobalConfig().getDatabaseConfig().setTranscriptome("transcriptome");
+        expectedConfiguration.getGlobalConfig().getDatabaseConfig().setFeatureRef("feature_ref.csv");
         expectedConfiguration.getGlobalConfig().getDatabaseConfig().setGenomeBuild("test1");
         CommonOutdir commonOutdir = new CommonOutdir("output");
         commonOutdir.createDirectory();

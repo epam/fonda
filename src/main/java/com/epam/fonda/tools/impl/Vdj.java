@@ -126,8 +126,8 @@ public class Vdj implements Tool<BamResult> {
                 GlobalConfigFormat.CELLRANGER_FORCED_CELLS);
         vdjFields.indices = configuration.getGlobalConfig().getCellrangerConfig().getCellrangerIndices();
         vdjFields.lanes = configuration.getGlobalConfig().getCellrangerConfig().getCellrangerLanes();
-        vdjFields.genome = validate(configuration.getGlobalConfig().getDatabaseConfig().getGenome(),
-                GlobalConfigFormat.GENOME);
+        vdjFields.genome = validate(configuration.getGlobalConfig().getDatabaseConfig().getVdjGenome(),
+                GlobalConfigFormat.VDJ_GENOME);
         vdjFields.numThreads = configuration.getGlobalConfig().getQueueParameters().getNumThreads();
     }
 }

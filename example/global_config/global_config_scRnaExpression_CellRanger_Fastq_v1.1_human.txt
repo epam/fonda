@@ -8,7 +8,9 @@ PE = -pe threaded
 SPECIES = human
 GENOME_BUILD = GRCh38
 GENOME = /ngs/data/tools/cellranger/references/GRCh38_2016_11_16
+VDJ_GENOME = /ngs/data/tools/cellranger/references/refdata-cellranger-vdj-GRCh38_2016_11_16
 TRANSCRIPTOME = /ngs/data/tools/cellranger/references/GRCh38_2016_11_16
+FEATURE_REFERENCE = /ngs/data/tools/cellranger/feature-ref-combined.csv
 
 [all_tools]
 cellranger = /ngs/data/tools/cellranger/v2.1.1/cellranger
@@ -31,5 +33,5 @@ cellranger_INDICES = NA
 
 [Pipeline_Info]
 workflow = scRnaExpression_CellRanger_Fastq
-toolset = count+qc
+toolset = count+vdj+doubledetection+qc
 read_type = paired
