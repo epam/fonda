@@ -16,6 +16,7 @@ ADAPTER_FWD = {{adapter_fwd}}
 ADAPTER_REV = {{adapter_rev}}
 MOUSEXENOMEINDEX = {{mousexenomeindex}}
 ADAPTER_SEQ = {{adapter_seq}}
+GENOME_LOAD = {{genome_load}}
 
 [all_tools]
 star = {{star}}

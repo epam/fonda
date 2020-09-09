@@ -28,7 +28,7 @@ class GlobalConfig:
         self.toolset = toolset
         self.java_path = None
 
-    def create(self, config_json, additional_options, flag_xenome=False, cores_per_sample=4):
+    def create(self, config_json, additional_options, flag_xenome=False, cores_per_sample=4, genome_load=None):
         if not self.workflow:
             print("Workflow name is required")
             sys.exit(2)
@@ -49,7 +49,8 @@ class GlobalConfig:
                         "read_type": self.read_type,
                         "toolset": self.toolset,
                         "flag_xenome": flag_xenome,
-                        "numthreads": cores_per_sample}
+                        "numthreads": cores_per_sample,
+                        "genome_load": genome_load}
         main_dir = os.path.dirname(os.path.realpath(__import__("__main__").__file__))
         with open("{}/config_templates/global_config/{}".format(main_dir, config_json)) as file:
             data = json.load(file)
