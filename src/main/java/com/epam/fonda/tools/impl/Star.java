@@ -68,6 +68,7 @@ public class Star implements Tool<BamResult> {
         private String index;
         private String annotgene;
         private int numThreads;
+        private String genomeLoad;
     }
 
     private static final String STAR_TOOL_TEMPLATE_NAME = "star_tool_template";
@@ -154,6 +155,8 @@ public class Star implements Tool<BamResult> {
         additionalStarFields.index = validate(configuration.getGlobalConfig().getDatabaseConfig().getStarIndex(),
                 GlobalConfigFormat.STARINDEX);
         additionalStarFields.annotgene = configuration.getGlobalConfig().getDatabaseConfig().getAnnotgene();
+        final String genomeLoad = configuration.getGlobalConfig().getDatabaseConfig().getGenomeLoad();
+        additionalStarFields.genomeLoad = StringUtils.isBlank(genomeLoad) ? "NoSharedMemory" : genomeLoad;
         return additionalStarFields;
     }
 
