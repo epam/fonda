@@ -112,6 +112,8 @@ public class GlobalConfig {
         private String sequenzaGc50;
         @Parameter(names = GlobalConfigFormat.CONTEST_POPAF)
         private String contEstPopAF;
+        @Parameter(names = GlobalConfigFormat.GENOME_LOAD)
+        private String genomeLoad;
     }
 
     @Data

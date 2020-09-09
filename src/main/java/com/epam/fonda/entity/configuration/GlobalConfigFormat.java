@@ -62,6 +62,7 @@ public final class GlobalConfigFormat {
     public static final String SEQUENZA_GC50 = "SEQUENZA_GC50";
     public static final String CONTEST_POPAF = "CONTEST_POPAF";
     public static final String VDJ_GENOME = "VDJ_GENOME";
+    public static final String GENOME_LOAD = "GENOME_LOAD";
 
     // [all_tools]
     public static final String BEDTOOLS = "bedtools";

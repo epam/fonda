@@ -50,6 +50,8 @@ class StarTest extends AbstractTest {
             "templates/star_tool_with_rmdup_test_output_data.txt";
     private static final String STAR_TOOL_WITH_QC_TEST_OUTPUT_DATA_PATH =
              "star_tool_with_qc_test_output_data";
+    private static final String STAR_TOOL_WITH_GENOME_LOAD_OUTPUT_DATA_PATH =
+            "templates/star_tool_with_load_and_remove_genome_load.txt";
     private static final String SBAM_OUTDIR_SAMPLE_NAME_STAR_SORTED_BAM = "sbamOutdir/sampleName.star.sorted.bam";
     private Configuration expectedConfiguration;
     private GlobalConfig expectedGlobalConfig;
@@ -152,5 +154,21 @@ class StarTest extends AbstractTest {
                 .generate(expectedConfiguration, expectedTemplateEngine);
         assertEquals(expectedCmd, bamResult.getCommand().getToolCommand() +
                 metricsResult.getCommand().getToolCommand());
+    }
+
+    @Test
+    void shouldGenerateWithGenomeLoad() throws IOException, URISyntaxException {
+        expectedDatabaseConfig.setGenomeLoad("LoadAndRemove");
+        expectedGlobalConfig.setDatabaseConfig(expectedDatabaseConfig);
+        expectedPipelineInfo.setToolset(new LinkedHashSet<>());
+        expectedGlobalConfig.setPipelineInfo(expectedPipelineInfo);
+        Flag flag = Flag.buildFlags(expectedConfiguration);
+        Star star = new Star(flag, expectedSample, fastqOutput);
+        Path path = Paths.get(Objects.requireNonNull(this.getClass().getClassLoader()
+                .getResource(STAR_TOOL_WITH_GENOME_LOAD_OUTPUT_DATA_PATH)).toURI());
+        byte[] fileBytes = Files.readAllBytes(path);
+        String expectedCmd = new String(fileBytes);
+        bamResult = star.generate(expectedConfiguration, expectedTemplateEngine);
+        assertEquals(expectedCmd, bamResult.getCommand().getToolCommand());
     }
 }

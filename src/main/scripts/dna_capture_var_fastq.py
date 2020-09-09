@@ -28,6 +28,7 @@ GLOBAL_CONFIG_TOOL_TEMPLATE_NAME_HUMAN_SURE_SELECT_V5 = "DnaCaptureVar_Fastq_too
 GLOBAL_CONFIG_TOOL_TEMPLATE_NAME_HUMAN_SURE_SELECT_V6 = "DnaCaptureVar_Fastq_tool_human_sure_select_v6.json"
 GLOBAL_CONFIG_TOOL_TEMPLATE_NAME_MOUSE_EXOME_V1 = "DnaCaptureVar_Fastq_tool_mouse_exome_v1.json"
 
+
 def usage():
     print('Usage:\n')
     print('-s <species> (required)          The species (human/mouse).\n')
