@@ -15,6 +15,7 @@ ANNOTGENESAF = /ngs/data/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.
 rRNABED = /ngs/data/reference_genome/GRCh38/Annotation/Gencode_v26/gencode.v26.rRNA.list
 ADAPTER_FWD = AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC
 ADAPTER_REV = AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT
+GENOME_LOAD = LoadAndRemove
 
 [all_tools]
 star = /ngs/data/tools/STAR/v2.4.0h1/bin/Linux_x86_64/STAR
