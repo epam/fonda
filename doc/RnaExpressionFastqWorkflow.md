@@ -235,6 +235,7 @@ MOUSEXENOMEINDEX = /data/test-fonda/Index/Xenome/GRCh38.genome
 ADAPTER_SEQ = /data/test-fonda/trim_adapters
 HISAT2INDEX = /data/test-fonda/Index/HISAT2_gc26/GRCh38.genome
 SALMONINDEX = /data/test-fonda/Index/salmon_index
+GENOME_LOAD = LoadAndRemove
 
 [all_tools]
 star = /opt/STAR/STAR-STAR_2.4.0h1/bin/Linux_x86_64/STAR

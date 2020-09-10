@@ -61,7 +61,7 @@ Users should choose to set the tools and databases as their specific pipeline ne
 | --- | --- |
 | **\[Queue_Parameters\]** | NUMTHREADS (4)<br/>MAXMEM (8g)<br/>QUEUE (all.q/c32.q)<br/>PE (-pe threaded) |
 | **\[all\_tools\]**<br/>need to install properly before running Fonda pipeline | star, hisat2, seqpurge, trimmomatic, java, rnaseqc_java, python, Rscript, cufflinks, rsem, stringtie, feature_count, samtools, picard, rnaseqc, xenome, src_scripts |
-| **\[Databases\]**<br/>need to download/prepare properly before running Fonda pipeline | SPECIES (human/mouse)<br/>ANNOTGENE<br/>GENOME<br/>GENOME_BUILD (hg19/GRCh38)<br/>TRANSCRIPTOME<br/>ANNOTGENESAF<br/>STARINDEX (for star)<br/>MOUSEXENOMEINDEX (for xenome)<br/>ADAPTER_SEQ (for seqpurge)<br/>ADAPTER_FWD (for trimmomatic)<br/>ADAPTER_REV (for trimmomatic) |
+| **\[Databases\]**<br/>need to download/prepare properly before running Fonda pipeline | SPECIES (human/mouse)<br/>ANNOTGENE<br/>GENOME<br/>GENOME_BUILD (hg19/GRCh38)<br/>TRANSCRIPTOME<br/>ANNOTGENESAF<br/>STARINDEX (for star)<br/>MOUSEXENOMEINDEX (for xenome)<br/>ADAPTER_SEQ (for seqpurge)<br/>ADAPTER_FWD (for trimmomatic)<br/>ADAPTER_REV (for trimmomatic)<br/>GENOME_LOAD (STAR tool option controls how the genome is loaded into memory) |
 | **\[Pipeline_Info\]** | workflow<br/>toolset<br/>flag_xenome (yes/no)<br/>read_type (paired/single) |
 
 ### DnaCaptureVar_Fastq
