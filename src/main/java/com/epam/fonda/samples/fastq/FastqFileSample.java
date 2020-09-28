@@ -24,6 +24,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -85,8 +86,9 @@ public class FastqFileSample implements Sample, DirectoryManager {
      * @param file received file to merge
      */
     private void checkParameters(final FastqFileSample file) {
-        if (!Objects.equals(this.getMatchControl(), file.getMatchControl()) ||
-                !this.getSampleType().equals(file.getSampleType())) {
+        if ((!Objects.equals(this.getMatchControl(), file.getMatchControl()) ||
+                !this.getSampleType().equals(file.getSampleType()))
+                && !StringUtils.containsIgnoreCase(file.getName(), "ADT")) {
             log.error(String.format("Error Step: %s has multiple sample types or matched controls!" +
                     " Please check!", file.getName()));
             throw new IllegalArgumentException("Multiple sample types or matched controls in a sample");
