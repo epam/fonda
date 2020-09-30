@@ -33,5 +33,5 @@ cellranger_INDICES = NA
 
 [Pipeline_Info]
 workflow = scRnaExpression_CellRanger_Fastq
-toolset = count+vdj+doubledetection+qc
+toolset = count+vdj+qc
 read_type = paired
