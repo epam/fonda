@@ -1,6 +1,7 @@
 {
     "genome_build": "GRCh38",
     "genome": "/ngs/data/cellranger/references/refdata-cellranger-GRCh38-3.0.0",
+    "vdj_genome": "/ngs/data/cellranger/references/refdata-cellranger-vdj-GRCh38-alts-ensembl-3.1.0",
     "transcriptome": "/ngs/data/cellranger/references/refdata-cellranger-GRCh38-3.0.0",
     "cellranger": "/ngs/data/tools/cellranger/v3.0.2/cellranger",
     "java": "/usr/bin/java",

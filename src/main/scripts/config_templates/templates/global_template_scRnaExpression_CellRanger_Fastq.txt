@@ -1,6 +1,6 @@
 [Queue_Parameters]
-NUMTHREADS = 4
-MAXMEM = 24g
+NUMTHREADS = 8
+MAXMEM = 50g
 QUEUE = all.q
 PE = -pe threaded
 
@@ -8,7 +8,9 @@ PE = -pe threaded
 SPECIES = {{species}}
 GENOME_BUILD = {{genome_build}}
 GENOME = {{genome}}
+VDJ_GENOME = {{vdj_genome}}
 TRANSCRIPTOME = {{transcriptome}}
+FEATURE_REFERENCE = {{feature_reference}}
 
 [all_tools]
 cellranger = {{cellranger}}
@@ -20,7 +22,7 @@ doubletdetection_python = {{doubletdetection_python}}
 [cellranger]
 cellranger_EXPECTED_CELLS = {{expected_cells}}
 cellranger_FORCED_CELLS = {{forced_cells}}
-cellranger_NOSECONDARY = FALSE
+cellranger_NOSECONDARY = {{nosecondary}}
 cellranger_CHEMISTRY = {{chemistry}}
 cellranger_R1-LENGTH = {{r1_length}}
 cellranger_R2-LENGTH = {{r2_length}}
