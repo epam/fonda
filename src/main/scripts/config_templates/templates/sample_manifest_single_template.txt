@@ -1,4 +1,5 @@
-parameterType{{tab}}shortName{{tab}}Parameter1
+parameterType{{tab}}shortName{{tab}}Parameter1{{tab}}libtype{{tab}}master
 {% for file in files %}
-{{parameter_type}}{{tab}}{{file.sample_name}}{{tab}}{{file.parameter_1}}
+{{parameter_type}}{{tab}}{{file.sample_name}}{{tab}}{{file.parameter_1}}{% if file.libtype is defined and file.libtype|length %}{{tab}}{{file.libtype}}{% else %}{% endif %}{% if file.master is defined and file.master|length %}{{tab}}{{file.master}}{% else %}{% endif %}
+
 {% endfor %}

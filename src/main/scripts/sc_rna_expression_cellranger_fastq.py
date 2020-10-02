@@ -35,7 +35,12 @@ def usage():
     print('-o <dir_out> (required)          The output directory for the analysis.\n')
     print('-b <feature_reference>(required) A feature reference csv file that declares the set of Feature Barcode '
           'reagents in use in the experiment.\n')
-    print('-l <fastq_list> (required)       The path to the input manifest file. \n')
+    print('-l <fastq_list> (required)       The path to the input manifest file or fastq folder '
+          'or comma-delimited fastq file list for R1.\n')
+    print('-q <fastq_list_r2>               The comma-delimited fastq file list for R2.\n')
+    print('-L <library_type>                The list of library types of each libraries will enable additional '
+          'downstream processing, specifically for CRISPR Guide Capture and Antibody Capture.\n')
+    print('-M <master>                      The list of the overall sample names.\n')
     print('-e <expected_cells>              The expected number of recovered cells.\n')
     print('-f <forced_cells>                Force pipeline to use this number of cells, bypassing the cell '
           'detection algorithm.\n')
@@ -62,6 +67,9 @@ def parse_arguments(script_name, argv):
     dir_out = None
     feature_reference = None
     fastq_list = None
+    fastq_list_r2 = None
+    library_type = None
+    master = None
     expected_cells = None
     forced_cells = None
     chemistry = None
@@ -79,28 +87,36 @@ def parse_arguments(script_name, argv):
     sync = None
     verbose = None
     try:
-        opts, args = getopt.getopt(argv, "hs:t:j:o:b:l:e:f:c:a:R:r:G:m:g:d:p:u:n:k:v", ["help", "species=",
-                                                                                        "read_type=", "job_name=",
-                                                                                        "dir_out=",
-                                                                                        "feature_reference=",
-                                                                                        "fastq_list=",
-                                                                                        "expected_cells=",
-                                                                                        "forced_cells=", "chemistry=",
-                                                                                        "nosecondary=",
-                                                                                        "r1_length=", "r2_length=",
-                                                                                        "genome_build=",
-                                                                                        "transcriptome=", "vdj_genome=",
-                                                                                        "detect_doublet=", "project=",
-                                                                                        "run=",
-                                                                                        "toolset=", "cores_per_sample=",
-                                                                                        "sync=", "verbose"])
+        opts, args = getopt.getopt(argv, "hs:t:j:o:b:l:q:L:M:e:f:c:a:R:r:G:m:g:d:p:u:n:k:v", ["help", "species=",
+                                                                                              "read_type=", "job_name=",
+                                                                                              "dir_out=",
+                                                                                              "feature_reference=",
+                                                                                              "fastq_list=",
+                                                                                              "fastq_list_r2=",
+                                                                                              "library_type=",
+                                                                                              "master=",
+                                                                                              "expected_cells=",
+                                                                                              "forced_cells=",
+                                                                                              "chemistry=",
+                                                                                              "nosecondary=",
+                                                                                              "r1_length=",
+                                                                                              "r2_length=",
+                                                                                              "genome_build=",
+                                                                                              "transcriptome=",
+                                                                                              "vdj_genome=",
+                                                                                              "detect_doublet=",
+                                                                                              "project=", "run=",
+                                                                                              "toolset=",
+                                                                                              "cores_per_sample=",
+                                                                                              "sync=", "verbose"])
         for opt, arg in opts:
             if opt == '-h':
                 print(script_name + ' -s <species> -t <read_type> -j <job_name> -o <dir_out> -b <feature_reference> '
-                                    '-l <fastq_list> -e <expected_cells> -f <forced_cells> -c <chemistry> '
-                                    '-a <nosecondary> -R <r1_length> -r <r2_length> -G <genome_build> '
-                                    '-m <transcriptome> -g <vdj_genome> -d <detect_doublet> -p <project> -u <run> '
-                                    '-n <toolset> -k <cores_per_sample> <sync> -v <verbose>')
+                                    '-l <fastq_list> -q <fastq_list_r2> -L <library_type> -M <master> '
+                                    '-e <expected_cells> -f <forced_cells> -c <chemistry> -a <nosecondary> '
+                                    '-R <r1_length> -r <r2_length> -G <genome_build> -m <transcriptome> -g <vdj_genome>'
+                                    ' -d <detect_doublet> -p <project> -u <run> -n <toolset> -k <cores_per_sample> '
+                                    '<sync> -v <verbose>')
                 sys.exit()
             elif opt in ("-s", "--species"):
                 species = arg
@@ -114,6 +130,12 @@ def parse_arguments(script_name, argv):
                 feature_reference = arg
             elif opt in ("-l", "--fastq_list"):
                 fastq_list = arg
+            elif opt in ("-q", "--fastq_list_r2"):
+                fastq_list_r2 = arg
+            elif opt in ("-L", "--library_type"):
+                library_type = arg
+            elif opt in ("-M", "--master"):
+                master = arg
             elif opt in ("-e", "--expected_cells"):
                 expected_cells = arg
             elif opt in ("-f", "--forced_cells"):
@@ -186,20 +208,21 @@ def parse_arguments(script_name, argv):
             print('The path to the Cell Ranger V(D)J compatible reference (-g <vdj_genome>) is required')
             usage()
             sys.exit(2)
-        return species, read_type, job_name, dir_out, feature_reference, fastq_list, expected_cells, forced_cells, \
-            chemistry, nosecondary, r1_length, r2_length, genome_build, transcriptome, vdj_genome, detect_doublet, \
-            project, run, toolset, cores_per_sample, verbose, sync
+        return species, read_type, job_name, dir_out, feature_reference, fastq_list, fastq_list_r2, library_type, \
+            master, expected_cells, forced_cells, chemistry, nosecondary, r1_length, r2_length, genome_build, \
+            transcriptome, vdj_genome, detect_doublet, project, run, toolset, cores_per_sample, verbose, sync
     except getopt.GetoptError:
         usage()
         sys.exit(2)
 
 
 def main(script_name, argv):
-    species, read_type, job_name, dir_out, feature_reference, fastq_list, expected_cells, forced_cells, chemistry, \
-        nosecondary, r1_length, r2_length, genome_build, transcriptome, vdj_genome, detect_doublet, project, run, \
-        toolset, cores_per_sample, verbose, sync = parse_arguments(script_name, argv)
+    species, read_type, job_name, dir_out, feature_reference, fastq_list, fastq_list_r2, libtype, master, \
+        expected_cells, forced_cells, chemistry, nosecondary, r1_length, r2_length, genome_build, transcriptome, \
+        vdj_genome, detect_doublet, project, run, toolset, cores_per_sample, verbose, sync = \
+        parse_arguments(script_name, argv)
 
-    library_type = "RNASeq"
+    library_type = "scRNASeq"
     if not read_type:
         read_type = "paired"
     if not job_name:
@@ -237,6 +260,16 @@ def main(script_name, argv):
 
     global_config_path = global_config.create(global_config_tool_template_name, additional_options,
                                               cores_per_sample=cores_per_sample)
+    if os.path.isdir(fastq_list):
+        fastq_list = FastqSampleManifest(read_type).create_by_folder(fastq_list, WORKFLOW_NAME, library_type)
+    elif 'fastq.gz' in str(fastq_list).split(',')[0]:
+        sample_libtype = list(str(libtype).split(',')) if libtype else None
+        sample_master = list(str(master).split(',')) if master else None
+        fastq_list = FastqSampleManifest(read_type).create_by_list(list(str(fastq_list).split(',')),
+                                                                   list(str(fastq_list_r2).split(',')),
+                                                                   WORKFLOW_NAME, library_type,
+                                                                   sample_libtype=sample_libtype,
+                                                                   sample_master=sample_master)
     study_config = StudyConfig(job_name, dir_out, fastq_list, None, library_type, run, project=project)
     study_config_path = study_config.parse(workflow=WORKFLOW_NAME)
     Launcher.launch(global_config_path, study_config_path, sync, java_path=global_config.java_path, verbose=verbose)
