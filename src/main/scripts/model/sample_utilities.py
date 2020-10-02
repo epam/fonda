@@ -22,6 +22,8 @@ def get_sample_name(f, sample_dir):
             last_folder.split('Sample_')[1] in f:
         return last_folder.split('Sample_')[1]
     elif len(sample_dir.strip()) != 0 and len(f.split(sample_dir)) > 0:
+        if last_folder in f.split(sample_dir)[1]:
+            return last_folder
         sample_name = f.split(sample_dir)[1].split('_')[0]
         return sample_name[1:] if str(sample_name).startswith('/') else sample_name
     raise RuntimeError('Failed to extract sample name from %s fastq path' % f)

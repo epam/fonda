@@ -49,7 +49,8 @@ class SampleManifest(ABC):
 
         return "{}/{}".format(os.getcwd(), list_path)
 
-    def write_from_list(self, extension, list_r1, list_r2, workflow_name, library_type):
+    def write_from_list(self, extension, list_r1, list_r2, workflow_name, library_type, sample_libtype=None,
+                        sample_master=None):
         files = []
         for i, f in enumerate(list_r1):
             sample_dir = os.path.dirname(list_r1[i])
@@ -61,9 +62,15 @@ class SampleManifest(ABC):
                 if len(list_r2) != len(list_r1):
                     print('The comma-delimited fastq file lists for R1 and R2 are not the same size.')
                     sys.exit(2)
-                self.add_sample(files, f, list_r2[i])
+                if sample_libtype is None:
+                    self.add_sample(files, f, list_r2[i])
+                else:
+                    self.add_sample(files, f, list_r2[i], libtype=sample_libtype[i], master=sample_master[i])
             else:
-                self.add_sample(files, f, None)
+                if sample_libtype is None:
+                    self.add_sample(files, f, None)
+                else:
+                    self.add_sample(files, f, None, libtype=sample_libtype[i], master=sample_master[i])
         return self.write(extension, files, workflow_name, library_type)
 
     def write_from_dir(self, extension, sample_dir, sample_files, workflow_name, library_type):
@@ -81,20 +88,17 @@ class SampleManifest(ABC):
                 self.add_sample(files, parameter1, None)
         return self.write(extension, files, workflow_name, library_type)
 
-    def add_sample(self, files, parameter1, parameter2):
+    def add_sample(self, files, parameter1, parameter2, libtype=None, master=None):
+        sample = {"sample_name": self.sample_name, "parameter_1": parameter1}
+        if libtype is not None:
+            sample["libtype"] = libtype
+        if master is not None:
+            sample["master"] = master
         if parameter2 is None:
-            files.append(
-                {
-                    "sample_name": self.sample_name,
-                    "parameter_1": parameter1
-                })
+            files.append(sample)
             return
-        files.append(
-            {
-                "sample_name": self.sample_name,
-                "parameter_1": parameter1,
-                "parameter_2": parameter2
-            })
+        sample["parameter_2"] = parameter2
+        files.append(sample)
 
     @abstractmethod
     def create_by_folder(self, sample_dir, workflow_name, library_type):
