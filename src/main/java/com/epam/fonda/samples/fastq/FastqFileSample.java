@@ -24,7 +24,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,8 +66,8 @@ public class FastqFileSample implements Sample, DirectoryManager {
      * @param file file to be merged
      * @return source file merged with received file
      */
-    public FastqFileSample merge(final FastqFileSample file) {
-        checkParameters(file);
+    public FastqFileSample merge(final FastqFileSample file, final boolean isScWorkflow) {
+        checkParameters(file, isScWorkflow);
         this.setFastq1(Stream.of(this.getFastq1(), file.getFastq1())
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList()));
@@ -84,11 +83,12 @@ public class FastqFileSample implements Sample, DirectoryManager {
      * Method checks for compatibility of sample type and match control in given and received files
      *
      * @param file received file to merge
+     * @param isScWorkflow is single-cell workflow
      */
-    private void checkParameters(final FastqFileSample file) {
+    private void checkParameters(final FastqFileSample file, final boolean isScWorkflow) {
         if ((!Objects.equals(this.getMatchControl(), file.getMatchControl()) ||
                 !this.getSampleType().equals(file.getSampleType()))
-                && !StringUtils.containsIgnoreCase(file.getName(), "ADT")) {
+                && !isScWorkflow) {
             log.error(String.format("Error Step: %s has multiple sample types or matched controls!" +
                     " Please check!", file.getName()));
             throw new IllegalArgumentException("Multiple sample types or matched controls in a sample");
