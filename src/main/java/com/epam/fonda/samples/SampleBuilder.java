@@ -75,7 +75,8 @@ public class SampleBuilder {
                 .skip(1)
                 .filter(StringUtils::isNotBlank)
                 .map(line -> parseFastqLine(line, rootOutdir))
-                .collect(Collectors.toMap(FastqFileSample::getName, s -> s, FastqFileSample::merge))
+                .collect(Collectors.toMap(FastqFileSample::getName, s -> s,
+                    (fastqFileSample, file) -> fastqFileSample.merge(file, isScWorkflow())))
                 .values());
         return isScWorkflow() ? buildScSamples(fastqFileSamples) : fastqFileSamples;
     }
