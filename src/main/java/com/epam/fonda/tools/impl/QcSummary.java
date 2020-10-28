@@ -28,6 +28,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -35,7 +36,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import static com.epam.fonda.utils.ToolUtils.matchesCaptureLibraryTypeCondition;
+import static com.epam.fonda.utils.ToolUtils.matchesExomeLibraryTypeCondition;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 @RequiredArgsConstructor
@@ -77,8 +81,12 @@ public class QcSummary implements PostProcessTool {
 
     private QcSummaryFields constructFields(final Configuration configuration, String sample) {
         final String workflowName = configuration.getGlobalConfig().getPipelineInfo().getWorkflow();
-        final String tag = getValueForSpecificVar(workflowName, Variable.TAG);
-        TaskContainer.addTasks(tag);
+        final String tag = getValueForSpecificVar(workflowName, Variable.TAG,
+                configuration.getStudyConfig().getLibraryType());
+        if (StringUtils.isNotBlank(tag)) {
+            TaskContainer.addTasks(tag);
+        }
+        final Set<String> tasks = TaskContainer.getTasks();
         final QcSummaryFields qcSummaryFields = QcSummaryFields.builder()
                 .workflow(workflowName)
                 .outDir(validate(configuration.getStudyConfig().getDirOut(), StudyConfigFormat.DIR_OUT))
@@ -90,10 +98,11 @@ public class QcSummary implements PostProcessTool {
                 .successMessage("Confirm QC results from " + sample)
                 .task("QC summary analysis")
                 .jarPath(PipelineUtils.getExecutionPath(configuration))
-                .steps(String.join("|", TaskContainer.getTasks()))
-                .successPattern(tag)
+                .steps(String.join("|", tasks))
+                .successPattern(StringUtils.isNotBlank(tag) ? tag : tasks.toArray()[tasks.size() - 1].toString())
                 .build();
-        final String task = getValueForSpecificVar(workflowName, Variable.TASK);
+        final String task = getValueForSpecificVar(workflowName, Variable.TASK,
+                configuration.getStudyConfig().getLibraryType());
         final String fileName = qcSummaryFields.getWorkflow() + "_" + task + "_for_" + sample + "_analysis";
         final String logOutDir = qcSummaryFields.getOutDir() + "/log_files";
         final String logFile = logOutDir + "/" + fileName + ".log";
@@ -121,9 +130,10 @@ public class QcSummary implements PostProcessTool {
     /**
      * @param workflow defines the proper value of variable for passed workflow.
      * @param variable {@link Variable} for which the value should be obtained.
+     * @param libraryType the sequencing library type: DNATargetSeq_Paired, DNATargetSeq_Single, etc
      * @return Depending on the workflow, returns the correct value for the {@link Variable}.
      */
-    private String getValueForSpecificVar(String workflow, Variable variable) {
+    private String getValueForSpecificVar(String workflow, Variable variable, String libraryType) {
         final PipelineType pipelineType = PipelineType.getByName(workflow);
         Map<Enum, String> map = new HashMap<>();
         map.put(Variable.TASK, "alignment");
@@ -132,8 +142,12 @@ public class QcSummary implements PostProcessTool {
             case DNA_CAPTURE_VAR_FASTQ:
             case DNA_WGS_VAR_FASTQ:
             case DNA_AMPLICON_VAR_FASTQ:
-                map.put(Variable.TAG, "Merge DNA QC");
                 map.put(Variable.TASK, "postalignment");
+                if (!matchesExomeLibraryTypeCondition(libraryType) &&
+                        !matchesCaptureLibraryTypeCondition(libraryType)) {
+                    break;
+                }
+                map.put(Variable.TAG, "Merge DNA QC");
                 break;
             case RNA_EXPRESSION_FASTQ:
             case RNA_CAPTURE_VAR_FASTQ:

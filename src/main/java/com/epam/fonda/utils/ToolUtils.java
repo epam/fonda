@@ -58,4 +58,16 @@ public final class ToolUtils {
                 ? picardVersion
                 : picardVersion.substring(0, picardVersion.lastIndexOf('.'))) <= THE_LAST_OLD_PICARD_VERSION;
     }
+
+    public static boolean matchesCaptureLibraryTypeCondition(final String libraryType) {
+        return libraryType.contains("target") || libraryType.contains("Target") || libraryType.contains("TARGET") ||
+                libraryType.contains("IDT_17genesPanel") || libraryType.contains("IDT_56_Panel") ||
+                libraryType.contains("IDT_SEADpanel") || libraryType.contains("IDT_Tp53panel") ||
+                libraryType.contains("IDT_Tp53_SERD") || libraryType.contains("JAK2V617F");
+    }
+
+    public static boolean matchesExomeLibraryTypeCondition(final String libraryType) {
+        return libraryType.contains("exome") || libraryType.contains("Exome") || libraryType.contains("EXOME")
+                || libraryType.contains("WEX") || libraryType.contains("WES");
+    }
 }

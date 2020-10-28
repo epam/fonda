@@ -36,6 +36,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import static com.epam.fonda.utils.PipelineUtils.getExecutionPath;
+import static com.epam.fonda.utils.ToolUtils.matchesCaptureLibraryTypeCondition;
+import static com.epam.fonda.utils.ToolUtils.matchesExomeLibraryTypeCondition;
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 @RequiredArgsConstructor
@@ -368,18 +370,6 @@ public class DnaPicardQc implements Tool<MetricsResult> {
         additionalFields.sampleName = sample.getName();
         additionalFields.analysis = isWorkflowRna() ? "RNA" : "DNA";
         return additionalFields;
-    }
-
-    private boolean matchesCaptureLibraryTypeCondition(String libraryType) {
-        return libraryType.contains("target") || libraryType.contains("Target") || libraryType.contains("TARGET") ||
-                libraryType.contains("IDT_17genesPanel") || libraryType.contains("IDT_56_Panel") ||
-                libraryType.contains("IDT_SEADpanel") || libraryType.contains("IDT_Tp53panel") ||
-                libraryType.contains("IDT_Tp53_SERD") || libraryType.contains("JAK2V617F");
-    }
-
-    private boolean matchesExomeLibraryTypeCondition(String libraryType) {
-        return libraryType.contains("exome") || libraryType.contains("Exome") || libraryType.contains("EXOME")
-                || libraryType.contains("WEX") || libraryType.contains("WES");
     }
 
     private boolean isWorkflowDnaCapture() {
