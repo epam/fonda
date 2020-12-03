@@ -1,4 +1,4 @@
-# Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+# Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -106,6 +106,7 @@ if (workflow=="DnaCaptureVar_Fastq"|workflow=="DnaWgsVar_Fastq"|workflow=="DnaAm
 	write.table(qc.mat,mat.fn,row.names=F,quote=F,sep="\t")
 	
 }else if(workflow=="scRnaExpression_CellRanger_Fastq"){
+    x = 0
 	for (i in 1:length(sampleList)){
 	  sample <- sampleList[i]
 	  if (file.exists(paste0('count/',sample))){
@@ -113,38 +114,14 @@ if (workflow=="DnaCaptureVar_Fastq"|workflow=="DnaWgsVar_Fastq"|workflow=="DnaAm
 		if (file.exists(qc.file)){
 		  
 		  qc.dat <-read.csv(qc.file,header=T,sep=",",check.names=F,stringsAsFactors = F,comment.char = "#")
-		  if (i==1){
+		  if (x == 0) {
 			qc.mat<-matrix(nrow=0,ncol=ncol(qc.dat)+1)
 			colnames(qc.mat)<-c('SAMPLE',colnames(qc.dat))
 			qc.mat <- rbind(qc.mat,c(sample,qc.dat))
 		  }else{
 		    qc.mat <- rbind(qc.mat,c(sample,qc.dat))
 		  }
-		}else{
-		  print (paste0("The QC metric of for ",sample," does not exist!"))
-		}
-	  }else{
-		print (paste0("The QC metric for ",sample," does not exist!"))
-	  }
-	}
-
-	mat.fn<- "Result_summary/merged.alignment.QC.metrics.txt"
-	write.table(qc.mat,mat.fn,row.names=F,quote=F,sep="\t")
-}else if(workflow=="scImmuneProfile_CellRanger_Fastq"){
-	for (i in 1:length(sampleList)){
-	  sample <- sampleList[i]
-	  if (file.exists(paste0('vdj/',sample))){
-		qc.file<-paste0('vdj/',sample,'/outs/metrics_summary.csv')
-		if (file.exists(qc.file)){
-		  
-		  qc.dat <-read.csv(qc.file,header=T,sep=",",check.names=F,stringsAsFactors = F,comment.char = "#")
-		  if (i==1){
-			qc.mat<-matrix(nrow=0,ncol=ncol(qc.dat)+1)
-			colnames(qc.mat)<-c('SAMPLE',colnames(qc.dat))
-			qc.mat <- rbind(qc.mat,c(sample,qc.dat))
-		  }else{
-		    qc.mat <- rbind(qc.mat,c(sample,qc.dat))
-		  }
+		  x = x + 1
 		}else{
 		  print (paste0("The QC metric of for ",sample," does not exist!"))
 		}
