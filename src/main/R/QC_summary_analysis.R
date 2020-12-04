@@ -68,10 +68,13 @@ dir.create("Result_summary",showWarnings = F)
 ## Collect the sample list from the information table.
 ## Please make sure the column name for the sample list is 'shortName'
 sample_infor <- read.table(infor.file,header=T,sep="\t",check.names=F,stringsAsFactors = F)
+colnames(sample_infor) <- tolower(colnames(sample_infor))
 sampleList<-vector()
 for (i in 1:nrow(sample_infor)){
-  if (!sample_infor$shortName[i] %in% sampleList){
-    sampleList<-append(sampleList,sample_infor$shortName[i])
+  if (!sample_infor$shortname[i] %in% sampleList){
+      if ("libtype" %in% colnames(sample_infor) & tolower(sample_infor$libtype[i]) != "gex"){} else{
+          sampleList<-append(sampleList,sample_infor$shortname[i])
+      }
   }
 }
 
