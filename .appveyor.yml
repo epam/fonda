@@ -1,0 +1,19 @@
+version: 2.0.0.{build}
+
+branches:
+  only:
+    - develop
+    - /release\/.*/
+
+skip_tags: true
+max_jobs: 1
+image: Ubuntu1604
+stack: jdk 8
+
+build_script:
+  - pip install --user awscli
+  - ./gradlew -PbuildNumber=${APPVEYOR_BUILD_NUMBER}.${APPVEYOR_REPO_COMMIT} build zip --no-daemon
+  - ./gradlew jacocoTestReport
+  - bash <(curl -s https://codecov.io/bash)
+  - aws s3 mv build/distributions/fonda*.zip s3://fonda-oss-builds/builds/${APPVEYOR_REPO_BRANCH}/
+test: off
