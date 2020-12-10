@@ -42,10 +42,10 @@ t_0 --->              develop
 ```
 ## CI process description
 
-* When a commit is pushed to the `develop` branch, Travis CI receives a notification and runs a build automatically. 
-* A Travis CI build process executes `./gradlew -PbuildNumber=${TRAVIS_BUILD_NUMBER}.${TRAVIS_COMMIT} build zip --no-daemon` command on the `script` main phase. 
-* After a successful build, Travis CI uploads the build result `fonda*.zip` to Amazon S3 `s3://fonda-oss-builds/builds/develop/` bucket automatically.
-* To get the `fonda*.zip` from S3 bucket you can follow the link `https://fonda-oss-builds.s3.amazonaws.com/builds/develop/fonda-${TRAVIS_BUILD_NUMBER}.${TRAVIS_COMMIT}.zip` 
+* When a commit is pushed to the `develop` branch, AppVeyor runs a build process automatically. AppVeyor uses a configuration is defined in `.appveyor.yml` file during the build process.
+* A AppVeyor build process executes `./gradlew -PbuildNumber=${APPVEYOR_BUILD_NUMBER}.${APPVEYOR_REPO_COMMIT} build zip --no-daemon` command on the `build_script` section.
+* After a successful build, AppVeyor uploads the build result `fonda*.zip` to Amazon S3 `s3://fonda-oss-builds/builds/develop/` bucket automatically.
+* To get the `fonda*.zip` from S3 bucket you can follow the link `https://fonda-oss-builds.s3.amazonaws.com/builds/develop/fonda-${APPVEYOR_BUILD_NUMBER}.${APPVEYOR_REPO_COMMIT}.zip` 
 in your browser or download file from the command console by `wget` or `curl` commands.
 ```
 1. Commit to "develop" branch
@@ -64,9 +64,9 @@ fn_branch1      |
                 |
              develop
 
-2. Run build command on the Travis CI:
+2. Run build command on the AppVeyor:
 
-./gradlew -PbuildNumber=${TRAVIS_BUILD_NUMBER}.${TRAVIS_COMMIT} build zip --no-daemon
+./gradlew -PbuildNumber=${APPVEYOR_BUILD_NUMBER}.${APPVEYOR_REPO_COMMIT} build zip --no-daemon
 
 3. If the `step 2` success:
                                          _________
