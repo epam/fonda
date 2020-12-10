@@ -40,6 +40,14 @@ jar {
     from {
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
     }
+
+    doFirst {
+        new File("$buildDir/resources/main/version.properties").withWriter { w ->
+            Properties p = new Properties()
+            p['version'] = version.toString()
+            p.store w, null
+        }
+    }
 }
 
 task copySrc(type: Copy, dependsOn: 'build') {
@@ -130,6 +138,7 @@ jacocoTestCoverageVerification {
             excludes = ['com.epam.fonda.workflow.Workflow',
                         'com.epam.fonda.entity.configuration.EOLConverter',
                         'com.epam.fonda.OptionNames',
+                        'com.epam.fonda.utils.MessageConstant',
                         'com.epam.fonda.Main',
                         'com.epam.fonda.Executor']
             limit {

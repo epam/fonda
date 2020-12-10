@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -128,7 +128,7 @@ public final class ConfigurationUtils {
         } else if (commandLine.hasOption(OptionName.HELP.getName())
                 || !(commandLine.hasOption(OptionName.STUDY_CONFIG.getName())
                 && commandLine.hasOption(OptionName.GLOBAL_CONFIG.getName()))) {
-            formatter.printHelp(MessageConstant.HEADER, options);
+            formatter.printHelp(MessageConstant.HEADER, MessageConstant.VERSION_MESSAGE, options, "");
             System.exit(1);
         }
     }
