@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,15 @@
 
 package com.epam.fonda.utils;
 
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
+import static java.lang.String.format;
+
+@Slf4j
 public final class MessageConstant {
     public static final String HELP_DESCRIPTION = "Show this utility message";
     public static final String DETAIL_DESCRIPTION = "Show the details of the fonda framework";
@@ -24,7 +33,25 @@ public final class MessageConstant {
     public static final String STUDY_CONFIG_DESCRIPTION = "Configuration file for the specific study (Required)";
     public static final String GLOBAL_CONFIG_DESCRIPTION = "Configuration file for the particular pipeline (Required)";
     public static final String SYNC_DESCRIPTION = "Run fonda in sync mode, waiting for all tasks to complete";
-    public static final String HEADER = "\nfonda (Framework Of NGS Data Analysis)";
+    public static final String HEADER = "\nFonda (Framework Of NGS Data Analysis)";
+
+    static {
+        final String propertiesFile = "version.properties";
+
+        String version = "";
+        try(InputStream stream = MessageConstant.class.getClassLoader().getResourceAsStream(propertiesFile)) {
+            if (stream != null) {
+                Properties properties = new Properties();
+                properties.load(stream);
+                version = properties.getProperty("version");
+            }
+        } catch (IOException e) {
+            log.error("Failed to read the fonda version: " + e);
+        }
+        VERSION_MESSAGE = format("The current build version: %s.", version);
+    }
+
+    public static final String VERSION_MESSAGE;
 
     private MessageConstant() {}
 }
