@@ -155,6 +155,8 @@ def main(script_name, argv):
         job_name = "{}_job".format(library_type)
     if not run:
         run = "{}_run".format(library_type)
+    if not cores_per_sample:
+        cores_per_sample = "4"
 
     if species == "human":
         human_kit = {

@@ -235,6 +235,8 @@ def main(script_name, argv):
         forced_cells = "NA"
     if not nosecondary:
         nosecondary = "FALSE"
+    if not cores_per_sample:
+        cores_per_sample = "8"
     additional_options = {"feature_reference": feature_reference,
                           "genome_build": genome_build,
                           "genome": transcriptome,
