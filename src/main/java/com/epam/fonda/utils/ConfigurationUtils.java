@@ -72,6 +72,8 @@ public final class ConfigurationUtils {
                 MessageConstant.GLOBAL_CONFIG_DESCRIPTION));
         options.addOption(new Option(OptionName.SYNC.getName(), false,
                 MessageConstant.SYNC_DESCRIPTION));
+        options.addOption(new Option(OptionName.MASTER.getName(), false,
+                MessageConstant.MASTER_DESCRIPTION));
         final CommandLine commandLine = new DefaultParser().parse(options, arg);
         printInfo(commandLine, options, new HelpFormatter());
         return commandLine;

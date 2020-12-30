@@ -1,0 +1,65 @@
+#!/bin/bash -x
+
+[# th:if = "${variablesMap.get('local').equals('false')}"]# --- SGE options --- #
+
+#$ -V
+#$ -wd [(${variablesMap.get('outdir')})]
+#$ -N [(${variablesMap.get('fileName')})]
+#$ -o [(${variablesMap.get('outdir')})]/log_files/[(${variablesMap.get('fileName')})].log
+#$ -e [(${variablesMap.get('outdir')})]/err_files/[(${variablesMap.get('fileName')})].err
+#$ -q [(${variablesMap.get('queue')})]
+#$ -R y
+[# th:if = "${variablesMap.get('sync').equals('true')}"]#$ -sync y
+[/]
+[/][# th:unless = "${variablesMap.get('local').equals('false')}"]# --- Local machine options --- #
+
+exec 1> [(${variablesMap.get('outdir')})]/log_files/[(${variablesMap.get('fileName')})].log
+exec 2> [(${variablesMap.get('outdir')})]/err_files/[(${variablesMap.get('fileName')})].err
+
+[/]# --- The commands to be executed --- #
+
+cd [(${variablesMap.get('outdir')})]
+
+echo `date` Begin the job execution...
+
+function qsub_script() {
+    local script="$1"
+    job="$(qsub $script)"
+    job_id="$(echo "$job" | sed -e 's|.*\\s\(\\d*\)\\s.*|\1|g' )"
+    printf "Job id $job_id"
+    while qstat | grep -q "$job_id"
+    do
+        printf "."
+        sleep 1
+    done
+    sleep 10
+    status="$(qacct -j "$job_id" | grep exit_status | grep -o \\d)"
+}
+
+function launch_script() {
+    local script="$1"
+    printf "`date` Start script execution $script \n"
+    [# th:if = "${variablesMap.get('local').equals('false')}"]qsub_script $script[/]
+    [# th:unless = "${variablesMap.get('local').equals('false')}"]
+    bash $script
+    status=$?
+    [/]printf "\n"
+    printf "`date` Finish script execution $script with $status \n"
+    return $status
+}
+
+function process_scripts_launch() {
+    [# th:each = "sampleScripts, itemStat : ${samplesProcessScripts}"][# th:each = "s, i : ${sampleScripts.scripts}"]
+    launch_script [(${s})] [# th:text = "!${i.last} ? ${#uris.escapePath('&&')} : ${#uris.escapePath('&')}"]
+    [/][/][/]
+    wait
+}
+
+function post_process_scripts_launch() {
+    [# th:if = "${#arrays.length(postProcessScripts) >= 1}"][# th:each="script : ${postProcessScripts}"]launch_script "[(${script})]" & [/][/]
+    wait
+}
+
+process_scripts_launch
+post_process_scripts_launch
+

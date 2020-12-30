@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package com.epam.fonda.workflow.impl;
 
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.orchestrator.ScriptManager;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.samples.fastq.FastqReadType;
 import com.epam.fonda.tools.impl.DnaAnalysis;
@@ -45,6 +46,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.epam.fonda.entity.configuration.orchestrator.ScriptType.ALIGNMENT;
+import static com.epam.fonda.entity.configuration.orchestrator.ScriptType.POST_ALIGNMENT;
+import static com.epam.fonda.entity.configuration.orchestrator.ScriptType.POST_PROCESS;
+import static com.epam.fonda.entity.configuration.orchestrator.ScriptType.TEMP;
 import static com.epam.fonda.utils.PipelineUtils.cleanUpTmpDir;
 import static com.epam.fonda.utils.PipelineUtils.printShell;
 
@@ -57,6 +62,7 @@ public class DnaVarFastqWorkflow implements FastqWorkflow {
     final Flag flag;
     @NonNull
     private final String stringTag;
+    final ScriptManager scriptManager;
 
     @Override
     public void run(final Configuration configuration, final FastqFileSample sample) throws IOException {
@@ -78,8 +84,13 @@ public class DnaVarFastqWorkflow implements FastqWorkflow {
     @Override
     public void postProcess(final Configuration configuration, final List<FastqFileSample> samples) throws IOException {
         List<String> sampleNames = samples.stream().map(FastqFileSample::getName).collect(Collectors.toList());
-        new QcSummary(flag, sampleNames).generate(configuration, TEMPLATE_ENGINE);
-        new DnaAnalysis(samples, null, flag).generate(configuration, TEMPLATE_ENGINE);
+        final String qcSummaryScript = new QcSummary(flag, sampleNames).generate(configuration, TEMPLATE_ENGINE);
+        final String dnaAnalysisScript = new DnaAnalysis(samples, null, flag)
+                .generate(configuration, TEMPLATE_ENGINE);
+        if (scriptManager != null) {
+            scriptManager.addScript(StringUtils.EMPTY, POST_PROCESS, qcSummaryScript);
+            scriptManager.addScript(StringUtils.EMPTY, POST_PROCESS, dnaAnalysisScript);
+        }
     }
 
     private boolean determineReadType(final String readType) {
@@ -111,7 +122,11 @@ public class DnaVarFastqWorkflow implements FastqWorkflow {
         final BamResult bamResult = new Alignment(fastqResult, index)
                 .mapping(flag, sample, configuration, TEMPLATE_ENGINE);
         bamsToMerge.add(bamResult.getBamOutput().getBam());
-        printShell(configuration, bamResult.getCommand().getToolCommand(), sample.getName(), String.valueOf(index));
+        final String alignScript = printShell(configuration, bamResult.getCommand().getToolCommand(), sample.getName(),
+                String.valueOf(index));
+        if (scriptManager != null) {
+            scriptManager.addScript(sample.getName(), ALIGNMENT, alignScript);
+        }
     }
 
     private void processPostAlignment(final Configuration configuration,
@@ -135,12 +150,17 @@ public class DnaVarFastqWorkflow implements FastqWorkflow {
             final boolean isPaired = StringUtils.isNoneBlank(sample.getControlName())
                     && !PipelineUtils.NA.equals(sample.getControlName());
             resultCmd.append(new SecondaryAnalysis(bamResult, sample.getName(), sample.getSampleOutputDir(),
-                    sample.getControlName(), isPaired)
+                    sample.getControlName(), isPaired, scriptManager)
                     .process(flag, configuration, TEMPLATE_ENGINE));
         }
+        final String command = configuration.isMasterMode()
+                ? resultCmd.toString()
+                : resultCmd.append(cleanUpTmpDir(bamResult.getCommand().getTempDirs())).toString();
+        final String postAlignScript = printShell(configuration, command, sample.getName(), null);
 
-        resultCmd.append(cleanUpTmpDir(bamResult.getCommand().getTempDirs()));
-
-        printShell(configuration, resultCmd.toString(), sample.getName(), null);
+        if (scriptManager != null) {
+            scriptManager.addScript(sample.getName(), POST_ALIGNMENT, postAlignScript);
+            bamResult.getCommand().getTempDirs().forEach(t -> scriptManager.addScript(sample.getName(), TEMP, t));
+        }
     }
 }

@@ -17,6 +17,7 @@
 package com.epam.fonda.workflow;
 
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.orchestrator.MasterScript;
 import com.epam.fonda.samples.Sample;
 
 import java.io.IOException;
@@ -37,13 +38,17 @@ public interface Workflow<T extends Sample> {
         List<T> samples = provideSample(configuration);
         samples.forEach(sample -> unsafe(() -> this.run(configuration, sample)));
         this.postProcess(configuration, samples);
+        if (configuration.isMasterMode()) {
+            MasterScript.getInstance(configuration).launchScript(configuration);
+        }
     }
 
     List<T> provideSample(final Configuration config) throws IOException;
 
     void run(final Configuration configuration, final T sample) throws IOException;
 
-    void postProcess(final Configuration configuration, final List<T> samples) throws IOException;
+    void postProcess(final Configuration configuration, final List<T> samples)
+            throws IOException;
 
     interface UnsafeRunnable {
         void run() throws IOException;

@@ -26,7 +26,8 @@ public enum OptionName {
     HELP("help"),
     DETAIL("detail"),
     STUDY_CONFIG("study_config"),
-    GLOBAL_CONFIG("global_config");
+    GLOBAL_CONFIG("global_config"),
+    MASTER("master");
 
     private final String name;
 

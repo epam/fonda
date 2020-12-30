@@ -17,6 +17,7 @@
 package com.epam.fonda.workflow.impl;
 
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.orchestrator.ScriptManager;
 import com.epam.fonda.samples.bam.BamFileSample;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.impl.FastqListAnalysis;
@@ -37,6 +38,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.epam.fonda.entity.configuration.orchestrator.ScriptType.ALIGNMENT;
+import static com.epam.fonda.entity.configuration.orchestrator.ScriptType.TEMP;
 import static com.epam.fonda.utils.PipelineUtils.cleanUpTmpDir;
 import static com.epam.fonda.utils.PipelineUtils.printShell;
 
@@ -47,6 +50,7 @@ public class Bam2FastqWorkflow implements BamWorkflow {
 
     @NonNull
     final Flag flag;
+    final ScriptManager scriptManager;
 
     @Override
     public void run(Configuration configuration, BamFileSample sample) throws IOException {
@@ -66,8 +70,15 @@ public class Bam2FastqWorkflow implements BamWorkflow {
             cmd.append(fastqResult.getCommand().getToolCommand());
         }
         Collections.addAll(bamResult.getCommand().getTempDirs(), sample.getTmpOutdir());
-        cmd.append(cleanUpTmpDir(bamResult.getCommand().getTempDirs()));
-        printShell(configuration, cmd.toString(), sample.getName(), null);
+
+        final String command = configuration.isMasterMode()
+                ? cmd.toString()
+                : cmd.append(cleanUpTmpDir(bamResult.getCommand().getTempDirs())).toString();
+        final String custScript = printShell(configuration, command, sample.getName(), null);
+        if (scriptManager != null) {
+            scriptManager.addScript(sample.getName(), ALIGNMENT, custScript);
+            bamResult.getCommand().getTempDirs().forEach(t -> scriptManager.addScript(sample.getName(), TEMP, t));
+        }
         log.debug(String.format("Successful Step: the %s sample was processed.", sample.getName()));
     }
 

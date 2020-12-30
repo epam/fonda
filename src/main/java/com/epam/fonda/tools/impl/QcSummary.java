@@ -49,7 +49,7 @@ public class QcSummary implements PostProcessTool {
     private static final int DEFAULT_VALUE = 60;
 
     @NonNull
-    private Flag flag;
+    private final Flag flag;
     @NonNull
     private final List<String> sampleNames;
 
@@ -61,9 +61,9 @@ public class QcSummary implements PostProcessTool {
      * if flag doesn't contains qc.
      **/
     @Override
-    public void generate(final Configuration configuration, final TemplateEngine templateEngine) throws IOException {
+    public String generate(final Configuration configuration, final TemplateEngine templateEngine) throws IOException {
         if (!flag.isQc()) {
-            return;
+            return StringUtils.EMPTY;
         }
         configuration.setCustTask("qcsummary");
         final Context context = new Context();
@@ -76,7 +76,7 @@ public class QcSummary implements PostProcessTool {
         }
         cmd.append(templateEngine.process(QC_SUMMARY_ANALYSIS_TEMPLATE, context));
         TaskContainer.addTasks("QC summary analysis");
-        PipelineUtils.printShell(configuration, cmd.toString(), "", null);
+        return PipelineUtils.printShell(configuration, cmd.toString(), "", null);
     }
 
     private QcSummaryFields constructFields(final Configuration configuration, String sample) {

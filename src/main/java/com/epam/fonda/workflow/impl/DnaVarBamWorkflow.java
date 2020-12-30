@@ -17,6 +17,7 @@ package com.epam.fonda.workflow.impl;
 
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.orchestrator.ScriptManager;
 import com.epam.fonda.samples.bam.BamFileSample;
 import com.epam.fonda.tools.impl.DnaAnalysis;
 import com.epam.fonda.tools.results.BamOutput;
@@ -28,12 +29,16 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.thymeleaf.TemplateEngine;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.epam.fonda.entity.configuration.orchestrator.ScriptType.ALIGNMENT;
+import static com.epam.fonda.entity.configuration.orchestrator.ScriptType.POST_PROCESS;
+import static com.epam.fonda.entity.configuration.orchestrator.ScriptType.TEMP;
 import static com.epam.fonda.utils.DnaUtils.isNotCaseOrTumor;
 import static com.epam.fonda.utils.PipelineUtils.cleanUpTmpDir;
 import static com.epam.fonda.utils.PipelineUtils.isPaired;
@@ -47,6 +52,7 @@ public class DnaVarBamWorkflow implements BamWorkflow {
 
     @NonNull
     final Flag flag;
+    final ScriptManager scriptManager;
 
     @Override
     public void run(final Configuration configuration, final BamFileSample sample) throws IOException {
@@ -57,10 +63,17 @@ public class DnaVarBamWorkflow implements BamWorkflow {
         configuration.setCustTask("variantDetection");
         final BamResult bamResult = buildBamResult(sample);
 
-        final String resultCmd = new SecondaryAnalysis(bamResult, sample.getName(), sample.getSampleOutputDir(),
-                sample.getControlName(), isPaired(sample.getControlName()))
-                .process(flag, configuration, TEMPLATE_ENGINE) + cleanUpTmpDir(bamResult.getCommand().getTempDirs());
-        printShell(configuration, resultCmd, sample.getName(), null);
+        final String cmd = new SecondaryAnalysis(bamResult, sample.getName(), sample.getSampleOutputDir(),
+                sample.getControlName(), isPaired(sample.getControlName()), scriptManager)
+                .process(flag, configuration, TEMPLATE_ENGINE);
+        final String resultCmd = configuration.isMasterMode()
+                ? cmd
+                : cmd + cleanUpTmpDir(bamResult.getCommand().getTempDirs());
+        final String custScript = printShell(configuration, resultCmd, sample.getName(), null);
+        if (scriptManager != null) {
+            scriptManager.addScript(sample.getName(), ALIGNMENT, custScript);
+            bamResult.getCommand().getTempDirs().forEach(t -> scriptManager.addScript(sample.getName(), TEMP, t));
+        }
 
         log.debug(String.format("Successful Step: the %s sample was processed.", sample.getName()));
     }
@@ -72,7 +85,11 @@ public class DnaVarBamWorkflow implements BamWorkflow {
         if (CollectionUtils.isEmpty(samplesWithCheckedTypes)) {
             return;
         }
-        new DnaAnalysis(null, samplesWithCheckedTypes, flag).generate(configuration, TEMPLATE_ENGINE);
+        final String dnaScript = new DnaAnalysis(null, samplesWithCheckedTypes, flag)
+                .generate(configuration, TEMPLATE_ENGINE);
+        if (scriptManager != null) {
+            scriptManager.addScript(StringUtils.EMPTY, POST_PROCESS, dnaScript);
+        }
     }
 
     private BamResult buildBamResult(final BamFileSample sample) {

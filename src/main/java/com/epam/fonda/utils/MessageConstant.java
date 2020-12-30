@@ -33,6 +33,7 @@ public final class MessageConstant {
     public static final String STUDY_CONFIG_DESCRIPTION = "Configuration file for the specific study (Required)";
     public static final String GLOBAL_CONFIG_DESCRIPTION = "Configuration file for the particular pipeline (Required)";
     public static final String SYNC_DESCRIPTION = "Run fonda in sync mode, waiting for all tasks to complete";
+    public static final String MASTER_DESCRIPTION = "Run fonda in master mode, orchestration blablabla";
     public static final String HEADER = "\nFonda (Framework Of NGS Data Analysis)";
 
     static {

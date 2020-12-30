@@ -16,6 +16,7 @@
 package com.epam.fonda.workflow.impl;
 
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.orchestrator.ScriptManager;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.impl.OptiType;
 import com.epam.fonda.tools.results.FastqResult;
@@ -33,6 +34,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
+import static com.epam.fonda.entity.configuration.orchestrator.ScriptType.ALIGNMENT;
+import static com.epam.fonda.entity.configuration.orchestrator.ScriptType.TEMP;
 import static com.epam.fonda.utils.PipelineUtils.cleanUpTmpDir;
 import static com.epam.fonda.utils.PipelineUtils.printShell;
 
@@ -44,6 +47,7 @@ public class HlaTypingFastqWorkflow implements FastqWorkflow {
 
     @NonNull
     final Flag flag;
+    final ScriptManager scriptManager;
 
     @Override
     public void run(Configuration configuration, FastqFileSample sample) throws IOException {
@@ -57,8 +61,14 @@ public class HlaTypingFastqWorkflow implements FastqWorkflow {
             OptiTypeResult optiTypeResult = new OptiType(sample, fastqResult).generate(configuration, TEMPLATE_ENGINE);
             cmd.append(optiTypeResult.getCommand().getToolCommand());
         }
-        cmd.append(cleanUpTmpDir(tmpDir));
-        printShell(configuration, cmd.toString(), sample.getName(), null);
+        final String command = configuration.isMasterMode()
+                ? cmd.toString()
+                : cmd.append(cleanUpTmpDir(tmpDir)).toString();
+        final String custScript = printShell(configuration, command, sample.getName(), null);
+        if (scriptManager != null) {
+            scriptManager.addScript(sample.getName(), ALIGNMENT, custScript);
+            tmpDir.forEach(t -> scriptManager.addScript(sample.getName(), TEMP, t));
+        }
         log.debug(String.format("Successful Step: the %s sample was processed.", sample.getName()));
     }
 

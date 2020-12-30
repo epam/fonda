@@ -46,6 +46,7 @@ public final class Main {
             System.exit(result.orElseGet(() -> processResult(configuration)));
         } catch (Exception e) {
             log.error("Error step in main: " + e);
+            e.printStackTrace();
             System.exit(PipelineUtils.ERROR_STATUS);
         }
     }

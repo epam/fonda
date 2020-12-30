@@ -27,6 +27,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -75,9 +76,9 @@ public class DnaAnalysis implements PostProcessTool {
      * @param templateEngine the {@link TemplateEngine}.
      **/
     @Override
-    public void generate(Configuration configuration, TemplateEngine templateEngine) {
+    public String generate(Configuration configuration, TemplateEngine templateEngine) {
         if (!checkToolset(flag) || isWgsWorkflow(configuration)) {
-            return;
+            return StringUtils.EMPTY;
         }
 
         if (CollectionUtils.isEmpty(fastqSamples) && CollectionUtils.isEmpty(bamSamples)) {
@@ -93,7 +94,7 @@ public class DnaAnalysis implements PostProcessTool {
         cmd.append(mutationAnalysis);
         configuration.setCustTask("mergeMutation");
         try {
-            PipelineUtils.printShell(configuration, cmd.toString(), null, null);
+            return PipelineUtils.printShell(configuration, cmd.toString(), null, null);
         } catch (IOException e) {
             throw new IllegalArgumentException("Cannot create bash script for DNA analysis post processing");
         }

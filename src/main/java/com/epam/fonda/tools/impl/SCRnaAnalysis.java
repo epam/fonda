@@ -26,6 +26,7 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -67,16 +68,16 @@ public class SCRnaAnalysis implements PostProcessTool {
     }
 
     @Override
-    public void generate(Configuration configuration, TemplateEngine templateEngine) {
+    public String generate(Configuration configuration, TemplateEngine templateEngine) {
         if (!flag.isConversion() || !flag.isCount()) {
-            return;
+            return StringUtils.EMPTY;
         }
         StringBuilder command = new StringBuilder()
                 .append(periodicStatusCheck(configuration, templateEngine))
                 .append(expressData(configuration, templateEngine));
         configuration.setCustTask(COUNT_TOOL);
         try {
-            PipelineUtils.printShell(configuration, command.toString(), null, null);
+            return PipelineUtils.printShell(configuration, command.toString(), null, null);
         } catch (IOException e) {
             throw new IllegalArgumentException("Cannot create bash script for " + COUNT_TOOL);
         }

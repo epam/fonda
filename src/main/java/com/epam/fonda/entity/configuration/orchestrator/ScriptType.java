@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.epam.fonda.entity.configuration.orchestrator;
 
-package com.epam.fonda.entity.configuration;
+public enum ScriptType {
 
-import lombok.Data;
-
-/**
- * The <tt>Configuration</tt> class represents the user specified parameters from command line
- */
-@Data
-public class Configuration {
-    private GlobalConfig globalConfig;
-    private StudyConfig studyConfig;
-    private CommonOutdir commonOutdir;
-    private String custTask;
-    private boolean syncMode;
-    private boolean testMode;
-    private boolean localMode;
-    private boolean masterMode;
+    ALIGNMENT, SECONDARY, POST_ALIGNMENT, POST_PROCESS, TEMP
 }

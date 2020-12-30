@@ -13,17 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package com.epam.fonda.tools;
+package com.epam.fonda.entity.configuration.orchestrator;
 
 import com.epam.fonda.entity.configuration.Configuration;
-import org.thymeleaf.TemplateEngine;
-
-import java.io.IOException;
+import com.epam.fonda.utils.PipelineUtils;
 
 /**
- * The <tt>PostProcessTool</tt> interface represents a tool entity for launch at workflow post process
+ *
  */
-public interface PostProcessTool {
-    String generate(final Configuration configuration, final TemplateEngine templateEngine) throws IOException;
+public interface ScriptManager {
+
+    /**
+     * Launch script
+     */
+    default void launchScript(final Configuration configuration) {
+        final String script = buildScript();
+        PipelineUtils.executeScript(configuration, script);
+    }
+
+    String buildScript();
+
+    void addScript(final String sampleName, final ScriptType type, final String script);
 }

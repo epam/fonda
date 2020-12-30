@@ -24,6 +24,7 @@ import com.epam.fonda.utils.PipelineUtils;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
+import org.apache.commons.lang3.StringUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -47,7 +48,7 @@ public class FastqListAnalysis implements PostProcessTool {
      * @param templateEngine the {@link TemplateEngine}.
      **/
     @Override
-    public void generate(Configuration configuration, TemplateEngine templateEngine) throws IOException {
+    public String generate(Configuration configuration, TemplateEngine templateEngine) throws IOException {
         FastqListAnalysisFields toolFields = initFastqListAnalysisFields(configuration);
         String fastqPath = String.format("%s/%s-%s-%s-FastqPaths.txt", toolFields.outdir, toolFields.project,
                 toolFields.runID, toolFields.date);
@@ -59,6 +60,7 @@ public class FastqListAnalysis implements PostProcessTool {
         String defineOfFileWithFastq = templateEngine.process(FASTQ_LIST_ANALYSIS_TEMPLATE, context);
         PipelineUtils.writeToFile(fastqPath, defineOfFileWithFastq,
                 configuration.getGlobalConfig().getPipelineInfo().getLineEnding());
+        return StringUtils.EMPTY;
     }
 
     @Data
