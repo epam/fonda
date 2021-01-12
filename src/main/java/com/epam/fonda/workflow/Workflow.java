@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ public interface Workflow<T extends Sample> {
         samples.forEach(sample -> unsafe(() -> this.run(configuration, sample)));
         this.postProcess(configuration, samples);
         if (configuration.isMasterMode()) {
-            MasterScript.getInstance(configuration).launchScript(configuration);
+            MasterScript.getInstance().launchScript(configuration);
         }
     }
 

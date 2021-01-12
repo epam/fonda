@@ -87,7 +87,7 @@ public class DnaAmpliconVarBamIntegrationTest extends AbstractIntegrationTest {
     void testDnaAmpliconVarBamNAAll(final String gConfigPath, final String sConfigPath, final String outputShFile,
                                     final String templatePath) throws IOException, URISyntaxException {
         startAppWithConfigs(gConfigPath, sConfigPath);
-        final String expectedCmd = templateEngine.process(templatePath, context);
+        final String expectedCmd = TEMPLATE_ENGINE.process(templatePath, context);
         assertEquals(expectedCmd.trim(), getCmd(outputShFile).trim());
     }
 
@@ -96,7 +96,7 @@ public class DnaAmpliconVarBamIntegrationTest extends AbstractIntegrationTest {
     void testDnaAmpliconVarBamNotNAAll(final String gConfigPath, final String sConfigPath, final String outputShFile,
                                        final String templatePath) throws IOException, URISyntaxException {
         startAppWithConfigs(gConfigPath, sConfigPath);
-        final String expectedCmd = templateEngine.process(templatePath, context);
+        final String expectedCmd = TEMPLATE_ENGINE.process(templatePath, context);
         assertEquals(expectedCmd.trim(), getCmd(outputShFile).trim());
     }
 

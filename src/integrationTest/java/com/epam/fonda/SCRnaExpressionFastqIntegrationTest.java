@@ -70,8 +70,8 @@ public class SCRnaExpressionFastqIntegrationTest extends AbstractIntegrationTest
         String alignmentTemplatePath = format("scRnaExpressionFastq/%s/%s", testFolder, ALIGNMENT_FILE);
         String rsemTemplatePath = format("scRnaExpressionFastq/%s/%s", testFolder, RSEM_FILE);
 
-        final String expectedAlignmentCmd = templateEngine.process(alignmentTemplatePath, context).trim();
-        final String expectedRsemCmd = templateEngine.process(rsemTemplatePath, context).trim();
+        final String expectedAlignmentCmd = TEMPLATE_ENGINE.process(alignmentTemplatePath, context).trim();
+        final String expectedRsemCmd = TEMPLATE_ENGINE.process(rsemTemplatePath, context).trim();
         final String actualAlignmentCmd = getCmd(ALIGNMENT_SH_PATH).trim();
         final String actualRsemCmd = getCmd(RSEM_SH_PATH).trim();
 
@@ -87,8 +87,8 @@ public class SCRnaExpressionFastqIntegrationTest extends AbstractIntegrationTest
         String alignmentTemplatePath = format("scRnaExpressionFastq/StarWithoutRsem/%s", ALIGNMENT_FILE);
         String qcSummaryTemplatePath = format("scRnaExpressionFastq/StarWithoutRsem/%s", QC_SUMMARY_FILE);
 
-        final String expectedAlignmentCmd = templateEngine.process(alignmentTemplatePath, context).trim();
-        final String expectedQcSummaryCmd = templateEngine.process(qcSummaryTemplatePath, context).trim();
+        final String expectedAlignmentCmd = TEMPLATE_ENGINE.process(alignmentTemplatePath, context).trim();
+        final String expectedQcSummaryCmd = TEMPLATE_ENGINE.process(qcSummaryTemplatePath, context).trim();
         final String actualAlignmentCmd = getCmd(ALIGNMENT_SH_PATH).trim();
         final String actualQcSummaryCmd = getCmd(QC_SUMMARY_SH_PATH).trim();
 
@@ -117,10 +117,10 @@ public class SCRnaExpressionFastqIntegrationTest extends AbstractIntegrationTest
         String cufflinksPbmc4kTemplatePath = format(folderAndFile, testFolder, CUFFLINK_PBMC4K_FILE);
         String featureCountTemplatePath = format(folderAndFile, testFolder, FEATURE_COUNT_FILE);
 
-        final String expectedAlignmentCmd = templateEngine.process(alignmentTemplatePath, context).trim();
-        final String expectedCufflinksCohortCmd = templateEngine.process(cufflinksCohortTemplatePath, context).trim();
-        final String expectedCufflinksPbmc4kCmd = templateEngine.process(cufflinksPbmc4kTemplatePath, context).trim();
-        final String expectedFeatureCountCmd = templateEngine.process(featureCountTemplatePath, context).trim();
+        final String expectedAlignmentCmd = TEMPLATE_ENGINE.process(alignmentTemplatePath, context).trim();
+        final String expectedCufflinksCohortCmd = TEMPLATE_ENGINE.process(cufflinksCohortTemplatePath, context).trim();
+        final String expectedCufflinksPbmc4kCmd = TEMPLATE_ENGINE.process(cufflinksPbmc4kTemplatePath, context).trim();
+        final String expectedFeatureCountCmd = TEMPLATE_ENGINE.process(featureCountTemplatePath, context).trim();
 
         final String actualAlignmentCmd = getCmd(ALIGNMENT_SH_PATH).trim();
         final String actualCufflinksCohortCmd = getCmd(CUFFLINKS_COHORT_SH_PATH).trim();

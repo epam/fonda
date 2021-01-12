@@ -47,7 +47,7 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
     void testDnaCaptureVarFastq(String gConfigPath, String sConfigPath, String outputShFile, String templatePath)
             throws IOException, URISyntaxException {
         startAppWithConfigs(gConfigPath, sConfigPath);
-        String expectedCmd = templateEngine.process(templatePath, context);
+        String expectedCmd = TEMPLATE_ENGINE.process(templatePath, context);
         assertEquals(expectedCmd.trim(), getCmd(outputShFile).trim());
     }
 

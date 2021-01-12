@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,10 @@
  */
 package com.epam.fonda.entity.configuration.orchestrator;
 
+/**
+ * The <tt>ScriptType</tt> enum provides a type of scripts that Fonda generates for execution.
+ */
 public enum ScriptType {
 
-    ALIGNMENT, SECONDARY, POST_ALIGNMENT, POST_PROCESS, TEMP
+    ALIGNMENT, POST_ALIGNMENT, SECONDARY, POST_PROCESS, TEMP
 }

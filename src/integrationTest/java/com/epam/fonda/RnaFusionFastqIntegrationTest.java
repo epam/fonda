@@ -66,7 +66,7 @@ public class RnaFusionFastqIntegrationTest extends AbstractIntegrationTest {
             throws IOException, URISyntaxException {
         startAppWithConfigs(globalConfigPath, S_CONFIG_PATH);
 
-        String expectedCmd = templateEngine.process(templatePath, context);
+        String expectedCmd = TEMPLATE_ENGINE.process(templatePath, context);
         String actualCmd = getCmd(OUTPUT_SH_FILE);
 
         assertEquals(expectedCmd.trim(), actualCmd.trim());

@@ -140,6 +140,10 @@ jacocoTestCoverageVerification {
                         'com.epam.fonda.OptionNames',
                         'com.epam.fonda.utils.MessageConstant',
                         'com.epam.fonda.Main',
+                        'com.epam.fonda.entity.configuration.orchestrator.ScriptManager',
+                        'com.epam.fonda.entity.configuration.orchestrator.MasterScript',
+                        'com.epam.fonda.entity.configuration.orchestrator.ScriptType',
+                        'com.epam.fonda.entity.configuration.orchestrator.MasterScript.MasterFileHolder',
                         'com.epam.fonda.Executor']
             limit {
                 counter = 'LINE'

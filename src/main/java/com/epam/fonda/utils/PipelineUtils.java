@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -194,6 +194,13 @@ public final class PipelineUtils {
         return shellToSubmit;
     }
 
+    /**
+     * This method executes a shell script.
+     * @param configuration is the type of {@link Configuration} which contains
+     *                      its fields: workflow, local, numThreads, pe, queue.
+     * @param shellToSubmit is the type or {@link String} and contains a run script path.
+     */
+    @SuppressWarnings("PMD.AvoidCatchingGenericException")
     public static void executeScript(final Configuration configuration, final String shellToSubmit) {
         final String command = configuration.isLocalMode()
                 ? format("sh %s", shellToSubmit)

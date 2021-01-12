@@ -131,7 +131,7 @@ public class Bam2FastqIntegrationTest extends AbstractIntegrationTest {
     }
 
     private String getTemplate(String folder, String file) {
-        return templateEngine.process(String.format("%s/%s", folder, file), context).trim();
+        return TEMPLATE_ENGINE.process(String.format("%s/%s", folder, file), context).trim();
     }
 
     private void assertDirectories() {

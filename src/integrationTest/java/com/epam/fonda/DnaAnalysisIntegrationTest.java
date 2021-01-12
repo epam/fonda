@@ -101,12 +101,12 @@ public class DnaAnalysisIntegrationTest extends AbstractIntegrationTest {
         String workflow, String mergeMutationTemplatePath) throws IOException, URISyntaxException {
         startAppWithConfigs(globalConfigPath, DNA_ANALYSIS_S_SINGLE_STUDY_CONFIG);
 
-        String expectedCmd = templateEngine.process(templatePath, context);
+        String expectedCmd = TEMPLATE_ENGINE.process(templatePath, context);
         String filePath = FIRST_PART_OF_THE_PATH_TO_DNA_SHELL_SCRIPT + workflow +
             THIRD_PART_OF_THE_PATH_TO_DNA_SHELL_SCRIPT + taskName + LAST_PART_OF_THE_PATH_TO_DNA_SHELL_SCRIPT;
         assertEquals(expectedCmd.trim(), getCmd(filePath).trim());
 
-        expectedCmd = templateEngine.process(mergeMutationTemplatePath, context);
+        expectedCmd = TEMPLATE_ENGINE.process(mergeMutationTemplatePath, context);
         filePath = FIRST_PART_TO_THE_PATH_OF_MERGE_MUTATION_SH + workflow + LAST_PART_TO_THE_PATH_OF_MERGE_MUTATION_SH;
         assertEquals(expectedCmd.trim(), getCmd(filePath).trim());
     }

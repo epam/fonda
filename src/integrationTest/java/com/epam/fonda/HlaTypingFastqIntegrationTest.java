@@ -47,7 +47,7 @@ public class HlaTypingFastqIntegrationTest extends AbstractIntegrationTest {
     void testHlaTypingPairedSeqpurgeOptiType(final String outputShFile, final String templatePath)
             throws IOException, URISyntaxException {
         startAppWithConfigs(G_CONFIG_PAIRED_SEQPURGE_OPTITYPE_PATH, S_CONFIG_PATH);
-        final String expectedCmd = templateEngine.process(templatePath, context);
+        final String expectedCmd = TEMPLATE_ENGINE.process(templatePath, context);
         assertEquals(expectedCmd.trim(), getCmd(outputShFile).trim());
     }
 
@@ -56,7 +56,7 @@ public class HlaTypingFastqIntegrationTest extends AbstractIntegrationTest {
     void testHlaTypingPairedTrimmQcXenomeYes(final String outputShFile, final String templatePath)
             throws IOException, URISyntaxException {
         startAppWithConfigs(G_CONFIG_PAIRED_TRIMM_QC_XENOME_YES_PATH, S_CONFIG_PATH);
-        final String expectedCmd = templateEngine.process(templatePath, context);
+        final String expectedCmd = TEMPLATE_ENGINE.process(templatePath, context);
         assertEquals(expectedCmd.trim(), getCmd(outputShFile).trim());
     }
 

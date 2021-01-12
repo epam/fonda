@@ -116,7 +116,7 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
     void testRnaExpressionFastq(final String gConfigPath, final String outputShFile, final String templatePath)
             throws IOException, URISyntaxException {
         startAppWithConfigs(gConfigPath, S_CONFIG_PATH);
-        final String expectedCmd = templateEngine.process(templatePath, context);
+        final String expectedCmd = TEMPLATE_ENGINE.process(templatePath, context);
         assertEquals(expectedCmd.trim(), getCmd(outputShFile).trim());
     }
 

@@ -66,7 +66,7 @@ public class TcrRepertoireFastqIntegrationTest extends AbstractIntegrationTest {
     @MethodSource("initParameters")
     void testTcrRepertoireFastqWorkflow(String templatePath, String filePath) throws IOException, URISyntaxException {
         startAppWithConfigs(TCR_REPERTOIRE_FASTQ_GLOBAL_CONFIG_PATH, TCR_REPERTOIRE_FASTQ_STUDY_CONFIG_PATH);
-        String expectedCmd = templateEngine.process(templatePath, context);
+        String expectedCmd = TEMPLATE_ENGINE.process(templatePath, context);
         assertEquals(expectedCmd.trim(), getCmd(filePath).trim());
     }
 

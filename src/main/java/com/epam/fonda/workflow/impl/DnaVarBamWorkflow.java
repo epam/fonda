@@ -22,6 +22,7 @@ import com.epam.fonda.samples.bam.BamFileSample;
 import com.epam.fonda.tools.impl.DnaAnalysis;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
+import com.epam.fonda.utils.DnaUtils;
 import com.epam.fonda.utils.TemplateEngineUtils;
 import com.epam.fonda.workflow.BamWorkflow;
 import com.epam.fonda.workflow.stage.impl.SecondaryAnalysis;
@@ -39,7 +40,6 @@ import java.util.stream.Collectors;
 import static com.epam.fonda.entity.configuration.orchestrator.ScriptType.ALIGNMENT;
 import static com.epam.fonda.entity.configuration.orchestrator.ScriptType.POST_PROCESS;
 import static com.epam.fonda.entity.configuration.orchestrator.ScriptType.TEMP;
-import static com.epam.fonda.utils.DnaUtils.isNotCaseOrTumor;
 import static com.epam.fonda.utils.PipelineUtils.cleanUpTmpDir;
 import static com.epam.fonda.utils.PipelineUtils.isPaired;
 import static com.epam.fonda.utils.PipelineUtils.printShell;
@@ -56,7 +56,7 @@ public class DnaVarBamWorkflow implements BamWorkflow {
 
     @Override
     public void run(final Configuration configuration, final BamFileSample sample) throws IOException {
-        if (isNotCaseOrTumor(sample.getSampleType())) {
+        if (DnaUtils.isNotCaseOrTumor(sample.getSampleType())) {
             return;
         }
         sample.createDirectory();
@@ -81,7 +81,7 @@ public class DnaVarBamWorkflow implements BamWorkflow {
     @Override
     public void postProcess(final Configuration configuration, final List<BamFileSample> samples) {
         final List<BamFileSample> samplesWithCheckedTypes = samples.stream()
-                .filter(s -> !isNotCaseOrTumor(s.getSampleType())).collect(Collectors.toList());
+                .filter(s -> !DnaUtils.isNotCaseOrTumor(s.getSampleType())).collect(Collectors.toList());
         if (CollectionUtils.isEmpty(samplesWithCheckedTypes)) {
             return;
         }

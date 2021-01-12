@@ -43,7 +43,7 @@ public class WorkflowFactory {
     public Workflow getWorkflow(final String workflowName, final Configuration configuration) {
         final Flag flag = Flag.buildFlags(configuration);
         final ScriptManager scriptManager = configuration.isMasterMode()
-                ? MasterScript.getInstance(configuration)
+                ? MasterScript.getInstance()
                 : null;
         switch (PipelineType.getByName(workflowName)) {
             case RNA_EXPRESSION_FASTQ: return new RnaExpressionFastqWorkflow(flag, scriptManager);

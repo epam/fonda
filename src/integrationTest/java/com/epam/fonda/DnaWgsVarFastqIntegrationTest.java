@@ -56,7 +56,7 @@ public class DnaWgsVarFastqIntegrationTest extends AbstractIntegrationTest {
     @MethodSource("initParameters")
     void testControlSample(String templatePath, String filePath) throws IOException, URISyntaxException {
         startAppWithConfigs(DNA_WGS_VAR_FASTQ_GLOBAL_CONFIG_PATH, STUDY_CONFIG_PATH);
-        String expectedCmd = templateEngine.process(templatePath, context);
+        String expectedCmd = TEMPLATE_ENGINE.process(templatePath, context);
         assertEquals(expectedCmd.trim(), getCmd(filePath).trim());
     }
 

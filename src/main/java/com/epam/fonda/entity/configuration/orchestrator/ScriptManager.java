@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,19 +19,37 @@ import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.utils.PipelineUtils;
 
 /**
- *
+ * The <tt>ScriptManager</tt> interface provides methods to work with master script.
  */
 public interface ScriptManager {
 
     /**
-     * Launch script
+     * This method executes a built script.
+     * @param configuration is the type of {@link Configuration} which contains
+     *                      its fields: workflow, local, numThreads, pe, queue.
      */
     default void launchScript(final Configuration configuration) {
-        final String script = buildScript();
+        final String script = buildScript(configuration);
         PipelineUtils.executeScript(configuration, script);
     }
 
-    String buildScript();
+    /**
+     * This method builds a main script.
+     * @param configuration is the type of {@link Configuration}
+     * @return path to the generated script
+     */
+    String buildScript(final Configuration configuration);
 
+    /**
+     * This method adds script that will be launched from master script.
+     * @param sampleName a name of a sample to which a script belongs
+     * @param type is the type of {@link ScriptType}
+     * @param script a script path
+     */
     void addScript(final String sampleName, final ScriptType type, final String script);
+
+    /**
+     * This method restores all defaults within the class.
+     */
+    void resetScript();
 }

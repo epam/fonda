@@ -1,5 +1,7 @@
 #!/bin/bash -x
 
+set -e
+
 [# th:if = "${variablesMap.get('local').equals('false')}"]# --- SGE options --- #
 
 #$ -V
@@ -25,41 +27,46 @@ echo `date` Begin the job execution...
 function qsub_script() {
     local script="$1"
     job="$(qsub $script)"
-    job_id="$(echo "$job" | sed -e 's|.*\\s\(\\d*\)\\s.*|\1|g' )"
+    job_id="$(echo "$job" | sed -e 's|.*\s\([0-9]*\)\s.*|\1|g')"
     printf "Job id $job_id"
     while qstat | grep -q "$job_id"
     do
         printf "."
         sleep 1
     done
-    sleep 10
-    status="$(qacct -j "$job_id" | grep exit_status | grep -o \\d)"
+    while [ -z $(qacct -j "$job_id") ]
+    do
+        printf "wait finish status...\n"
+        sleep 1
+    done
+    status="$(qacct -j "$job_id" | grep exit_status | grep -o '[0-9]*')"
+    return $status
 }
 
 function launch_script() {
     local script="$1"
     printf "`date` Start script execution $script \n"
     [# th:if = "${variablesMap.get('local').equals('false')}"]qsub_script $script[/]
-    [# th:unless = "${variablesMap.get('local').equals('false')}"]
-    bash $script
+    [# th:unless = "${variablesMap.get('local').equals('false')}"]bash $script[/]
     status=$?
-    [/]printf "\n"
-    printf "`date` Finish script execution $script with $status \n"
-    return $status
+    if [ $status -eq 0 ]
+    then
+        printf "`date` Successful step: $script script execution is completed \n"
+    else
+        printf "`date` Error step: $script script execution is completed with $status status. \n"
+    fi
 }
 
 function process_scripts_launch() {
-    [# th:each = "sampleScripts, itemStat : ${samplesProcessScripts}"][# th:each = "s, i : ${sampleScripts.scripts}"]
-    launch_script [(${s})] [# th:text = "!${i.last} ? ${#uris.escapePath('&&')} : ${#uris.escapePath('&')}"]
-    [/][/][/]
-    wait
+    [# th:each = "sampleScripts : ${samplesProcessScripts}"][# th:each = "s : ${sampleScripts.scripts}"]launch_script [(${s})]
+    [/][/]wait
 }
 
-function post_process_scripts_launch() {
-    [# th:if = "${#arrays.length(postProcessScripts) >= 1}"][# th:each="script : ${postProcessScripts}"]launch_script "[(${script})]" & [/][/]
+[# th:if = "${#arrays.length(postProcessScripts) >= 1}"]function post_process_scripts_launch() {
+    [# th:each="script : ${postProcessScripts}"]launch_script "[(${script})]" & [/]
     wait
-}
+}[/]
 
-process_scripts_launch
-post_process_scripts_launch
+process_scripts_launch[# th:if = "${#arrays.length(postProcessScripts) >= 1}"] && \
+post_process_scripts_launch[/]
 

@@ -38,7 +38,7 @@ public class RnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
     void testRnaCaptureVarFastq(final String gConfigPath, final String sCongfigPath, final String outputShFile,
                                 final String templatePath) throws IOException, URISyntaxException {
         startAppWithConfigs(gConfigPath, sCongfigPath);
-        final String expectedCmd = templateEngine.process(templatePath, context);
+        final String expectedCmd = TEMPLATE_ENGINE.process(templatePath, context);
         assertEquals(expectedCmd.trim(), getCmd(outputShFile).trim());
     }
 

@@ -84,7 +84,7 @@ public class DnaAmpliconVarFastqIntegrationTest extends AbstractIntegrationTest 
         startAppWithConfigs(G_SINGLE_ALL_TASKS, SINGLE_STUDY_CONFIG);
 
         String filePath = format("output/sh_files/DnaAmpliconVar_Fastq_%s_for_GA5_analysis.sh", task);
-        final String expectedCmd = templateEngine.process(template, context).trim();
+        final String expectedCmd = TEMPLATE_ENGINE.process(template, context).trim();
         final String actualCmd = getCmd(filePath).trim();
 
         assertFalse(actualCmd.contains(NULL));
@@ -188,7 +188,7 @@ public class DnaAmpliconVarFastqIntegrationTest extends AbstractIntegrationTest 
     }
 
     private String getTestTemplate(String folder, String task, Context context) {
-        return templateEngine.process(format("%s/%s", folder, task), context).trim();
+        return TEMPLATE_ENGINE.process(format("%s/%s", folder, task), context).trim();
     }
 
     @SuppressWarnings("PMD")

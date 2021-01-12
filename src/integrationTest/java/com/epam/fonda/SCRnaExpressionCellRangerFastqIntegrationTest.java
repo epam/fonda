@@ -100,7 +100,7 @@ class SCRnaExpressionCellRangerFastqIntegrationTest extends AbstractIntegrationT
     @MethodSource("initParameters")
     void testCount(String globalConfigPath, String templatePath) throws IOException, URISyntaxException {
         startAppWithConfigs(globalConfigPath, SCRNA_EXPRESSION_FASTQ_STUDY_CONFIG);
-        final String expectedCmd = templateEngine.process(templatePath, context);
+        final String expectedCmd = TEMPLATE_ENGINE.process(templatePath, context);
         assertEquals(expectedCmd.trim(), getCmd(TEST_SHELL_SCRIPT_TEMPLATE_PATH).trim());
         cleanOutputDirForNextTest(OUTPUT_DIR);
     }

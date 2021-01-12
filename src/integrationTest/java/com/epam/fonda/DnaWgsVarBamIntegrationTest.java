@@ -112,10 +112,10 @@ public class DnaWgsVarBamIntegrationTest extends AbstractIntegrationTest {
         startAppWithConfigs(globalConfigPath, studyConfigPath);
 
         String filePath = format("%s%s%s", FIRST_PART_OF_THE_TEST_SHELL_SCRIPT_PATH, taskName, suffixForFilePath);
-        String expectedCmd = templateEngine.process(templatePath, context);
+        String expectedCmd = TEMPLATE_ENGINE.process(templatePath, context);
         assertEquals(expectedCmd.trim(), getCmd(filePath).trim());
 
-        expectedCmd = templateEngine.process(variantDetectionTemplatePath, context);
+        expectedCmd = TEMPLATE_ENGINE.process(variantDetectionTemplatePath, context);
         assertEquals(expectedCmd.trim(), getCmd(variantDetectionFilePath).trim());
     }
 

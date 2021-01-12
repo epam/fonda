@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,14 +19,14 @@ import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.utils.TemplateEngineUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.Setter;
-import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -39,54 +39,47 @@ import java.util.stream.Stream;
 
 import static com.epam.fonda.entity.configuration.orchestrator.ScriptType.ALIGNMENT;
 import static com.epam.fonda.entity.configuration.orchestrator.ScriptType.POST_ALIGNMENT;
+import static com.epam.fonda.entity.configuration.orchestrator.ScriptType.POST_PROCESS;
 import static com.epam.fonda.entity.configuration.orchestrator.ScriptType.SECONDARY;
 import static com.epam.fonda.utils.PipelineUtils.cleanUpTmpDir;
 import static com.epam.fonda.utils.PipelineUtils.writeToFile;
 import static java.lang.String.format;
 
 /**
- * The <tt>MasterFile</tt> class represents the
+ * The <tt>MasterFile</tt> class represents the master script to manage all bash scripts.
  */
+@SuppressWarnings("PMD.TooManyStaticImports")
 public final class MasterScript implements ScriptManager {
     public static final TemplateEngine TEMPLATE_ENGINE = TemplateEngineUtils.init();
     private static final String MASTER_TEMPLATE = "master_template";
+    private static final String DELIMITER = " && \\";
 
     private List<SampleScripts> alignmentScripts;
     private Set<String> postProcessScripts;
     private Set<String> cleanupTempFiles;
     private Map<String, Map<ScriptType, List<String>>> scriptsBySample;
-    @NonNull
-    private static Configuration configuration;
 
     private MasterScript() {
-        alignmentScripts = new LinkedList<>();
-        postProcessScripts = new LinkedHashSet<>();
-        cleanupTempFiles = new LinkedHashSet<>();
-        scriptsBySample = new HashMap<>();
+        resetScript();
     }
 
-    public static MasterScript getInstance(final Configuration config) {
-        configuration = config;
+    public static MasterScript getInstance() {
         return MasterFileHolder.INSTANCE;
     }
 
-    public String buildScript() {
+    @Override
+    public String buildScript(final Configuration configuration) {
         Map<String, String> variablesMap = initializeVariablesMap(configuration);
         Context context = new Context();
         context.setVariable("variablesMap", variablesMap);
-        scriptsBySample.forEach((key, typeMap) -> alignmentScripts.add(new SampleScripts(Stream.concat(
-                Stream.concat(
-                        typeMap.getOrDefault(ALIGNMENT, Collections.emptyList()).stream(),
-                        typeMap.getOrDefault(POST_ALIGNMENT, Collections.emptyList()).stream()),
-                        typeMap.getOrDefault(SECONDARY, Collections.emptyList()).stream())
-                .filter(StringUtils::isNotBlank)
-                .collect(Collectors.toList()))));
-        final List<SampleScripts> processScript = alignmentScripts
-                .stream()
-                .filter(ObjectUtils::isNotEmpty)
-                .collect(Collectors.toList());
-
-        context.setVariable("samplesProcessScripts", processScript);
+        scriptsBySample.forEach((key, typeMap) -> {
+            final List<String> sampleScripts = new LinkedList<>();
+            processScripts(typeMap.getOrDefault(ALIGNMENT, Collections.emptyList()), sampleScripts);
+            processScripts(typeMap.getOrDefault(POST_PROCESS, Collections.emptyList()), sampleScripts);
+            processScripts(typeMap.getOrDefault(SECONDARY, Collections.emptyList()), sampleScripts);
+            alignmentScripts.add(new SampleScripts(replaceLast(sampleScripts)));
+        });
+        context.setVariable("samplesProcessScripts", alignmentScripts);
         context.setVariable("postProcessScripts", postProcessScripts);
         String masterShell = TEMPLATE_ENGINE.process(MASTER_TEMPLATE, context);
         final String shellToSubmit = String.valueOf(variablesMap.get("shellToSubmit"));
@@ -97,6 +90,14 @@ public final class MasterScript implements ScriptManager {
             throw new IllegalArgumentException(format("Cannot create master %s file", shellToSubmit), e);
         }
         return shellToSubmit;
+    }
+
+    @Override
+    public void resetScript() {
+        this.alignmentScripts = new LinkedList<>();
+        this.postProcessScripts = new LinkedHashSet<>();
+        this.cleanupTempFiles = new LinkedHashSet<>();
+        this.scriptsBySample = new HashMap<>();
     }
 
     @Override
@@ -124,14 +125,16 @@ public final class MasterScript implements ScriptManager {
             case TEMP:
                 cleanupTempFiles.add(script);
                 break;
-            default: throw new IllegalArgumentException(String.format("Requested %s script type is not allowed", type));
+            default: throw new IllegalArgumentException(format("Requested %s script type is not allowed", type));
         }
     }
 
     private void putScript(final String sampleName, final ScriptType type, final String script) {
         final Map<ScriptType, List<String>> scriptsByProcess = scriptsBySample.get(sampleName);
         if (!scriptsByProcess.containsKey(type)) {
-            scriptsByProcess.put(type, Collections.singletonList(script));
+            final List<String> scriptList = new ArrayList<>();
+            scriptList.add(script);
+            scriptsByProcess.put(type, scriptList);
             return;
         }
         if (scriptsByProcess.get(type).contains(script)) {
@@ -171,5 +174,24 @@ public final class MasterScript implements ScriptManager {
         variablesMap.put("outdir", configuration.getCommonOutdir().getRootOutdir());
         variablesMap.put("sync", String.valueOf(configuration.isSyncMode()));
         return variablesMap;
+    }
+
+    private void processScripts(final List<String> scripts, final List<String> sampleScripts) {
+        if (CollectionUtils.isEmpty(scripts)) {
+            return;
+        }
+        sampleScripts.addAll(scripts);
+    }
+
+    private List<String> replaceLast(final List<String> items) {
+        if (CollectionUtils.isEmpty(items)) {
+            return items;
+        }
+        final Stream<String> allExceptLast = items.stream()
+                .limit(items.size() - 1)
+                .filter(StringUtils::isNotBlank)
+                .map(s -> s += DELIMITER);
+        return Stream.concat(allExceptLast, Stream.of(items.get(items.size() - 1) + " &"))
+                .collect(Collectors.toList());
     }
 }
