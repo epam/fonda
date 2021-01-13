@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,8 +32,10 @@ public final class MessageConstant {
     public static final String LOCAL_DESCRIPTION = "Default: no. Running the job on local machine";
     public static final String STUDY_CONFIG_DESCRIPTION = "Configuration file for the specific study (Required)";
     public static final String GLOBAL_CONFIG_DESCRIPTION = "Configuration file for the particular pipeline (Required)";
-    public static final String SYNC_DESCRIPTION = "Run fonda in sync mode, waiting for all tasks to complete";
-    public static final String MASTER_DESCRIPTION = "Run fonda in master mode, orchestration blablabla";
+    public static final String SYNC_DESCRIPTION = "Default: no. Run fonda in sync mode, " +
+            "waiting for all tasks to complete";
+    public static final String MASTER_DESCRIPTION = "Default: no. Run fonda in master mode " +
+            "representing the main master script to manage all Fonda created scripts";
     public static final String HEADER = "\nFonda (Framework Of NGS Data Analysis)";
 
     static {

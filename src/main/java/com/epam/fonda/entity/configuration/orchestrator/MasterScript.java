@@ -39,7 +39,6 @@ import java.util.stream.Stream;
 
 import static com.epam.fonda.entity.configuration.orchestrator.ScriptType.ALIGNMENT;
 import static com.epam.fonda.entity.configuration.orchestrator.ScriptType.POST_ALIGNMENT;
-import static com.epam.fonda.entity.configuration.orchestrator.ScriptType.POST_PROCESS;
 import static com.epam.fonda.entity.configuration.orchestrator.ScriptType.SECONDARY;
 import static com.epam.fonda.utils.PipelineUtils.cleanUpTmpDir;
 import static com.epam.fonda.utils.PipelineUtils.writeToFile;
@@ -53,6 +52,7 @@ public final class MasterScript implements ScriptManager {
     public static final TemplateEngine TEMPLATE_ENGINE = TemplateEngineUtils.init();
     private static final String MASTER_TEMPLATE = "master_template";
     private static final String DELIMITER = " && \\";
+    private static final String AMPERSAND = " &";
 
     private List<SampleScripts> alignmentScripts;
     private Set<String> postProcessScripts;
@@ -74,8 +74,19 @@ public final class MasterScript implements ScriptManager {
         context.setVariable("variablesMap", variablesMap);
         scriptsBySample.forEach((key, typeMap) -> {
             final List<String> sampleScripts = new LinkedList<>();
+            if (typeMap.containsKey(ALIGNMENT) && typeMap.get(ALIGNMENT).size() > 1) {
+                final List<String> alignments = typeMap.get(ALIGNMENT);
+                final int lastScript = alignments.size() - 1;
+                final List<String> replacedAlignmentScripts = alignments.stream()
+                        .filter(StringUtils::isNotBlank)
+                        .limit(lastScript)
+                        .map(s -> s += AMPERSAND)
+                        .collect(Collectors.toList());
+                replacedAlignmentScripts.add(alignments.get(lastScript));
+                typeMap.replace(ALIGNMENT, replacedAlignmentScripts);
+            }
             processScripts(typeMap.getOrDefault(ALIGNMENT, Collections.emptyList()), sampleScripts);
-            processScripts(typeMap.getOrDefault(POST_PROCESS, Collections.emptyList()), sampleScripts);
+            processScripts(typeMap.getOrDefault(POST_ALIGNMENT, Collections.emptyList()), sampleScripts);
             processScripts(typeMap.getOrDefault(SECONDARY, Collections.emptyList()), sampleScripts);
             alignmentScripts.add(new SampleScripts(replaceLast(sampleScripts)));
         });
@@ -187,11 +198,14 @@ public final class MasterScript implements ScriptManager {
         if (CollectionUtils.isEmpty(items)) {
             return items;
         }
+        final Stream<String> preProcessed = items.stream().filter(s -> s.endsWith(AMPERSAND));
         final Stream<String> allExceptLast = items.stream()
                 .limit(items.size() - 1)
                 .filter(StringUtils::isNotBlank)
+                .filter(s -> !s.endsWith(AMPERSAND))
                 .map(s -> s += DELIMITER);
-        return Stream.concat(allExceptLast, Stream.of(items.get(items.size() - 1) + " &"))
+        return Stream.concat(Stream.concat(preProcessed, allExceptLast),
+                Stream.of(items.get(items.size() - 1) + AMPERSAND))
                 .collect(Collectors.toList());
     }
 }

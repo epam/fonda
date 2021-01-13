@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,7 +69,9 @@ public class DnaVarBamWorkflow implements BamWorkflow {
         final String resultCmd = configuration.isMasterMode()
                 ? cmd
                 : cmd + cleanUpTmpDir(bamResult.getCommand().getTempDirs());
-        final String custScript = printShell(configuration, resultCmd, sample.getName(), null);
+        final String custScript = configuration.isMasterMode() && StringUtils.isBlank(cmd)
+                ? StringUtils.EMPTY
+                : printShell(configuration, resultCmd, sample.getName(), null);
         if (scriptManager != null) {
             scriptManager.addScript(sample.getName(), ALIGNMENT, custScript);
             bamResult.getCommand().getTempDirs().forEach(t -> scriptManager.addScript(sample.getName(), TEMP, t));

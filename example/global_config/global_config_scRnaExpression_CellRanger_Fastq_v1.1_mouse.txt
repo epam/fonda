@@ -9,6 +9,7 @@ SPECIES = mouse
 GENOME_BUILD = mm10
 GENOME = /ngs/data/tools/cellranger/references/mm10_2016_11_16
 TRANSCRIPTOME = /ngs/data/tools/cellranger/references/mm10_2016_11_16
+FEATURE_REFERENCE = /ngs/data/tools/cellranger/feature-ref-combined.csv
 
 [all_tools]
 cellranger = /ngs/data/tools/cellranger/v2.0.2/cellranger

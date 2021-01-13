@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,9 +37,9 @@ public class RnaMutationAnalysis implements PostProcessTool {
     private static final String GATK_STEP_NAME = "SnpEff annotation";
 
     @NonNull
-    private Flag flag;
+    private final Flag flag;
     @NonNull
-    private List<String> sampleNames;
+    private final List<String> sampleNames;
 
     @Override
     public String generate(Configuration configuration, TemplateEngine templateEngine) {

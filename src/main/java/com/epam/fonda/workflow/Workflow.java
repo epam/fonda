@@ -47,8 +47,7 @@ public interface Workflow<T extends Sample> {
 
     void run(final Configuration configuration, final T sample) throws IOException;
 
-    void postProcess(final Configuration configuration, final List<T> samples)
-            throws IOException;
+    void postProcess(final Configuration configuration, final List<T> samples) throws IOException;
 
     interface UnsafeRunnable {
         void run() throws IOException;

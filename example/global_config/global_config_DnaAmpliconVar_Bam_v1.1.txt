@@ -10,6 +10,7 @@ GENOME_BUILD = hg19
 BED = /ngs/data/data_padded.bed
 SNPSIFTDB = /ngs/data/tools/SnpEff/snpEff_v4.3p/snpEff/db
 CANONICAL_TRANSCRIPT = /ngs/data/reference_genome/GRCh37/Annotation/prefer_ensembl_transcript.txt
+GENOME = /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa
 
 [all_tools]
 bedtools = /ngs/data/tools/bedtools2/v2.2.1/bin/bedtools
@@ -21,6 +22,10 @@ scalpel = /ngs/data/tools/scalpel/v0.5.3
 python = /ngs/data/app/python/v2.7.2/bin/python
 Rscript = /ngs/data/app/R/v3.5.0/bin/Rscript
 doubletdetection_python = /ngs/data/py/versions/3.5.2/bin/python
+mutect_java = /ngs/data/tools/java/jre1.7.0_60/bin/java
+DBSNP = /ngs/test/data/dbsnp_138.hg19_decoy.vcf
+COSMIC = /ngs/test/data/hg19_cosmic_v69_decoy.vcf
+MUTECT_NORMAL_PANEL = /ngs/test/data/refseq_exome_hg19_1kg_normal_panel_decoy.vcf
 
 [Pipeline_Info]
 workflow = DnaAmpliconVar_Bam

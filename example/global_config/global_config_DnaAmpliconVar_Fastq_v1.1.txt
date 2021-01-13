@@ -43,6 +43,7 @@ vardict = /opt/VarDictJava/v1.5.0
 lofreq = /opt/lofreq/v2.1.2/bin/lofreq
 freebayes = /opt/freebayes/bin/freebayes
 strelka2 = /opt/strelka2/v2.9.6/bin
+picard_version = v2.10.3
 
 [Pipeline_Info]
 workflow = DnaAmpliconVar_Fastq

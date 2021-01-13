@@ -63,8 +63,8 @@ function process_scripts_launch() {
 }
 
 [# th:if = "${#arrays.length(postProcessScripts) >= 1}"]function post_process_scripts_launch() {
-    [# th:each="script : ${postProcessScripts}"]launch_script "[(${script})]" & [/]
-    wait
+    [# th:each="script : ${postProcessScripts}"]launch_script "[(${script})]" &
+    [/]wait
 }[/]
 
 process_scripts_launch[# th:if = "${#arrays.length(postProcessScripts) >= 1}"] && \

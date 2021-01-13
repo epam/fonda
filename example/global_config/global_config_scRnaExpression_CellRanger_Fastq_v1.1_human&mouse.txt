@@ -9,6 +9,7 @@ SPECIES = human,mouse
 GENOME_BUILD = hg19,mm10
 GENOME = /ngs/data/tools/cellranger/references/hg19_and_mm10_2016_11_16
 TRANSCRIPTOME = /ngs/data/tools/cellranger/references/hg19_and_mm10_2016_11_16
+FEATURE_REFERENCE = /ngs/data/tools/cellranger/feature-ref-combined.csv
 
 [all_tools]
 cellranger = /ngs/data/tools/cellranger/v2.0.2/cellranger

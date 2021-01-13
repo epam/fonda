@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,7 +67,7 @@ public class DnaAnalysis implements PostProcessTool {
     private final List<FastqFileSample> fastqSamples;
     private final List<BamFileSample> bamSamples;
     @NonNull
-    private Flag flag;
+    private final Flag flag;
 
     /**
      * This method generates a bash script for {@link DnaAnalysis} post process tool.
