@@ -28,15 +28,10 @@ function qsub_script() {
     local script="$1"
     job="$(qsub $script)"
     job_id="$(echo "$job" | sed -e 's|.*\s\([0-9]*\)\s.*|\1|g')"
-    printf "Job id $job_id"
-    while qstat | grep -q "$job_id"
-    do
-        printf "."
-        sleep 1
-    done
+    printf "Job id $job_id for $script \n"
     while [ -z $(qacct -j "$job_id") ]
     do
-        printf "wait finish status...\n"
+        printf "Waiting for finish status for $script...\n"
         sleep 1
     done
     status="$(qacct -j "$job_id" | grep exit_status | grep -o '[0-9]*')"
@@ -54,12 +49,14 @@ function launch_script() {
         printf "`date` Successful step: $script script execution is completed \n"
     else
         printf "`date` Error step: $script script execution is completed with $status status. \n"
+        exit "$status"
     fi
 }
 
 function process_scripts_launch() {
-    [# th:each = "sampleScripts : ${samplesProcessScripts}"][# th:each = "s : ${sampleScripts.scripts}"]launch_script [(${s})]
-    [/][/]wait
+    [# th:each = "sampleScripts : ${samplesProcessScripts}"][# th:each = "s : ${sampleScripts.baseScripts}"]launch_script [(${s})]
+    [/][# th:if = "${#arrays.length(sampleScripts.secondaryScripts) > 1}"]( [# th:each = "s : ${sampleScripts.secondaryScripts}"]launch_script [(${s})] [/]wait ) &[/] [# th:if = "${#arrays.length(sampleScripts.secondaryScripts) == 1}"][# th:each = "s : ${sampleScripts.secondaryScripts}"]launch_script [(${s})][/][/]
+    [/]wait
 }
 
 [# th:if = "${#arrays.length(postProcessScripts) >= 1}"]function post_process_scripts_launch() {

@@ -87,8 +87,11 @@ public final class MasterScript implements ScriptManager {
             }
             processScripts(typeMap.getOrDefault(ALIGNMENT, Collections.emptyList()), sampleScripts);
             processScripts(typeMap.getOrDefault(POST_ALIGNMENT, Collections.emptyList()), sampleScripts);
-            processScripts(typeMap.getOrDefault(SECONDARY, Collections.emptyList()), sampleScripts);
-            alignmentScripts.add(new SampleScripts(replaceLast(sampleScripts)));
+            final List<String> secondaryScripts = typeMap.getOrDefault(SECONDARY, Collections.emptyList()).stream()
+                    .filter(StringUtils::isNotBlank)
+                    .map(s -> s += AMPERSAND)
+                    .collect(Collectors.toList());
+            alignmentScripts.add(new SampleScripts(replaceLast(sampleScripts, secondaryScripts), secondaryScripts));
         });
         context.setVariable("samplesProcessScripts", alignmentScripts);
         context.setVariable("postProcessScripts", postProcessScripts);
@@ -157,7 +160,8 @@ public final class MasterScript implements ScriptManager {
     @Data
     @AllArgsConstructor
     public static class SampleScripts {
-        private List<String> scripts;
+        private List<String> baseScripts;
+        private List<String> secondaryScripts;
     }
 
     @Setter
@@ -194,18 +198,26 @@ public final class MasterScript implements ScriptManager {
         sampleScripts.addAll(scripts);
     }
 
-    private List<String> replaceLast(final List<String> items) {
-        if (CollectionUtils.isEmpty(items)) {
-            return items;
+    private List<String> replaceLast(final List<String> sampleScripts, final List<String> secondaryScripts) {
+        if (CollectionUtils.isEmpty(sampleScripts)) {
+            return sampleScripts;
         }
-        final Stream<String> preProcessed = items.stream().filter(s -> s.endsWith(AMPERSAND));
-        final Stream<String> allExceptLast = items.stream()
-                .limit(items.size() - 1)
+        final Stream<String> preProcessed = sampleScripts.stream().filter(s -> s.endsWith(AMPERSAND));
+        final Stream<String> allExceptLast;
+        if (CollectionUtils.isEmpty(secondaryScripts)) {
+            allExceptLast = sampleScripts.stream()
+                    .limit(sampleScripts.size() - 1)
+                    .filter(StringUtils::isNotBlank)
+                    .filter(s -> !s.endsWith(AMPERSAND))
+                    .map(s -> s += DELIMITER);
+            return Stream.concat(Stream.concat(preProcessed, allExceptLast),
+                    Stream.of(sampleScripts.get(sampleScripts.size() - 1) + AMPERSAND))
+                    .collect(Collectors.toList());
+        }
+        allExceptLast = sampleScripts.stream()
                 .filter(StringUtils::isNotBlank)
                 .filter(s -> !s.endsWith(AMPERSAND))
                 .map(s -> s += DELIMITER);
-        return Stream.concat(Stream.concat(preProcessed, allExceptLast),
-                Stream.of(items.get(items.size() - 1) + AMPERSAND))
-                .collect(Collectors.toList());
+        return Stream.concat(preProcessed, allExceptLast).collect(Collectors.toList());
     }
 }
