@@ -28,10 +28,12 @@ function qsub_script() {
     local script="$1"
     job="$(qsub $script)"
     job_id="$(echo "$job" | sed -e 's|.*\s\([0-9]*\)\s.*|\1|g')"
-    printf "Job id $job_id for $script \n"
+    if [ -z "$job_id" ]; then
+        echo "[ERROR] Could not get job id from job $job. Exiting"
+        exit 1
+    fi
     while [ -z $(qacct -j "$job_id") ]
     do
-        printf "Waiting for finish status for $script...\n"
         sleep 1
     done
     status="$(qacct -j "$job_id" | grep exit_status | grep -o '[0-9]*')"
