@@ -1,4 +1,4 @@
-# Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+# Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -48,8 +48,9 @@ def usage():
     print('-n <toolset> (required)          A number of tools to run in a specific pipeline.\n')
     print('-x <flag_xenome>                 A flag (yes/no) to add xenome tool to the toolset.\n')
     print('-c <cores_per_sample>            A number of cores per sample for sge cluster.\n')
-    print('--sync                           A flag (true/false) enable or disable "-sync" option '
+    print('--sync                           The flag (true/false) enables or disables "-sync" option '
           '("true" by default).\n')
+    print('--master_mode                    The flag enables "-master" option.\n')
     print('-v <verbose>                     The enable debug verbosity output.\n')
 
 
@@ -69,6 +70,7 @@ def parse_arguments(script_name, argv):
     flag_xenome = None
     cores_per_sample = None
     sync = None
+    master_mode = None
     verbose = None
     try:
         opts, args = getopt.getopt(argv, "hs:t:g:k:j:d:f:q:l:p:r:n:x:c:v", ["help", "species=", "read_type=", "genome=",
@@ -76,12 +78,14 @@ def parse_arguments(script_name, argv):
                                                                             "fastq_list=", "fastq_list_r2",
                                                                             "library_type=", "project=", "run=",
                                                                             "toolset=", "flag_xenome=",
-                                                                            "cores_per_sample=", "sync=", "verbose"])
+                                                                            "cores_per_sample=", "sync=", "master_mode",
+                                                                            "verbose"])
         for opt, arg in opts:
             if opt == '-h':
                 print(script_name + ' -s <species> -t <read_type> -g <genome> -k <targeted_kit> -j <job_name> '
                                     '-d <dir_out> -f <fastq_list> -q <fastq_list_r2> -l <library_type> -p <project> '
-                                    '-r <run> -n <toolset> -x <flag_xenome> -c <cores_per_sample> <sync> -v <verbose>')
+                                    '-r <run> -n <toolset> -x <flag_xenome> -c <cores_per_sample> <sync> <master_mode> '
+                                    '-v <verbose>')
                 sys.exit()
             elif opt in ("-s", "--species"):
                 species = arg
@@ -113,6 +117,8 @@ def parse_arguments(script_name, argv):
                 cores_per_sample = arg
             elif opt in "--sync":
                 sync = arg
+            elif opt in "--master_mode":
+                master_mode = True
             elif opt in ("-v", "--verbose"):
                 verbose = 'True'
         if not species:
@@ -140,7 +146,7 @@ def parse_arguments(script_name, argv):
             usage()
             sys.exit(2)
         return species, read_type, job_name, dir_out, fastq_list, fastq_list_r2, library_type, project, run, toolset, \
-            flag_xenome, cores_per_sample, verbose, sync, genome, targeted_kit
+            flag_xenome, cores_per_sample, verbose, sync, genome, targeted_kit, master_mode
     except getopt.GetoptError:
         usage()
         sys.exit(2)
@@ -148,7 +154,8 @@ def parse_arguments(script_name, argv):
 
 def main(script_name, argv):
     species, read_type, job_name, dir_out, fastq_list, fastq_list_r2, library_type, project, run, toolset, \
-        flag_xenome, cores_per_sample, verbose, sync, genome, targeted_kit = parse_arguments(script_name, argv)
+        flag_xenome, cores_per_sample, verbose, sync, genome, targeted_kit, master_mode = \
+        parse_arguments(script_name, argv)
     if not library_type:
         library_type = "DNASeq"
     if not job_name:
@@ -187,7 +194,8 @@ def main(script_name, argv):
                                                                    WORKFLOW_NAME, library_type)
     study_config = StudyConfig(job_name, dir_out, fastq_list, None, library_type, run, project=project)
     study_config_path = study_config.parse(workflow=WORKFLOW_NAME)
-    Launcher.launch(global_config_path, study_config_path, sync, java_path=global_config.java_path, verbose=verbose)
+    Launcher.launch(global_config_path, study_config_path, sync, java_path=global_config.java_path, verbose=verbose,
+                    master=master_mode)
 
 
 if __name__ == "__main__":
