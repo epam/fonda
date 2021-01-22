@@ -29,8 +29,8 @@ function qsub_script() {
     job="$(qsub $script)"
     job_id="$(echo "$job" | sed -e 's|.*\s\([0-9]*\)\s.*|\1|g')"
     if [ -z "$job_id" ]; then
-        echo "[ERROR] Could not get job id from job $job. Exiting"
-        exit 1
+        printf "`date` [ERROR] Could not get job id from job $job. Exiting \n"
+        qdel $job_id
     fi
     while [ -z $(qacct -j "$job_id") ]
     do
@@ -51,7 +51,9 @@ function launch_script() {
         printf "`date` Successful step: $script script execution is completed \n"
     else
         printf "`date` Error step: $script script execution is completed with $status status. \n"
-        exit "$status"
+        printf "`date` Master job was aborted due to ERRORS found. \n"
+        [# th:if = "${variablesMap.get('local').equals('false')}"]master_job_id="$(qstat -j [(${variablesMap.get('fileName')})] | grep 'job_number' | grep -o '[0-9]*')"
+        qdel $master_job_id[/][# th:unless = "${variablesMap.get('local').equals('false')}"]exit "$status"[/]
     fi
 }
 
