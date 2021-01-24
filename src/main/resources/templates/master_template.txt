@@ -24,21 +24,25 @@ cd [(${variablesMap.get('outdir')})]
 
 echo `date` Begin the job execution...
 
-function qsub_script() {
+[# th:if = "${variablesMap.get('local').equals('false')}"]function qsub_script() {
     local script="$1"
     job="$(qsub $script)"
-    job_id="$(echo "$job" | sed -e 's|.*\s\([0-9]*\)\s.*|\1|g')"
+    job_id="$(echo "$job" | sed -n '1s|.*\s\([0-9]*\)\s.*|\1|p')"
     if [ -z "$job_id" ]; then
-        printf "`date` [ERROR] Could not get job id from job $job. Exiting \n"
-        qdel $job_id
+        job_id="$(qstat -j $script | grep 'job_number' | grep -o '[0-9]*')"
+        if [ -z "$job_id" ]; then
+            printf "`date` [ERROR] Could not get job id from job $job. Exiting \n"
+            master_job_id="$(qstat -j [(${variablesMap.get('fileName')})] | grep 'job_number' | grep -o '[0-9]*')"
+            qdel $master_job_id
+        fi
     fi
-    while [ -z $(qacct -j "$job_id") ]
+    while [[ "$(qacct -j "$job_id" | grep jobnumber | grep -o '[0-9]*')" != "$job_id" ]]
     do
         sleep 1
     done
     status="$(qacct -j "$job_id" | grep exit_status | grep -o '[0-9]*')"
     return $status
-}
+}[/]
 
 function launch_script() {
     local script="$1"
