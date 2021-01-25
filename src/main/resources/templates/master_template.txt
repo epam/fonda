@@ -36,7 +36,7 @@ echo `date` Begin the job execution...
             qdel $master_job_id
         fi
     fi
-    while [[ "$(qacct -j "$job_id" | grep jobnumber | grep -o '[0-9]*')" != "$job_id" ]]
+    while [ "$(qacct -j "$job_id" | grep jobnumber | grep -o '[0-9]*')" != "$job_id" ]
     do
         sleep 1
     done
