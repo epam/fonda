@@ -1,4 +1,4 @@
-# Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+# Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -28,10 +28,11 @@ class SampleManifest(ABC):
         self.parameter_type = parameter_type
         self.sample_name = None
 
-    def write(self, extension, files, workflow_name, library_type):
+    def write(self, extension, files, workflow_name, library_type, sample_libtype=None):
         data = {
             "parameter_type": self.parameter_type,
             "files": files,
+            "libtype": True if sample_libtype is not None else False,
             "tab": '\t'
         }
         sample_type = 'Fastq' if extension.split('.')[0] == 'fastq' else 'Bam'
@@ -71,7 +72,7 @@ class SampleManifest(ABC):
                     self.add_sample(files, f, None)
                 else:
                     self.add_sample(files, f, None, libtype=sample_libtype[i], master=sample_master[i])
-        return self.write(extension, files, workflow_name, library_type)
+        return self.write(extension, files, workflow_name, library_type, sample_libtype=sample_libtype)
 
     def write_from_dir(self, extension, sample_dir, sample_files, workflow_name, library_type):
         files = []
