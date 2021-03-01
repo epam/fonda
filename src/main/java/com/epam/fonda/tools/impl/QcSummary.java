@@ -72,7 +72,9 @@ public class QcSummary implements PostProcessTool {
         for (final String sample : sampleNames) {
             qcSummaryFields = constructFields(configuration, sample);
             context.setVariable("QcSummaryFields", qcSummaryFields);
-            cmd.append(templateEngine.process(QC_SUMMARY_STATUS_CHECK_TEMPLATE, context));
+            if (!configuration.isMasterMode()) {
+                cmd.append(templateEngine.process(QC_SUMMARY_STATUS_CHECK_TEMPLATE, context));
+            }
         }
         cmd.append(templateEngine.process(QC_SUMMARY_ANALYSIS_TEMPLATE, context));
         TaskContainer.addTasks("QC summary analysis");

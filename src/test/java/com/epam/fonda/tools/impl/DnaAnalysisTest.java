@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,6 +67,7 @@ class DnaAnalysisTest extends AbstractTest {
         CommonOutdir commonOutdir = new CommonOutdir(TEST_DIRECTORY);
         commonOutdir.createDirectory();
         configuration.setCommonOutdir(commonOutdir);
+        configuration.setTestMode(true);
         DnaAnalysis dnaAnalysis = new DnaAnalysis(samples, null, Flag.buildFlags(configuration));
         dnaAnalysis.generate(configuration, expectedTemplateEngine);
         String jarPath = getExecutionPath(configuration);
