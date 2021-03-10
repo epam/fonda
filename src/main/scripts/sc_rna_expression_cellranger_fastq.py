@@ -1,4 +1,4 @@
-# Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+# Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ def usage():
     print('-t <read_type>                   The read type (paired/single).\n')
     print('-j <job_name>                    The job ID.\n')
     print('-o <dir_out> (required)          The output directory for the analysis.\n')
-    print('-b <feature_reference>(required) A feature reference csv file that declares the set of Feature Barcode '
+    print('-b <feature_reference>           A feature reference csv file that declares the set of Feature Barcode '
           'reagents in use in the experiment.\n')
     print('-l <fastq_list> (required)       The path to the input manifest file or fastq folder '
           'or comma-delimited fastq file list for R1.\n')
@@ -178,10 +178,6 @@ def parse_arguments(script_name, argv):
             sys.exit(2)
         if not dir_out:
             print('The output directory for the analysis (-o <dir_out>) is required')
-            usage()
-            sys.exit(2)
-        if not feature_reference:
-            print('The feature reference csv file (-b <feature_reference>) is required')
             usage()
             sys.exit(2)
         if not chemistry:
