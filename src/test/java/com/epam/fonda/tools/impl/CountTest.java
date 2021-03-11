@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,8 +34,8 @@ import org.thymeleaf.context.Context;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 
 import static com.epam.fonda.utils.PipelineUtils.NA;
 import static com.epam.fonda.utils.PipelineUtils.getExecutionPath;
@@ -52,12 +52,13 @@ public class CountTest extends AbstractTest {
     private Count count;
     private String jarPath;
     private String fastqDirs;
+    private FastqFileSample expectedSample;
     private TemplateEngine expectedTemplateEngine = TemplateEngineUtils.init();
 
     @BeforeEach
     void init() {
         constructConfiguration();
-        FastqFileSample expectedSample = new FastqFileSample();
+        expectedSample = new FastqFileSample();
         expectedSample.setFastq1(Arrays.asList("/path/to/sampleName/fastq1", "/path/to/sampleName/fastq2"));
         expectedSample.setName("sampleName");
         expectedSample.createDirectory();
@@ -67,7 +68,9 @@ public class CountTest extends AbstractTest {
                 .fastqDir(fastqDirs)
                 .libraryType("Gene Expression")
                 .build();
-        expectedSample.setLibrary(Collections.singletonList(libraryCsv));
+        final ArrayList<LibraryCsv> libraryList = new ArrayList<>();
+        libraryList.add(libraryCsv);
+        expectedSample.setLibrary(libraryList);
         BamOutput bamOutput = BamOutput.builder()
                 .bam("sampleName.toolName.sorted.bam")
                 .build();
@@ -84,6 +87,12 @@ public class CountTest extends AbstractTest {
         Context context = new Context();
         context.setVariable("jarPath", jarPath);
         context.setVariable("fastqDirs", fastqDirs);
+        final LibraryCsv libraryCsv = LibraryCsv.builder()
+                .sampleName("sampleName")
+                .fastqDir(fastqDirs)
+                .libraryType("Antibody Capture")
+                .build();
+        expectedSample.getLibrary().add(libraryCsv);
         final String expectedCmd = expectedTemplateEngine.process(COUNT_TEST_OUTPUT_DATA_PATH, context);
         final String actualCmd = count.generate(expectedConfiguration, expectedTemplateEngine).getCommand()
                 .getToolCommand();

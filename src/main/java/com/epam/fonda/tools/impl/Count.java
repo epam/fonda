@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -37,6 +38,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.epam.fonda.utils.PipelineUtils.NA;
 import static java.lang.String.format;
 
 @Slf4j
@@ -106,7 +108,8 @@ public class Count implements Tool<BamResult> {
         countFields.sampleName = sample.getName();
         countFields.transcriptome = configuration.getGlobalConfig().getDatabaseConfig().getTranscriptome();
         countFields.libraries = createLibraryCsvFile(configuration, templateEngine);
-        countFields.featureRef = configuration.getGlobalConfig().getDatabaseConfig().getFeatureRef();
+        final String featureRef = configuration.getGlobalConfig().getDatabaseConfig().getFeatureRef();
+        countFields.featureRef = removeFeatureRefFlag(featureRef) ? NA : featureRef;
         countFields.countOutdir = format("%s/%s", configuration.getCommonOutdir().getRootOutdir(), "count");
         PipelineUtils.createDir(countFields.countOutdir);
         countFields.genomeBuild = configuration.getGlobalConfig().getDatabaseConfig().getGenomeBuild();
@@ -124,6 +127,12 @@ public class Count implements Tool<BamResult> {
                 CELLRANGER_OUTPUT_FOLDER);
         countFields.numThreads = configuration.getGlobalConfig().getQueueParameters().getNumThreads();
         return countFields;
+    }
+
+    private boolean removeFeatureRefFlag(final String featureRef) {
+        return StringUtils.isBlank(featureRef)
+                || NA.equals(featureRef)
+                || sample.getLibrary().stream().allMatch(l -> l.getLibraryType().equals("Gene Expression"));
     }
 
     private String createLibraryCsvFile(final Configuration configuration, final TemplateEngine templateEngine) {
@@ -158,8 +167,6 @@ public class Count implements Tool<BamResult> {
                 "RScript is not specified");
         Validate.notBlank(configuration.getGlobalConfig().getDatabaseConfig().getTranscriptome(),
                 "Transcriptome is not specified");
-        Validate.notBlank(configuration.getGlobalConfig().getDatabaseConfig().getFeatureRef(),
-                "Feature Reference CSV file is not specified");
         Validate.notBlank(configuration.getGlobalConfig().getDatabaseConfig().getGenomeBuild(),
                 "Genome build configuration is not specified");
         Validate.notBlank(cellrangerConfig.getCellrangerChemistry(), "CellRanger chemistry is not specified");
