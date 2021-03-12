@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,14 +71,7 @@ public class SampleBuilder {
         checkConfig(SampleType.FASTQ);
         final String fastqList = studyConfig.getFastqList();
         final Path filePath = checkSampleFile(fastqList);
-        final ArrayList<FastqFileSample> fastqFileSamples = new ArrayList<>(Files.readAllLines(filePath).stream()
-                .skip(1)
-                .filter(StringUtils::isNotBlank)
-                .map(line -> parseFastqLine(line, rootOutdir))
-                .collect(Collectors.toMap(FastqFileSample::getName, s -> s,
-                    (fastqFileSample, file) -> fastqFileSample.merge(file, isScWorkflow())))
-                .values());
-        return isScWorkflow() ? buildScSamples(fastqFileSamples) : fastqFileSamples;
+        return isScWorkflow() ? buildScSamples(filePath, rootOutdir) : getFastqFileSamples(rootOutdir, filePath);
     }
 
     /**
@@ -149,15 +142,37 @@ public class SampleBuilder {
                 .build();
     }
 
-    private List<FastqFileSample> buildScSamples(final ArrayList<FastqFileSample> fastqFileSamples) {
-        final List<FastqFileSample> librarySamples = fastqFileSamples.stream()
+    private List<FastqFileSample> getFastqFileSamples(final String rootOutdir,
+                                                           final Path filePath) throws IOException {
+        return new ArrayList<>(Files.readAllLines(filePath).stream()
+                .skip(1)
+                .filter(StringUtils::isNotBlank)
+                .map(line -> parseFastqLine(line, rootOutdir))
+                .collect(Collectors.toMap(FastqFileSample::getName, s -> s,
+                    (fastqFileSample, file) -> fastqFileSample.merge(file, isScWorkflow())))
+                .values());
+    }
+
+    private List<FastqFileSample> buildScSamples(final Path filePath, final String rootOutdir) throws IOException {
+        final List<FastqFileSample> samples = Files.readAllLines(filePath).stream()
+                .skip(1)
+                .filter(StringUtils::isNotBlank)
+                .map(line -> parseFastqLine(line, rootOutdir))
+                .collect(toList());
+        final List<FastqFileSample> librarySamples = samples.stream()
+                .map(s -> s.merge(s, isScWorkflow()))
                 .filter(s -> !"VDJ".equalsIgnoreCase(s.getSampleType()))
                 .collect(groupingBy(FastqFileSample::getControlName))
                 .values()
                 .stream()
                 .map(FastqFileSample::mergeLibrarySamples)
                 .collect(toList());
-        final List<FastqFileSample> vdjSamples = fastqFileSamples.stream()
+        final List<FastqFileSample> vdjSamples = samples
+                .stream()
+                .collect(Collectors.toMap(FastqFileSample::getName, s -> s,
+                    (fastqFileSample, file) -> fastqFileSample.merge(file, isScWorkflow())))
+                .values()
+                .stream()
                 .filter(s -> "VDJ".equalsIgnoreCase(s.getSampleType()))
                 .collect(toList());
         return Stream.of(librarySamples, vdjSamples).flatMap(Collection::stream).collect(toList());
