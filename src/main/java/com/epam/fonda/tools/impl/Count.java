@@ -139,6 +139,7 @@ public class Count implements Tool<BamResult> {
         Context context = new Context();
         final List<String> libraryFields = sample.getLibrary().stream()
                 .map(l -> String.join(",", l.getFastqDir(), l.getSampleName(), l.getLibraryType()))
+                .distinct()
                 .collect(Collectors.toList());
         context.setVariable("libraries", libraryFields);
         final String cmd = templateEngine.process(LIBRARY_TEMPLATE, context);
