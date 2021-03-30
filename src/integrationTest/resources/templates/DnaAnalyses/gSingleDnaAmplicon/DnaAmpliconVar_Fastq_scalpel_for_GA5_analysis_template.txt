@@ -19,7 +19,7 @@ cd build/resources/integrationTest/output
 echo `date` Begin the job execution...
 
 echo `date` Begin Step: Scalpel detection...
-/usr/bin/scalpel/scalpel-discovery --single --ref /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa --bam build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam --bed /ngs/data/test_data_Padded.bed --dir build/resources/integrationTest/output/GA5/scalpel --format vcf --mapscore 10 --numprocs 8 --covthr 5 --mincov 5 --outratio 0.05
+/usr/bin/scalpel/scalpel-discovery --single --ref /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa --bam build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.recal.bam --bed /ngs/data/test_data_Padded.bed --dir build/resources/integrationTest/output/GA5/scalpel --format vcf --mapscore 10 --numprocs 8 --covthr 5 --mincov 5 --outratio 0.05
 mv build/resources/integrationTest/output/GA5/scalpel/variants.indel.vcf build/resources/integrationTest/output/GA5/scalpel/GA5.scalpel.variants.vcf
 if [ $? -eq 0 ]
 then

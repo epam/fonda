@@ -24,7 +24,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -Ei "((Error Step: (Xenome classification|Seqpurge trimming|BWA alignment|Index bam|Merge DNA bams|Index mkdup bam|Remove temporary directories|Merge DNA QC))|(Successful Step: Merge DNA QC))" $logFile;)
+	str=$(grep -Ei "((Error Step: (Xenome classification|Seqpurge trimming|BWA alignment|Index bam|Merge DNA bams|GATK recalibration|Index mkdup bam|Remove temporary directories|Merge DNA QC))|(Successful Step: Merge DNA QC))" $logFile;)
 fi
 	echo Waiting for step: Merge DNA QC
 	sleep 60

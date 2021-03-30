@@ -99,6 +99,20 @@ else
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
 fi
+echo `date` Begin Step: GATK recalibration...
+/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -Djava.io.tmpdir=build/resources/integrationTest/output/GA5/tmp -jar /usr/bin/gatk -T BaseRecalibrator -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -I build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.splitRead.bam --disable_indel_quals -knownSites /ngs/data/db/mutect.dbsnp -knownSites 10 -knownSites 100 -o build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.splitRead.recal.table
+/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -Djava.io.tmpdir=build/resources/integrationTest/output/GA5/tmp -jar /usr/bin/gatk -T PrintReads -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -I build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.splitRead.bam -BQSR build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.splitRead.recal.table -o build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.splitRead.recal.bam
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: GATK recalibration.
+	sleep 8
+else
+	echo `date` Error Step: GATK recalibration.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
 echo `date` Begin Step: Remove temporary directories...
 rm -rf build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.bam
 rm -rf build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.bam.bai
@@ -107,6 +121,7 @@ rm -rf build/resources/integrationTest/output/GA5/bam/GA5.Aligned.out.bam.bai
 rm -rf build/resources/integrationTest/output/GA5/tmp
 rm -rf build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.splitRead.bam
 rm -rf build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.splitRead.bam.bai
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.star.sorted.splitRead.recal.table
 
 if [ $? -eq 0 ]
 then

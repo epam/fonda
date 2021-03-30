@@ -19,7 +19,7 @@ cd build/resources/integrationTest/output
 echo `date` Begin the job execution...
 
 echo `date` Begin Step: Freebayes detection...
-/usr/bin/freebayes -f /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -F 0.05 -C 3 -m 20 -t /ngs/data/test.bed build/resources/integrationTest/output/smv1/bam/smv1.merged.sorted.bam > build/resources/integrationTest/output/smv1/freebayes/smv1.freebayes.variants.vcf
+/usr/bin/freebayes -f /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -F 0.05 -C 3 -m 20 -t /ngs/data/test.bed build/resources/integrationTest/output/smv1/bam/smv1.merged.sorted.recal.bam > build/resources/integrationTest/output/smv1/freebayes/smv1.freebayes.variants.vcf
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Freebayes detection.

@@ -166,13 +166,27 @@ else
 	exit 1;
 fi
 
+echo `date` Begin Step: GATK recalibration...
+/ngs/data/app/java/v1.8.0u121/bin/java -Xmx10g -Djava.io.tmpdir=build/resources/integrationTest/output/GA5/tmp -jar /ngs/data/tools/GATK/v3.7/GenomeAnalysisTK.jar -T BaseRecalibrator -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -I build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.realign.bam --disable_indel_quals -knownSites /ngs/test/data/dbsnp_138.hg19_decoy.vcf -knownSites /ngs/test/data/Mills_and_1000G_gold_standard.indels.hg19_decoy.vcf -knownSites /ngs/test/data/1000G_phase1.indels.hg19_decoy.vcf -o build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.realign.recal.table
+/ngs/data/app/java/v1.8.0u121/bin/java -Xmx10g -Djava.io.tmpdir=build/resources/integrationTest/output/GA5/tmp -jar /ngs/data/tools/GATK/v3.7/GenomeAnalysisTK.jar -T PrintReads -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -I build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.realign.bam -BQSR build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.realign.recal.table -o build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.realign.recal.bam
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: GATK recalibration.
+	sleep 8
+else
+	echo `date` Error Step: GATK recalibration.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
 logFile=build/resources/integrationTest/output/log_files/DnaWgsVar_Fastq_postalignment_for_GA5_analysis.log
 str=""
 while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -Ei "((Error Step: (Novoalign alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|Remove duplicates|Index rmdup bam|DNA QC metrics|Merge DNA QC|ABRA realignment))|(Successful Step: Index rmdup bam))" $logFile;)
+	str=$(grep -Ei "((Error Step: (Novoalign alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|Remove duplicates|Index rmdup bam|DNA QC metrics|Merge DNA QC|ABRA realignment|GATK recalibration))|(Successful Step: Index rmdup bam))" $logFile;)
 fi
 	echo Waiting for step: Index rmdup bam
 	sleep 60
@@ -217,6 +231,7 @@ rm -rf build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.mkdup.gc.
 rm -rf build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.rmdup.hs.metrics
 rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.realign.bam
 rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.realign.bam.bai
+rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.realign.recal.table
 rm -rf build/resources/integrationTest/output/GA5/tmp
 
 if [ $? -eq 0 ]
