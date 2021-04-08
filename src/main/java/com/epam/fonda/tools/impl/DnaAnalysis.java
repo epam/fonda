@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -66,7 +67,7 @@ public class DnaAnalysis implements PostProcessTool {
     private final List<FastqFileSample> fastqSamples;
     private final List<BamFileSample> bamSamples;
     @NonNull
-    private Flag flag;
+    private final Flag flag;
 
     /**
      * This method generates a bash script for {@link DnaAnalysis} post process tool.
@@ -75,9 +76,9 @@ public class DnaAnalysis implements PostProcessTool {
      * @param templateEngine the {@link TemplateEngine}.
      **/
     @Override
-    public void generate(Configuration configuration, TemplateEngine templateEngine) {
+    public String generate(Configuration configuration, TemplateEngine templateEngine) {
         if (!checkToolset(flag) || isWgsWorkflow(configuration)) {
-            return;
+            return StringUtils.EMPTY;
         }
 
         if (CollectionUtils.isEmpty(fastqSamples) && CollectionUtils.isEmpty(bamSamples)) {
@@ -93,7 +94,7 @@ public class DnaAnalysis implements PostProcessTool {
         cmd.append(mutationAnalysis);
         configuration.setCustTask("mergeMutation");
         try {
-            PipelineUtils.printShell(configuration, cmd.toString(), null, null);
+            return PipelineUtils.printShell(configuration, cmd.toString(), null, null);
         } catch (IOException e) {
             throw new IllegalArgumentException("Cannot create bash script for DNA analysis post processing");
         }

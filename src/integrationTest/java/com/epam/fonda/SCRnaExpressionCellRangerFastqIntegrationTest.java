@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -100,7 +100,7 @@ class SCRnaExpressionCellRangerFastqIntegrationTest extends AbstractIntegrationT
     @MethodSource("initParameters")
     void testCount(String globalConfigPath, String templatePath) throws IOException, URISyntaxException {
         startAppWithConfigs(globalConfigPath, SCRNA_EXPRESSION_FASTQ_STUDY_CONFIG);
-        final String expectedCmd = templateEngine.process(templatePath, context);
+        final String expectedCmd = TEMPLATE_ENGINE.process(templatePath, context);
         assertEquals(expectedCmd.trim(), getCmd(TEST_SHELL_SCRIPT_TEMPLATE_PATH).trim());
         cleanOutputDirForNextTest(OUTPUT_DIR);
     }

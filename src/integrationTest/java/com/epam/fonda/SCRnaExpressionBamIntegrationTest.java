@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -103,7 +103,7 @@ public class SCRnaExpressionBamIntegrationTest extends AbstractIntegrationTest {
         throws IOException, URISyntaxException {
         startAppWithConfigs(SCRNA_EXPRESSION_BAM_GLOBAL_CONFIG, SCRNA_EXPRESSION_BAM_STUDY_CONFIG);
         String filePath = FIRST_PART_OF_THE_SH_FILE_PATH + taskName + suffixForFilePath;
-        final String expectedCmd = templateEngine.process(templatePath, context);
+        final String expectedCmd = TEMPLATE_ENGINE.process(templatePath, context);
         assertEquals(expectedCmd.trim(), getCmd(filePath).trim());
     }
 
@@ -111,13 +111,13 @@ public class SCRnaExpressionBamIntegrationTest extends AbstractIntegrationTest {
     void testConversion() throws IOException, URISyntaxException {
         startAppWithConfigs(SCRNA_EXPRESSION_BAM_GLOBAL_CONFIG, SCRNA_EXPRESSION_BAM_STUDY_CONFIG);
         String expectedCmd =
-            templateEngine.process(SC_RNA_EXPRESSION_BAM_CUFFLINKS_FOR_COHORT_TEMPLATE_PATH, context);
+            TEMPLATE_ENGINE.process(SC_RNA_EXPRESSION_BAM_CUFFLINKS_FOR_COHORT_TEMPLATE_PATH, context);
         assertEquals(expectedCmd.trim(), getCmd(SC_RNA_EXPRESSION_BAM_CUFFLINKS_FOR_COHORT_FILE_PATH).trim());
 
-        expectedCmd = templateEngine.process(SC_RNA_EXPRESSION_BAM_RSEM_FOR_COHORT_TEMPLATE_PATH, context);
+        expectedCmd = TEMPLATE_ENGINE.process(SC_RNA_EXPRESSION_BAM_RSEM_FOR_COHORT_TEMPLATE_PATH, context);
         assertEquals(expectedCmd.trim(), getCmd(SC_RNA_EXPRESSION_BAM_RSEM_FOR_COHORT_FILE_PATH).trim());
 
-        expectedCmd = templateEngine.process(SC_RNA_EXPRESSION_BAM_STRINGTIE_FOR_COHORT_TEMPLATE_PATH, context);
+        expectedCmd = TEMPLATE_ENGINE.process(SC_RNA_EXPRESSION_BAM_STRINGTIE_FOR_COHORT_TEMPLATE_PATH, context);
         assertEquals(expectedCmd.trim(), getCmd(SC_RNA_EXPRESSION_BAM_STRINGTIE_FOR_COHORT_FILE_PATH).trim());
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ public class HlaTypingFastqIntegrationTest extends AbstractIntegrationTest {
     void testHlaTypingPairedSeqpurgeOptiType(final String outputShFile, final String templatePath)
             throws IOException, URISyntaxException {
         startAppWithConfigs(G_CONFIG_PAIRED_SEQPURGE_OPTITYPE_PATH, S_CONFIG_PATH);
-        final String expectedCmd = templateEngine.process(templatePath, context);
+        final String expectedCmd = TEMPLATE_ENGINE.process(templatePath, context);
         assertEquals(expectedCmd.trim(), getCmd(outputShFile).trim());
     }
 
@@ -56,7 +56,7 @@ public class HlaTypingFastqIntegrationTest extends AbstractIntegrationTest {
     void testHlaTypingPairedTrimmQcXenomeYes(final String outputShFile, final String templatePath)
             throws IOException, URISyntaxException {
         startAppWithConfigs(G_CONFIG_PAIRED_TRIMM_QC_XENOME_YES_PATH, S_CONFIG_PATH);
-        final String expectedCmd = templateEngine.process(templatePath, context);
+        final String expectedCmd = TEMPLATE_ENGINE.process(templatePath, context);
         assertEquals(expectedCmd.trim(), getCmd(outputShFile).trim());
     }
 

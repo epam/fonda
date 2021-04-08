@@ -1,0 +1,77 @@
+#!/bin/bash -x
+
+set -e
+
+[# th:if = "${variablesMap.get('local').equals('false')}"]# --- SGE options --- #
+
+#$ -V
+#$ -wd [(${variablesMap.get('outdir')})]
+#$ -N [(${variablesMap.get('fileName')})]
+#$ -o [(${variablesMap.get('outdir')})]/log_files/[(${variablesMap.get('fileName')})].log
+#$ -e [(${variablesMap.get('outdir')})]/err_files/[(${variablesMap.get('fileName')})].err
+#$ -q [(${variablesMap.get('queue')})]
+#$ -R y
+[# th:if = "${variablesMap.get('sync').equals('true')}"]#$ -sync y
+[/]
+[/][# th:unless = "${variablesMap.get('local').equals('false')}"]# --- Local machine options --- #
+
+exec 1> [(${variablesMap.get('outdir')})]/log_files/[(${variablesMap.get('fileName')})].log
+exec 2> [(${variablesMap.get('outdir')})]/err_files/[(${variablesMap.get('fileName')})].err
+
+[/]# --- The commands to be executed --- #
+
+cd [(${variablesMap.get('outdir')})]
+
+echo `date` Begin the job execution...
+
+[# th:if = "${variablesMap.get('local').equals('false')}"]function qsub_script() {
+    local script="$1"
+    job="$(qsub $script)"
+    job_id="$(echo "$job" | sed -n '1s|.*\s\([0-9]*\)\s.*|\1|p')"
+    if [ -z "$job_id" ]; then
+        job_id="$(qstat -j $script | grep 'job_number' | grep -o '[0-9]*')"
+        if [ -z "$job_id" ]; then
+            printf "`date` [ERROR] Could not get job id from job $job. Exiting \n"
+            master_job_id="$(qstat -j [(${variablesMap.get('fileName')})] | grep 'job_number' | grep -o '[0-9]*')"
+            qdel $master_job_id
+        fi
+    fi
+    while [ "$(qacct -j "$job_id" | grep jobnumber | grep -o '[0-9]*')" != "$job_id" ]
+    do
+        sleep 1
+    done
+    status="$(qacct -j "$job_id" | grep exit_status | grep -o '[0-9]*')"
+    return $status
+}[/]
+
+function launch_script() {
+    local script="$1"
+    printf "`date` Start script execution $script \n"
+    [# th:if = "${variablesMap.get('local').equals('false')}"]qsub_script $script[/]
+    [# th:unless = "${variablesMap.get('local').equals('false')}"]bash $script[/]
+    status=$?
+    if [ $status -eq 0 ]
+    then
+        printf "`date` Successful step: $script script execution is completed \n"
+    else
+        printf "`date` Error step: $script script execution is completed with $status status. \n"
+        printf "`date` Master job was aborted due to ERRORS found. \n"
+        [# th:if = "${variablesMap.get('local').equals('false')}"]master_job_id="$(qstat -j [(${variablesMap.get('fileName')})] | grep 'job_number' | grep -o '[0-9]*')"
+        qdel $master_job_id[/][# th:unless = "${variablesMap.get('local').equals('false')}"]exit "$status"[/]
+    fi
+}
+
+function process_scripts_launch() {
+    [# th:each = "sampleScripts : ${samplesProcessScripts}"][# th:each = "s : ${sampleScripts.baseScripts}"]launch_script [(${s})]
+    [/][# th:if = "${#arrays.length(sampleScripts.secondaryScripts) > 1}"]( [# th:each = "s : ${sampleScripts.secondaryScripts}"]launch_script [(${s})] [/]wait ) &[/] [# th:if = "${#arrays.length(sampleScripts.secondaryScripts) == 1}"][# th:each = "s : ${sampleScripts.secondaryScripts}"]launch_script [(${s})][/][/]
+    [/]wait
+}
+
+[# th:if = "${#arrays.length(postProcessScripts) >= 1}"]function post_process_scripts_launch() {
+    [# th:each="script : ${postProcessScripts}"]launch_script [(${script})] &
+    [/]wait
+}[/]
+
+process_scripts_launch[# th:if = "${#arrays.length(postProcessScripts) >= 1}"] && \
+post_process_scripts_launch[/]
+

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -103,17 +103,20 @@ public final class PipelineUtils {
      * @param task          is the type or {@link String} and contains the name of the task.
      * @param cmd           is the type or {@link String} and contains the bash script.
      * @param sampleName    sample name
+     * @return absolute path to the file {@link String}
      * @throws IOException throws when file cannot be written or be created properly
      **/
-    public static void createStaticShell(Configuration configuration, String task,
+    public static String createStaticShell(Configuration configuration, String task,
                                          String cmd, String sampleName) throws IOException {
         cmd += JOB_FINISH;
         Map<String, String> variablesMap = initializeVariablesMap(configuration, sampleName, task);
         Context context = new Context();
         context.setVariable(VARIABLES_MAP, variablesMap);
         String staticShell = TEMPLATE_ENGINE.process(STATIC_SHELL_TEMPLATE_NAME, context);
-        writeToFile(String.valueOf(variablesMap.get("shellToSubmit")), staticShell + cmd,
+        final String shellToSubmit = String.valueOf(variablesMap.get("shellToSubmit"));
+        writeToFile(shellToSubmit, staticShell + cmd,
                 configuration.getGlobalConfig().getPipelineInfo().getLineEnding());
+        return shellToSubmit;
     }
 
     /**
@@ -166,7 +169,7 @@ public final class PipelineUtils {
      * @param sampleName    sample name
      * @throws IOException throws when file cannot be written or be created properly
      */
-    public static void printShell(Configuration configuration, String cmd, String sampleName, String index)
+    public static String printShell(Configuration configuration, String cmd, String sampleName, String index)
             throws IOException {
         Map<String, String> variablesMap = initializeVariablesMap(configuration, sampleName,
                 configuration.getCustTask());
@@ -184,15 +187,35 @@ public final class PipelineUtils {
         writeToFile(shellToSubmit, format("%s%s%s", staticShell, cmd, JOB_FINISH),
                 configuration.getGlobalConfig().getPipelineInfo().getLineEnding());
 
-        if (configuration.isTestMode()) {
-            return;
+        if (!configuration.isTestMode() && !configuration.isMasterMode()) {
+            executeScript(configuration, shellToSubmit);
         }
 
-        if (configuration.isLocalMode()) {
-            execute(format("sh %s", shellToSubmit));
+        return shellToSubmit;
+    }
+
+    /**
+     * This method executes a shell script.
+     * @param configuration is the type of {@link Configuration} which contains
+     *                      its fields: workflow, local, numThreads, pe, queue.
+     * @param shellToSubmit is the type or {@link String} and contains a run script path.
+     */
+    @SuppressWarnings("PMD.AvoidCatchingGenericException")
+    public static void executeScript(final Configuration configuration, final String shellToSubmit) {
+        final String command = configuration.isLocalMode()
+                ? format("sh %s", shellToSubmit)
+                : format("qsub %s", shellToSubmit);
+
+        if (configuration.isSyncMode()) {
+            execute(command);
             return;
         }
-        execute(format("qsub %s", shellToSubmit));
+        try {
+            Runtime.getRuntime().exec(command);
+        } catch(Exception e) {
+            log.error("In executing the command: " + command + ": " + e.getMessage());
+            System.exit(ERROR_STATUS);
+        }
     }
 
     /**

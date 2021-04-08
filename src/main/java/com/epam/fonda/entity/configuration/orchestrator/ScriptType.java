@@ -13,32 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package com.epam.fonda;
+package com.epam.fonda.entity.configuration.orchestrator;
 
 /**
- * The <tt>OptionName</tt> enum provides workflow launching option specified by user from command line
+ * The <tt>ScriptType</tt> enum provides a type of scripts that Fonda generates for execution.
  */
-public enum OptionName {
-    SYNC("sync"),
-    LOCAL("local"),
-    TEST("test"),
-    HELP("help"),
-    DETAIL("detail"),
-    STUDY_CONFIG("study_config"),
-    GLOBAL_CONFIG("global_config"),
-    MASTER("master");
+public enum ScriptType {
 
-    private final String name;
-
-    OptionName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * @return lowercase name of enum
-     */
-    public String getName() {
-        return name;
-    }
+    ALIGNMENT, POST_ALIGNMENT, SECONDARY, POST_PROCESS, TEMP
 }

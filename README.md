@@ -99,6 +99,8 @@ Possible options:
 | **`-detail`** | Show the details of the Fonda framework |
 | **`-local`** | Default: no. Running the job on local machine |
 | **`-test`** | Default: no. Test the commands without actually running the job |
+| **`-sync`** | Default: no. Running Fonda in asynchronous mode, waiting for all tasks to complete |
+| **`-master`** | Default: no. Running the main master script to manage all Fonda created scripts |
 | **`-help`** | Show help utility message |
 
 ### Elaboration of required config arguments

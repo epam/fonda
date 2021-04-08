@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ public class QcSummary implements PostProcessTool {
     private static final int DEFAULT_VALUE = 60;
 
     @NonNull
-    private Flag flag;
+    private final Flag flag;
     @NonNull
     private final List<String> sampleNames;
 
@@ -61,9 +61,9 @@ public class QcSummary implements PostProcessTool {
      * if flag doesn't contains qc.
      **/
     @Override
-    public void generate(final Configuration configuration, final TemplateEngine templateEngine) throws IOException {
+    public String generate(final Configuration configuration, final TemplateEngine templateEngine) throws IOException {
         if (!flag.isQc()) {
-            return;
+            return StringUtils.EMPTY;
         }
         configuration.setCustTask("qcsummary");
         final Context context = new Context();
@@ -72,11 +72,13 @@ public class QcSummary implements PostProcessTool {
         for (final String sample : sampleNames) {
             qcSummaryFields = constructFields(configuration, sample);
             context.setVariable("QcSummaryFields", qcSummaryFields);
-            cmd.append(templateEngine.process(QC_SUMMARY_STATUS_CHECK_TEMPLATE, context));
+            if (!configuration.isMasterMode()) {
+                cmd.append(templateEngine.process(QC_SUMMARY_STATUS_CHECK_TEMPLATE, context));
+            }
         }
         cmd.append(templateEngine.process(QC_SUMMARY_ANALYSIS_TEMPLATE, context));
         TaskContainer.addTasks("QC summary analysis");
-        PipelineUtils.printShell(configuration, cmd.toString(), "", null);
+        return PipelineUtils.printShell(configuration, cmd.toString(), "", null);
     }
 
     private QcSummaryFields constructFields(final Configuration configuration, String sample) {

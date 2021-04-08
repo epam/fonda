@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package com.epam.fonda.workflow;
 
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.orchestrator.MasterScript;
 import com.epam.fonda.samples.Sample;
 
 import java.io.IOException;
@@ -37,6 +38,9 @@ public interface Workflow<T extends Sample> {
         List<T> samples = provideSample(configuration);
         samples.forEach(sample -> unsafe(() -> this.run(configuration, sample)));
         this.postProcess(configuration, samples);
+        if (configuration.isMasterMode()) {
+            MasterScript.getInstance().launchScript(configuration);
+        }
     }
 
     List<T> provideSample(final Configuration config) throws IOException;

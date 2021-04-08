@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import com.epam.fonda.workflow.impl.Flag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.thymeleaf.TemplateEngine;
 
 import java.io.IOException;
@@ -36,14 +37,14 @@ public class RnaMutationAnalysis implements PostProcessTool {
     private static final String GATK_STEP_NAME = "SnpEff annotation";
 
     @NonNull
-    private Flag flag;
+    private final Flag flag;
     @NonNull
-    private List<String> sampleNames;
+    private final List<String> sampleNames;
 
     @Override
-    public void generate(Configuration configuration, TemplateEngine templateEngine) {
+    public String generate(Configuration configuration, TemplateEngine templateEngine) {
         if (!checkToolset(flag)) {
-            return;
+            return StringUtils.EMPTY;
         }
         StringBuilder command = new StringBuilder();
         if (flag.isGatkHaplotypeCaller()) {
@@ -55,7 +56,7 @@ public class RnaMutationAnalysis implements PostProcessTool {
         command.append(mutationAnalysis);
         configuration.setCustTask("mergeMutation");
         try {
-            PipelineUtils.printShell(configuration, command.toString(), null, null);
+            return PipelineUtils.printShell(configuration, command.toString(), null, null);
         } catch (IOException e) {
             throw new IllegalArgumentException("Cannot create bash script for " + GATK_HAPLOTYPE_CALLER_TOOL);
         }

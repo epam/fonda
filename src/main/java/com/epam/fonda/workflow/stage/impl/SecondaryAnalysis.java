@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@ package com.epam.fonda.workflow.stage.impl;
 
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.orchestrator.ScriptManager;
+import com.epam.fonda.entity.configuration.orchestrator.ScriptType;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.impl.ContEst;
 import com.epam.fonda.tools.impl.Cufflinks;
@@ -72,11 +74,12 @@ public class SecondaryAnalysis implements Stage {
     @NonNull
     private BamResult bamResult;
     @NonNull
-    private String sampleName;
+    private final String sampleName;
     @NonNull
-    private String sampleOutputDir;
+    private final String sampleOutputDir;
     private String controlSampleName;
     private boolean isPaired;
+    private ScriptManager scriptManager;
 
     /**
      * Method consists of list of tools that can be invoked on re-analysis of either qualitative or quantitative data.
@@ -304,7 +307,11 @@ public class SecondaryAnalysis implements Stage {
                                        final StringBuilder alignCmd,
                                        final String cmd,
                                        final String task) throws IOException {
-        createStaticShell(configuration, task, cmd, sampleName);
+        final String staticShell = createStaticShell(configuration, task, cmd, sampleName);
+        if (configuration.isMasterMode() && scriptManager != null) {
+            scriptManager.addScript(sampleName, ScriptType.SECONDARY, staticShell);
+            return;
+        }
         final String addTaskCmd = addTask(configuration, task, sampleName);
         alignCmd.append(addTaskCmd);
     }

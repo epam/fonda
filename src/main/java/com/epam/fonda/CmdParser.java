@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,12 +58,13 @@ public class CmdParser {
                 commandLine.getOptionValue(OptionName.GLOBAL_CONFIG.getName()));
 
         parseFieldsFromMapToConfigClass(studyConfigMap, studyConfig);
-        parseFieldsFromMapToConfigClass(globalConfigMap, new Object[]{
+        parseFieldsFromMapToConfigClass(globalConfigMap, new Object[] {
                 globalConfig.getQueueParameters(),
                 globalConfig.getPipelineInfo(),
                 globalConfig.getToolConfig(),
                 globalConfig.getDatabaseConfig(),
-                globalConfig.getCellrangerConfig()});
+                globalConfig.getCellrangerConfig()
+        });
 
         final Properties properties = ConfigurationUtils.getProperties();
         final String rootOutdir = studyConfig.getDirOut();
@@ -100,6 +101,7 @@ public class CmdParser {
         configuration.setTestMode(cmd.hasOption(OptionName.TEST.getName()));
         configuration.setLocalMode(cmd.hasOption(OptionName.LOCAL.getName()));
         configuration.setSyncMode(cmd.hasOption(OptionName.SYNC.getName()));
+        configuration.setMasterMode(cmd.hasOption(OptionName.MASTER.getName()));
         configuration.setCommonOutdir(commonOutdir);
         return configuration;
     }

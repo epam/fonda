@@ -1,4 +1,4 @@
-# Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+# Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -72,7 +72,7 @@ colnames(sample_infor) <- tolower(colnames(sample_infor))
 sampleList<-vector()
 for (i in 1:nrow(sample_infor)){
   if (!sample_infor$shortname[i] %in% sampleList){
-      if ("libtype" %in% colnames(sample_infor) & tolower(sample_infor$libtype[i]) != "gex"){} else{
+      if ("libtype" %in% colnames(sample_infor) && tolower(sample_infor$libtype[i]) != "gex"){} else{
           sampleList<-append(sampleList,sample_infor$shortname[i])
       }
   }

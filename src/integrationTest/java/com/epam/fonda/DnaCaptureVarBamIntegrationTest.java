@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -88,7 +88,7 @@ public class DnaCaptureVarBamIntegrationTest extends AbstractIntegrationTest {
         startAppWithConfigs("DnaCaptureVarBam/gSingleAllTasks.txt", "DnaCaptureVarBam/sSingle.txt");
         String filePath = format("output/sh_files/DnaCaptureVar_Bam_%s_for_GA5_analysis.sh", task);
 
-        final String expectedCmd = templateEngine.process(template, context).trim();
+        final String expectedCmd = TEMPLATE_ENGINE.process(template, context).trim();
         final String actualCmd = getCmd(filePath).trim();
 
         assertFalse(actualCmd.contains(NULL));
@@ -113,7 +113,7 @@ public class DnaCaptureVarBamIntegrationTest extends AbstractIntegrationTest {
         startAppWithConfigs("DnaCaptureVarBam/gAllTasksSampleNotNA.txt", "DnaCaptureVarBam/sControlSampleNotNA.txt");
         String filePath = format("output/sh_files/DnaCaptureVar_Bam_%s_for_GA51_analysis.sh", task);
 
-        final String expectedCmd = templateEngine.process(template, context).trim();
+        final String expectedCmd = TEMPLATE_ENGINE.process(template, context).trim();
         final String actualCmd = getCmd(filePath).trim();
 
         assertFalse(actualCmd.contains(NULL));

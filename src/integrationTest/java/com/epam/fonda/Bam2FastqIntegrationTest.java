@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -131,7 +131,7 @@ public class Bam2FastqIntegrationTest extends AbstractIntegrationTest {
     }
 
     private String getTemplate(String folder, String file) {
-        return templateEngine.process(String.format("%s/%s", folder, file), context).trim();
+        return TEMPLATE_ENGINE.process(String.format("%s/%s", folder, file), context).trim();
     }
 
     private void assertDirectories() {

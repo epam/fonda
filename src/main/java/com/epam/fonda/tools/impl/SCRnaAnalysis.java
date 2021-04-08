@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -47,12 +48,12 @@ public class SCRnaAnalysis implements PostProcessTool {
     private static final int PERIOD = 60;
 
     @NonNull
-    private Flag flag;
+    private final Flag flag;
     @NonNull
-    private List<String> sampleNames;
+    private final List<String> sampleNames;
 
     @Data
-    private class SCRnaAnalysisFields {
+    private static class SCRnaAnalysisFields {
         private String logFile;
         private String successMessage;
         private String errorMessage;
@@ -67,16 +68,16 @@ public class SCRnaAnalysis implements PostProcessTool {
     }
 
     @Override
-    public void generate(Configuration configuration, TemplateEngine templateEngine) {
+    public String generate(Configuration configuration, TemplateEngine templateEngine) {
         if (!flag.isConversion() || !flag.isCount()) {
-            return;
+            return StringUtils.EMPTY;
         }
         StringBuilder command = new StringBuilder()
                 .append(periodicStatusCheck(configuration, templateEngine))
                 .append(expressData(configuration, templateEngine));
         configuration.setCustTask(COUNT_TOOL);
         try {
-            PipelineUtils.printShell(configuration, command.toString(), null, null);
+            return PipelineUtils.printShell(configuration, command.toString(), null, null);
         } catch (IOException e) {
             throw new IllegalArgumentException("Cannot create bash script for " + COUNT_TOOL);
         }
@@ -110,7 +111,7 @@ public class SCRnaAnalysis implements PostProcessTool {
     private String logFileScanningShellScript(String workflow, TemplateEngine templateEngine,
                                               String logDir, String sampleName) {
         Validate.notBlank(logDir, "Logging directory is not specified");
-        SCRnaAnalysis.SCRnaAnalysisFields scRnaAnalysisFields = new SCRnaAnalysis.SCRnaAnalysisFields();
+        SCRnaAnalysis.SCRnaAnalysisFields scRnaAnalysisFields = new SCRnaAnalysisFields();
         String fileName = workflow + "_alignment_for_" + sampleName + "_analysis";
         scRnaAnalysisFields.errorMessage = "Error gene expression results from " + sampleName;
         scRnaAnalysisFields.successMessage = "Confirm gene expression results from " + sampleName;
@@ -131,7 +132,7 @@ public class SCRnaAnalysis implements PostProcessTool {
      */
     String expressData(Configuration configuration, TemplateEngine templateEngine) {
         checkConfiguration(configuration);
-        SCRnaAnalysis.SCRnaAnalysisFields scRnaAnalysisFields = new SCRnaAnalysis.SCRnaAnalysisFields();
+        SCRnaAnalysis.SCRnaAnalysisFields scRnaAnalysisFields = new SCRnaAnalysisFields();
         scRnaAnalysisFields.jarPath = PipelineUtils.getExecutionPath(configuration);
         scRnaAnalysisFields.sampleList = getSampleFileListReference(configuration.getStudyConfig());
         scRnaAnalysisFields.rScript = validate(configuration.getGlobalConfig().getToolConfig().getRScript(),

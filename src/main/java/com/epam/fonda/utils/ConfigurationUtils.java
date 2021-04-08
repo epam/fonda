@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,6 +72,8 @@ public final class ConfigurationUtils {
                 MessageConstant.GLOBAL_CONFIG_DESCRIPTION));
         options.addOption(new Option(OptionName.SYNC.getName(), false,
                 MessageConstant.SYNC_DESCRIPTION));
+        options.addOption(new Option(OptionName.MASTER.getName(), false,
+                MessageConstant.MASTER_DESCRIPTION));
         final CommandLine commandLine = new DefaultParser().parse(options, arg);
         printInfo(commandLine, options, new HelpFormatter());
         return commandLine;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package com.epam.fonda;
 import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.entity.configuration.EOLMarker;
 import com.epam.fonda.entity.configuration.GlobalConfig;
+import com.epam.fonda.entity.configuration.orchestrator.MasterScript;
 import com.epam.fonda.utils.TemplateEngineUtils;
 import com.epam.fonda.workflow.TaskContainer;
 import org.junit.jupiter.api.AfterEach;
@@ -46,7 +47,7 @@ import static com.epam.fonda.utils.PipelineUtils.writeToFile;
 public abstract class AbstractIntegrationTest {
 
     public static Context context;
-    public static TemplateEngine templateEngine = TemplateEngineUtils.init();
+    public static final TemplateEngine TEMPLATE_ENGINE = TemplateEngineUtils.init();
     public static final String OUTPUT_DIR = "output/";
 
     @BeforeEach
@@ -61,6 +62,7 @@ public abstract class AbstractIntegrationTest {
     public void cleanUp() throws IOException {
         cleanOutputDirForNextTest(OUTPUT_DIR);
         TaskContainer.getTasks().clear();
+        MasterScript.getInstance().resetScript();
     }
 
     /**
@@ -95,13 +97,12 @@ public abstract class AbstractIntegrationTest {
             studyConfig = Paths.get(this.getClass().getClassLoader().getResource(studyConfigName).toURI()).toString();
             EOLMarker lineSeparator = System.lineSeparator().equalsIgnoreCase(CRLF.getLineSeparator()) ? CRLF : LF;
             final String source = new String(Files.readAllBytes(Paths.get(globalConfig))) +
-                    String.format("\nline_ending = %s", lineSeparator.name());
+                    String.format("%nline_ending = %s", lineSeparator.name());
             writeToFile(globalConfig, source, lineSeparator);
         } catch (URISyntaxException | IOException e) {
             throw new IllegalArgumentException("Cannot parse globalConfig or StudyConfig " + e);
         }
         String[] arg = new String[]{"-test", "-global_config", globalConfig, "-study_config", studyConfig};
-
         Main.main(arg);
     }
 

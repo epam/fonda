@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,5 +25,5 @@ import java.io.IOException;
  * The <tt>PostProcessTool</tt> interface represents a tool entity for launch at workflow post process
  */
 public interface PostProcessTool {
-    void generate(final Configuration configuration, final TemplateEngine templateEngine) throws IOException;
+    String generate(final Configuration configuration, final TemplateEngine templateEngine) throws IOException;
 }

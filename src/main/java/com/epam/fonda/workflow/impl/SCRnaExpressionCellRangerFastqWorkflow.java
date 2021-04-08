@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package com.epam.fonda.workflow.impl;
 
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.orchestrator.ScriptManager;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.impl.QcSummary;
 import com.epam.fonda.tools.impl.SCRnaAnalysis;
@@ -30,12 +31,16 @@ import com.epam.fonda.workflow.stage.impl.Alignment;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.thymeleaf.TemplateEngine;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.epam.fonda.entity.configuration.orchestrator.ScriptType.ALIGNMENT;
+import static com.epam.fonda.entity.configuration.orchestrator.ScriptType.POST_PROCESS;
+import static com.epam.fonda.entity.configuration.orchestrator.ScriptType.TEMP;
 import static com.epam.fonda.utils.PipelineUtils.cleanUpTmpDir;
 import static com.epam.fonda.utils.PipelineUtils.printShell;
 
@@ -46,6 +51,7 @@ public class SCRnaExpressionCellRangerFastqWorkflow implements FastqWorkflow {
 
     @NonNull
     final Flag flag;
+    final ScriptManager scriptManager;
 
     @Override
     public void run(Configuration configuration, FastqFileSample sample) throws IOException {
@@ -62,18 +68,27 @@ public class SCRnaExpressionCellRangerFastqWorkflow implements FastqWorkflow {
         } else {
             bamResult = new Alignment().estimating(flag, sample, configuration, TEMPLATE_ENGINE);
         }
+        final String toolCommand = bamResult.getCommand().getToolCommand();
+        final String cmd = configuration.isMasterMode()
+                ? toolCommand
+                : toolCommand + cleanUpTmpDir(bamResult.getCommand().getTempDirs());
 
-        final String cmd = bamResult.getCommand().getToolCommand() +
-                cleanUpTmpDir(bamResult.getCommand().getTempDirs());
-
-        printShell(configuration, cmd, sample.getName(), null);
+        final String custScript = printShell(configuration, cmd, sample.getName(), null);
+        if (scriptManager != null) {
+            scriptManager.addScript(sample.getName(), ALIGNMENT, custScript);
+            bamResult.getCommand().getTempDirs().forEach(t -> scriptManager.addScript(sample.getName(), TEMP, t));
+        }
         log.debug(String.format("Successful Step: the %s sample was processed.", sample.getName()));
     }
 
     @Override
     public void postProcess(Configuration configuration, List<FastqFileSample> samples) throws IOException {
         List<String> sampleNames = samples.stream().map(FastqFileSample::getName).collect(Collectors.toList());
-        new QcSummary(flag, sampleNames).generate(configuration, TEMPLATE_ENGINE);
-        new SCRnaAnalysis(flag, sampleNames).generate(configuration, TEMPLATE_ENGINE);
+        final String qcSummaryScript = new QcSummary(flag, sampleNames).generate(configuration, TEMPLATE_ENGINE);
+        final String scRnaScript = new SCRnaAnalysis(flag, sampleNames).generate(configuration, TEMPLATE_ENGINE);
+        if (scriptManager != null) {
+            scriptManager.addScript(StringUtils.EMPTY, POST_PROCESS, qcSummaryScript);
+            scriptManager.addScript(StringUtils.EMPTY, POST_PROCESS, scRnaScript);
+        }
     }
 }

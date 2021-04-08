@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,12 +23,14 @@ import com.epam.fonda.workflow.impl.Flag;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.thymeleaf.TemplateEngine;
 
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -38,25 +40,25 @@ public class RnaAnalysis implements PostProcessTool {
     private static final String STRINGTIE_TOOL = "stringtie";
 
     @NonNull
-    private Flag flag;
+    private final Flag flag;
     @NonNull
-    private List<String> sampleNames;
+    private final List<String> sampleNames;
 
     @Override
-    public void generate(final Configuration configuration, final TemplateEngine templateEngine) {
-        filterToolset(flag)
-                .forEach(toolName -> {
+    public String generate(final Configuration configuration, final TemplateEngine templateEngine) {
+        return filterToolset(flag)
+                .stream().map(toolName -> {
                     StringBuilder command = new StringBuilder()
                             .append(RnaAnalysisUtils.periodicStatusCheck(configuration, templateEngine,
                                     "gene expression", toolName, sampleNames))
                             .append(RnaAnalysisUtils.dataAnalysis(configuration, templateEngine, toolName));
                     configuration.setCustTask(toolName);
                     try {
-                        PipelineUtils.printShell(configuration, command.toString(), null, null);
+                        return PipelineUtils.printShell(configuration, command.toString(), null, null);
                     } catch (IOException e) {
                         throw new IllegalArgumentException("Cannot create bash script for " + toolName);
                     }
-                });
+                }).collect(Collectors.joining(StringUtils.SPACE));
     }
 
     /**

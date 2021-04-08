@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package com.epam.fonda.workflow.impl;
 
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.orchestrator.ScriptManager;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.impl.Mixcr;
 import com.epam.fonda.tools.results.FastqResult;
@@ -33,6 +34,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
+import static com.epam.fonda.entity.configuration.orchestrator.ScriptType.ALIGNMENT;
+import static com.epam.fonda.entity.configuration.orchestrator.ScriptType.TEMP;
 import static com.epam.fonda.utils.PipelineUtils.cleanUpTmpDir;
 import static com.epam.fonda.utils.PipelineUtils.printShell;
 
@@ -44,6 +47,7 @@ public class TcrRepertoireFastqWorkflow implements FastqWorkflow {
 
     @NonNull
     final Flag flag;
+    final ScriptManager scriptManager;
 
     @Override
     public void run(Configuration configuration, FastqFileSample sample) throws IOException {
@@ -61,8 +65,14 @@ public class TcrRepertoireFastqWorkflow implements FastqWorkflow {
             MixcrResult generate = new Mixcr(sample, fastqResult).generate(configuration, TEMPLATE_ENGINE);
             cmd.append(generate.getCommand().getToolCommand());
         }
-        cmd.append(cleanUpTmpDir(tmpDir));
-        printShell(configuration, cmd.toString(), sample.getName(), null);
+        final String command = configuration.isMasterMode()
+                ? cmd.toString()
+                : cmd.append(cleanUpTmpDir(tmpDir)).toString();
+        final String custScript = printShell(configuration, command, sample.getName(), null);
+        if (scriptManager != null) {
+            scriptManager.addScript(sample.getName(), ALIGNMENT, custScript);
+            tmpDir.forEach(t -> scriptManager.addScript(sample.getName(), TEMP, t));
+        }
         log.debug(String.format("Successful Step: the %s sample was processed.", sample.getName()));
     }
 
