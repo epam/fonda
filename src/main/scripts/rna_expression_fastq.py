@@ -151,7 +151,7 @@ def parse_arguments(script_name, argv):
             usage()
             sys.exit(2)
         return species, read_type, job_name, dir_out, fastq_list, fastq_list_r2, cufflinks_library_type, library_type, \
-            project, run, toolset, flag_xenome, cores_per_sample, verbose, sync, genome_load, sample_name_list,
+            project, run, toolset, flag_xenome, cores_per_sample, verbose, sync, genome_load, sample_name_list, \
             master_mode
     except getopt.GetoptError:
         usage()
