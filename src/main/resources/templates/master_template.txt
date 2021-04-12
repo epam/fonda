@@ -24,6 +24,7 @@ cd [(${variablesMap.get('outdir')})]
 
 echo `date` Begin the job execution...
 
+R=$(echo $RANDOM)
 [# th:if = "${variablesMap.get('local').equals('false')}"]function qsub_script() {
     local script="$1"
     job="$(qsub $script)"
@@ -32,8 +33,10 @@ echo `date` Begin the job execution...
         job_id="$(qstat -j $script | grep 'job_number' | grep -o '[0-9]*')"
         if [ -z "$job_id" ]; then
             printf "`date` [ERROR] Could not get job id from job $job. Exiting \n"
-            master_job_id="$(qstat -j [(${variablesMap.get('fileName')})] | grep 'job_number' | grep -o '[0-9]*')"
-            qdel $master_job_id
+            if [ ! -f [(${variablesMap.get('outdir')})]/err_files/failure_$R.err ]; then
+                touch [(${variablesMap.get('outdir')})]/err_files/failure_$R.err
+            fi
+            exit 1
         fi
     fi
     while [ "$(qacct -j "$job_id" | grep jobnumber | grep -o '[0-9]*')" != "$job_id" ]
@@ -55,9 +58,18 @@ function launch_script() {
         printf "`date` Successful step: $script script execution is completed \n"
     else
         printf "`date` Error step: $script script execution is completed with $status status. \n"
+        if [ ! -f [(${variablesMap.get('outdir')})]/err_files/failure_$R.err ]; then
+            touch [(${variablesMap.get('outdir')})]/err_files/failure_$R.err
+        fi
+        exit "$status"
+    fi
+}
+
+function check_current_status() {
+    if [ -f [(${variablesMap.get('outdir')})]/err_files/failure_$R.err ]; then
         printf "`date` Master job was aborted due to ERRORS found. \n"
-        [# th:if = "${variablesMap.get('local').equals('false')}"]master_job_id="$(qstat -j [(${variablesMap.get('fileName')})] | grep 'job_number' | grep -o '[0-9]*')"
-        qdel $master_job_id[/][# th:unless = "${variablesMap.get('local').equals('false')}"]exit "$status"[/]
+        rm -f [(${variablesMap.get('outdir')})]/err_files/failure_$R.err
+        exit 1
     fi
 }
 
@@ -65,11 +77,13 @@ function process_scripts_launch() {
     [# th:each = "sampleScripts : ${samplesProcessScripts}"][# th:each = "s : ${sampleScripts.baseScripts}"]launch_script [(${s})]
     [/][# th:if = "${#arrays.length(sampleScripts.secondaryScripts) > 1}"]( [# th:each = "s : ${sampleScripts.secondaryScripts}"]launch_script [(${s})] [/]wait ) &[/] [# th:if = "${#arrays.length(sampleScripts.secondaryScripts) == 1}"][# th:each = "s : ${sampleScripts.secondaryScripts}"]launch_script [(${s})][/][/]
     [/]wait
+    check_current_status
 }
 
 [# th:if = "${#arrays.length(postProcessScripts) >= 1}"]function post_process_scripts_launch() {
     [# th:each="script : ${postProcessScripts}"]launch_script [(${script})] &
     [/]wait
+    check_current_status
 }[/]
 
 process_scripts_launch[# th:if = "${#arrays.length(postProcessScripts) >= 1}"] && \
