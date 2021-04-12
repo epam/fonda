@@ -48,8 +48,8 @@ def usage():
     print('-k <cores_per_sample>           A number of cores per sample for sge cluster.\n')
     print('-g <genome_load>                The --genomeLoad option of the STAR tool controls how the genome is loaded '
           'into memory.\n')
-    print('--sync                          The flag (true/false) enables or disables "-sync" option '
-          '("true" by default).\n')
+    print('--sync                          The flag (true/false) enables or disables "-sync" option ("true" by default).\n')
+    print('-i <sample_name_list>           The comma-delimited list of sample names.\n')
     print('--master_mode                   The flag enables "-master" option.\n')
     print('-v <verbose>                    The enable debug verbosity output.\n')
 
@@ -72,20 +72,23 @@ def parse_arguments(script_name, argv):
     sync = None
     master_mode = None
     verbose = None
+    sample_name_list = None
     try:
-        opts, args = getopt.getopt(argv, "hs:t:j:d:f:q:c:l:p:r:n:x:k:g:v", ["help", "species=", "read_type=",
-                                                                            "job_name=", "dir_out=", "fastq_list=",
-                                                                            "fastq_list_r2", "cufflinks_library_type=",
-                                                                            "library_type=", "project=", "run=",
-                                                                            "toolset=", "flag_xenome=",
-                                                                            "cores_per_sample=", "genome_load=",
-                                                                            "sync=", "master_mode", "verbose"])
+        opts, args = getopt.getopt(argv, "hs:t:j:d:f:q:c:l:p:r:n:x:k:g:i:v", ["help", "species=", "read_type=",
+                                                                              "job_name=", "dir_out=", "fastq_list=",
+                                                                              "fastq_list_r2",
+                                                                              "cufflinks_library_type=",
+                                                                              "library_type=", "project=", "run=",
+                                                                              "toolset=", "flag_xenome=",
+                                                                              "cores_per_sample=", "genome_load=",
+                                                                              "sync=", "sample_name_list", "master_mode",
+                                                                              "verbose"])
         for opt, arg in opts:
             if opt == '-h':
                 print(script_name + ' -s <species> -t <read_type> -j <job_name> -d <dir_out> -f <fastq_list> '
                                     '-q <fastq_list_r2> -c <cufflinks_library_type> -l <library_type> -p <project> '
                                     '-r <run> -n <toolset> -x <flag_xenome> -k <cores_per_sample> -g <genome_load> '
-                                    '<sync> <master_mode> -v <verbose>')
+                                    '<sync> -i <sample_name_list> <master_mode> -v <verbose>')
                 sys.exit()
             elif opt in ("-s", "--species"):
                 species = arg
@@ -121,6 +124,8 @@ def parse_arguments(script_name, argv):
                 master_mode = True
             elif opt in ("-v", "--verbose"):
                 verbose = 'True'
+            elif opt in ("-i", "--sample_name_list"):
+                sample_name_list = arg
         if not species:
             print('Species (-s <species>) is required')
             usage()
@@ -146,7 +151,8 @@ def parse_arguments(script_name, argv):
             usage()
             sys.exit(2)
         return species, read_type, job_name, dir_out, fastq_list, fastq_list_r2, cufflinks_library_type, library_type, \
-            project, run, toolset, flag_xenome, cores_per_sample, verbose, sync, genome_load, master_mode
+            project, run, toolset, flag_xenome, cores_per_sample, verbose, sync, genome_load, sample_name_list, \
+            master_mode
     except getopt.GetoptError:
         usage()
         sys.exit(2)
@@ -154,7 +160,7 @@ def parse_arguments(script_name, argv):
 
 def main(script_name, argv):
     species, read_type, job_name, dir_out, fastq_list, fastq_list_r2, cufflinks_library_type, library_type, project, \
-        run, toolset, flag_xenome, cores_per_sample, verbose, sync, genome_load, master_mode = \
+        run, toolset, flag_xenome, cores_per_sample, verbose, sync, genome_load, sample_name_list, master_mode = \
         parse_arguments(script_name, argv)
     if not library_type:
         library_type = "RNASeq"
@@ -177,9 +183,11 @@ def main(script_name, argv):
     if os.path.isdir(fastq_list):
         fastq_list = FastqSampleManifest(read_type).create_by_folder(fastq_list, WORKFLOW_NAME, library_type)
     elif 'fastq.gz' in str(fastq_list).split(',')[0]:
+        sample_name_list = list(str(sample_name_list).split(',')) if sample_name_list else None
         fastq_list = FastqSampleManifest(read_type).create_by_list(list(str(fastq_list).split(',')),
                                                                    list(str(fastq_list_r2).split(',')),
-                                                                   WORKFLOW_NAME, library_type)
+                                                                   WORKFLOW_NAME, library_type,
+                                                                   sample_names=sample_name_list)
     study_config = StudyConfig(job_name, dir_out, fastq_list, cufflinks_library_type, library_type, run,
                                project=project)
     study_config_path = study_config.parse(workflow=WORKFLOW_NAME)
