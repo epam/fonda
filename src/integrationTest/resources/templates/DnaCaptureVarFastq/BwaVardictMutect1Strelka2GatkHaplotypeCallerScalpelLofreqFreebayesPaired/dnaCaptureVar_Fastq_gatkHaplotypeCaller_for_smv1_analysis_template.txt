@@ -19,7 +19,7 @@ cd build/resources/integrationTest/output
 echo `date` Begin the job execution...
 
 echo `date` Begin Step: GATK haplotypecaller detection...
-/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -Djava.io.tmpdir=build/resources/integrationTest/output/smv1/gatkHaplotypeCaller/tmp -jar /usr/bin/gatk -T HaplotypeCaller -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -mmq 20 --intervals /ngs/data/test.bed --input_file build/resources/integrationTest/output/smv1/bam/smv1.merged.sorted.bam --out build/resources/integrationTest/output/smv1/gatkHaplotypeCaller/smv1.gatkHaplotypeCaller.variants.vcf --validation_strictness SILENT
+/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -Djava.io.tmpdir=build/resources/integrationTest/output/smv1/gatkHaplotypeCaller/tmp -jar /usr/bin/gatk -T HaplotypeCaller -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -mmq 20 --intervals /ngs/data/test.bed --input_file build/resources/integrationTest/output/smv1/bam/smv1.merged.sorted.recal.bam --out build/resources/integrationTest/output/smv1/gatkHaplotypeCaller/smv1.gatkHaplotypeCaller.variants.vcf --validation_strictness SILENT
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: GATK haplotypecaller detection.

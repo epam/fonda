@@ -19,7 +19,7 @@ cd build/resources/integrationTest/output
 echo `date` Begin the job execution...
 
 echo `date` Begin Step: Lofreq detection...
-/usr/bin/lofreq call -f /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa --min-cov 3 -m 20 -q 20 -Q 20 --sig 0.05 --call-indels -o build/resources/integrationTest/output/GA5/lofreq/GA5.lofreq.variants.vcf -l /ngs/data/test_data_Padded.bed build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam
+/usr/bin/lofreq call -f /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa --min-cov 3 -m 20 -q 20 -Q 20 --sig 0.05 --call-indels -o build/resources/integrationTest/output/GA5/lofreq/GA5.lofreq.variants.vcf -l /ngs/data/test_data_Padded.bed build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.recal.bam
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Lofreq detection.

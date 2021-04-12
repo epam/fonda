@@ -68,13 +68,27 @@ else
 	exit 1;
 fi
 
+echo `date` Begin Step: GATK recalibration...
+/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -Djava.io.tmpdir=build/resources/integrationTest/output/smv1/tmp -jar /usr/bin/gatk -T BaseRecalibrator -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -I build/resources/integrationTest/output/smv1/bam/smv1.merged.sorted.bam --disable_indel_quals -knownSites /ngs/data/db/mutect.dbsnp -knownSites 10 -knownSites 100 -o build/resources/integrationTest/output/smv1/bam/smv1.merged.sorted.recal.table
+/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -Djava.io.tmpdir=build/resources/integrationTest/output/smv1/tmp -jar /usr/bin/gatk -T PrintReads -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -I build/resources/integrationTest/output/smv1/bam/smv1.merged.sorted.bam -BQSR build/resources/integrationTest/output/smv1/bam/smv1.merged.sorted.recal.table -o build/resources/integrationTest/output/smv1/bam/smv1.merged.sorted.recal.bam
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: GATK recalibration.
+	sleep 8
+else
+	echo `date` Error Step: GATK recalibration.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
 logFile=build/resources/integrationTest/output/log_files/DnaCaptureVar_Fastq_postalignment_for_smv1_analysis.log
 str=""
 while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -Ei "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Index rmdup bam))|(Successful Step: Index rmdup bam))" $logFile;)
+	str=$(grep -Ei "((Error Step: (BWA alignment|Index bam|Merge DNA bams|GATK recalibration|Index rmdup bam))|(Successful Step: Index rmdup bam))" $logFile;)
 fi
 	echo Waiting for step: Index rmdup bam
 	sleep 60
@@ -184,6 +198,7 @@ rm -rf build/resources/integrationTest/output/smv1/bam/smv1_1.bwa.sorted.bam
 rm -rf build/resources/integrationTest/output/smv1/bam/smv1_1.bwa.sorted.bam.bai
 rm -rf build/resources/integrationTest/output/smv1/bam/smv1.merged.sorted.bam
 rm -rf build/resources/integrationTest/output/smv1/bam/smv1.merged.sorted.bam.bai
+rm -rf build/resources/integrationTest/output/smv1/bam/smv1.merged.sorted.recal.table
 rm -rf build/resources/integrationTest/output/smv1/tmp
 
 if [ $? -eq 0 ]
