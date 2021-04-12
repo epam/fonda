@@ -1,4 +1,4 @@
-# Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+# Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ class FastqSampleManifest(SampleManifest):
         return self.write_from_dir(EXTENSION, sample_dir, r1_gz_files, workflow_name, library_type)
 
     def create_by_list(self, fastq_list_r1, fastq_list_r2, workflow_name, library_type, sample_libtype=None,
-                       sample_master=None):
+                       sample_master=None, sample_names=None):
         return self.write_from_list(EXTENSION, fastq_list_r1, fastq_list_r2, workflow_name, library_type,
-                                    sample_libtype=sample_libtype, sample_master=sample_master)
+                                    sample_libtype=sample_libtype, sample_master=sample_master,
+                                    sample_names=sample_names)
