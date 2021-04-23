@@ -50,18 +50,17 @@ class Launcher:
             jar_folder += "/"
         sync = '-sync' if sync is None or sync == 'true' else ''
         master_flag = '-master' if master else ''
-        cmd = "{} -jar {}fonda-{}.jar -global_config {} -study_config {} {} {} {} > fonda_launch_out.txt" \
+        cmd = "{} -jar {}fonda-{}.jar -global_config {} -study_config {} {} {} {} " \
             .format(java_path, jar_folder, Launcher.FONDA_VERSION, global_config, study_config, sync, mode, master_flag)
-        proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
-        o, e = proc.communicate()
-
+        proc = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        while True:
+            output = proc.stdout.readline().decode()
+            if output == '' and proc.poll() is not None:
+                break
+            if output:
+                logging.debug(output.rstrip())
         exit_code = proc.wait()
         if exit_code != 0:
-            exec_err_msg = 'Command \'%s\' execution has failed.\n Out: %s\n %s Exit code: %s' % \
-                           (cmd, o.decode('ascii'), 'Err: %s.\n' % (e.decode('ascii')) if e else '',
-                            exit_code)
-            logging.error(exec_err_msg)
+            exec_err_msg = 'Command \'%s\' execution has failed.\n Exit code: %s' % (cmd, exit_code)
             raise RuntimeError(exec_err_msg)
-        logging.debug('Output: ' + o.decode('ascii'))
         logging.debug('Exit code: ' + str(exit_code))

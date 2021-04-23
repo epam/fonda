@@ -22,17 +22,29 @@ exec 2> [(${variablesMap.get('outdir')})]/err_files/[(${variablesMap.get('fileNa
 
 cd [(${variablesMap.get('outdir')})]
 
-echo `date` Begin the job execution...
+log_info "Begin the jobs execution."
+
+function log_info() {
+    LOG_TEXT="$1"
+    LOG_TASK="Fonda"
+    if command -v pipe_log_info &> /dev/null
+    then
+        pipe_log_info "$LOG_TEXT" "$LOG_TASK"
+    else
+        echo `date` "$LOG_TEXT"
+    fi
+}
 
 R=$(echo $RANDOM)
 [# th:if = "${variablesMap.get('local').equals('false')}"]function qsub_script() {
     local script="$1"
     job="$(qsub $script)"
+    log_info "$job"
     job_id="$(echo "$job" | sed -n '1s|.*\s\([0-9]*\)\s.*|\1|p')"
     if [ -z "$job_id" ]; then
         job_id="$(qstat -j $script | grep 'job_number' | grep -o '[0-9]*')"
         if [ -z "$job_id" ]; then
-            printf "`date` [ERROR] Could not get job id from job $job. Exiting \n"
+            log_info "[ERROR] Could not get job id from job $job. Exiting"
             if [ ! -f [(${variablesMap.get('outdir')})]/err_files/failure_$R.err ]; then
                 touch [(${variablesMap.get('outdir')})]/err_files/failure_$R.err
             fi
@@ -49,15 +61,15 @@ R=$(echo $RANDOM)
 
 function launch_script() {
     local script="$1"
-    printf "`date` Start script execution $script \n"
+    log_info "Start script execution $script"
     [# th:if = "${variablesMap.get('local').equals('false')}"]qsub_script $script[/]
     [# th:unless = "${variablesMap.get('local').equals('false')}"]bash $script[/]
     status=$?
     if [ $status -eq 0 ]
     then
-        printf "`date` Successful step: $script script execution is completed \n"
+        log_info "Successful step: $script script execution is completed."
     else
-        printf "`date` Error step: $script script execution is completed with $status status. \n"
+        log_info "Error step: $script script execution is completed with $status status."
         if [ ! -f [(${variablesMap.get('outdir')})]/err_files/failure_$R.err ]; then
             touch [(${variablesMap.get('outdir')})]/err_files/failure_$R.err
         fi
@@ -67,7 +79,7 @@ function launch_script() {
 
 function check_current_status() {
     if [ -f [(${variablesMap.get('outdir')})]/err_files/failure_$R.err ]; then
-        printf "`date` Master job was aborted due to ERRORS found. \n"
+        log_info "Master job was aborted due to ERRORS found."
         rm -f [(${variablesMap.get('outdir')})]/err_files/failure_$R.err
         exit 1
     fi
@@ -89,3 +101,4 @@ function process_scripts_launch() {
 process_scripts_launch[# th:if = "${#arrays.length(postProcessScripts) >= 1}"] && \
 post_process_scripts_launch[/]
 
+log_info "All jobs have been completed."
