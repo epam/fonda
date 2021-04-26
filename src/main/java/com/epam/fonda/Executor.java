@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,13 +50,15 @@ public final class Executor {
      *
      * @param cmd a shell command to execute
      */
-    public static void execute(String cmd) {
+    public static void execute(String cmd, boolean isMaster) {
         FutureTask<Integer> task = new FutureTask<>(() -> {
             try {
                 Process p = Runtime.getRuntime().exec(cmd);
                 p.waitFor();
-                try (BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
-                    reader.lines().forEach(l -> log.debug(cmd + ": " + l));
+                if (!isMaster) {
+                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
+                        reader.lines().forEach(l -> log.debug(cmd + ": " + l));
+                    }
                 }
 
                 return p.exitValue();

@@ -207,7 +207,7 @@ public final class PipelineUtils {
                 : format("qsub %s", shellToSubmit);
 
         if (configuration.isSyncMode()) {
-            execute(command);
+            execute(command, configuration.isMasterMode());
             return;
         }
         try {
