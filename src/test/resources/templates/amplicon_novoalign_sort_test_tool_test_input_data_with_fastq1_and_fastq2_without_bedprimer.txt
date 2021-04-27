@@ -1,5 +1,5 @@
 echo `date` Begin Step: Novoalign alignment...
-novoalign -c 5 -d novoindex -o SAM $'@RG\tID:sampleName\tSM:sampleName\tLB:DNA\tPL:Illumina' -f fastq1 fastq2 --hlimit 9 -t 0,2 -x 3 -H 22 --softclip 35 --trim3hp --matchreward 3 -k| samtools view -bS -|samtools sort - sbamOutdir/sampleName_1.novoalign.sorted
+novoalign -c 5 -d novoindex -o SAM $"@RG\tID:sampleName\tSM:sampleName\tLB:sampleName\tPL:Illumina" -f fastq1 fastq2 --hlimit 9 -t 0,2 -x 3 -H 22 --softclip 35 --trim3hp --matchreward 3 -k| samtools view -bS -|samtools sort - sbamOutdir/sampleName_1.novoalign.sorted
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Novoalign alignment.

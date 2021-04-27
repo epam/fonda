@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,10 +23,13 @@ import lombok.Data;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.epam.fonda.utils.PipelineUtils.isPaired;
 import static java.lang.String.format;
@@ -154,6 +157,23 @@ public final class DnaUtils {
      */
     public static boolean isWgsWorkflow(final Configuration configuration) {
         return configuration.getGlobalConfig().getPipelineInfo().getWorkflow().toLowerCase().contains("wgs");
+    }
+
+    /**
+     * Build @RG ID tag - add lane to sample name if exists
+     * @param fastqPath
+     * @param sampleName
+     * @return
+     */
+    public static String buildRGIdTag(final String fastqPath, final String sampleName) {
+
+        final String fastq = new File(fastqPath).getName();
+        final Pattern p = Pattern.compile("^([^._]+)_[^.]*(_L[0-9]+_)[\\w.]*(fastq[\\w.]*)$");
+        final Matcher m = p.matcher(fastq);
+        final String rgId = m.find()
+                ? format("%s+%s", sampleName, m.group(2).replace("_", ""))
+                : sampleName;
+        return format("\"@RG\\tID:%s\\tSM:%s\\tLB:%s\\tPL:Illumina\"", rgId, sampleName, sampleName);
     }
 
     private static String getLogFileScanningShellScript(LogFileFields logFileFields, String tag,
