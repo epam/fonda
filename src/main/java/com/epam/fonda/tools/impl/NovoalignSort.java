@@ -105,7 +105,7 @@ public class NovoalignSort implements Tool<BamResult> {
                 novoalignSortFields.getTmpBam());
         novoalignSortFields.sortedBamIndex = format("%s.bai",
                 novoalignSortFields.getSortedBam());
-        novoalignSortFields.rg = DnaUtils.buildRGIdTag(fastq1, sample.getName());
+        novoalignSortFields.rg = DnaUtils.buildRGIdTag(sample.getName(), index);
         return novoalignSortFields;
     }
 

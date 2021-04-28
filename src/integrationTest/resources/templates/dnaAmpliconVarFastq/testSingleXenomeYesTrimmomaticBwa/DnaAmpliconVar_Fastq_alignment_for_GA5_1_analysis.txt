@@ -48,7 +48,7 @@ else
 fi
 
 echo `date` Begin Step: BWA alignment...
-/usr/bin/bwa mem -t 4 /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -M -R "@RG\tID:GA5\tSM:GA5\tLB:GA5\tPL:Illumina" build/resources/integrationTest/output/GA5/fastq/GA5_1.trimmed.R1.fastq.gz| /opt/samtools/samtools-0.1.19/samtools view -bS -|/opt/samtools/samtools-0.1.19/samtools sort - build/resources/integrationTest/output/GA5/bam/GA5_1.bwa.sorted
+/usr/bin/bwa mem -t 4 /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -M -R "@RG\tID:GA5_L001\tSM:GA5\tLB:GA5\tPL:Illumina" build/resources/integrationTest/output/GA5/fastq/GA5_1.trimmed.R1.fastq.gz| /opt/samtools/samtools-0.1.19/samtools view -bS -|/opt/samtools/samtools-0.1.19/samtools sort - build/resources/integrationTest/output/GA5/bam/GA5_1.bwa.sorted
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: BWA alignment.

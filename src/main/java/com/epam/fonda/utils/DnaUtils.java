@@ -23,13 +23,10 @@ import lombok.Data;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static com.epam.fonda.utils.PipelineUtils.isPaired;
 import static java.lang.String.format;
@@ -160,19 +157,13 @@ public final class DnaUtils {
     }
 
     /**
-     * Build @RG ID tag - add lane to sample name if exists
-     * @param fastqPath
+     * Build @RG ID tag - add lane to sample name
      * @param sampleName
-     * @return
+     * @param index synthetic sample lane
+     * @return @RG ID tag
      */
-    public static String buildRGIdTag(final String fastqPath, final String sampleName) {
-
-        final String fastq = new File(fastqPath).getName();
-        final Pattern p = Pattern.compile("^([^._]+)_[^.]*(_L[0-9]+_)[\\w.]*(fastq[\\w.]*)$");
-        final Matcher m = p.matcher(fastq);
-        final String rgId = m.find()
-                ? format("%s+%s", sampleName, m.group(2).replace("_", ""))
-                : sampleName;
+    public static String buildRGIdTag(final String sampleName, final int index) {
+        final String rgId = format("%s_L%s%s%s", sampleName, index / 100 % 10, index / 10 % 10, index % 10);
         return format("\"@RG\\tID:%s\\tSM:%s\\tLB:%s\\tPL:Illumina\"", rgId, sampleName, sampleName);
     }
 

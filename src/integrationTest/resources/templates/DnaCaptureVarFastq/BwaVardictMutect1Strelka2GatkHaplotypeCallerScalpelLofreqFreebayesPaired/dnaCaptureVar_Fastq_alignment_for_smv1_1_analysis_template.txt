@@ -19,7 +19,7 @@ cd build/resources/integrationTest/output
 echo `date` Begin the job execution...
 
 echo `date` Begin Step: BWA alignment...
-/usr/bin/bwa mem -t 4 /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -M -R "@RG\tID:smv1+L004\tSM:smv1\tLB:smv1\tPL:Illumina" /ngs/data/demo/test/fastq/smv1_GTGTTCTA_L004_R1_001.fastq.gz /ngs/data/demo/test/fastq/smv1_GTGTTCTA_L004_R2_001.fastq.gz| /opt/samtools/samtools-0.1.19/samtools view -bS -|/opt/samtools/samtools-0.1.19/samtools sort - build/resources/integrationTest/output/smv1/bam/smv1_1.bwa.sorted
+/usr/bin/bwa mem -t 4 /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -M -R "@RG\tID:smv1_L001\tSM:smv1\tLB:smv1\tPL:Illumina" /ngs/data/demo/test/fastq/smv1_GTGTTCTA_L004_R1_001.fastq.gz /ngs/data/demo/test/fastq/smv1_GTGTTCTA_L004_R2_001.fastq.gz| /opt/samtools/samtools-0.1.19/samtools view -bS -|/opt/samtools/samtools-0.1.19/samtools sort - build/resources/integrationTest/output/smv1/bam/smv1_1.bwa.sorted
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: BWA alignment.

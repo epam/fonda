@@ -100,7 +100,7 @@ public class BwaSort implements Tool<BamResult> {
                 bwaSortFields.sbamOutDir, bwaSortFields.sampleName, index);
         bwaSortFields.sortedBam = format("%s.bam", bwaSortFields.tmpBam);
         bwaSortFields.sortedBamIndex = format("%s.bai", bwaSortFields.sortedBam);
-        bwaSortFields.rg = DnaUtils.buildRGIdTag(fastq1, sample.getName());
+        bwaSortFields.rg = DnaUtils.buildRGIdTag(sample.getName(), index);
         return bwaSortFields;
     }
 
