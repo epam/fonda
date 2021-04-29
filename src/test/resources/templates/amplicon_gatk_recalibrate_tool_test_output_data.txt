@@ -1,6 +1,6 @@
 echo `date` Begin Step: GATK recalibration...
-java -Xmx10g -Djava.io.tmpdir=tmpOutdir -jar gatk -T BaseRecalibrator -R genome -I sbamOutdir/sampleName.toolName.sorted.file.bam --disable_indel_quals -knownSites DBsnp -knownSites knownIndelsMills -knownSites knownIndelsPhase1 -o sbamOutdir/sampleName.toolName.sorted.file.recal.table
-java -Xmx10g -Djava.io.tmpdir=tmpOutdir -jar gatk -T PrintReads -R genome -I sbamOutdir/sampleName.toolName.sorted.file.bam -BQSR sbamOutdir/sampleName.toolName.sorted.file.recal.table -o sbamOutdir/sampleName.toolName.sorted.file.recal.bam
+java -Xmx10g -Djava.io.tmpdir=tmpOutdir -jar gatk BaseRecalibrator -R genome -I sbamOutdir/sampleName.toolName.sorted.file.bam --use-original-qualities true -knownSites DBsnp -knownSites knownIndelsMills -knownSites knownIndelsPhase1 -o sbamOutdir/sampleName.toolName.sorted.file.recal.table
+java -Xmx10g -Djava.io.tmpdir=tmpOutdir -jar gatk ApplyBQSR -R genome -I sbamOutdir/sampleName.toolName.sorted.file.bam -bqsr sbamOutdir/sampleName.toolName.sorted.file.recal.table -o sbamOutdir/sampleName.toolName.sorted.file.recal.bam
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: GATK recalibration.

@@ -69,8 +69,8 @@ else
 fi
 
 echo `date` Begin Step: GATK recalibration...
-/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -Djava.io.tmpdir=build/resources/integrationTest/output/GA5/tmp -jar /usr/bin/gatk -T BaseRecalibrator -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -I build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam --disable_indel_quals -knownSites /ngs/test/data/dbsnp_138.hg19_decoy.vcf -knownSites /ngs/test/data/Mills_and_1000G_gold_standard.indels.hg19_decoy.vcf -knownSites /ngs/test/data/1000G_phase1.indels.hg19_decoy.vcf -o build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.recal.table
-/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -Djava.io.tmpdir=build/resources/integrationTest/output/GA5/tmp -jar /usr/bin/gatk -T PrintReads -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -I build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam -BQSR build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.recal.table -o build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.recal.bam
+/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -Djava.io.tmpdir=build/resources/integrationTest/output/GA5/tmp -jar /usr/bin/gatk BaseRecalibrator -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -I build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam --use-original-qualities true -knownSites /ngs/test/data/dbsnp_138.hg19_decoy.vcf -knownSites /ngs/test/data/Mills_and_1000G_gold_standard.indels.hg19_decoy.vcf -knownSites /ngs/test/data/1000G_phase1.indels.hg19_decoy.vcf -o build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.recal.table
+/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -Djava.io.tmpdir=build/resources/integrationTest/output/GA5/tmp -jar /usr/bin/gatk ApplyBQSR -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -I build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam -bqsr build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.recal.table -o build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.recal.bam
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: GATK recalibration.
