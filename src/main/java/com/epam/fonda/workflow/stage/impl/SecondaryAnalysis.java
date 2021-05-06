@@ -19,6 +19,7 @@ import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.entity.configuration.orchestrator.ScriptManager;
 import com.epam.fonda.entity.configuration.orchestrator.ScriptType;
+import com.epam.fonda.tools.impl.PileupSummaries;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.impl.ContEst;
 import com.epam.fonda.tools.impl.Cufflinks;
@@ -46,6 +47,7 @@ import com.epam.fonda.tools.results.CufflinksResult;
 import com.epam.fonda.tools.results.ExomecnvResult;
 import com.epam.fonda.tools.results.FeatureCountResult;
 import com.epam.fonda.tools.results.PileupResult;
+import com.epam.fonda.tools.results.PileupSummariesResult;
 import com.epam.fonda.tools.results.RsemResult;
 import com.epam.fonda.tools.results.SequenzaResult;
 import com.epam.fonda.tools.results.StringtieResult;
@@ -206,7 +208,14 @@ public class SecondaryAnalysis implements Stage {
             return;
         }
         final Mutect2 mutect2 = new Mutect2(sampleName, bamResult.getBamOutput(), sampleOutputDir, controlSampleName);
-        processVcfTool(configuration, templateEngine, alignCmd, mutect2);
+        final VariantsVcfResult toolResult = mutect2.generate(configuration, templateEngine);
+        final PileupSummaries pileupSummaries = new PileupSummaries(sampleName, bamResult.getBamOutput(),
+                toolResult.getVariantsVcfOutput().getVariantsOutputDir());
+        final PileupSummariesResult pileupSummariesResult = pileupSummaries.generate(configuration, templateEngine);
+
+        final VcfScnpeffAnnonationResult vcfSnpeffAnnotationResult = new VcfSnpeffAnnotation(sampleName, toolResult)
+                .generate(configuration, templateEngine);
+        createVcfToolShell(configuration, alignCmd, toolResult, vcfSnpeffAnnotationResult);
     }
 
     private void mutect1(final Flag flag, final Configuration configuration, final TemplateEngine templateEngine,

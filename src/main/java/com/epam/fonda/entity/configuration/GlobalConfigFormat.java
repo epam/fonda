@@ -65,6 +65,8 @@ public final class GlobalConfigFormat {
     public static final String GENOME_LOAD = "GENOME_LOAD";
     public static final String COUNT_TARGET_PANEL = "COUNT_TARGET_PANEL";
     public static final String GERMLINE_RESOURCE = "GERMLINE_RESOURCE";
+    public static final String CONTAMINATION_VCF = "CONTAMINATION_VCF";
+    public static final String SEQUENCE_DICTIONARY = "SEQUENCE_DICTIONARY";
 
     // [all_tools]
     public static final String BEDTOOLS = "bedtools";

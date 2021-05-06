@@ -118,6 +118,10 @@ public class GlobalConfig {
         private String cellrangerCountTargetPanel;
         @Parameter(names = GlobalConfigFormat.GERMLINE_RESOURCE)
         private String germlineResource;
+        @Parameter(names = GlobalConfigFormat.CONTAMINATION_VCF)
+        private String contaminationVCF;
+        @Parameter(names = GlobalConfigFormat.SEQUENCE_DICTIONARY)
+        private String sequenceDictionary;
     }
 
     @Data
