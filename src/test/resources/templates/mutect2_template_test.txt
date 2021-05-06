@@ -1,5 +1,5 @@
 echo `date` Begin Step: Mutect2 detection...
-gatk Mutect2 -R GENOME -I file.bam -I control.bam -normal sample2 -L BED --bam-output output/mutect2/sample1.mutect2.bamout.bam --f1r2-tar-gz output/mutect2/sample1.mutect2.f1r2.tar.gz -O output/mutect2/sample1.mutect2.somatic.variants.vcf
+gatk Mutect2 -R GENOME -I file.bam -I control.bam -normal sample2 -L BED --bam-output [(${output})]/mutect2/sample1.mutect2.bamout.bam --f1r2-tar-gz [(${output})]/mutect2/sample1.mutect2.f1r2.tar.gz -O [(${output})]/mutect2/sample1.mutect2.somatic.variants.vcf
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Mutect2 detection.

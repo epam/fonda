@@ -19,6 +19,7 @@ import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.entity.configuration.orchestrator.ScriptManager;
 import com.epam.fonda.entity.configuration.orchestrator.ScriptType;
+import com.epam.fonda.tools.impl.CalculateContamination;
 import com.epam.fonda.tools.impl.PileupSummaries;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.impl.ContEst;
@@ -42,6 +43,7 @@ import com.epam.fonda.tools.impl.Vardict;
 import com.epam.fonda.tools.impl.VcfSnpeffAnnotation;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
+import com.epam.fonda.tools.results.CalculateContaminationResult;
 import com.epam.fonda.tools.results.ContEstResult;
 import com.epam.fonda.tools.results.CufflinksResult;
 import com.epam.fonda.tools.results.ExomecnvResult;
@@ -209,10 +211,14 @@ public class SecondaryAnalysis implements Stage {
         }
         final Mutect2 mutect2 = new Mutect2(sampleName, bamResult.getBamOutput(), sampleOutputDir, controlSampleName);
         final VariantsVcfResult toolResult = mutect2.generate(configuration, templateEngine);
+        String variantsOutputDir = toolResult.getVariantsVcfOutput().getVariantsOutputDir();
         final PileupSummaries pileupSummaries = new PileupSummaries(sampleName, bamResult.getBamOutput(),
-                toolResult.getVariantsVcfOutput().getVariantsOutputDir());
+                variantsOutputDir);
         final PileupSummariesResult pileupSummariesResult = pileupSummaries.generate(configuration, templateEngine);
-
+        final CalculateContamination calculateContamination = new CalculateContamination(sampleName,
+                pileupSummariesResult.getPileupTable(), variantsOutputDir);
+        CalculateContaminationResult calculateContaminationResult = calculateContamination.generate(configuration,
+                templateEngine);
         final VcfScnpeffAnnonationResult vcfSnpeffAnnotationResult = new VcfSnpeffAnnotation(sampleName, toolResult)
                 .generate(configuration, templateEngine);
         createVcfToolShell(configuration, alignCmd, toolResult, vcfSnpeffAnnotationResult);
