@@ -19,7 +19,7 @@ cd build/resources/integrationTest/output
 echo `date` Begin the job execution...
 
 echo `date` Begin Step: Mutect2 detection...
-/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -Djava.io.tmpdir=build/resources/integrationTest/output/GA52/mutect2/tmp -jar /usr/bin/gatk -T MuTect2 -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa --input_file:normal /ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_003.bam --input_file:tumor /ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_003.bam --out build/resources/integrationTest/output/GA52/mutect2/GA52.mutect2.somatic.variants.vcf --validation_strictness SILENT
+/usr/bin/gatk Mutect2 -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -I /ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_003.bam -I /ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_003.bam -normal GA51 -L /ngs/data/test_data_Padded.bed -pon /ngs/data/db/mormal_panel --bam-output build/resources/integrationTest/output/GA52/mutect2/GA52.mutect2.bamout.bam --f1r2-tar-gz build/resources/integrationTest/output/GA52/mutect2/GA52.mutect2.f1r2.tar.gz -O build/resources/integrationTest/output/GA52/mutect2/GA52.mutect2.somatic.variants.vcf
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Mutect2 detection.
@@ -45,7 +45,6 @@ else
 fi
 
 echo `date` Begin Step: Remove temporary directories...
-rm -rf build/resources/integrationTest/output/GA52/mutect2/tmp
 
 if [ $? -eq 0 ]
 then

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.VariantsVcfOutput;
 import com.epam.fonda.tools.results.VariantsVcfResult;
-import com.epam.fonda.utils.DnaUtils;
 import com.epam.fonda.utils.ToolUtils;
 import com.epam.fonda.workflow.TaskContainer;
 import lombok.Builder;
@@ -33,9 +32,8 @@ import lombok.RequiredArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import java.util.Collections;
-
 import static com.epam.fonda.utils.ToolUtils.validate;
+import static java.lang.String.format;
 
 @RequiredArgsConstructor
 public class Mutect2 implements Tool<VariantsVcfResult> {
@@ -44,21 +42,23 @@ public class Mutect2 implements Tool<VariantsVcfResult> {
     private final String sampleName;
     private final BamOutput bam;
     private final String sampleOutDir;
+    private final String controlSampleName;
 
     @Data
     @Builder
     private static class ToolFields {
         private final String genome;
         private final String bed;
-        private final String java;
         private final String gatk;
         private final String sampleName;
-        private final String outDir;
-        private final String outTmpDir;
+        private final String controlSampleName;
+        private final String germlineResource;
+        private final String panelOfNormal;
+        private final String bamOut;
+        private final String f1r2TarGz;
         private final String bam;
         private final String controlBam;
         private final String vcf;
-        private boolean isWgs;
     }
 
     /**
@@ -70,43 +70,40 @@ public class Mutect2 implements Tool<VariantsVcfResult> {
      */
     @Override
     public VariantsVcfResult generate(final Configuration configuration, final TemplateEngine templateEngine) {
-        final ToolFields toolFields = initToolFields(configuration);
+        final String outputDir = format("%s/mutect2", sampleOutDir);
+        final ToolFields toolFields = initToolFields(configuration, outputDir);
         final Context context = new Context();
         context.setVariable("toolFields", toolFields);
         final String cmd = templateEngine.process(MUTECT2_TEMPLATE, context);
         TaskContainer.addTasks("Mutect2 detection");
         final VariantsVcfOutput output = VariantsVcfOutput.builder()
                 .variantsVcf(toolFields.getVcf())
-                .variantsOutputDir(toolFields.getOutDir())
-                .variantsTmpOutputDir(toolFields.getOutTmpDir())
+                .variantsOutputDir(outputDir)
                 .build();
         output.createDirectory();
-        final BashCommand abstractCommand = BashCommand.withTool(cmd);
-        abstractCommand.setTempDirs(Collections.singletonList(toolFields.getOutTmpDir()));
         return VariantsVcfResult.builder()
-                .abstractCommand(abstractCommand)
+                .abstractCommand(BashCommand.withTool(cmd))
                 .filteredTool("mutect2")
                 .variantsVcfOutput(output)
                 .build();
     }
 
-    private ToolFields initToolFields(final Configuration configuration) {
-        final String outputDir = String.format("%s/mutect2", sampleOutDir);
-        final String outputTmpDir = String.format("%s/mutect2/tmp", sampleOutDir);
+    private ToolFields initToolFields(final Configuration configuration, final String outputDir) {
         final GlobalConfig.DatabaseConfig databaseConfig = configuration.getGlobalConfig().getDatabaseConfig();
         final GlobalConfig.ToolConfig toolConfig = configuration.getGlobalConfig().getToolConfig();
         return ToolFields.builder()
                 .genome(validate(databaseConfig.getGenome(), GlobalConfigFormat.GENOME))
-                .bed(validate(databaseConfig.getBed(), GlobalConfigFormat.BED))
-                .java(validate(toolConfig.getJava(), GlobalConfigFormat.JAVA))
+                .bed(databaseConfig.getBed())
                 .gatk(validate(toolConfig.getGatk(), GlobalConfigFormat.GATK))
                 .sampleName(validate(sampleName, ToolUtils.SAMPLE_NAME))
+                .controlSampleName(controlSampleName)
                 .bam(validate(bam.getBam(), ToolUtils.BAM))
-                .controlBam(validate(bam.getControlBam(), ToolUtils.CONTROL_BAM))
-                .outDir(outputDir)
-                .outTmpDir(outputTmpDir)
-                .vcf(String.format("%s/%s.mutect2.somatic.variants.vcf", outputDir, sampleName))
-                .isWgs(DnaUtils.isWgsWorkflow(configuration))
+                .controlBam(bam.getControlBam())
+                .germlineResource(databaseConfig.getGermlineResource())
+                .panelOfNormal(databaseConfig.getMutectNormalPanel())
+                .bamOut(format("%s/%s.mutect2.bamout.bam", outputDir, sampleName))
+                .f1r2TarGz(format("%s/%s.mutect2.f1r2.tar.gz", outputDir, sampleName))
+                .vcf(format("%s/%s.mutect2.somatic.variants.vcf", outputDir, sampleName))
                 .build();
     }
 }

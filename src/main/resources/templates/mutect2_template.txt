@@ -1,5 +1,5 @@
 echo `date` Begin Step: Mutect2 detection...
-[(${toolFields.java})] -Xmx10g -Djava.io.tmpdir=[(${toolFields.outTmpDir})] -jar [(${toolFields.gatk})] -T MuTect2 -R [(${toolFields.genome})][# th:unless = "${toolFields.isWgs}"] --intervals [(${toolFields.bed})][/] --input_file:normal [(${toolFields.controlBam})] --input_file:tumor [(${toolFields.bam})] --out [(${toolFields.vcf})] --validation_strictness SILENT
+[(${toolFields.gatk})] Mutect2 -R [(${toolFields.genome})] -I [(${toolFields.bam})][# th:if = "${toolFields.controlBam != null}"] -I [(${toolFields.controlBam})][/][# th:if = "${toolFields.controlBam != null}"] -normal [(${toolFields.controlSampleName})][/][# th:if = "${toolFields.germlineResource != null}"] --germline-resource [(${toolFields.germlineResource})][/][# th:if = "${toolFields.bed != null}"] -L [(${toolFields.bed})][/][# th:if = "${toolFields.panelOfNormal != null}"] -pon [(${toolFields.panelOfNormal})][/] --bam-output [(${toolFields.bamOut})] --f1r2-tar-gz [(${toolFields.f1r2TarGz})] -O [(${toolFields.vcf})]
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Mutect2 detection.

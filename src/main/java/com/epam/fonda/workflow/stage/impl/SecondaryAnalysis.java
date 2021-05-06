@@ -205,7 +205,7 @@ public class SecondaryAnalysis implements Stage {
         if (!(isPaired && flag.isMutect2())) {
             return;
         }
-        final Mutect2 mutect2 = new Mutect2(sampleName, bamResult.getBamOutput(), sampleOutputDir);
+        final Mutect2 mutect2 = new Mutect2(sampleName, bamResult.getBamOutput(), sampleOutputDir, controlSampleName);
         processVcfTool(configuration, templateEngine, alignCmd, mutect2);
     }
 

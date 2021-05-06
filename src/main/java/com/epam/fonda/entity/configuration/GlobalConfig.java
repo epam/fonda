@@ -116,6 +116,8 @@ public class GlobalConfig {
         private String genomeLoad;
         @Parameter(names = GlobalConfigFormat.COUNT_TARGET_PANEL)
         private String cellrangerCountTargetPanel;
+        @Parameter(names = GlobalConfigFormat.GERMLINE_RESOURCE)
+        private String germlineResource;
     }
 
     @Data
