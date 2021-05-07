@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
+import com.epam.fonda.utils.DnaUtils;
 import com.epam.fonda.workflow.PipelineType;
 import com.epam.fonda.workflow.TaskContainer;
 import lombok.AllArgsConstructor;
@@ -35,6 +36,7 @@ import org.thymeleaf.context.Context;
 import java.util.Arrays;
 
 import static com.epam.fonda.utils.ToolUtils.validate;
+import static java.lang.String.format;
 
 @Data
 @AllArgsConstructor
@@ -55,11 +57,11 @@ public class NovoalignSort implements Tool<BamResult> {
      */
     @Override
     public BamResult generate(Configuration configuration, TemplateEngine templateEngine) {
-        NovoalignSortFields novoalignSortFields = constructFieldsForNovoalignSort(configuration);
         if (StringUtils.isBlank(fastq1)) {
             throw new IllegalArgumentException(
                     "Error Step: In novoalignSort: no fastq files are properly provided, please check!");
         }
+        NovoalignSortFields novoalignSortFields = constructFieldsForNovoalignSort(configuration);
         Context context = new Context();
         context.setVariable("novoalignSortFields", novoalignSortFields);
         context.setVariable("fastq1", fastq1);
@@ -72,7 +74,7 @@ public class NovoalignSort implements Tool<BamResult> {
                 .build();
         bamOutput.setBam(StringUtils.isBlank(bamOutput.getBam())
                 ? novoalignSortFields.sortedBam
-                : String.format("%s,%s", bamOutput.getBam(), novoalignSortFields.sortedBam));
+                : format("%s,%s", bamOutput.getBam(), novoalignSortFields.sortedBam));
         AbstractCommand command = BashCommand.withTool(cmd);
         command.setTempDirs(Arrays.asList(novoalignSortFields.sortedBam, novoalignSortFields.sortedBamIndex));
         return BamResult.builder()
@@ -95,15 +97,15 @@ public class NovoalignSort implements Tool<BamResult> {
         novoalignSortFields.sampleName = sample.getName();
         novoalignSortFields.numThreads = configuration.getGlobalConfig().getQueueParameters().getNumThreads();
         novoalignSortFields.index = index;
-        novoalignSortFields.tmpBam = String.format("%s/%s_%s.novoalign.sorted",
+        novoalignSortFields.tmpBam = format("%s/%s_%s.novoalign.sorted",
                 novoalignSortFields.getBamOutdir(),
                 novoalignSortFields.getSampleName(),
                 novoalignSortFields.getIndex());
-        novoalignSortFields.sortedBam = String.format("%s.bam",
+        novoalignSortFields.sortedBam = format("%s.bam",
                 novoalignSortFields.getTmpBam());
-        novoalignSortFields.sortedBamIndex = String.format("%s.bai",
+        novoalignSortFields.sortedBamIndex = format("%s.bai",
                 novoalignSortFields.getSortedBam());
-        novoalignSortFields.rg = constructFieldRG(configuration, sample.getName());
+        novoalignSortFields.rg = DnaUtils.buildRGIdTag(sample.getName(), index);
         return novoalignSortFields;
     }
 
@@ -111,12 +113,6 @@ public class NovoalignSort implements Tool<BamResult> {
         return isDnaAmpliconWorkflow(configuration)
                 ? configuration.getGlobalConfig().getDatabaseConfig().getBedPrimer()
                 : null;
-    }
-
-    private String constructFieldRG(Configuration configuration, String sampleName) {
-        return isDnaAmpliconWorkflow(configuration)
-                ? String.format("\'@RG\\tID:%s\\tSM:%s\\tLB:%s\\tPL:Illumina\'", sampleName, sampleName, sampleName)
-                : String.format("\'@RG\\tID:%s\\tSM:%s\\tLB:DNA\\tPL:Illumina\'", sampleName, sampleName);
     }
 
     private boolean isDnaAmpliconWorkflow(final Configuration configuration) {

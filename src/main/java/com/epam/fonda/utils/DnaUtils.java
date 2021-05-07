@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -154,6 +154,17 @@ public final class DnaUtils {
      */
     public static boolean isWgsWorkflow(final Configuration configuration) {
         return configuration.getGlobalConfig().getPipelineInfo().getWorkflow().toLowerCase().contains("wgs");
+    }
+
+    /**
+     * Build @RG ID tag - add lane to sample name
+     * @param sampleName
+     * @param index synthetic sample lane
+     * @return @RG ID tag
+     */
+    public static String buildRGIdTag(final String sampleName, final int index) {
+        final String rgId = format("%s_L%s%s%s", sampleName, index / 100 % 10, index / 10 % 10, index % 10);
+        return format("\"@RG\\tID:%s\\tSM:%s\\tLB:%s\\tPL:Illumina\"", rgId, sampleName, sampleName);
     }
 
     private static String getLogFileScanningShellScript(LogFileFields logFileFields, String tag,

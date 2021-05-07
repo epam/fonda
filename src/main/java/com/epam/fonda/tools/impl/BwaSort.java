@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
-import com.epam.fonda.workflow.PipelineType;
+import com.epam.fonda.utils.DnaUtils;
 import com.epam.fonda.workflow.TaskContainer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -35,6 +35,7 @@ import org.thymeleaf.context.Context;
 import java.util.Arrays;
 
 import static com.epam.fonda.utils.ToolUtils.validate;
+import static java.lang.String.format;
 
 @Data
 @AllArgsConstructor
@@ -55,11 +56,11 @@ public class BwaSort implements Tool<BamResult> {
      */
     @Override
     public BamResult generate(Configuration configuration, TemplateEngine templateEngine) {
-        BwaSortFields bwaSortFields = constructFieldsForBwaSort(configuration);
         if (fastq1 == null) {
             throw new IllegalArgumentException(
                     "Error Step: In bwaSort: no fastq files are properly provided, please check!");
         }
+        BwaSortFields bwaSortFields = constructFieldsForBwaSort(configuration);
         Context context = new Context();
         context.setVariable("bwaSortFields", bwaSortFields);
         context.setVariable("fastq1", fastq1);
@@ -71,7 +72,7 @@ public class BwaSort implements Tool<BamResult> {
                 .build();
         bamOutput.setBam(StringUtils.isBlank(bamOutput.getBam())
                 ? bwaSortFields.sortedBam
-                : String.format("%s,%s", bamOutput.getBam(), bwaSortFields.sortedBam));
+                : format("%s,%s", bamOutput.getBam(), bwaSortFields.sortedBam));
         AbstractCommand command = BashCommand.withTool(cmd);
         command.setTempDirs(Arrays.asList(bwaSortFields.sortedBam, bwaSortFields.sortedBamIndex));
         TaskContainer.addTasks("BWA alignment", "Index bam");
@@ -95,19 +96,12 @@ public class BwaSort implements Tool<BamResult> {
         bwaSortFields.fastq1 = fastq1;
         bwaSortFields.fastq2 = fastq2;
         bwaSortFields.sampleName = sample.getName();
-        bwaSortFields.tmpBam = String.format("%s/%s_%d.bwa.sorted",
+        bwaSortFields.tmpBam = format("%s/%s_%d.bwa.sorted",
                 bwaSortFields.sbamOutDir, bwaSortFields.sampleName, index);
-        bwaSortFields.sortedBam = String.format("%s.bam", bwaSortFields.tmpBam);
-        bwaSortFields.sortedBamIndex = String.format("%s.bai", bwaSortFields.sortedBam);
-        bwaSortFields.rg = constructFieldRG(configuration, sample.getName());
+        bwaSortFields.sortedBam = format("%s.bam", bwaSortFields.tmpBam);
+        bwaSortFields.sortedBamIndex = format("%s.bai", bwaSortFields.sortedBam);
+        bwaSortFields.rg = DnaUtils.buildRGIdTag(sample.getName(), index);
         return bwaSortFields;
-    }
-
-    private String constructFieldRG(Configuration configuration, String sampleName) {
-        return PipelineType.DNA_AMPLICON_VAR_FASTQ.getName()
-                .equals(configuration.getGlobalConfig().getPipelineInfo().getWorkflow())
-                ? String.format("\"@RG\\tID:%s\\tSM:%s\\tLB:%s\\tPL:Illumina\"", sampleName, sampleName, sampleName)
-                : String.format("\"@RG\\tID:%s\\tSM:%s\\tLB:DNA\\tPL:Illumina\"", sampleName, sampleName);
     }
 
     @Data

@@ -1,5 +1,5 @@
 echo `date` Begin Step: BWA alignment...
-bwa mem -t 4 genome -M -R "@RG\tID:sampleName\tSM:sampleName\tLB:DNA\tPL:Illumina" fastq1 fastq2| samTools view -bS -|samTools sort - sbamOutdir/sampleName_1.bwa.sorted
+bwa mem -t 4 genome -M -R "@RG\tID:sampleName_L001\tSM:sampleName\tLB:sampleName\tPL:Illumina" fastq1 fastq2| samTools view -bS -|samTools sort - sbamOutdir/sampleName_1.bwa.sorted
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: BWA alignment.

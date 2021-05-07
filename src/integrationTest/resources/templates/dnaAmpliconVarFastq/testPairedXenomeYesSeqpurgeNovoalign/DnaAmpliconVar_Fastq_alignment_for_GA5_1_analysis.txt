@@ -49,7 +49,7 @@ else
 fi
 
 echo `date` Begin Step: Novoalign alignment...
-/usr/bin/novoalign -c 4 -d /ngs/data/novoindexDB/novoindex.nix -o SAM $'@RG\tID:GA5\tSM:GA5\tLB:GA5\tPL:Illumina' -f build/resources/integrationTest/output/GA5/fastq/GA5_1.trimmed.R1.fastq.gz build/resources/integrationTest/output/GA5/fastq/GA5_1.trimmed.R2.fastq.gz --amplicons /ngs/data/test_data_padded_decoy.txt --hlimit 9 -t 0,2 -x 3 -H 22 --softclip 35 --trim3hp --matchreward 3 -k| /opt/samtools/samtools-0.1.19/samtools view -bS -|/opt/samtools/samtools-0.1.19/samtools sort - build/resources/integrationTest/output/GA5/bam/GA5_1.novoalign.sorted
+/usr/bin/novoalign -c 4 -d /ngs/data/novoindexDB/novoindex.nix -o SAM $"@RG\tID:GA5_L001\tSM:GA5\tLB:GA5\tPL:Illumina" -f build/resources/integrationTest/output/GA5/fastq/GA5_1.trimmed.R1.fastq.gz build/resources/integrationTest/output/GA5/fastq/GA5_1.trimmed.R2.fastq.gz --amplicons /ngs/data/test_data_padded_decoy.txt --hlimit 9 -t 0,2 -x 3 -H 22 --softclip 35 --trim3hp --matchreward 3 -k| /opt/samtools/samtools-0.1.19/samtools view -bS -|/opt/samtools/samtools-0.1.19/samtools sort - build/resources/integrationTest/output/GA5/bam/GA5_1.novoalign.sorted
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Novoalign alignment.
