@@ -20,6 +20,7 @@ import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.entity.configuration.orchestrator.ScriptManager;
 import com.epam.fonda.entity.configuration.orchestrator.ScriptType;
 import com.epam.fonda.tools.impl.CalculateContamination;
+import com.epam.fonda.tools.impl.FilterAlignmentArtifacts;
 import com.epam.fonda.tools.impl.FilterMutectCalls;
 import com.epam.fonda.tools.impl.GatkSortSam;
 import com.epam.fonda.tools.impl.LearnReadOrientationModel;
@@ -229,30 +230,34 @@ public class SecondaryAnalysis implements Stage {
         final VariantsVcfOutput variantsVcfOutput = mutect2ToolResult.getVariantsVcfOutput();
         final String variantsOutputDir = variantsVcfOutput.getVariantsOutputDir();
         FilterMutectCalls filterMutectCalls;
-        if (!"mm10".equals(configuration.getGlobalConfig().getDatabaseConfig().getGenomeBuild())) {
-            final PileupSummaries pileupSummaries = new PileupSummaries(sampleName, bamResult.getBamOutput(),
-                    variantsOutputDir);
-            final PileupSummariesResult pileupSummariesResult = pileupSummaries.generate(configuration, templateEngine);
-            final CalculateContamination calculateContamination = new CalculateContamination(sampleName,
-                    pileupSummariesResult.getPileupTable(), variantsOutputDir);
-            final CalculateContaminationResult calculateContaminationResult = calculateContamination.generate(configuration,
-                    templateEngine);
-            final GatkSortSam gatkSortSam = new GatkSortSam(sampleName, variantsVcfOutput.getBamout(), variantsOutputDir);
-            final BamResult gatkSortSamResult = gatkSortSam.generate(configuration, templateEngine);
-            final LearnReadOrientationModel learnReadOrientationModel = new LearnReadOrientationModel(sampleName,
-                    variantsVcfOutput.getF1R2Metrics(), variantsOutputDir);
-            final LearnReadOrientationModelResult orientationModelResult = learnReadOrientationModel.generate(configuration,
-                    templateEngine);
-            CalculateContaminationOutput contaminationOutput = calculateContaminationResult.getCalculateContaminationOutput();
-            filterMutectCalls = new FilterMutectCalls(sampleName, variantsOutputDir, variantsVcfOutput.getVariantsVcf(),
-                    contaminationOutput.getContaminationTable(), contaminationOutput.getTumorSegmentation(),
-                    orientationModelResult.getLearnReadOrientationModelOutput().getArtifactPriorTables());
-        } else {
+        if ("mm10".equals(configuration.getGlobalConfig().getDatabaseConfig().getGenomeBuild())) {
             filterMutectCalls = new FilterMutectCalls(sampleName, variantsOutputDir, variantsVcfOutput.getVariantsVcf());
+            VariantsVcfResult variantsVcfResult = filterMutectCalls.generate(configuration, templateEngine);
+            return variantsVcfResult;
         }
+        final PileupSummaries pileupSummaries = new PileupSummaries(sampleName, bamResult.getBamOutput(),
+                variantsOutputDir);
+        final PileupSummariesResult pileupSummariesResult = pileupSummaries.generate(configuration, templateEngine);
+        final CalculateContamination calculateContamination = new CalculateContamination(sampleName,
+                pileupSummariesResult.getPileupTable(), variantsOutputDir);
+        final CalculateContaminationResult calculateContaminationResult = calculateContamination.generate(configuration,
+                templateEngine);
+        final GatkSortSam gatkSortSam = new GatkSortSam(sampleName, variantsVcfOutput.getBamout(), variantsOutputDir);
+        final BamResult gatkSortSamResult = gatkSortSam.generate(configuration, templateEngine);
+        final LearnReadOrientationModel learnReadOrientationModel = new LearnReadOrientationModel(sampleName,
+                variantsVcfOutput.getF1R2Metrics(), variantsOutputDir);
+        final LearnReadOrientationModelResult orientationModelResult = learnReadOrientationModel.generate(configuration,
+                templateEngine);
+        CalculateContaminationOutput contaminationOutput = calculateContaminationResult.getCalculateContaminationOutput();
+        filterMutectCalls = new FilterMutectCalls(sampleName, variantsOutputDir, variantsVcfOutput.getVariantsVcf(),
+                contaminationOutput.getContaminationTable(), contaminationOutput.getTumorSegmentation(),
+                orientationModelResult.getLearnReadOrientationModelOutput().getArtifactPriorTables());
         final VariantsVcfResult variantsVcfResult = filterMutectCalls.generate(configuration, templateEngine);
-
-        return variantsVcfResult;
+        FilterAlignmentArtifacts alignmentArtifacts = new FilterAlignmentArtifacts(sampleName, variantsOutputDir,
+                variantsVcfResult.getVariantsVcfOutput().getVariantsVcfFiltered(),
+                gatkSortSamResult.getBamOutput().getSortedBam());
+        VariantsVcfResult vcfResult = alignmentArtifacts.generate(configuration, templateEngine);
+        return vcfResult;
     }
 
     private void mutect1(final Flag flag, final Configuration configuration, final TemplateEngine templateEngine,

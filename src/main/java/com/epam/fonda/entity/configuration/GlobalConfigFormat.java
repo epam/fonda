@@ -67,6 +67,7 @@ public final class GlobalConfigFormat {
     public static final String GERMLINE_RESOURCE = "GERMLINE_RESOURCE";
     public static final String CONTAMINATION_VCF = "CONTAMINATION_VCF";
     public static final String SEQUENCE_DICTIONARY = "SEQUENCE_DICTIONARY";
+    public static final String BWA_IMG = "BWA_IMG";
 
     // [all_tools]
     public static final String BEDTOOLS = "bedtools";

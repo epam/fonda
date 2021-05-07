@@ -122,6 +122,8 @@ public class GlobalConfig {
         private String contaminationVCF;
         @Parameter(names = GlobalConfigFormat.SEQUENCE_DICTIONARY)
         private String sequenceDictionary;
+        @Parameter(names = GlobalConfigFormat.BWA_IMG)
+        private String bwaImg;
     }
 
     @Data

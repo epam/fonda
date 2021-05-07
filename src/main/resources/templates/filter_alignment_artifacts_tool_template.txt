@@ -1,0 +1,12 @@
+echo `date` Begin Step: FilterAlignmentArtifacts...
+[(${toolFields.gatk})] FilterAlignmentArtifacts -R [(${toolFields.genome})] -V [(${toolFields.filteredVcf})] -I [(${toolFields.sortedBam})] --bwa-mem-index-image [(${toolFields.bwaImg})] -O [(${toolFields.filteredArtifactsVcf})]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: FilterAlignmentArtifacts.
+	sleep 8
+else
+	echo `date` Error Step: FilterAlignmentArtifacts.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
