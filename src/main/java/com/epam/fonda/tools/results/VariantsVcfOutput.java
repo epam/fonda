@@ -31,6 +31,7 @@ public class VariantsVcfOutput implements DirectoryManager {
     private String variantsOutputDir;
     private String variantsTmpOutputDir;
     private String variantsVcf;
+    private String variantsVcfFiltered;
     private String bamout;
     private String F1R2Metrics;
 

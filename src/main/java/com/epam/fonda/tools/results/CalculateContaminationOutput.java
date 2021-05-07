@@ -22,4 +22,5 @@ import lombok.Data;
 @Builder
 public class CalculateContaminationOutput {
     private String contaminationTable;
+    private String tumorSegmentation;
 }

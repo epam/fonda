@@ -20,6 +20,7 @@ import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.entity.configuration.orchestrator.ScriptManager;
 import com.epam.fonda.entity.configuration.orchestrator.ScriptType;
 import com.epam.fonda.tools.impl.CalculateContamination;
+import com.epam.fonda.tools.impl.FilterMutectCalls;
 import com.epam.fonda.tools.impl.GatkSortSam;
 import com.epam.fonda.tools.impl.LearnReadOrientationModel;
 import com.epam.fonda.tools.impl.PileupSummaries;
@@ -45,6 +46,7 @@ import com.epam.fonda.tools.impl.Vardict;
 import com.epam.fonda.tools.impl.VcfSnpeffAnnotation;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
+import com.epam.fonda.tools.results.CalculateContaminationOutput;
 import com.epam.fonda.tools.results.CalculateContaminationResult;
 import com.epam.fonda.tools.results.ContEstResult;
 import com.epam.fonda.tools.results.CufflinksResult;
@@ -210,30 +212,47 @@ public class SecondaryAnalysis implements Stage {
 
     private void mutect2(final Flag flag, final Configuration configuration, final TemplateEngine templateEngine,
                          final StringBuilder alignCmd) throws IOException {
-        if (!(isPaired && flag.isMutect2())) {
+        if (!flag.isMutect2()) {
             return;
         }
         final Mutect2 mutect2 = new Mutect2(sampleName, bamResult.getBamOutput(), sampleOutputDir, controlSampleName);
-        final VariantsVcfResult toolResult = mutect2.generate(configuration, templateEngine);
-        final VariantsVcfOutput variantsVcfOutput = toolResult.getVariantsVcfOutput();
-        final String variantsOutputDir = variantsVcfOutput.getVariantsOutputDir();
-
-        final PileupSummaries pileupSummaries = new PileupSummaries(sampleName, bamResult.getBamOutput(),
-                variantsOutputDir);
-        final PileupSummariesResult pileupSummariesResult = pileupSummaries.generate(configuration, templateEngine);
-        final CalculateContamination calculateContamination = new CalculateContamination(sampleName,
-                pileupSummariesResult.getPileupTable(), variantsOutputDir);
-        final CalculateContaminationResult calculateContaminationResult = calculateContamination.generate(configuration,
-                templateEngine);
-        final GatkSortSam gatkSortSam = new GatkSortSam(sampleName, variantsVcfOutput.getBamout(), variantsOutputDir);
-        final BamResult gatkSortSamResult = gatkSortSam.generate(configuration, templateEngine);
-        final LearnReadOrientationModel learnReadOrientationModel = new LearnReadOrientationModel(sampleName,
-                variantsVcfOutput.getF1R2Metrics(), variantsOutputDir);
-        final LearnReadOrientationModelResult orientationModelResult = learnReadOrientationModel.generate(configuration,
-                templateEngine);
+        final VariantsVcfResult mutect2ToolResult = mutect2.generate(configuration, templateEngine);
+        final VariantsVcfResult toolResult = postMutect2Processing(configuration, templateEngine, mutect2ToolResult);
         final VcfScnpeffAnnonationResult vcfSnpeffAnnotationResult = new VcfSnpeffAnnotation(sampleName, toolResult)
                 .generate(configuration, templateEngine);
         createVcfToolShell(configuration, alignCmd, toolResult, vcfSnpeffAnnotationResult);
+    }
+
+    private VariantsVcfResult postMutect2Processing(final Configuration configuration,
+                                                    final TemplateEngine templateEngine,
+                                                    final VariantsVcfResult mutect2ToolResult) {
+        final VariantsVcfOutput variantsVcfOutput = mutect2ToolResult.getVariantsVcfOutput();
+        final String variantsOutputDir = variantsVcfOutput.getVariantsOutputDir();
+        FilterMutectCalls filterMutectCalls;
+        if (!"mm10".equals(configuration.getGlobalConfig().getDatabaseConfig().getGenomeBuild())) {
+            final PileupSummaries pileupSummaries = new PileupSummaries(sampleName, bamResult.getBamOutput(),
+                    variantsOutputDir);
+            final PileupSummariesResult pileupSummariesResult = pileupSummaries.generate(configuration, templateEngine);
+            final CalculateContamination calculateContamination = new CalculateContamination(sampleName,
+                    pileupSummariesResult.getPileupTable(), variantsOutputDir);
+            final CalculateContaminationResult calculateContaminationResult = calculateContamination.generate(configuration,
+                    templateEngine);
+            final GatkSortSam gatkSortSam = new GatkSortSam(sampleName, variantsVcfOutput.getBamout(), variantsOutputDir);
+            final BamResult gatkSortSamResult = gatkSortSam.generate(configuration, templateEngine);
+            final LearnReadOrientationModel learnReadOrientationModel = new LearnReadOrientationModel(sampleName,
+                    variantsVcfOutput.getF1R2Metrics(), variantsOutputDir);
+            final LearnReadOrientationModelResult orientationModelResult = learnReadOrientationModel.generate(configuration,
+                    templateEngine);
+            CalculateContaminationOutput contaminationOutput = calculateContaminationResult.getCalculateContaminationOutput();
+            filterMutectCalls = new FilterMutectCalls(sampleName, variantsOutputDir, variantsVcfOutput.getVariantsVcf(),
+                    contaminationOutput.getContaminationTable(), contaminationOutput.getTumorSegmentation(),
+                    orientationModelResult.getLearnReadOrientationModelOutput().getArtifactPriorTables());
+        } else {
+            filterMutectCalls = new FilterMutectCalls(sampleName, variantsOutputDir, variantsVcfOutput.getVariantsVcf());
+        }
+        final VariantsVcfResult variantsVcfResult = filterMutectCalls.generate(configuration, templateEngine);
+
+        return variantsVcfResult;
     }
 
     private void mutect1(final Flag flag, final Configuration configuration, final TemplateEngine templateEngine,

@@ -20,9 +20,10 @@ import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.entity.configuration.GlobalConfig;
 import com.epam.fonda.entity.configuration.GlobalConfigFormat;
 import com.epam.fonda.tools.Tool;
-import com.epam.fonda.tools.results.CalculateContaminationOutput;
-import com.epam.fonda.tools.results.CalculateContaminationResult;
+import com.epam.fonda.tools.results.VariantsVcfOutput;
+import com.epam.fonda.tools.results.VariantsVcfResult;
 import com.epam.fonda.workflow.TaskContainer;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
@@ -34,50 +35,67 @@ import static com.epam.fonda.utils.ToolUtils.validate;
 import static java.lang.String.format;
 
 @RequiredArgsConstructor
-public class CalculateContamination implements Tool<CalculateContaminationResult> {
+@AllArgsConstructor
+public class FilterMutectCalls implements Tool<VariantsVcfResult> {
 
-    private static final String CALCULATE_CONTAMINATION_TOOL_TEMPLATE_NAME = "calculate_contamination_template";
+    private static final String FILTER_MUTECT_CALLS_TOOL_TEMPLATE = "filter_mutect_calls_tool_template";
 
     @NonNull
     private final String sampleName;
     @NonNull
-    private final String pileupTable;
-    @NonNull
     private final String outputDir;
+    @NonNull
+    private final String vcf;
+    private String contamTable;
+    private String segments;
+    private String artifactsPriors;
 
     @Data
     @Builder
     private static class ToolFields {
+        private final String genome;
         private final String gatk;
-        private final String pileupTable;
-        private final String segments;
         private final String contamTable;
+        private final String segments;
+        private final String artifactsPriors;
+        private final String vcfStats;
+        private final String filteringStats;
+        private final String vcf;
+        private final boolean includeOptions;
+        private final String filteredVcf;
     }
 
     @Override
-    public CalculateContaminationResult generate(Configuration configuration, TemplateEngine templateEngine) {
+    public VariantsVcfResult generate(Configuration configuration, TemplateEngine templateEngine) {
         final ToolFields toolFields = initToolFields(configuration);
         final Context context = new Context();
         context.setVariable("toolFields", toolFields);
-        final String cmd = templateEngine.process(CALCULATE_CONTAMINATION_TOOL_TEMPLATE_NAME, context);
-        TaskContainer.addTasks("CalculateContamination");
-        final CalculateContaminationOutput calculateContaminationOutput = CalculateContaminationOutput.builder()
-                .contaminationTable(toolFields.getPileupTable())
-                .tumorSegmentation(toolFields.getSegments())
+        final String cmd = templateEngine.process(FILTER_MUTECT_CALLS_TOOL_TEMPLATE, context);
+        TaskContainer.addTasks("FilterMutectCalls");
+        final VariantsVcfOutput output = VariantsVcfOutput.builder()
+                .variantsVcfFiltered(toolFields.getFilteredVcf())
                 .build();
-        return CalculateContaminationResult.builder()
-                .command(BashCommand.withTool(cmd))
-                .calculateContaminationOutput(calculateContaminationOutput)
+        return VariantsVcfResult.builder()
+                .abstractCommand(BashCommand.withTool(cmd))
+                .filteredTool("mutect2")
+                .variantsVcfOutput(output)
                 .build();
     }
 
     private ToolFields initToolFields(final Configuration configuration) {
+        final GlobalConfig.DatabaseConfig databaseConfig = configuration.getGlobalConfig().getDatabaseConfig();
         final GlobalConfig.ToolConfig toolConfig = configuration.getGlobalConfig().getToolConfig();
         return ToolFields.builder()
+                .genome(validate(databaseConfig.getGenome(), GlobalConfigFormat.GENOME))
                 .gatk(validate(toolConfig.getGatk(), GlobalConfigFormat.GATK))
-                .pileupTable(pileupTable)
-                .segments(format("%s/%s.segments.table", outputDir, sampleName))
-                .contamTable(format("%s/%s.contamination.table", outputDir, sampleName))
+                .vcf(vcf)
+                .contamTable(contamTable)
+                .segments(segments)
+                .artifactsPriors(artifactsPriors)
+                .vcfStats(format("%s/%s.vcf.stats", outputDir, sampleName))
+                .filteringStats(format("%s/%s.filtering.stats", outputDir, sampleName))
+                .includeOptions(!"mm10".equals(configuration.getGlobalConfig().getDatabaseConfig().getGenomeBuild()))
+                .filteredVcf(format("%s/%s.filtered.vcf", outputDir, sampleName))
                 .build();
     }
 }
