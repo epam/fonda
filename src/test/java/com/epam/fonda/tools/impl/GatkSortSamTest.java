@@ -62,6 +62,7 @@ class GatkSortSamTest extends AbstractTest {
     private void buildConfiguration() {
         GlobalConfig.ToolConfig toolConfig = new GlobalConfig.ToolConfig();
         toolConfig.setGatk("/opt/gatk/gatk");
+        toolConfig.setSamTools("/opt/samtools/samtools");
         GlobalConfig globalConfig = new GlobalConfig();
         globalConfig.setToolConfig(toolConfig);
         expectedConfiguration = new Configuration();

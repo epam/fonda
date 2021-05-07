@@ -41,6 +41,7 @@ public class GatkSortSam implements Tool<BamResult> {
     @Builder
     private static class ToolFields {
         private String gatk;
+        private String samtools;
         private String bam;
         private String sortedBam;
     }
@@ -58,6 +59,7 @@ public class GatkSortSam implements Tool<BamResult> {
         final ToolFields toolFields = ToolFields.builder()
                 .bam(bam)
                 .gatk(validate(toolConfig.getGatk(), GlobalConfigFormat.GATK))
+                .samtools(validate(toolConfig.getSamTools(), GlobalConfigFormat.SAMTOOLS))
                 .sortedBam(format("%s/%s.bam.sorted", outputDir, sampleName))
                 .build();
         final Context context = new Context();
