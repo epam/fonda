@@ -30,14 +30,13 @@ import java.net.URISyntaxException;
 import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class CalculateContaminationTest extends AbstractTest {
-
-    private static final String CALCULATE_CONTAMINATION_TEMPLATE = "calculate_contamination_template_test";
+class LearnReadOrientationModelTest extends AbstractTest {
+    private static final String ORIENTATION_MODEL_TEMPLATE = "learnReadOrientationModel_tool_template_test.txt";
     private static final String SAMPLE_NAME = "sample1";
     private static final String OUTPUT_DIR = format("%s/%s", TEST_DIRECTORY, "mutect2");
-    private static final String PILEUP_TABLE = format("%s/%s.tumor-pileups.table", OUTPUT_DIR, SAMPLE_NAME);
+    private static final String F1R2_TAR_GZ = format("%s/%s.mutect2.f1r2.tar.gz", OUTPUT_DIR, SAMPLE_NAME);
     private final TemplateEngine expectedTemplateEngine = TemplateEngineUtils.init();
-    private CalculateContamination calculateContamination;
+    private LearnReadOrientationModel learnReadOrientationModel;
     private Configuration expectedConfiguration;
     private Context context;
 
@@ -48,13 +47,13 @@ class CalculateContaminationTest extends AbstractTest {
         context.setVariable("output", TEST_DIRECTORY);
         final CommonOutdir commonOutdir = new CommonOutdir(TEST_DIRECTORY);
         commonOutdir.createDirectory();
-        calculateContamination = new CalculateContamination(SAMPLE_NAME, PILEUP_TABLE, OUTPUT_DIR);
+        learnReadOrientationModel = new LearnReadOrientationModel(SAMPLE_NAME, F1R2_TAR_GZ, OUTPUT_DIR);
     }
 
     @Test
     void testGenerate() {
-        final String expectedCmd = expectedTemplateEngine.process(CALCULATE_CONTAMINATION_TEMPLATE, context);
-        final String actualCmd = calculateContamination.generate(expectedConfiguration, expectedTemplateEngine)
+        final String expectedCmd = expectedTemplateEngine.process(ORIENTATION_MODEL_TEMPLATE, context);
+        final String actualCmd = learnReadOrientationModel.generate(expectedConfiguration, expectedTemplateEngine)
                 .getCommand().getToolCommand();
         assertEquals(expectedCmd, actualCmd);
     }

@@ -35,7 +35,7 @@ class GatkSortSamTest extends AbstractTest {
     private static final String GATK_SORT_BAM_TEMPLATE_TEST = "gatk_sort_bam_template_test";
     private static final String SAMPLE_NAME = "sample1";
     private static final String OUTPUT_DIR = format("%s/%s", TEST_DIRECTORY, "mutect2");
-    private static final String BAM = format("%s/%s", OUTPUT_DIR, "sample1.mutect2.bamout.bam");
+    private static final String BAM = format("%s/%s.mutect2.bamout.bam", OUTPUT_DIR, SAMPLE_NAME);
     private final TemplateEngine expectedTemplateEngine = TemplateEngineUtils.init();
     private GatkSortSam gatkSortSam;
     private Configuration expectedConfiguration;

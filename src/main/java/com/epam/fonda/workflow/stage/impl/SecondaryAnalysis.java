@@ -21,6 +21,7 @@ import com.epam.fonda.entity.configuration.orchestrator.ScriptManager;
 import com.epam.fonda.entity.configuration.orchestrator.ScriptType;
 import com.epam.fonda.tools.impl.CalculateContamination;
 import com.epam.fonda.tools.impl.GatkSortSam;
+import com.epam.fonda.tools.impl.LearnReadOrientationModel;
 import com.epam.fonda.tools.impl.PileupSummaries;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.impl.ContEst;
@@ -49,6 +50,7 @@ import com.epam.fonda.tools.results.ContEstResult;
 import com.epam.fonda.tools.results.CufflinksResult;
 import com.epam.fonda.tools.results.ExomecnvResult;
 import com.epam.fonda.tools.results.FeatureCountResult;
+import com.epam.fonda.tools.results.LearnReadOrientationModelResult;
 import com.epam.fonda.tools.results.PileupResult;
 import com.epam.fonda.tools.results.PileupSummariesResult;
 import com.epam.fonda.tools.results.RsemResult;
@@ -225,6 +227,10 @@ public class SecondaryAnalysis implements Stage {
                 templateEngine);
         final GatkSortSam gatkSortSam = new GatkSortSam(sampleName, variantsVcfOutput.getBamout(), variantsOutputDir);
         final BamResult gatkSortSamResult = gatkSortSam.generate(configuration, templateEngine);
+        final LearnReadOrientationModel learnReadOrientationModel = new LearnReadOrientationModel(sampleName,
+                variantsVcfOutput.getF1R2Metrics(), variantsOutputDir);
+        final LearnReadOrientationModelResult orientationModelResult = learnReadOrientationModel.generate(configuration,
+                templateEngine);
         final VcfScnpeffAnnonationResult vcfSnpeffAnnotationResult = new VcfSnpeffAnnotation(sampleName, toolResult)
                 .generate(configuration, templateEngine);
         createVcfToolShell(configuration, alignCmd, toolResult, vcfSnpeffAnnotationResult);
