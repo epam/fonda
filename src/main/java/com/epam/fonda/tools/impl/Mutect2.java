@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.epam.fonda.tools.impl;
 
 import com.epam.fonda.entity.command.BashCommand;
@@ -77,6 +76,8 @@ public class Mutect2 implements Tool<VariantsVcfResult> {
         final String cmd = templateEngine.process(MUTECT2_TEMPLATE, context);
         TaskContainer.addTasks("Mutect2 detection");
         final VariantsVcfOutput output = VariantsVcfOutput.builder()
+                .bamout(toolFields.getBamOut())
+                .F1R2Metrics(toolFields.getF1r2TarGz())
                 .variantsVcf(toolFields.getVcf())
                 .variantsOutputDir(outputDir)
                 .build();

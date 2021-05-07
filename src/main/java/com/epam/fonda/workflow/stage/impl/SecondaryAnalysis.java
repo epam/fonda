@@ -20,6 +20,7 @@ import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.entity.configuration.orchestrator.ScriptManager;
 import com.epam.fonda.entity.configuration.orchestrator.ScriptType;
 import com.epam.fonda.tools.impl.CalculateContamination;
+import com.epam.fonda.tools.impl.GatkSortSam;
 import com.epam.fonda.tools.impl.PileupSummaries;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.impl.ContEst;
@@ -53,6 +54,7 @@ import com.epam.fonda.tools.results.PileupSummariesResult;
 import com.epam.fonda.tools.results.RsemResult;
 import com.epam.fonda.tools.results.SequenzaResult;
 import com.epam.fonda.tools.results.StringtieResult;
+import com.epam.fonda.tools.results.VariantsVcfOutput;
 import com.epam.fonda.tools.results.VariantsVcfResult;
 import com.epam.fonda.tools.results.VcfScnpeffAnnonationResult;
 import com.epam.fonda.workflow.PipelineType;
@@ -211,14 +213,18 @@ public class SecondaryAnalysis implements Stage {
         }
         final Mutect2 mutect2 = new Mutect2(sampleName, bamResult.getBamOutput(), sampleOutputDir, controlSampleName);
         final VariantsVcfResult toolResult = mutect2.generate(configuration, templateEngine);
-        String variantsOutputDir = toolResult.getVariantsVcfOutput().getVariantsOutputDir();
+        final VariantsVcfOutput variantsVcfOutput = toolResult.getVariantsVcfOutput();
+        final String variantsOutputDir = variantsVcfOutput.getVariantsOutputDir();
+
         final PileupSummaries pileupSummaries = new PileupSummaries(sampleName, bamResult.getBamOutput(),
                 variantsOutputDir);
         final PileupSummariesResult pileupSummariesResult = pileupSummaries.generate(configuration, templateEngine);
         final CalculateContamination calculateContamination = new CalculateContamination(sampleName,
                 pileupSummariesResult.getPileupTable(), variantsOutputDir);
-        CalculateContaminationResult calculateContaminationResult = calculateContamination.generate(configuration,
+        final CalculateContaminationResult calculateContaminationResult = calculateContamination.generate(configuration,
                 templateEngine);
+        final GatkSortSam gatkSortSam = new GatkSortSam(sampleName, variantsVcfOutput.getBamout(), variantsOutputDir);
+        final BamResult gatkSortSamResult = gatkSortSam.generate(configuration, templateEngine);
         final VcfScnpeffAnnonationResult vcfSnpeffAnnotationResult = new VcfSnpeffAnnotation(sampleName, toolResult)
                 .generate(configuration, templateEngine);
         createVcfToolShell(configuration, alignCmd, toolResult, vcfSnpeffAnnotationResult);

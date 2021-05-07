@@ -1,0 +1,13 @@
+echo `date` Begin Step: SortSam...
+[(${toolFields.gatk})] SortSam -I [(${toolFields.bam})] -O [(${toolFields.sortedBam})] -SO coordinate
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: SortSam.
+	sleep 8
+else
+	echo `date` Error Step: SortSam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+

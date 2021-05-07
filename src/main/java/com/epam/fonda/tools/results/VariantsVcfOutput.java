@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,8 @@ public class VariantsVcfOutput implements DirectoryManager {
     private String variantsOutputDir;
     private String variantsTmpOutputDir;
     private String variantsVcf;
-    private String variantsVcfFiltered;
+    private String bamout;
+    private String F1R2Metrics;
 
     @Override
     public List<String> getDirs() {

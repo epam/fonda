@@ -1,0 +1,13 @@
+echo `date` Begin Step: SortSam...
+/opt/gatk/gatk SortSam -I [(${output})]/mutect2/sample1.mutect2.bamout.bam -O [(${output})]/mutect2/sample1.bam.sorted -SO coordinate
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: SortSam.
+	sleep 8
+else
+	echo `date` Error Step: SortSam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
