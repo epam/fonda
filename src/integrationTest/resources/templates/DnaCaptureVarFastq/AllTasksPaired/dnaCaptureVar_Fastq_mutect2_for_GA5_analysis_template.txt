@@ -19,7 +19,7 @@ cd build/resources/integrationTest/output
 echo `date` Begin the job execution...
 
 echo `date` Begin Step: Mutect2 detection...
-/usr/bin/gatk Mutect2 -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -I build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.realign.realign.recal.bam -I build/resources/integrationTest/output/N/bam/N.merged.sorted.rmdup.realign.realign.recal.bam -normal N -L /ngs/data/test.bed -pon /ngs/data/db/mormal_panel --bam-output build/resources/integrationTest/output/GA5/mutect2/GA5.mutect2.bamout.bam --f1r2-tar-gz build/resources/integrationTest/output/GA5/mutect2/GA5.mutect2.f1r2.tar.gz -O build/resources/integrationTest/output/GA5/mutect2/GA5.mutect2.somatic.variants.vcf
+/usr/bin/gatk Mutect2 -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -I build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.recal.bam -I build/resources/integrationTest/output/N/bam/N.merged.sorted.rmdup.recal.bam -normal N -L /ngs/data/test.bed -pon /ngs/data/db/mormal_panel --bam-output build/resources/integrationTest/output/GA5/mutect2/GA5.mutect2.bamout.bam --f1r2-tar-gz build/resources/integrationTest/output/GA5/mutect2/GA5.mutect2.f1r2.tar.gz -O build/resources/integrationTest/output/GA5/mutect2/GA5.mutect2.somatic.variants.vcf
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Mutect2 detection.
@@ -32,7 +32,7 @@ else
 fi
 
 echo `date` Begin Step: PileupSummaries...
-/usr/bin/gatk GetPileupSummaries -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -I build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.realign.realign.recal.bam -L /ngs/data/test.bed -V /ngs/data/contamination.vcf.gz --interval-set-rule INTERSECTION -O build/resources/integrationTest/output/GA5/mutect2/GA5.tumor-pileups.table
+/usr/bin/gatk GetPileupSummaries -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -I build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.recal.bam -L /ngs/data/test.bed -V /ngs/data/contamination.vcf.gz --interval-set-rule INTERSECTION -O build/resources/integrationTest/output/GA5/mutect2/GA5.tumor-pileups.table
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: PileupSummaries.

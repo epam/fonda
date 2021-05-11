@@ -19,7 +19,7 @@ cd build/resources/integrationTest/output
 echo `date` Begin the job execution...
 
 echo `date` Begin Step: Vardict detection...
-/usr/bin/vardict/build/install/VarDict/bin/VarDict -G /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -f 0.05 -r 3 -Q 20 -N GA5 -b "build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.realign.realign.recal.bam|build/resources/integrationTest/output/N/bam/N.merged.sorted.rmdup.realign.realign.recal.bam" -z 1 -c 1 -S 2 -E 3 /ngs/data/test.bed | /usr/bin/vardict/VarDict/testsomatic.R |/usr/bin/vardict/VarDict/var2vcf_paired.pl -M -N "GA5|N" -f 0.05 > build/resources/integrationTest/output/GA5/vardict/GA5.vardict.somatic.variants.vcf
+/usr/bin/vardict/build/install/VarDict/bin/VarDict -G /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -f 0.05 -r 3 -Q 20 -N GA5 -b "build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.recal.bam|build/resources/integrationTest/output/N/bam/N.merged.sorted.rmdup.recal.bam" -z 1 -c 1 -S 2 -E 3 /ngs/data/test.bed | /usr/bin/vardict/VarDict/testsomatic.R |/usr/bin/vardict/VarDict/var2vcf_paired.pl -M -N "GA5|N" -f 0.05 > build/resources/integrationTest/output/GA5/vardict/GA5.vardict.somatic.variants.vcf
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Vardict detection.

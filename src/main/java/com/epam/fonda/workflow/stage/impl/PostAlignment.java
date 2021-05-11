@@ -83,10 +83,10 @@ public class PostAlignment implements Stage {
             bamResult = new GatkSplitReads(sample.getSampleOutputDir(),
                     bamResult).generate(configuration, templateEngine);
         }
-        if (flag.isAbraRealign()) {
+        if (flag.isAbraRealign() && !flag.isMutect2()) {
             bamResult = new AbraRealign(sample, bamResult).generate(configuration, templateEngine);
         }
-        if (flag.isGatkRealign()) {
+        if (flag.isGatkRealign() && !flag.isMutect2()) {
             bamResult = new AmpliconGatkRealign(sample, bamResult).generate(configuration, templateEngine);
         }
         bamResult = new AmpliconGatkRecalibrate(sample.getTmpOutdir(), bamResult)
