@@ -25,7 +25,6 @@ import com.epam.fonda.tools.results.VariantsVcfResult;
 import com.epam.fonda.workflow.TaskContainer;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -38,13 +37,9 @@ public class FilterAlignmentArtifacts implements Tool<VariantsVcfResult> {
 
     private static final String FILTER_ALIGNMENT_ARTIFACTS_TOOL_TEMPLATE = "filter_alignment_artifacts_tool_template";
 
-    @NonNull
     private final String sampleName;
-    @NonNull
     private final String outputDir;
-    @NonNull
     private final String filteredVcf;
-    @NonNull
     private final String sortedBam;
 
     @Data

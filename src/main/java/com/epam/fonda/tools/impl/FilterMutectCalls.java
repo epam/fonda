@@ -26,7 +26,6 @@ import com.epam.fonda.workflow.TaskContainer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -40,11 +39,8 @@ public class FilterMutectCalls implements Tool<VariantsVcfResult> {
 
     private static final String FILTER_MUTECT_CALLS_TOOL_TEMPLATE = "filter_mutect_calls_tool_template";
 
-    @NonNull
     private final String sampleName;
-    @NonNull
     private final String outputDir;
-    @NonNull
     private final String vcf;
     private String contamTable;
     private String segments;
