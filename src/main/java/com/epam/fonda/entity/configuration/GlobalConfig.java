@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -134,6 +134,8 @@ public class GlobalConfig {
         private String hisat2;
         @Parameter(names = GlobalConfigFormat.NOVOALIGN)
         private String novoalign;
+        @Parameter(names = GlobalConfigFormat.NOVOALIGN_TUNE)
+        private String novoalignTune;
         @Parameter(names = GlobalConfigFormat.JAVA)
         private String java;
         @Parameter(names = GlobalConfigFormat.SAMTOOLS)

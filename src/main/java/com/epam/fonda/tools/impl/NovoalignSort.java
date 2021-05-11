@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -90,7 +90,6 @@ public class NovoalignSort implements Tool<BamResult> {
                 GlobalConfigFormat.NOVOINDEX);
         novoalignSortFields.samtools = validate(configuration.getGlobalConfig().getToolConfig().getSamTools(),
                 GlobalConfigFormat.SAMTOOLS);
-        novoalignSortFields.bedPrimer = constructFieldBedPrimer(configuration);
         novoalignSortFields.bamOutdir = sample.getBamOutdir();
         novoalignSortFields.sampleName = sample.getName();
         novoalignSortFields.numThreads = configuration.getGlobalConfig().getQueueParameters().getNumThreads();
@@ -104,13 +103,8 @@ public class NovoalignSort implements Tool<BamResult> {
         novoalignSortFields.sortedBamIndex = String.format("%s.bai",
                 novoalignSortFields.getSortedBam());
         novoalignSortFields.rg = constructFieldRG(configuration, sample.getName());
+        novoalignSortFields.tune = configuration.getGlobalConfig().getToolConfig().getNovoalignTune();
         return novoalignSortFields;
-    }
-
-    private String constructFieldBedPrimer(Configuration configuration) {
-        return isDnaAmpliconWorkflow(configuration)
-                ? configuration.getGlobalConfig().getDatabaseConfig().getBedPrimer()
-                : null;
     }
 
     private String constructFieldRG(Configuration configuration, String sampleName) {
@@ -129,7 +123,6 @@ public class NovoalignSort implements Tool<BamResult> {
         private String novoalign;
         private String novoindex;
         private String samtools;
-        private String bedPrimer;
         private String bamOutdir;
         private String sampleName;
         private int numThreads;
@@ -138,5 +131,6 @@ public class NovoalignSort implements Tool<BamResult> {
         private String rg;
         private String sortedBam;
         private String sortedBamIndex;
+        private String tune;
     }
 }

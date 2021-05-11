@@ -1,5 +1,5 @@
 echo `date` Begin Step: Novoalign alignment...
-[(${novoalignSortFields.novoalign})] -c [(${novoalignSortFields.numThreads})] -d [(${novoalignSortFields.novoindex})] -o SAM $[(${novoalignSortFields.rg})] -f [# th:if = "${fastq2 != null}"][(${fastq1})] [(${fastq2})][/][# th:unless = "${fastq2 != null}"][(${fastq1})][/] [# th:if = "${novoalignSortFields.bedPrimer != null}"]--amplicons [(${novoalignSortFields.bedPrimer})] [/]--hlimit 9 -t 0,2 -x 3 -H 22 --softclip 35 --trim3hp --matchreward 3 -k| [(${novoalignSortFields.samtools})] view -bS -|[(${novoalignSortFields.samtools})] sort - [(${novoalignSortFields.tmpBam})]
+[(${novoalignSortFields.novoalign})] -c [(${novoalignSortFields.numThreads})] -d [(${novoalignSortFields.novoindex})] -o SAM $[(${novoalignSortFields.rg})] -f [# th:if = "${fastq2 != null}"][(${fastq1})] [(${fastq2})][/][# th:unless = "${fastq2 != null}"][(${fastq1})][/][# th:if = "${novoalignSortFields.tune != null}"] --tune [(${novoalignSortFields.tune})] [/]| [(${novoalignSortFields.samtools})] view -bS -|[(${novoalignSortFields.samtools})] sort - [(${novoalignSortFields.tmpBam})]
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Novoalign alignment.
