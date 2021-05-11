@@ -114,6 +114,8 @@ public class GlobalConfig {
         private String contEstPopAF;
         @Parameter(names = GlobalConfigFormat.GENOME_LOAD)
         private String genomeLoad;
+        @Parameter(names = GlobalConfigFormat.COUNT_TARGET_PANEL)
+        private String cellrangerCountTargetPanel;
     }
 
     @Data
