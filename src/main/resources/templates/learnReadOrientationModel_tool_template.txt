@@ -1,5 +1,5 @@
 echo `date` Begin Step: LearnReadOrientationModel...
-[(${toolFields.gatk})] LearnReadOrientationModel -I [(${toolFields.f1r2TarGz})] -O [(${toolFields.artifactsPriors})]
+[(${toolFields.gatk})][# th:if = "${toolFields.javaOptions != null}"] --java-options [(${toolFields.javaOptions})][/] LearnReadOrientationModel -I [(${toolFields.f1r2TarGz})] -O [(${toolFields.artifactsPriors})]
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: LearnReadOrientationModel.
@@ -10,3 +10,4 @@ else
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
 fi
+

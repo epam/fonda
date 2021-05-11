@@ -1,5 +1,5 @@
 echo `date` Begin Step: PileupSummaries...
-[(${toolFields.gatk})] GetPileupSummaries -R [(${toolFields.genome})] -I [(${toolFields.bam})] -L [(${toolFields.bed})] -V [(${toolFields.contamVcf})][# th:if = "${toolFields.seqDict != null}"] --sequence-dictionary [(${toolFields.seqDict})][/] --interval-set-rule INTERSECTION -O [(${toolFields.pileupTable})]
+[(${toolFields.gatk})][# th:if = "${toolFields.javaOptions != null}"] --java-options [(${toolFields.javaOptions})][/] GetPileupSummaries -R [(${toolFields.genome})] -I [(${toolFields.bam})] -L [(${toolFields.bed})] -V [(${toolFields.contamVcf})][# th:if = "${toolFields.seqDict != null}"] --sequence-dictionary [(${toolFields.seqDict})][/] --interval-set-rule INTERSECTION -O [(${toolFields.pileupTable})]
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: PileupSummaries.

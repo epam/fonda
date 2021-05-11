@@ -1,5 +1,5 @@
 echo `date` Begin Step: CalculateContamination...
-[(${toolFields.gatk})] CalculateContamination --tumor-segmentation [(${toolFields.segments})] -I [(${toolFields.pileupTable})] -O [(${toolFields.contamTable})]
+[(${toolFields.gatk})][# th:if = "${toolFields.javaOptions != null}"] --java-options [(${toolFields.javaOptions})][/] CalculateContamination --tumor-segmentation [(${toolFields.segments})] -I [(${toolFields.pileupTable})] -O [(${toolFields.contamTable})]
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: CalculateContamination.

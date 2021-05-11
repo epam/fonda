@@ -25,7 +25,6 @@ import com.epam.fonda.tools.results.CalculateContaminationResult;
 import com.epam.fonda.workflow.TaskContainer;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -38,11 +37,8 @@ public class CalculateContamination implements Tool<CalculateContaminationResult
 
     private static final String CALCULATE_CONTAMINATION_TOOL_TEMPLATE_NAME = "calculate_contamination_template";
 
-    @NonNull
     private final String sampleName;
-    @NonNull
     private final String pileupTable;
-    @NonNull
     private final String outputDir;
 
     @Data
@@ -52,6 +48,7 @@ public class CalculateContamination implements Tool<CalculateContaminationResult
         private final String pileupTable;
         private final String segments;
         private final String contamTable;
+        private final String javaOptions;
     }
 
     @Override
@@ -78,6 +75,7 @@ public class CalculateContamination implements Tool<CalculateContaminationResult
                 .pileupTable(pileupTable)
                 .segments(format("%s/%s.segments.table", outputDir, sampleName))
                 .contamTable(format("%s/%s.contamination.table", outputDir, sampleName))
+                .javaOptions(toolConfig.getGatkJavaOptions())
                 .build();
     }
 }

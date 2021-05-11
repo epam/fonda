@@ -25,7 +25,6 @@ import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.workflow.TaskContainer;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -44,13 +43,11 @@ public class GatkSortSam implements Tool<BamResult> {
         private String samtools;
         private String bam;
         private String sortedBam;
+        private String javaOptions;
     }
 
-    @NonNull
     private final String sampleName;
-    @NonNull
     private final String bam;
-    @NonNull
     private final String outputDir;
 
     @Override
@@ -61,6 +58,7 @@ public class GatkSortSam implements Tool<BamResult> {
                 .gatk(validate(toolConfig.getGatk(), GlobalConfigFormat.GATK))
                 .samtools(validate(toolConfig.getSamTools(), GlobalConfigFormat.SAMTOOLS))
                 .sortedBam(format("%s/%s.bam.sorted", outputDir, sampleName))
+                .javaOptions(toolConfig.getGatkJavaOptions())
                 .build();
         final Context context = new Context();
         context.setVariable("toolFields", toolFields);

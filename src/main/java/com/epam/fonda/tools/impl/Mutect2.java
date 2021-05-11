@@ -58,6 +58,7 @@ public class Mutect2 implements Tool<VariantsVcfResult> {
         private final String bam;
         private final String controlBam;
         private final String vcf;
+        private final String javaOptions;
     }
 
     /**
@@ -77,7 +78,7 @@ public class Mutect2 implements Tool<VariantsVcfResult> {
         TaskContainer.addTasks("Mutect2 detection");
         final VariantsVcfOutput output = VariantsVcfOutput.builder()
                 .bamout(toolFields.getBamOut())
-                .F1R2Metrics(toolFields.getF1r2TarGz())
+                .f1R2Metrics(toolFields.getF1r2TarGz())
                 .variantsVcf(toolFields.getVcf())
                 .variantsOutputDir(outputDir)
                 .build();
@@ -105,6 +106,7 @@ public class Mutect2 implements Tool<VariantsVcfResult> {
                 .bamOut(format("%s/%s.mutect2.bamout.bam", outputDir, sampleName))
                 .f1r2TarGz(format("%s/%s.mutect2.f1r2.tar.gz", outputDir, sampleName))
                 .vcf(format("%s/%s.mutect2.somatic.variants.vcf", outputDir, sampleName))
+                .javaOptions(toolConfig.getGatkJavaOptions())
                 .build();
     }
 }

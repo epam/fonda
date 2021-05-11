@@ -51,6 +51,7 @@ public class FilterAlignmentArtifacts implements Tool<VariantsVcfResult> {
         private final String sortedBam;
         private final String bwaImg;
         private final String filteredArtifactsVcf;
+        private final String javaOptions;
     }
 
     @Override
@@ -80,6 +81,7 @@ public class FilterAlignmentArtifacts implements Tool<VariantsVcfResult> {
                 .sortedBam(sortedBam)
                 .bwaImg(validate(databaseConfig.getBwaImg(), GlobalConfigFormat.BWA_IMG))
                 .filteredArtifactsVcf(format("%s/%s.filtered.artifacts.vcf", outputDir, sampleName))
+                .javaOptions(toolConfig.getGatkJavaOptions())
                 .build();
     }
 }

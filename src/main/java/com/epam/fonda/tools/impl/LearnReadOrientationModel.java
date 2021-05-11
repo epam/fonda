@@ -25,7 +25,6 @@ import com.epam.fonda.tools.results.LearnReadOrientationModelResult;
 import com.epam.fonda.workflow.TaskContainer;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -38,11 +37,8 @@ public class LearnReadOrientationModel implements Tool<LearnReadOrientationModel
 
     private static final String LEARN_READ_ORIENTATION_MODEL_TEMPLATE = "learnReadOrientationModel_tool_template";
 
-    @NonNull
     private final String sampleName;
-    @NonNull
     private final String f1r2TarGz;
-    @NonNull
     private final String outputDir;
 
     @Data
@@ -51,6 +47,7 @@ public class LearnReadOrientationModel implements Tool<LearnReadOrientationModel
         private final String gatk;
         private final String f1r2TarGz;
         private final String artifactsPriors;
+        private final String javaOptions;
     }
 
     @Override
@@ -75,6 +72,7 @@ public class LearnReadOrientationModel implements Tool<LearnReadOrientationModel
                 .gatk(validate(toolConfig.getGatk(), GlobalConfigFormat.GATK))
                 .f1r2TarGz(f1r2TarGz)
                 .artifactsPriors(format("%s/%s.artifacts-priors.tar.gz", outputDir, sampleName))
+                .javaOptions(toolConfig.getGatkJavaOptions())
                 .build();
     }
 }

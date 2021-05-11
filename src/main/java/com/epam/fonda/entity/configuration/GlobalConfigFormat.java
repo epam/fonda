@@ -115,6 +115,7 @@ public final class GlobalConfigFormat {
     public static final String SEQUENZA = "sequenza";
     public static final String EXOMECNV = "exomecnv";
     public static final String SRC_SCRIPTS_FOLDER_PATH = "src_scripts";
+    public static final String GATK_JAVA_OPTIONS = "gatk_java_options";
 
     // [cellranger]
     public static final String CELLRANGER_EXPECTED_CELLS = "cellranger_EXPECTED_CELLS";

@@ -59,6 +59,7 @@ public class FilterMutectCalls implements Tool<VariantsVcfResult> {
         private final String vcf;
         private final boolean includeOptions;
         private final String filteredVcf;
+        private final String javaOptions;
     }
 
     @Override
@@ -92,6 +93,7 @@ public class FilterMutectCalls implements Tool<VariantsVcfResult> {
                 .filteringStats(format("%s/%s.filtering.stats", outputDir, sampleName))
                 .includeOptions(!"mm10".equals(configuration.getGlobalConfig().getDatabaseConfig().getGenomeBuild()))
                 .filteredVcf(format("%s/%s.filtered.vcf", outputDir, sampleName))
+                .javaOptions(toolConfig.getGatkJavaOptions())
                 .build();
     }
 }

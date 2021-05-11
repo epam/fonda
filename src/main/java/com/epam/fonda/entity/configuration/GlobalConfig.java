@@ -218,6 +218,8 @@ public class GlobalConfig {
         private String exomecnv;
         @Parameter(names = GlobalConfigFormat.SRC_SCRIPTS_FOLDER_PATH)
         private String srcPath;
+        @Parameter(names = GlobalConfigFormat.GATK_JAVA_OPTIONS)
+        private String gatkJavaOptions;
     }
 
     @Data

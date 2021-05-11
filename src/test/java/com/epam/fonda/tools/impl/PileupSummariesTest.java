@@ -64,14 +64,13 @@ class PileupSummariesTest extends AbstractTest {
     }
 
     private void initConfiguration() {
-        final Configuration configuration = new Configuration();
         final GlobalConfig globalConfig = new GlobalConfig();
         final GlobalConfig.ToolConfig toolConfig = new GlobalConfig.ToolConfig();
         toolConfig.setGatk("/opt/gatk/gatk");
         globalConfig.setToolConfig(toolConfig);
         final GlobalConfig.DatabaseConfig databaseConfig = new GlobalConfig.DatabaseConfig();
         databaseConfig.setGenome("/ngs/test/data/hg19.decoy.fa");
-        databaseConfig.setBed(format("%s/file.bed", TEST_DIRECTORY, SAMPLE_NAME));
+        databaseConfig.setBed(format("%s/file.bed", TEST_DIRECTORY));
         databaseConfig.setContaminationVCF("contamination.vcf");
         databaseConfig.setSequenceDictionary("sequence.dict");
         globalConfig.setDatabaseConfig(databaseConfig);

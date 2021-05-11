@@ -51,6 +51,7 @@ public class PileupSummaries implements Tool<PileupSummariesResult> {
         private final String contamVcf;
         private final String seqDict;
         private final String pileupTable;
+        private final String javaOptions;
     }
 
     @Override
@@ -73,10 +74,11 @@ public class PileupSummaries implements Tool<PileupSummariesResult> {
                 .gatk(validate(toolConfig.getGatk(), GlobalConfigFormat.GATK))
                 .genome(validate(databaseConfig.getGenome(), GlobalConfigFormat.GENOME))
                 .bam(validate(bam.getBam(), ToolUtils.BAM))
-                .bed(databaseConfig.getBed())
-                .contamVcf(databaseConfig.getContaminationVCF())
+                .bed(validate(databaseConfig.getBed(), GlobalConfigFormat.BED))
+                .contamVcf(validate(databaseConfig.getContaminationVCF(), GlobalConfigFormat.CONTAMINATION_VCF))
                 .seqDict(databaseConfig.getSequenceDictionary())
                 .pileupTable(format("%s/%s.tumor-pileups.table", outputDir, sampleName))
+                .javaOptions(toolConfig.getGatkJavaOptions())
                 .build();
     }
 }

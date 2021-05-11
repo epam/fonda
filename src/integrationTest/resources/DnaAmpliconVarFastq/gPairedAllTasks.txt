@@ -35,6 +35,8 @@ abra2 = /usr/bin/abra2
 bedtools = /usr/bin/bedtools
 exomecnv = /usr/bin/exomecnv
 sequenza = /usr/bin/sequenza
+BWA_IMG = /ngs/data/hg19.fasta.img
+CONTAMINATION_VCF = /ngs/data/contamination.vcf.gz
 
 [Databases]
 SPECIES = human

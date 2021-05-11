@@ -15,6 +15,7 @@
  */
 package com.epam.fonda.workflow.stage.impl;
 
+import com.epam.fonda.entity.command.AbstractCommand;
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.entity.configuration.orchestrator.ScriptManager;
@@ -228,36 +229,50 @@ public class SecondaryAnalysis implements Stage {
                                                     final TemplateEngine templateEngine,
                                                     final VariantsVcfResult mutect2ToolResult) {
         final VariantsVcfOutput variantsVcfOutput = mutect2ToolResult.getVariantsVcfOutput();
+        final AbstractCommand mutect2ToolCommand = mutect2ToolResult.getAbstractCommand();
         final String variantsOutputDir = variantsVcfOutput.getVariantsOutputDir();
-        FilterMutectCalls filterMutectCalls;
         if ("mm10".equals(configuration.getGlobalConfig().getDatabaseConfig().getGenomeBuild())) {
-            filterMutectCalls = new FilterMutectCalls(sampleName, variantsOutputDir, variantsVcfOutput.getVariantsVcf());
-            VariantsVcfResult variantsVcfResult = filterMutectCalls.generate(configuration, templateEngine);
-            return variantsVcfResult;
+            final VariantsVcfResult variantsVcfResult = new FilterMutectCalls(sampleName, variantsOutputDir,
+                    variantsVcfOutput.getVariantsVcf()).generate(configuration, templateEngine);
+            mutect2ToolCommand.setToolCommand(mutect2ToolCommand.getToolCommand()
+                    + variantsVcfResult.getAbstractCommand().getToolCommand());
+            mutect2ToolResult.getVariantsVcfOutput().setVariantsVcf(
+                    variantsVcfResult.getVariantsVcfOutput().getVariantsVcfFiltered());
+            return mutect2ToolResult;
         }
-        final PileupSummaries pileupSummaries = new PileupSummaries(sampleName, bamResult.getBamOutput(),
-                variantsOutputDir);
-        final PileupSummariesResult pileupSummariesResult = pileupSummaries.generate(configuration, templateEngine);
-        final CalculateContamination calculateContamination = new CalculateContamination(sampleName,
-                pileupSummariesResult.getPileupTable(), variantsOutputDir);
-        final CalculateContaminationResult calculateContaminationResult = calculateContamination.generate(configuration,
-                templateEngine);
-        final GatkSortSam gatkSortSam = new GatkSortSam(sampleName, variantsVcfOutput.getBamout(), variantsOutputDir);
-        final BamResult gatkSortSamResult = gatkSortSam.generate(configuration, templateEngine);
-        final LearnReadOrientationModel learnReadOrientationModel = new LearnReadOrientationModel(sampleName,
-                variantsVcfOutput.getF1R2Metrics(), variantsOutputDir);
-        final LearnReadOrientationModelResult orientationModelResult = learnReadOrientationModel.generate(configuration,
-                templateEngine);
-        CalculateContaminationOutput contaminationOutput = calculateContaminationResult.getCalculateContaminationOutput();
-        filterMutectCalls = new FilterMutectCalls(sampleName, variantsOutputDir, variantsVcfOutput.getVariantsVcf(),
-                contaminationOutput.getContaminationTable(), contaminationOutput.getTumorSegmentation(),
-                orientationModelResult.getLearnReadOrientationModelOutput().getArtifactPriorTables());
-        final VariantsVcfResult variantsVcfResult = filterMutectCalls.generate(configuration, templateEngine);
-        FilterAlignmentArtifacts alignmentArtifacts = new FilterAlignmentArtifacts(sampleName, variantsOutputDir,
-                variantsVcfResult.getVariantsVcfOutput().getVariantsVcfFiltered(),
-                gatkSortSamResult.getBamOutput().getSortedBam());
-        VariantsVcfResult vcfResult = alignmentArtifacts.generate(configuration, templateEngine);
-        return vcfResult;
+        final PileupSummariesResult pileupSummariesResult =
+                new PileupSummaries(sampleName, bamResult.getBamOutput(), variantsOutputDir)
+                .generate(configuration, templateEngine);
+        final CalculateContaminationResult calculateContamResult =
+                new CalculateContamination(sampleName, pileupSummariesResult.getPileupTable(), variantsOutputDir)
+                .generate(configuration, templateEngine);
+        final BamResult gatkSortSamResult =
+                new GatkSortSam(sampleName, variantsVcfOutput.getBamout(), variantsOutputDir)
+                .generate(configuration, templateEngine);
+        final LearnReadOrientationModelResult orientationModelResult =
+                new LearnReadOrientationModel(sampleName, variantsVcfOutput.getF1R2Metrics(), variantsOutputDir)
+                .generate(configuration, templateEngine);
+        final CalculateContaminationOutput contamOutput = calculateContamResult.getCalculateContaminationOutput();
+        final VariantsVcfResult filterMutectCallsVcfResult =
+                new FilterMutectCalls(sampleName, variantsOutputDir, variantsVcfOutput.getVariantsVcf(),
+                        contamOutput.getContaminationTable(), contamOutput.getTumorSegmentation(),
+                        orientationModelResult.getLearnReadOrientationModelOutput().getArtifactPriorTables())
+                .generate(configuration, templateEngine);
+        final VariantsVcfResult alignmentArtifactsVariantsVcfResult =
+                new FilterAlignmentArtifacts(sampleName, variantsOutputDir,
+                        filterMutectCallsVcfResult.getVariantsVcfOutput().getVariantsVcfFiltered(),
+                        gatkSortSamResult.getBamOutput().getSortedBam())
+                .generate(configuration, templateEngine);
+        mutect2ToolCommand.setToolCommand(mutect2ToolCommand.getToolCommand()
+                + pileupSummariesResult.getCommand().getToolCommand()
+                + calculateContamResult.getCommand().getToolCommand()
+                + gatkSortSamResult.getCommand().getToolCommand()
+                + orientationModelResult.getCommand().getToolCommand()
+                + filterMutectCallsVcfResult.getAbstractCommand().getToolCommand()
+                + alignmentArtifactsVariantsVcfResult.getAbstractCommand().getToolCommand());
+        mutect2ToolResult.getVariantsVcfOutput().setVariantsVcf(
+                filterMutectCallsVcfResult.getVariantsVcfOutput().getVariantsVcfFiltered());
+        return mutect2ToolResult;
     }
 
     private void mutect1(final Flag flag, final Configuration configuration, final TemplateEngine templateEngine,

@@ -33,7 +33,7 @@ public class VariantsVcfOutput implements DirectoryManager {
     private String variantsVcf;
     private String variantsVcfFiltered;
     private String bamout;
-    private String F1R2Metrics;
+    private String f1R2Metrics;
 
     @Override
     public List<String> getDirs() {
