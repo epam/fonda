@@ -46,7 +46,7 @@ class Mutect2Test extends AbstractTest {
             .controlBam(CONTROL_BAM)
             .build();
     private final TemplateEngine expectedTemplateEngine = TemplateEngineUtils.init();
-    private final Mutect2 mutect2 = new Mutect2(SAMPLE_NAME, bamOutput, TEST_DIRECTORY, CONTROL_SAMPLE_NAME);
+    private final Mutect2 mutect2 = new Mutect2(SAMPLE_NAME, bamOutput, TEST_DIRECTORY, CONTROL_SAMPLE_NAME, true);
 
     @BeforeEach
     void setup() {
@@ -98,7 +98,7 @@ class Mutect2Test extends AbstractTest {
     @Test
     void shouldFailIfBamNotSpecified() {
         final Mutect2 mutect = new Mutect2(SAMPLE_NAME, BamOutput.builder().build(), TEST_DIRECTORY,
-                CONTROL_SAMPLE_NAME);
+                CONTROL_SAMPLE_NAME, true);
         final Configuration config = initConfiguration();
         assertThrows(NullPointerException.class, () -> mutect.generate(config, expectedTemplateEngine));
     }
@@ -106,7 +106,7 @@ class Mutect2Test extends AbstractTest {
     @Test
     void shouldGenerateTumorOnly() {
         final Mutect2 mutect = new Mutect2(SAMPLE_NAME, BamOutput.builder().bam(BAM).build(), TEST_DIRECTORY,
-                CONTROL_SAMPLE_NAME);
+                CONTROL_SAMPLE_NAME, false);
         final Configuration config = initConfiguration();
         final VariantsVcfResult result = mutect.generate(config, expectedTemplateEngine);
         final String expectedCmd = expectedTemplateEngine.process(MUTECT2_TUMOR_ONLY_TEMPLATE_TEST, context);

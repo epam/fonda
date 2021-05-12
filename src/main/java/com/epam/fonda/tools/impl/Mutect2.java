@@ -42,6 +42,7 @@ public class Mutect2 implements Tool<VariantsVcfResult> {
     private final BamOutput bam;
     private final String sampleOutDir;
     private final String controlSampleName;
+    private final boolean isPaired;
 
     @Data
     @Builder
@@ -100,7 +101,7 @@ public class Mutect2 implements Tool<VariantsVcfResult> {
                 .sampleName(validate(sampleName, ToolUtils.SAMPLE_NAME))
                 .controlSampleName(controlSampleName)
                 .bam(validate(bam.getBam(), ToolUtils.BAM))
-                .controlBam(bam.getControlBam())
+                .controlBam(isPaired ? validate(bam.getControlBam(), ToolUtils.CONTROL_BAM) : null)
                 .germlineResource(databaseConfig.getGermlineResource())
                 .panelOfNormal(databaseConfig.getMutectNormalPanel())
                 .bamOut(format("%s/%s.mutect2.bamout.bam", outputDir, sampleName))
