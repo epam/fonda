@@ -19,11 +19,13 @@ package com.epam.fonda.tools.impl;
 import com.epam.fonda.entity.command.AbstractCommand;
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
+import com.epam.fonda.entity.configuration.GlobalConfig;
 import com.epam.fonda.entity.configuration.GlobalConfigFormat;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
+import com.epam.fonda.utils.PipelineUtils;
 import com.epam.fonda.workflow.PipelineType;
 import com.epam.fonda.workflow.TaskContainer;
 import lombok.AllArgsConstructor;
@@ -83,12 +85,12 @@ public class NovoalignSort implements Tool<BamResult> {
 
     private NovoalignSortFields constructFieldsForNovoalignSort(Configuration configuration) {
         NovoalignSortFields novoalignSortFields = new NovoalignSortFields();
-
-        novoalignSortFields.novoalign = validate(configuration.getGlobalConfig().getToolConfig().getNovoalign(),
+        GlobalConfig.ToolConfig toolConfig = configuration.getGlobalConfig().getToolConfig();
+        novoalignSortFields.novoalign = validate(toolConfig.getNovoalign(),
                 GlobalConfigFormat.NOVOALIGN);
         novoalignSortFields.novoindex = validate(configuration.getGlobalConfig().getDatabaseConfig().getNovoIndex(),
                 GlobalConfigFormat.NOVOINDEX);
-        novoalignSortFields.samtools = validate(configuration.getGlobalConfig().getToolConfig().getSamTools(),
+        novoalignSortFields.samtools = validate(toolConfig.getSamTools(),
                 GlobalConfigFormat.SAMTOOLS);
         novoalignSortFields.bamOutdir = sample.getBamOutdir();
         novoalignSortFields.sampleName = sample.getName();
@@ -103,7 +105,9 @@ public class NovoalignSort implements Tool<BamResult> {
         novoalignSortFields.sortedBamIndex = String.format("%s.bai",
                 novoalignSortFields.getSortedBam());
         novoalignSortFields.rg = constructFieldRG(configuration, sample.getName());
-        novoalignSortFields.tune = configuration.getGlobalConfig().getToolConfig().getNovoalignTune();
+        novoalignSortFields.tune = PipelineUtils.NA.equals(toolConfig.getNovoalignTune())
+                ? null
+                : toolConfig.getNovoalignTune();
         return novoalignSortFields;
     }
 
