@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package com.epam.fonda.tools.impl;
 
-import com.epam.fonda.entity.command.AbstractCommand;
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.entity.configuration.GlobalConfigFormat;
@@ -30,8 +29,6 @@ import lombok.Data;
 import lombok.NonNull;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-
-import java.util.Collections;
 
 import static com.epam.fonda.utils.ToolUtils.validate;
 
@@ -80,11 +77,9 @@ public class FusionCatcher implements Tool<FusionCatcherResult> {
         context.setVariable("fusionCatcherFields", fusionCatcherFields);
         final String cmd = templateEngine.process(FUSION_CATCHER_TOOL_TEMPLATE_NAME, context);
         TaskContainer.addTasks("FusionCatcher");
-        AbstractCommand command = BashCommand.withTool(cmd);
-        command.setTempDirs(Collections.singletonList(fusionCatcherFields.tmpFusionCatcherOutdir));
         return FusionCatcherResult.builder()
                 .fusionCatcherOutput(fusionCatcherOutput)
-                .command(command)
+                .command(BashCommand.withTool(cmd))
                 .fastqResult(result)
                 .build();
     }

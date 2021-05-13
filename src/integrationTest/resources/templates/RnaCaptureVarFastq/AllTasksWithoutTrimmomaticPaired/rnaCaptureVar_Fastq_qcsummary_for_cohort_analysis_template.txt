@@ -24,7 +24,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -Ei "((Error Step: (Merge fastqs|Xenome classification|Seqpurge trimming|STAR alignment|Sort bam|Index bam|Mark duplicates|Index mkdup bam|Remove duplicates|Index rmdup bam|RNA QC metrics|Merge RNA QC|GATK SplitNCigarReads|ABRA realignment|GATK realignment|GATK recalibration|GATK haplotypecaller detection|GATK haplotypecaller filtration|SnpEff annotation|Remove temporary directories|Run gatkHaplotypeCaller))|(Successful Step: Merge RNA QC))" $logFile;)
+	str=$(grep -Ei "((Error Step: (Merge fastqs|Xenome classification|Seqpurge trimming|STAR alignment|Sort bam|Index bam|Mark duplicates|Index mkdup bam|Remove duplicates|Index rmdup bam|RNA QC metrics|Merge RNA QC|GATK SplitNCigarReads|ABRA realignment|GATK realignment|GATK recalibration|GATK haplotypecaller detection|GATK haplotypecaller filtration|SnpEff annotation|Run gatkHaplotypeCaller|Remove temporary directories))|(Successful Step: Merge RNA QC))" $logFile;)
 fi
 	echo Waiting for step: Merge RNA QC
 	sleep 60

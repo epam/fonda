@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,10 +28,6 @@ import org.junit.jupiter.api.Test;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -48,7 +44,7 @@ class ExomecnvTest extends AbstractTest {
             .controlBam(CONTROL_BAM)
             .build();
 
-    private TemplateEngine expectedTemplateEngine = TemplateEngineUtils.init();
+    private final TemplateEngine expectedTemplateEngine = TemplateEngineUtils.init();
 
     @BeforeEach
     void setup() {
@@ -64,7 +60,6 @@ class ExomecnvTest extends AbstractTest {
         final String format = "%s/exomecnv/%s.sample_interval_summary";
         final String expectedTumorOutput = String.format(format, TEST_DIRECTORY, SAMPLE_NAME);
         final String expectedNormalOutput = String.format(format, TEST_DIRECTORY, CONTROL_SAMPLE_NAME);
-        final Set<String> expectedSet = new LinkedHashSet<>(Arrays.asList(expectedTumorOutput, expectedNormalOutput));
 
         final Configuration configuration = initConfiguration();
         final Exomecnv exomecnv = new Exomecnv(SAMPLE_NAME, CONTROL_SAMPLE_NAME, controlBamOutput, TEST_DIRECTORY);
@@ -72,7 +67,6 @@ class ExomecnvTest extends AbstractTest {
 
         final AbstractCommand command = result.getCommand();
         assertEquals(expectedCmd, command.getToolCommand());
-        assertTmpDirs(expectedSet, command.getTempDirs());
         assertEquals(expectedNormalOutput, result.getOutput().getControlReadDepthSummary());
         assertEquals(expectedTumorOutput, result.getOutput().getReadDepthSummary());
     }
@@ -155,13 +149,5 @@ class ExomecnvTest extends AbstractTest {
         globalConfig.setDatabaseConfig(databaseConfig);
         configuration.setGlobalConfig(globalConfig);
         return configuration;
-    }
-
-    private void assertTmpDirs(final Set<String> expected, final Set<String> actual) {
-        assertEquals(expected.size(), actual.size());
-        if (!expected.containsAll(actual)) {
-            throw new AssertionError(String.format("Expected: [%s] but was: [%s]",
-                    String.join(",", expected), String.join(",", actual)));
-        }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,8 +30,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-
-import java.util.Collections;
 
 import static com.epam.fonda.utils.ToolUtils.validate;
 import static java.lang.String.format;
@@ -94,14 +92,11 @@ public class GatkHaplotypeCaller implements Tool<VariantsVcfResult> {
                 .variantsVcf(additionalFields.variantsVcf)
                 .build();
         variantsVcfOutput.createDirectory();
-        VariantsVcfResult variantsVcfResult = VariantsVcfResult.builder()
+        return VariantsVcfResult.builder()
                 .variantsVcfOutput(variantsVcfOutput)
                 .filteredTool("gatkHaplotypeCaller")
-                .abstractCommand(new BashCommand(cmd))
+                .abstractCommand(BashCommand.withTool(cmd))
                 .build();
-        variantsVcfResult.getAbstractCommand().setTempDirs(Collections.singletonList(additionalFields
-                .tmpGatkHapOutdir));
-        return variantsVcfResult;
     }
 
     private ToolFields initializeToolFields(Configuration configuration) {

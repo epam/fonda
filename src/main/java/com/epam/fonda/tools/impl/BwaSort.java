@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package com.epam.fonda.tools.impl;
 
-import com.epam.fonda.entity.command.AbstractCommand;
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.entity.configuration.GlobalConfigFormat;
@@ -31,8 +30,6 @@ import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-
-import java.util.Arrays;
 
 import static com.epam.fonda.utils.ToolUtils.validate;
 
@@ -72,12 +69,10 @@ public class BwaSort implements Tool<BamResult> {
         bamOutput.setBam(StringUtils.isBlank(bamOutput.getBam())
                 ? bwaSortFields.sortedBam
                 : String.format("%s,%s", bamOutput.getBam(), bwaSortFields.sortedBam));
-        AbstractCommand command = BashCommand.withTool(cmd);
-        command.setTempDirs(Arrays.asList(bwaSortFields.sortedBam, bwaSortFields.sortedBamIndex));
         TaskContainer.addTasks("BWA alignment", "Index bam");
         return BamResult.builder()
                 .bamOutput(bamOutput)
-                .command(command)
+                .command(BashCommand.withTool(cmd))
                 .build();
     }
 

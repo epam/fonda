@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,8 +29,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-
-import java.util.Arrays;
 
 import static com.epam.fonda.utils.ToolUtils.validate;
 
@@ -68,8 +66,6 @@ public class PicardRemoveDuplicate implements Tool<BamResult> {
         bamOutput.setRmdupBamIndex(rmdupBam.replace(".bam", ".bam.bai"));
         AbstractCommand resultCommand = bamResult.getCommand();
         resultCommand.setToolCommand(resultCommand.getToolCommand() + cmd);
-        resultCommand.setTempDirs(Arrays.asList(bamResult.getBamOutput().getMkdupBam(),
-                bamResult.getBamOutput().getMkdupBamIndex()));
         return BamResult.builder()
                 .bamOutput(bamOutput)
                 .command(resultCommand)

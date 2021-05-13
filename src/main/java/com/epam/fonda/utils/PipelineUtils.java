@@ -24,6 +24,7 @@ import com.epam.fonda.tools.results.FastqOutput;
 import com.epam.fonda.tools.results.FastqResult;
 import com.epam.fonda.workflow.TaskContainer;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -35,7 +36,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -154,6 +155,9 @@ public final class PipelineUtils {
      * @return resulting script of type {@link String}
      **/
     public static String cleanUpTmpDir(Set<String> fields) {
+        if (CollectionUtils.isEmpty(fields)) {
+            return StringUtils.EMPTY;
+        }
         Context context = new Context();
         context.setVariable("fields", fields);
         TaskContainer.addTasks("Remove temporary directories");
@@ -252,7 +256,7 @@ public final class PipelineUtils {
                 .mergedFastq2(mergedFastq2)
                 .build();
         AbstractCommand command = BashCommand.withTool(cmd);
-        command.setTempDirs(Collections.singletonList(sample.getTmpOutdir()));
+        command.setTempDirs(Arrays.asList(mergedFastq1, mergedFastq2));
         return FastqResult.builder()
                 .command(command)
                 .out(fastqOutput)

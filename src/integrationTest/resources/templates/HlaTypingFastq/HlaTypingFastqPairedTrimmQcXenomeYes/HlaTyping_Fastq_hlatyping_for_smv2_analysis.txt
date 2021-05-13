@@ -66,7 +66,8 @@ else
 fi
 
 echo `date` Begin Step: Remove temporary directories...
-rm -rf build/resources/integrationTest/output/smv2/tmp
+rm -rf build/resources/integrationTest/output/smv2/fastq/smv2.merged_R1.fastq.gz
+rm -rf build/resources/integrationTest/output/smv2/fastq/smv2.merged_R2.fastq.gz
 
 if [ $? -eq 0 ]
 then

@@ -24,7 +24,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -Ei "((Error Step: (Merge fastqs|STAR alignment|rsem|rsem annotation|Remove temporary directories|Run rsem|Merge RNA QC))|(Successful Step: Merge RNA QC))" $logFile;)
+	str=$(grep -Ei "((Error Step: (Merge fastqs|STAR alignment|rsem|rsem annotation|Run rsem|Remove temporary directories|Merge RNA QC))|(Successful Step: Merge RNA QC))" $logFile;)
 fi
 	echo Waiting for step: Merge RNA QC
 	sleep 60
@@ -44,7 +44,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -Ei "((Error Step: (Merge fastqs|STAR alignment|rsem|rsem annotation|Remove temporary directories|Run rsem|Merge RNA QC))|(Successful Step: Merge RNA QC))" $logFile;)
+	str=$(grep -Ei "((Error Step: (Merge fastqs|STAR alignment|rsem|rsem annotation|Run rsem|Remove temporary directories|Merge RNA QC))|(Successful Step: Merge RNA QC))" $logFile;)
 fi
 	echo Waiting for step: Merge RNA QC
 	sleep 60
@@ -64,7 +64,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -Ei "((Error Step: (Merge fastqs|STAR alignment|rsem|rsem annotation|Remove temporary directories|Run rsem|Merge RNA QC))|(Successful Step: Merge RNA QC))" $logFile;)
+	str=$(grep -Ei "((Error Step: (Merge fastqs|STAR alignment|rsem|rsem annotation|Run rsem|Remove temporary directories|Merge RNA QC))|(Successful Step: Merge RNA QC))" $logFile;)
 fi
 	echo Waiting for step: Merge RNA QC
 	sleep 60
@@ -84,7 +84,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -Ei "((Error Step: (Merge fastqs|STAR alignment|rsem|rsem annotation|Remove temporary directories|Run rsem|Merge RNA QC))|(Successful Step: Merge RNA QC))" $logFile;)
+	str=$(grep -Ei "((Error Step: (Merge fastqs|STAR alignment|rsem|rsem annotation|Run rsem|Remove temporary directories|Merge RNA QC))|(Successful Step: Merge RNA QC))" $logFile;)
 fi
 	echo Waiting for step: Merge RNA QC
 	sleep 60
@@ -104,7 +104,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -Ei "((Error Step: (Merge fastqs|STAR alignment|rsem|rsem annotation|Remove temporary directories|Run rsem|Merge RNA QC))|(Successful Step: Merge RNA QC))" $logFile;)
+	str=$(grep -Ei "((Error Step: (Merge fastqs|STAR alignment|rsem|rsem annotation|Run rsem|Remove temporary directories|Merge RNA QC))|(Successful Step: Merge RNA QC))" $logFile;)
 fi
 	echo Waiting for step: Merge RNA QC
 	sleep 60
@@ -124,7 +124,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -Ei "((Error Step: (Merge fastqs|STAR alignment|rsem|rsem annotation|Remove temporary directories|Run rsem|Merge RNA QC))|(Successful Step: Merge RNA QC))" $logFile;)
+	str=$(grep -Ei "((Error Step: (Merge fastqs|STAR alignment|rsem|rsem annotation|Run rsem|Remove temporary directories|Merge RNA QC))|(Successful Step: Merge RNA QC))" $logFile;)
 fi
 	echo Waiting for step: Merge RNA QC
 	sleep 60

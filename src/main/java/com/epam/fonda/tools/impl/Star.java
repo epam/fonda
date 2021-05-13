@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package com.epam.fonda.tools.impl;
 
-import com.epam.fonda.entity.command.AbstractCommand;
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.entity.configuration.GlobalConfigFormat;
@@ -33,10 +32,6 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.epam.fonda.utils.ToolUtils.validate;
 import static com.epam.fonda.utils.ToolUtils.validateOldPicardVersion;
@@ -118,15 +113,9 @@ public class Star implements Tool<BamResult> {
             bamOutput.setUnsortedBamIndex(additionalStarFields.unsortedBamIndex);
             TaskContainer.addTasks("STAR alignment", "Sort bam", "Index bam");
         }
-        AbstractCommand resultCommand = BashCommand.withTool(cmd);
-        final List<String> tempDirs = Stream.of(bamOutput.getSortedBam(), bamOutput.getSortedBamIndex(),
-                bamOutput.getUnsortedBam(), bamOutput.getUnsortedBamIndex())
-                .filter(StringUtils::isNotBlank)
-                .collect(Collectors.toList());
-        resultCommand.setTempDirs(tempDirs);
         return BamResult.builder()
                 .bamOutput(bamOutput)
-                .command(resultCommand)
+                .command(BashCommand.withTool(cmd))
                 .build();
     }
 

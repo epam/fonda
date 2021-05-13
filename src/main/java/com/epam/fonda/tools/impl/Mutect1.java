@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,8 +32,6 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.Validate;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-
-import java.util.Collections;
 
 import static com.epam.fonda.utils.ToolUtils.validate;
 
@@ -83,10 +81,8 @@ public class Mutect1 implements Tool<VariantsVcfResult> {
                 .variantsTmpOutputDir(toolFields.getOutTmpDir())
                 .build();
         output.createDirectory();
-        final BashCommand abstractCommand = BashCommand.withTool(cmd);
-        abstractCommand.setTempDirs(Collections.singletonList(toolFields.getOutTmpDir()));
         return VariantsVcfResult.builder()
-                .abstractCommand(abstractCommand)
+                .abstractCommand(BashCommand.withTool(cmd))
                 .filteredTool("mutect1")
                 .variantsVcfOutput(output)
                 .build();

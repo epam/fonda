@@ -34,7 +34,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.thymeleaf.TemplateEngine;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -69,7 +68,6 @@ public class Bam2FastqWorkflow implements BamWorkflow {
                     .generate(configuration, TEMPLATE_ENGINE);
             cmd.append(fastqResult.getCommand().getToolCommand());
         }
-        Collections.addAll(bamResult.getCommand().getTempDirs(), sample.getTmpOutdir());
 
         final String command = configuration.isMasterMode()
                 ? cmd.toString()

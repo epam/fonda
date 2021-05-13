@@ -24,7 +24,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -Ei "((Error Step: (Featurecounts|Remove temporary directories|Run featureCount|rsem|rsem annotation|Run rsem|Cufflinks|Run cufflinks|Stringtie|Run stringtie))|(Successful Step: stringtie))" $logFile;)
+	str=$(grep -Ei "((Error Step: (Featurecounts|Run featureCount|rsem|rsem annotation|Run rsem|Cufflinks|Run cufflinks|Stringtie|Run stringtie))|(Successful Step: stringtie))" $logFile;)
 fi
 	echo Waiting for step: stringtie
 	sleep 60
@@ -44,7 +44,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -Ei "((Error Step: (Featurecounts|Remove temporary directories|Run featureCount|rsem|rsem annotation|Run rsem|Cufflinks|Run cufflinks|Stringtie|Run stringtie))|(Successful Step: stringtie))" $logFile;)
+	str=$(grep -Ei "((Error Step: (Featurecounts|Run featureCount|rsem|rsem annotation|Run rsem|Cufflinks|Run cufflinks|Stringtie|Run stringtie))|(Successful Step: stringtie))" $logFile;)
 fi
 	echo Waiting for step: stringtie
 	sleep 60
@@ -64,7 +64,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -Ei "((Error Step: (Featurecounts|Remove temporary directories|Run featureCount|rsem|rsem annotation|Run rsem|Cufflinks|Run cufflinks|Stringtie|Run stringtie))|(Successful Step: stringtie))" $logFile;)
+	str=$(grep -Ei "((Error Step: (Featurecounts|Run featureCount|rsem|rsem annotation|Run rsem|Cufflinks|Run cufflinks|Stringtie|Run stringtie))|(Successful Step: stringtie))" $logFile;)
 fi
 	echo Waiting for step: stringtie
 	sleep 60

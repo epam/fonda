@@ -15,7 +15,6 @@
  */
 package com.epam.fonda.workflow.stage.impl;
 
-import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.entity.configuration.orchestrator.ScriptManager;
 import com.epam.fonda.entity.configuration.orchestrator.ScriptType;
@@ -39,7 +38,6 @@ import com.epam.fonda.tools.impl.Strelka2;
 import com.epam.fonda.tools.impl.Stringtie;
 import com.epam.fonda.tools.impl.Vardict;
 import com.epam.fonda.tools.impl.VcfSnpeffAnnotation;
-import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
 import com.epam.fonda.tools.results.ContEstResult;
 import com.epam.fonda.tools.results.CufflinksResult;
@@ -57,14 +55,11 @@ import com.epam.fonda.workflow.stage.Stage;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.SetUtils;
 import org.thymeleaf.TemplateEngine;
 
 import java.io.IOException;
-import java.util.Set;
 
 import static com.epam.fonda.utils.PipelineUtils.addTask;
-import static com.epam.fonda.utils.PipelineUtils.cleanUpTmpDir;
 import static com.epam.fonda.utils.PipelineUtils.createStaticShell;
 
 @AllArgsConstructor
@@ -92,19 +87,11 @@ public class SecondaryAnalysis implements Stage {
      */
     public String process(final Flag flag, final Configuration configuration,
                           final TemplateEngine templateEngine) throws IOException {
-        if (bamResult == null) {
-            BamOutput bamOutput = BamOutput.builder().build();
-            bamResult = BamResult.builder()
-                    .bamOutput(bamOutput)
-                    .command(BashCommand.withTool(""))
-                    .build();
-        }
         final StringBuilder alignCmd = new StringBuilder();
-        final Set<String> tempDirs = bamResult.getCommand().getTempDirs();
         featureCount(flag, configuration, templateEngine, alignCmd);
-        rsem(flag, configuration, templateEngine, alignCmd, tempDirs);
-        cufflinks(flag, configuration, templateEngine, alignCmd, tempDirs);
-        stringtie(flag, configuration, templateEngine, alignCmd, tempDirs);
+        rsem(flag, configuration, templateEngine, alignCmd);
+        cufflinks(flag, configuration, templateEngine, alignCmd);
+        stringtie(flag, configuration, templateEngine, alignCmd);
         vardict(flag, configuration, templateEngine, alignCmd);
         gatkHaplotypeCaller(flag, configuration, templateEngine, alignCmd);
         contEst(flag, configuration, templateEngine, alignCmd);
@@ -126,8 +113,7 @@ public class SecondaryAnalysis implements Stage {
         }
         final ContEstResult result = new ContEst(sampleName, sampleOutputDir, bamResult)
                 .generate(configuration, templateEngine);
-        createCustomToolShell(configuration, alignCmd, result.getCommand().getToolCommand() +
-                cleanUpTmpDir(result.getCommand().getTempDirs()), "contEst");
+        createCustomToolShell(configuration, alignCmd, result.getCommand().getToolCommand(), "contEst");
     }
 
     private void freebayes(final Flag flag, final Configuration configuration, final TemplateEngine templateEngine,
@@ -164,8 +150,7 @@ public class SecondaryAnalysis implements Stage {
         }
         final ExomecnvResult result = new Exomecnv(sampleName, controlSampleName, bamResult.getBamOutput(),
                 sampleOutputDir).generate(configuration, templateEngine);
-        createCustomToolShell(configuration, alignCmd, result.getCommand().getToolCommand() +
-                cleanUpTmpDir(result.getCommand().getTempDirs()), result.getToolName());
+        createCustomToolShell(configuration, alignCmd, result.getCommand().getToolCommand(), result.getToolName());
     }
 
     private void sequenza(final Flag flag, final Configuration configuration, final TemplateEngine templateEngine,
@@ -178,8 +163,7 @@ public class SecondaryAnalysis implements Stage {
         final SequenzaResult result = new Sequenza(sampleName, sampleOutputDir, pileupResult.getPileupOutput())
                 .generate(configuration, templateEngine);
         createCustomToolShell(configuration, alignCmd, pileupResult.getCommand().getToolCommand()
-                        + result.getCommand().getToolCommand() + cleanUpTmpDir(result.getCommand().getTempDirs()),
-                result.getToolName());
+                        + result.getCommand().getToolCommand(), result.getToolName());
     }
 
     private void lofreq(final Flag flag, final Configuration configuration, final TemplateEngine templateEngine,
@@ -238,29 +222,27 @@ public class SecondaryAnalysis implements Stage {
     }
 
     private void stringtie(final Flag flag, final Configuration configuration, final TemplateEngine templateEngine,
-                           final StringBuilder alignCmd, final Set<String> tempDirs) throws IOException {
+                           final StringBuilder alignCmd) throws IOException {
         if (!flag.isStringtie()) {
             return;
         }
         StringtieResult stringtieResult = new Stringtie(sampleName, sampleOutputDir, bamResult.getBamOutput())
                 .generate(configuration, templateEngine);
-        createCustomToolShell(configuration, alignCmd,
-                stringtieResult.getCommand().getToolCommand() + cleanUpTmpDir(tempDirs), "stringtie");
+        createCustomToolShell(configuration, alignCmd, stringtieResult.getCommand().getToolCommand(), "stringtie");
     }
 
     private void cufflinks(final Flag flag, final Configuration configuration, final TemplateEngine templateEngine,
-                           final StringBuilder alignCmd, final Set<String> tempDirs) throws IOException {
+                           final StringBuilder alignCmd) throws IOException {
         if (!flag.isCufflinks()) {
             return;
         }
         CufflinksResult cufflinksResult = new Cufflinks(sampleName, sampleOutputDir, bamResult.getBamOutput())
                 .generate(configuration, templateEngine);
-        createCustomToolShell(configuration, alignCmd,
-                cufflinksResult.getCommand().getToolCommand() + cleanUpTmpDir(tempDirs), "cufflinks");
+        createCustomToolShell(configuration, alignCmd, cufflinksResult.getCommand().getToolCommand(), "cufflinks");
     }
 
     private void rsem(final Flag flag, final Configuration configuration, final TemplateEngine templateEngine,
-                      final StringBuilder alignCmd, final Set<String> tempDirs) throws IOException {
+                      final StringBuilder alignCmd) throws IOException {
         if (!flag.isRsem()) {
             return;
         }
@@ -271,8 +253,7 @@ public class SecondaryAnalysis implements Stage {
         RsemResult rsemResult = new RsemExpression(sampleName, sampleOutputDir, bamResult.getBamOutput())
                 .generate(configuration, templateEngine);
         rsemResult = new RsemAnnotation(rsemResult).generate(configuration, templateEngine);
-        createCustomToolShell(configuration, alignCmd,
-                rsemResult.getCommand().getToolCommand() + cleanUpTmpDir(tempDirs), "rsem");
+        createCustomToolShell(configuration, alignCmd, rsemResult.getCommand().getToolCommand(), "rsem");
     }
 
     private void featureCount(final Flag flag, final Configuration configuration, final TemplateEngine templateEngine,
@@ -298,9 +279,7 @@ public class SecondaryAnalysis implements Stage {
                                     final VariantsVcfResult vcfToolResult,
                                     final VcfScnpeffAnnonationResult vcfScnpeffAnnonationResult) throws IOException {
         createCustomToolShell(configuration, alignCmd, vcfToolResult.getAbstractCommand().getToolCommand()
-                        + vcfScnpeffAnnonationResult.getCommand().getToolCommand()
-                        + cleanUpTmpDir(SetUtils.emptyIfNull(vcfToolResult.getAbstractCommand().getTempDirs())),
-                vcfToolResult.getFilteredTool());
+                        + vcfScnpeffAnnonationResult.getCommand().getToolCommand(), vcfToolResult.getFilteredTool());
     }
 
     private void createCustomToolShell(final Configuration configuration,

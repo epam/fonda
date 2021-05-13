@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,8 +30,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-
-import java.util.Arrays;
 
 @RequiredArgsConstructor
 public class AmpliconGatkRealign implements Tool<BamResult> {
@@ -73,8 +71,6 @@ public class AmpliconGatkRealign implements Tool<BamResult> {
         bamOutput.setBam(additionalFields.realignBam);
         AbstractCommand resultCommand = bamResult.getCommand();
         resultCommand.setToolCommand(resultCommand.getToolCommand() + cmd);
-        resultCommand.setTempDirs(Arrays.asList(additionalFields.realignInterval, additionalFields.realignBam,
-                additionalFields.realignBamIndex));
         return bamResult;
     }
 

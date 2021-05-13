@@ -33,14 +33,12 @@ import org.thymeleaf.TemplateEngine;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.epam.fonda.entity.configuration.orchestrator.ScriptType.ALIGNMENT;
 import static com.epam.fonda.entity.configuration.orchestrator.ScriptType.POST_PROCESS;
 import static com.epam.fonda.entity.configuration.orchestrator.ScriptType.TEMP;
-import static com.epam.fonda.utils.PipelineUtils.cleanUpTmpDir;
 import static com.epam.fonda.utils.PipelineUtils.printShell;
 
 @Slf4j
@@ -57,19 +55,14 @@ public class RnaExpressionBamWorkflow implements BamWorkflow {
         sample.createDirectory();
         configuration.setCustTask("ExpressionEstimation");
         final BamOutput bamOutput = BamOutput.builder().bam(sample.getBam()).build();
-        final BashCommand command = BashCommand.withTool("");
-        command.getTempDirs().add(sample.getTmpOutdir());
         final BamResult bamResult = BamResult.builder()
                 .bamOutput(bamOutput)
-                .command(command)
+                .command(BashCommand.withTool(""))
                 .build();
 
         final String secondaryAnalysis = new SecondaryAnalysis(bamResult, sample.getName(), sample.getSampleOutputDir())
                 .process(flag, configuration, TEMPLATE_ENGINE);
-        final String cmd = configuration.isMasterMode()
-                ? secondaryAnalysis
-                : secondaryAnalysis + cleanUpTmpDir(Collections.singleton(sample.getTmpOutdir()));
-        final String custScript = printShell(configuration, cmd, sample.getName(), null);
+        final String custScript = printShell(configuration, secondaryAnalysis, sample.getName(), null);
         if (scriptManager != null) {
             scriptManager.addScript(sample.getName(), ALIGNMENT, custScript);
             scriptManager.addScript(sample.getName(), TEMP, sample.getTmpOutdir());

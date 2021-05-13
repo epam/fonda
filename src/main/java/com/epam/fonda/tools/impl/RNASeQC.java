@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package com.epam.fonda.tools.impl;
 
-import com.epam.fonda.entity.command.AbstractCommand;
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.entity.configuration.GlobalConfigFormat;
@@ -31,8 +30,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-
-import java.util.Arrays;
 
 import static com.epam.fonda.utils.PipelineUtils.getExecutionPath;
 import static com.epam.fonda.utils.ToolUtils.validate;
@@ -118,12 +115,10 @@ public class RNASeQC implements Tool<MetricsResult> {
         metricsOutput.setGcbiasMetrics(metricFields.gcbiasMetrics);
         metricsOutput.setGcsumMetrics(metricFields.gcsumMetrics);
         metricsOutput.setGcbiasChart(metricFields.gcbiasChart);
-        AbstractCommand resultCommand = BashCommand.withTool(cmd);
-        resultCommand.setTempDirs(Arrays.asList(metricsOutput.getGcbiasMetrics(), metricsOutput.getGcsumMetrics()));
         return MetricsResult.builder()
                 .bamOutput(bamOutput)
                 .metricsOutput(metricsOutput)
-                .command(resultCommand)
+                .command(BashCommand.withTool(cmd))
                 .build();
     }
 

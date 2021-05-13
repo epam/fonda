@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,8 +30,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-
-import java.util.Arrays;
 
 import static com.epam.fonda.utils.DnaUtils.isWgsWorkflow;
 import static com.epam.fonda.utils.ToolUtils.validate;
@@ -88,9 +86,6 @@ public class AbraRealign implements Tool<BamResult> {
         bamOutput.setBamIndex(additionalFields.realignBam.concat(".bai"));
         AbstractCommand resultCommand = bamResult.getCommand();
         resultCommand.setToolCommand(resultCommand.getToolCommand() + cmd);
-        if (isWgsWorkflow(configuration)) {
-            resultCommand.getTempDirs().addAll(Arrays.asList(bamOutput.getBam(), bamOutput.getBamIndex()));
-        }
         return bamResult;
     }
 

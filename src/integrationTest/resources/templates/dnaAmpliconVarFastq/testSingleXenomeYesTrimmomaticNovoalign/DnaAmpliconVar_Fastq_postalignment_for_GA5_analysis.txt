@@ -102,22 +102,4 @@ else
 	echo $(date) Confirm bam from GA5:
 fi
 
-echo `date` Begin Step: Remove temporary directories...
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5_1.novoalign.sorted.bam
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5_1.novoalign.sorted.bam.bai
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam.bai
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.recal.table
-rm -rf build/resources/integrationTest/output/GA5/tmp
-
-if [ $? -eq 0 ]
-then
-	echo `date` Successful Step: Remove temporary directories.
-	sleep 8
-else
-	echo `date` Error Step: Remove temporary directories.
-
-	echo `date` The job was aborted due to ERRORS found.
-	exit 1;
-fi
 echo `date` Finish the job execution!
