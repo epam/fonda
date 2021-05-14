@@ -97,7 +97,7 @@ else
 fi
 
 echo `date` Begin Step: FilterMutectCalls...
-/usr/bin/gatk FilterMutectCalls -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -V build/resources/integrationTest/output/GA5/mutect2/GA5.mutect2.somatic.variants.vcf --contamination-table build/resources/integrationTest/output/GA5/mutect2/GA5.tumor-pileups.table --tumor-segmentation build/resources/integrationTest/output/GA5/mutect2/GA5.segments.table --ob-priors build/resources/integrationTest/output/GA5/mutect2/GA5.artifacts-priors.tar.gz -stats build/resources/integrationTest/output/GA5/mutect2/GA5.vcf.stats --filtering-stats build/resources/integrationTest/output/GA5/mutect2/GA5.filtering.stats -O build/resources/integrationTest/output/GA5/mutect2/GA5.filtered.vcf
+/usr/bin/gatk FilterMutectCalls -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -V build/resources/integrationTest/output/GA5/mutect2/GA5.mutect2.somatic.variants.vcf --contamination-table build/resources/integrationTest/output/GA5/mutect2/GA5.contamination.table --tumor-segmentation build/resources/integrationTest/output/GA5/mutect2/GA5.segments.table --ob-priors build/resources/integrationTest/output/GA5/mutect2/GA5.artifacts-priors.tar.gz -stats build/resources/integrationTest/output/GA5/mutect2/GA5.vcf.stats --filtering-stats build/resources/integrationTest/output/GA5/mutect2/GA5.filtering.stats -O build/resources/integrationTest/output/GA5/mutect2/GA5.filtered.vcf
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: FilterMutectCalls.

@@ -59,7 +59,7 @@ public class CalculateContamination implements Tool<CalculateContaminationResult
         final String cmd = templateEngine.process(CALCULATE_CONTAMINATION_TOOL_TEMPLATE_NAME, context);
         TaskContainer.addTasks("CalculateContamination");
         final CalculateContaminationOutput calculateContaminationOutput = CalculateContaminationOutput.builder()
-                .contaminationTable(toolFields.getPileupTable())
+                .contaminationTable(toolFields.getContamTable())
                 .tumorSegmentation(toolFields.getSegments())
                 .build();
         return CalculateContaminationResult.builder()
