@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,6 +75,7 @@ public final class GlobalConfigFormat {
     public static final String SALMON = "salmon";
     public static final String HISAT2 = "hisat2";
     public static final String NOVOALIGN = "novoalign";
+    public static final String NOVOALIGN_TUNE = "novoalign_tune";
     public static final String JAVA = "java";
     public static final String SAMTOOLS = "samtools";
     public static final String PICARD_VERSION = "picard_version";
