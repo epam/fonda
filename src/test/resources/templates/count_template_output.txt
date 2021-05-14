@@ -1,6 +1,6 @@
 echo `date` Begin Step: Cellranger count...
 cd output/count
-cellRanger count --localcores=3 --id=sampleName --transcriptome=transcriptome --libraries=output/sh_files/sampleName_library.txt --feature-ref=feature_ref.csv --chemistry=chemistry --r1-length=r1Length --r2-length=r2Length --lanes=lanes --force-cells=forcedCells
+cellRanger count --localcores=3 --id=sampleName --target-panel=/opt/cellranger-5.0.0/target_panels/immunology_v1.0_GRCh38-2020-A.target_panel.csv --transcriptome=transcriptome --libraries=output/sh_files/sampleName_library.txt --feature-ref=feature_ref.csv --chemistry=chemistry --r1-length=r1Length --r2-length=r2Length --lanes=lanes --force-cells=forcedCells
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Cellranger count.
