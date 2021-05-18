@@ -277,14 +277,12 @@ public class DnaWgsVarBamIntegrationTest extends AbstractIntegrationTest {
             () -> assertTrue(new File(format("%s%s/GA51/contEst/tmp", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
             () -> assertTrue(new File(format("%s%s/GA51/lofreq", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
             () -> assertTrue(new File(format("%s%s/GA51/mutect2", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
-            () -> assertTrue(new File(format("%s%s/GA51/mutect2/tmp", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
             () -> assertTrue(new File(format("%s%s/GA51/strelka2", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
             () -> assertTrue(new File(format("%s%s/GA51/tmp", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
             () -> assertTrue(new File(format("%s%s/GA52/contEst", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
             () -> assertTrue(new File(format("%s%s/GA52/contEst/tmp", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
             () -> assertTrue(new File(format("%s%s/GA52/lofreq", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
             () -> assertTrue(new File(format("%s%s/GA52/mutect2", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
-            () -> assertTrue(new File(format("%s%s/GA52/mutect2/tmp", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
             () -> assertTrue(new File(format("%s%s/GA52/strelka2", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists()),
             () -> assertTrue(new File(format("%s%s/GA52/tmp", OUTPUT_DIR_ROOT, OUTPUT_DIR)).exists())
         );

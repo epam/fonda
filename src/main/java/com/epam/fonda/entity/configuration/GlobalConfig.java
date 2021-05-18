@@ -116,6 +116,14 @@ public class GlobalConfig {
         private String genomeLoad;
         @Parameter(names = GlobalConfigFormat.COUNT_TARGET_PANEL)
         private String cellrangerCountTargetPanel;
+        @Parameter(names = GlobalConfigFormat.GERMLINE_RESOURCE)
+        private String germlineResource;
+        @Parameter(names = GlobalConfigFormat.CONTAMINATION_VCF)
+        private String contaminationVCF;
+        @Parameter(names = GlobalConfigFormat.SEQUENCE_DICTIONARY)
+        private String sequenceDictionary;
+        @Parameter(names = GlobalConfigFormat.BWA_IMG)
+        private String bwaImg;
     }
 
     @Data
@@ -210,6 +218,8 @@ public class GlobalConfig {
         private String exomecnv;
         @Parameter(names = GlobalConfigFormat.SRC_SCRIPTS_FOLDER_PATH)
         private String srcPath;
+        @Parameter(names = GlobalConfigFormat.GATK_JAVA_OPTIONS)
+        private String gatkJavaOptions;
     }
 
     @Data

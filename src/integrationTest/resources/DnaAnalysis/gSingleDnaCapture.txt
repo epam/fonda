@@ -54,6 +54,8 @@ COSMIC = /ngs/data/db/cosmic
 MUTECT_NORMAL_PANEL = /ngs/data/db/mormal_panel
 KNOWN_INDELS_MILLS = 10
 KNOWN_INDELS_PHASE1 = 100
+BWA_IMG = /ngs/data/hg19.fasta.img
+CONTAMINATION_VCF = /ngs/data/contamination.vcf.gz
 
 [Pipeline_Info]
 workflow = DnaCaptureVar_Fastq

@@ -1,0 +1,13 @@
+echo `date` Begin Step: CalculateContamination...
+/opt/gatk/gatk CalculateContamination --tumor-segmentation [(${output})]/mutect2/sample1.segments.table -I [(${output})]/mutect2/sample1.tumor-pileups.table -O [(${output})]/mutect2/sample1.contamination.table
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: CalculateContamination.
+	sleep 8
+else
+	echo `date` Error Step: CalculateContamination.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+

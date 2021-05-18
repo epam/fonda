@@ -15,10 +15,17 @@
  */
 package com.epam.fonda.workflow.stage.impl;
 
+import com.epam.fonda.entity.command.AbstractCommand;
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.entity.configuration.orchestrator.ScriptManager;
 import com.epam.fonda.entity.configuration.orchestrator.ScriptType;
+import com.epam.fonda.tools.impl.CalculateContamination;
+import com.epam.fonda.tools.impl.FilterAlignmentArtifacts;
+import com.epam.fonda.tools.impl.FilterMutectCalls;
+import com.epam.fonda.tools.impl.GatkSortSam;
+import com.epam.fonda.tools.impl.LearnReadOrientationModel;
+import com.epam.fonda.tools.impl.PileupSummaries;
 import com.epam.fonda.tools.Tool;
 import com.epam.fonda.tools.impl.ContEst;
 import com.epam.fonda.tools.impl.Cufflinks;
@@ -41,14 +48,19 @@ import com.epam.fonda.tools.impl.Vardict;
 import com.epam.fonda.tools.impl.VcfSnpeffAnnotation;
 import com.epam.fonda.tools.results.BamOutput;
 import com.epam.fonda.tools.results.BamResult;
+import com.epam.fonda.tools.results.CalculateContaminationOutput;
+import com.epam.fonda.tools.results.CalculateContaminationResult;
 import com.epam.fonda.tools.results.ContEstResult;
 import com.epam.fonda.tools.results.CufflinksResult;
 import com.epam.fonda.tools.results.ExomecnvResult;
 import com.epam.fonda.tools.results.FeatureCountResult;
+import com.epam.fonda.tools.results.LearnReadOrientationModelResult;
 import com.epam.fonda.tools.results.PileupResult;
+import com.epam.fonda.tools.results.PileupSummariesResult;
 import com.epam.fonda.tools.results.RsemResult;
 import com.epam.fonda.tools.results.SequenzaResult;
 import com.epam.fonda.tools.results.StringtieResult;
+import com.epam.fonda.tools.results.VariantsVcfOutput;
 import com.epam.fonda.tools.results.VariantsVcfResult;
 import com.epam.fonda.tools.results.VcfScnpeffAnnonationResult;
 import com.epam.fonda.workflow.PipelineType;
@@ -202,11 +214,66 @@ public class SecondaryAnalysis implements Stage {
 
     private void mutect2(final Flag flag, final Configuration configuration, final TemplateEngine templateEngine,
                          final StringBuilder alignCmd) throws IOException {
-        if (!(isPaired && flag.isMutect2())) {
+        if (!flag.isMutect2()) {
             return;
         }
-        final Mutect2 mutect2 = new Mutect2(sampleName, bamResult.getBamOutput(), sampleOutputDir);
-        processVcfTool(configuration, templateEngine, alignCmd, mutect2);
+        final Mutect2 mutect2 = new Mutect2(sampleName, bamResult.getBamOutput(), sampleOutputDir, controlSampleName,
+                isPaired);
+        final VariantsVcfResult mutect2ToolResult = mutect2.generate(configuration, templateEngine);
+        final VariantsVcfResult toolResult = postMutect2Processing(configuration, templateEngine, mutect2ToolResult);
+        final VcfScnpeffAnnonationResult vcfSnpeffAnnotationResult = new VcfSnpeffAnnotation(sampleName, toolResult)
+                .generate(configuration, templateEngine);
+        createVcfToolShell(configuration, alignCmd, toolResult, vcfSnpeffAnnotationResult);
+    }
+
+    private VariantsVcfResult postMutect2Processing(final Configuration configuration,
+                                                    final TemplateEngine templateEngine,
+                                                    final VariantsVcfResult mutect2ToolResult) {
+        final VariantsVcfOutput variantsVcfOutput = mutect2ToolResult.getVariantsVcfOutput();
+        final AbstractCommand mutect2ToolCommand = mutect2ToolResult.getAbstractCommand();
+        final String variantsOutputDir = variantsVcfOutput.getVariantsOutputDir();
+        if ("mm10".equals(configuration.getGlobalConfig().getDatabaseConfig().getGenomeBuild())) {
+            final VariantsVcfResult variantsVcfResult = new FilterMutectCalls(sampleName, variantsOutputDir,
+                    variantsVcfOutput.getVariantsVcf()).generate(configuration, templateEngine);
+            mutect2ToolCommand.setToolCommand(mutect2ToolCommand.getToolCommand()
+                    + variantsVcfResult.getAbstractCommand().getToolCommand());
+            mutect2ToolResult.getVariantsVcfOutput().setVariantsVcf(
+                    variantsVcfResult.getVariantsVcfOutput().getVariantsVcfFiltered());
+            return mutect2ToolResult;
+        }
+        final PileupSummariesResult pileupSummariesResult =
+                new PileupSummaries(sampleName, bamResult.getBamOutput(), variantsOutputDir)
+                .generate(configuration, templateEngine);
+        final CalculateContaminationResult calculateContamResult =
+                new CalculateContamination(sampleName, pileupSummariesResult.getPileupTable(), variantsOutputDir)
+                .generate(configuration, templateEngine);
+        final BamResult gatkSortSamResult =
+                new GatkSortSam(sampleName, variantsVcfOutput.getBamout(), variantsOutputDir)
+                .generate(configuration, templateEngine);
+        final LearnReadOrientationModelResult orientationModelResult =
+                new LearnReadOrientationModel(sampleName, variantsVcfOutput.getF1R2Metrics(), variantsOutputDir)
+                .generate(configuration, templateEngine);
+        final CalculateContaminationOutput contamOutput = calculateContamResult.getCalculateContaminationOutput();
+        final VariantsVcfResult filterMutectCallsVcfResult =
+                new FilterMutectCalls(sampleName, variantsOutputDir, variantsVcfOutput.getVariantsVcf(),
+                        contamOutput.getContaminationTable(), contamOutput.getTumorSegmentation(),
+                        orientationModelResult.getLearnReadOrientationModelOutput().getArtifactPriorTables())
+                .generate(configuration, templateEngine);
+        final VariantsVcfResult alignmentArtifactsVariantsVcfResult =
+                new FilterAlignmentArtifacts(sampleName, variantsOutputDir,
+                        filterMutectCallsVcfResult.getVariantsVcfOutput().getVariantsVcfFiltered(),
+                        gatkSortSamResult.getBamOutput().getSortedBam())
+                .generate(configuration, templateEngine);
+        mutect2ToolCommand.setToolCommand(mutect2ToolCommand.getToolCommand()
+                + pileupSummariesResult.getCommand().getToolCommand()
+                + calculateContamResult.getCommand().getToolCommand()
+                + gatkSortSamResult.getCommand().getToolCommand()
+                + orientationModelResult.getCommand().getToolCommand()
+                + filterMutectCallsVcfResult.getAbstractCommand().getToolCommand()
+                + alignmentArtifactsVariantsVcfResult.getAbstractCommand().getToolCommand());
+        mutect2ToolResult.getVariantsVcfOutput().setVariantsVcf(
+                filterMutectCallsVcfResult.getVariantsVcfOutput().getVariantsVcfFiltered());
+        return mutect2ToolResult;
     }
 
     private void mutect1(final Flag flag, final Configuration configuration, final TemplateEngine templateEngine,

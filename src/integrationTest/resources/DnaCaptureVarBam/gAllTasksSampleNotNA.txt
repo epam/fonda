@@ -57,6 +57,8 @@ KNOWN_INDELS_MILLS = 10
 KNOWN_INDELS_PHASE1 = 100
 CONTEST_POPAF = 100
 SEQUENZA_GC50 = 10
+BWA_IMG = /ngs/data/hg19.fasta.img
+CONTAMINATION_VCF = /ngs/data/contamination.vcf.gz
 
 [Pipeline_Info]
 workflow = DnaCaptureVar_Bam

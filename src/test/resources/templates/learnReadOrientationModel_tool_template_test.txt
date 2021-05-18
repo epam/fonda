@@ -1,0 +1,13 @@
+echo `date` Begin Step: LearnReadOrientationModel...
+/opt/gatk/gatk LearnReadOrientationModel -I [(${output})]/mutect2/sample1.mutect2.f1r2.tar.gz -O [(${output})]/mutect2/sample1.artifacts-priors.tar.gz
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: LearnReadOrientationModel.
+	sleep 8
+else
+	echo `date` Error Step: LearnReadOrientationModel.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+

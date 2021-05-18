@@ -1,0 +1,13 @@
+echo `date` Begin Step: FilterMutectCalls...
+[(${toolFields.gatk})][# th:if = "${toolFields.javaOptions != null}"] --java-options [(${toolFields.javaOptions})][/] FilterMutectCalls -R [(${toolFields.genome})] -V [(${toolFields.vcf})][# th:if = "${toolFields.includeOptions}"] --contamination-table [(${toolFields.contamTable})] --tumor-segmentation [(${toolFields.segments})] --ob-priors [(${toolFields.artifactsPriors})] -stats [(${toolFields.vcfStats})] --filtering-stats [(${toolFields.filteringStats})][/] -O [(${toolFields.filteredVcf})]
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: FilterMutectCalls.
+	sleep 8
+else
+	echo `date` Error Step: FilterMutectCalls.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+

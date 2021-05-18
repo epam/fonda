@@ -1,5 +1,5 @@
 echo `date` Begin Step: Mutect2 detection...
-java -Xmx10g -Djava.io.tmpdir=[(${output})]/mutect2/tmp -jar gatk -T MuTect2 -R GENOME --intervals BED --input_file:normal control.bam --input_file:tumor file.bam --out [(${output})]/mutect2/sample_name.mutect2.somatic.variants.vcf --validation_strictness SILENT
+gatk Mutect2 -R GENOME -I file.bam -I control.bam -normal sample2 -L BED --bam-output [(${output})]/mutect2/sample1.mutect2.bamout.bam --f1r2-tar-gz [(${output})]/mutect2/sample1.mutect2.f1r2.tar.gz -O [(${output})]/mutect2/sample1.mutect2.somatic.variants.vcf
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Mutect2 detection.
