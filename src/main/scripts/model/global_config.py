@@ -1,4 +1,4 @@
-# Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+# Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -43,6 +43,10 @@ class GlobalConfig:
             sys.exit(2)
         if not cores_per_sample:
             cores_per_sample = 4
+        main_dir = os.path.dirname(os.path.realpath(__import__("__main__").__file__))
+        config_path = "{}/config_templates/global_config/{}".format(main_dir, config_json)
+        if not os.path.exists(config_path):
+            raise RuntimeError('Required config json file %s not found' % config_path)
         flag_xenome = "yes" if flag_xenome == "True" or flag_xenome == "true" else "no"
         args_to_json = {"workflow": self.workflow,
                         "species": self.species,
@@ -51,8 +55,8 @@ class GlobalConfig:
                         "flag_xenome": flag_xenome,
                         "numthreads": cores_per_sample,
                         "genome_load": genome_load}
-        main_dir = os.path.dirname(os.path.realpath(__import__("__main__").__file__))
-        with open("{}/config_templates/global_config/{}".format(main_dir, config_json)) as file:
+
+        with open(config_path) as file:
             data = json.load(file)
             self.java_path = data['java']
             data.update(args_to_json)
