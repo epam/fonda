@@ -154,6 +154,19 @@ else
 	exit 1;
 fi
 
+echo `date` Begin Step: Run mutect2...
+qsub build/resources/integrationTest/output/sh_files/DnaCaptureVar_Fastq_mutect2_for_GA5_analysis.sh
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Run mutect2.
+	sleep 8
+else
+	echo `date` Error Step: Run mutect2.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
 echo `date` Begin Step: Run scalpel...
 qsub build/resources/integrationTest/output/sh_files/DnaCaptureVar_Fastq_scalpel_for_GA5_analysis.sh
 if [ $? -eq 0 ]

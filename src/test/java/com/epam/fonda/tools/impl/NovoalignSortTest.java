@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,16 +42,16 @@ class NovoalignSortTest extends AbstractTest {
     private static final String AMPLICON_NOVOALIGN_SORT_TEST_INPUT_DATA_WITH_FASTQ1_PATH =
             "templates/amplicon_novoalign_sort_test_tool_test_input_data_with_fastq1.txt";
     private static final String AMPLICON_NOVOALIGN_SORT_TEST_INPUT_DATA_WITH_FASTQ1_WITHOUT_BEDPRIMER_PATH =
-            "templates/amplicon_novoalign_sort_test_tool_test_input_data_with_fastq1_without_bedprimer.txt";
+            "templates/amplicon_novoalign_sort_test_tool_test_input_data_with_fastq1_with_tune.txt";
     private static final String AMPLICON_NOVOALIGN_SORT_TEST_INPUT_DATA_WITH_FASTQ1_AND_FASTQ2_PATH =
             "templates/amplicon_novoalign_sort_test_tool_test_input_data_with_fastq1_and_fastq2.txt";
     private static final String AMPLICON_NOVOALIGN_SORT_TEST_INPUT_DATA_WITH_FASTQ1_AND_FASTQ1_WITHOUT_BEDPRIMER_PATH =
-            "templates/amplicon_novoalign_sort_test_tool_test_input_data_with_fastq1_and_fastq2_without_bedprimer.txt";
+            "templates/amplicon_novoalign_sort_test_tool_test_input_data_with_fastq1_and_fastq2_with_tune.txt";
     private static final String CAPTURE_NOVOALIGN_SORT_TEST_INPUT_DATA_WITH_FASTQ1_PATH =
             "templates/capture_novoalign_sort_test_tool_test_input_data_with_fastq1.txt";
     private static final String CAPTURE_NOVOALIGN_SORT_TEST_INPUT_DATA_WITH_FASTQ1_AND_FASTQ2_PATH =
             "templates/capture_novoalign_sort_test_tool_test_input_data_with_fastq1_and_fastq2.txt";
-
+    private static final String NOVOALIGN_TUNE = "NextSeq";
     private NovoalignSort novoalignSort;
     private Configuration expectedConfiguration;
     private BashCommand expectedBashCommand;
@@ -79,7 +79,6 @@ class NovoalignSortTest extends AbstractTest {
         expectedConfiguration.getGlobalConfig().getPipelineInfo()
                 .setWorkflow(PipelineType.DNA_AMPLICON_VAR_FASTQ.getName());
         novoalignSort.setFastq2(null);
-        expectedConfiguration.getGlobalConfig().getDatabaseConfig().setBedPrimer("bedprimer");
         expectedBashCommand =
                 getExpectedBashCommandFromFile(AMPLICON_NOVOALIGN_SORT_TEST_INPUT_DATA_WITH_FASTQ1_PATH);
         BamResult actualBamResult = novoalignSort.generate(expectedConfiguration, expectedTemplateEngine);
@@ -88,10 +87,11 @@ class NovoalignSortTest extends AbstractTest {
     }
 
     @Test
-    void shouldGenerateWithFastq1WithoutBedPrimerForCaptureVarFastq() throws URISyntaxException, IOException {
+    void shouldGenerateWithFastq1WithTuneForCaptureVarFastq() throws URISyntaxException, IOException {
         expectedConfiguration.getGlobalConfig().getPipelineInfo()
                 .setWorkflow(PipelineType.DNA_CAPTURE_VAR_FASTQ.getName());
         novoalignSort.setFastq2(null);
+        expectedConfiguration.getGlobalConfig().getToolConfig().setNovoalignTune(NOVOALIGN_TUNE);
         expectedBashCommand =
                 getExpectedBashCommandFromFile(
                         AMPLICON_NOVOALIGN_SORT_TEST_INPUT_DATA_WITH_FASTQ1_WITHOUT_BEDPRIMER_PATH);
@@ -104,7 +104,6 @@ class NovoalignSortTest extends AbstractTest {
     void shouldGenerateWithFastq1AndFastq2ForAmpliconVarFastq() throws URISyntaxException, IOException {
         expectedConfiguration.getGlobalConfig().getPipelineInfo()
                 .setWorkflow(PipelineType.DNA_AMPLICON_VAR_FASTQ.getName());
-        expectedConfiguration.getGlobalConfig().getDatabaseConfig().setBedPrimer("bedprimer");
         expectedBashCommand =
                 getExpectedBashCommandFromFile(AMPLICON_NOVOALIGN_SORT_TEST_INPUT_DATA_WITH_FASTQ1_AND_FASTQ2_PATH);
         BamResult actualBamResult = novoalignSort.generate(expectedConfiguration, expectedTemplateEngine);
@@ -113,9 +112,10 @@ class NovoalignSortTest extends AbstractTest {
     }
 
     @Test
-    void shouldGenerateWithFastq1AndFastq2WithoutBedPrimerForCaptureVarFastq() throws URISyntaxException, IOException {
+    void shouldGenerateWithFastq1AndFastq2WithTuneForCaptureVarFastq() throws URISyntaxException, IOException {
         expectedConfiguration.getGlobalConfig().getPipelineInfo()
                 .setWorkflow(PipelineType.DNA_CAPTURE_VAR_FASTQ.getName());
+        expectedConfiguration.getGlobalConfig().getToolConfig().setNovoalignTune(NOVOALIGN_TUNE);
         expectedBashCommand =
                 getExpectedBashCommandFromFile(
                         AMPLICON_NOVOALIGN_SORT_TEST_INPUT_DATA_WITH_FASTQ1_AND_FASTQ1_WITHOUT_BEDPRIMER_PATH);

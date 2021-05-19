@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,6 +63,11 @@ public final class GlobalConfigFormat {
     public static final String CONTEST_POPAF = "CONTEST_POPAF";
     public static final String VDJ_GENOME = "VDJ_GENOME";
     public static final String GENOME_LOAD = "GENOME_LOAD";
+    public static final String COUNT_TARGET_PANEL = "COUNT_TARGET_PANEL";
+    public static final String GERMLINE_RESOURCE = "GERMLINE_RESOURCE";
+    public static final String CONTAMINATION_VCF = "CONTAMINATION_VCF";
+    public static final String SEQUENCE_DICTIONARY = "SEQUENCE_DICTIONARY";
+    public static final String BWA_IMG = "BWA_IMG";
 
     // [all_tools]
     public static final String BEDTOOLS = "bedtools";
@@ -74,6 +79,7 @@ public final class GlobalConfigFormat {
     public static final String SALMON = "salmon";
     public static final String HISAT2 = "hisat2";
     public static final String NOVOALIGN = "novoalign";
+    public static final String NOVOALIGN_TUNE = "novoalign_tune";
     public static final String JAVA = "java";
     public static final String SAMTOOLS = "samtools";
     public static final String PICARD_VERSION = "picard_version";
@@ -109,6 +115,7 @@ public final class GlobalConfigFormat {
     public static final String SEQUENZA = "sequenza";
     public static final String EXOMECNV = "exomecnv";
     public static final String SRC_SCRIPTS_FOLDER_PATH = "src_scripts";
+    public static final String GATK_JAVA_OPTIONS = "gatk_java_options";
 
     // [cellranger]
     public static final String CELLRANGER_EXPECTED_CELLS = "cellranger_EXPECTED_CELLS";

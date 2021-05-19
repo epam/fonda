@@ -19,7 +19,7 @@ cd build/resources/integrationTest/output
 echo `date` Begin the job execution...
 
 echo `date` Begin Step: Mutect2 detection...
-/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -Djava.io.tmpdir=build/resources/integrationTest/output/GA51/mutect2/tmp -jar /usr/bin/gatk -T MuTect2 -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa --input_file:normal /ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_003.bam --input_file:tumor /ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_003.bam --out build/resources/integrationTest/output/GA51/mutect2/GA51.mutect2.somatic.variants.vcf --validation_strictness SILENT
+/usr/bin/gatk Mutect2 -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -I /ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_003.bam -I /ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_003.bam -normal GA52 -L /ngs/data/test_data_Padded.bed -pon /ngs/data/db/mormal_panel --bam-output build/resources/integrationTest/output/GA51/mutect2/GA51.mutect2.bamout.bam --f1r2-tar-gz build/resources/integrationTest/output/GA51/mutect2/GA51.mutect2.f1r2.tar.gz -O build/resources/integrationTest/output/GA51/mutect2/GA51.mutect2.somatic.variants.vcf
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Mutect2 detection.
@@ -31,8 +31,99 @@ else
 	exit 1;
 fi
 
+echo `date` Begin Step: PileupSummaries...
+/usr/bin/gatk GetPileupSummaries -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -I /ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_003.bam -L /ngs/data/test_data_Padded.bed -V /ngs/data/contamination.vcf.gz --interval-set-rule INTERSECTION -O build/resources/integrationTest/output/GA51/mutect2/GA51.tumor-pileups.table
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: PileupSummaries.
+	sleep 8
+else
+	echo `date` Error Step: PileupSummaries.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: CalculateContamination...
+/usr/bin/gatk CalculateContamination --tumor-segmentation build/resources/integrationTest/output/GA51/mutect2/GA51.segments.table -I build/resources/integrationTest/output/GA51/mutect2/GA51.tumor-pileups.table -O build/resources/integrationTest/output/GA51/mutect2/GA51.contamination.table
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: CalculateContamination.
+	sleep 8
+else
+	echo `date` Error Step: CalculateContamination.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: SortSam...
+/usr/bin/gatk SortSam -I build/resources/integrationTest/output/GA51/mutect2/GA51.mutect2.bamout.bam -O build/resources/integrationTest/output/GA51/mutect2/GA51.bam.sorted -SO coordinate
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: SortSam.
+	sleep 8
+else
+	echo `date` Error Step: SortSam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Index bam...
+/opt/samtools/samtools-0.1.19/samtools index build/resources/integrationTest/output/GA51/mutect2/GA51.bam.sorted
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Index bam.
+	sleep 8
+else
+	echo `date` Error Step: Index bam.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: LearnReadOrientationModel...
+/usr/bin/gatk LearnReadOrientationModel -I build/resources/integrationTest/output/GA51/mutect2/GA51.mutect2.f1r2.tar.gz -O build/resources/integrationTest/output/GA51/mutect2/GA51.artifacts-priors.tar.gz
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: LearnReadOrientationModel.
+	sleep 8
+else
+	echo `date` Error Step: LearnReadOrientationModel.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: FilterMutectCalls...
+/usr/bin/gatk FilterMutectCalls -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -V build/resources/integrationTest/output/GA51/mutect2/GA51.mutect2.somatic.variants.vcf --contamination-table build/resources/integrationTest/output/GA51/mutect2/GA51.contamination.table --tumor-segmentation build/resources/integrationTest/output/GA51/mutect2/GA51.segments.table --ob-priors build/resources/integrationTest/output/GA51/mutect2/GA51.artifacts-priors.tar.gz -stats build/resources/integrationTest/output/GA51/mutect2/GA51.vcf.stats --filtering-stats build/resources/integrationTest/output/GA51/mutect2/GA51.filtering.stats -O build/resources/integrationTest/output/GA51/mutect2/GA51.filtered.vcf
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: FilterMutectCalls.
+	sleep 8
+else
+	echo `date` Error Step: FilterMutectCalls.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: FilterAlignmentArtifacts...
+/usr/bin/gatk FilterAlignmentArtifacts -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -V build/resources/integrationTest/output/GA51/mutect2/GA51.filtered.vcf -I build/resources/integrationTest/output/GA51/mutect2/GA51.bam.sorted --bwa-mem-index-image /ngs/data/hg19.fasta.img -O build/resources/integrationTest/output/GA51/mutect2/GA51.filtered.artifacts.vcf
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: FilterAlignmentArtifacts.
+	sleep 8
+else
+	echo `date` Error Step: FilterAlignmentArtifacts.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
 echo `date` Begin Step: SnpEff annotation...
-/usr/bin/python [(${jarPath})]/src/python/vcf_snpeff_annotation.py -s GA51 -i build/resources/integrationTest/output/GA51/mutect2/GA51.mutect2.somatic.variants.vcf -o build/resources/integrationTest/output/GA51/mutect2/GA51.mutect2.somatic.variants.pass.annotation.tsv -t mutect2 --canonical /ngs/data/reference_genome/GRCh37/Annotation/prefer_ensembl_transcript.txt --transvar /usr/bin/transvar -r hg19 --snpsift /usr/bin/snpsift --snpsift_db /ngs/data/SnpEff/snpEff_v4.3p/snpEff/db --dbnsfp --dbsnp --coding_only --pass_only
+/usr/bin/python [(${jarPath})]/src/python/vcf_snpeff_annotation.py -s GA51 -i build/resources/integrationTest/output/GA51/mutect2/GA51.filtered.vcf -o build/resources/integrationTest/output/GA51/mutect2/GA51.filtered.pass.annotation.tsv -t mutect2 --canonical /ngs/data/reference_genome/GRCh37/Annotation/prefer_ensembl_transcript.txt --transvar /usr/bin/transvar -r hg19 --snpsift /usr/bin/snpsift --snpsift_db /ngs/data/SnpEff/snpEff_v4.3p/snpEff/db --dbnsfp --dbsnp --coding_only --pass_only
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: SnpEff annotation.

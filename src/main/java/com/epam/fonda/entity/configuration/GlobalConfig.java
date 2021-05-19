@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -114,6 +114,16 @@ public class GlobalConfig {
         private String contEstPopAF;
         @Parameter(names = GlobalConfigFormat.GENOME_LOAD)
         private String genomeLoad;
+        @Parameter(names = GlobalConfigFormat.COUNT_TARGET_PANEL)
+        private String cellrangerCountTargetPanel;
+        @Parameter(names = GlobalConfigFormat.GERMLINE_RESOURCE)
+        private String germlineResource;
+        @Parameter(names = GlobalConfigFormat.CONTAMINATION_VCF)
+        private String contaminationVCF;
+        @Parameter(names = GlobalConfigFormat.SEQUENCE_DICTIONARY)
+        private String sequenceDictionary;
+        @Parameter(names = GlobalConfigFormat.BWA_IMG)
+        private String bwaImg;
     }
 
     @Data
@@ -134,6 +144,8 @@ public class GlobalConfig {
         private String hisat2;
         @Parameter(names = GlobalConfigFormat.NOVOALIGN)
         private String novoalign;
+        @Parameter(names = GlobalConfigFormat.NOVOALIGN_TUNE)
+        private String novoalignTune;
         @Parameter(names = GlobalConfigFormat.JAVA)
         private String java;
         @Parameter(names = GlobalConfigFormat.SAMTOOLS)
@@ -206,6 +218,8 @@ public class GlobalConfig {
         private String exomecnv;
         @Parameter(names = GlobalConfigFormat.SRC_SCRIPTS_FOLDER_PATH)
         private String srcPath;
+        @Parameter(names = GlobalConfigFormat.GATK_JAVA_OPTIONS)
+        private String gatkJavaOptions;
     }
 
     @Data

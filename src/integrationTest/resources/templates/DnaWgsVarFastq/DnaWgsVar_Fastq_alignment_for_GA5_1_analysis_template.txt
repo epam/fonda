@@ -19,7 +19,7 @@ cd build/resources/integrationTest/output
 echo `date` Begin the job execution...
 
 echo `date` Begin Step: Novoalign alignment...
-/ngs/data/tools/novoalign/v3.07.01/novoalign -c 8 -d /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.nix -o SAM $'@RG\tID:GA5\tSM:GA5\tLB:DNA\tPL:Illumina' -f /ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_001.fastq.gz --hlimit 9 -t 0,2 -x 3 -H 22 --softclip 35 --trim3hp --matchreward 3 -k| /ngs/data/tools/samtools/v0.1.19/samtools view -bS -|/ngs/data/tools/samtools/v0.1.19/samtools sort - build/resources/integrationTest/output/GA5/bam/GA5_1.novoalign.sorted
+/ngs/data/tools/novoalign/v3.07.01/novoalign -c 8 -d /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.nix -o SAM $'@RG\tID:GA5\tSM:GA5\tLB:DNA\tPL:Illumina' -f /ngs/data/demo/test/fastq_data/GA5_0001_L002_R1_001.fastq.gz| /ngs/data/tools/samtools/v0.1.19/samtools view -bS -|/ngs/data/tools/samtools/v0.1.19/samtools sort - build/resources/integrationTest/output/GA5/bam/GA5_1.novoalign.sorted
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Novoalign alignment.

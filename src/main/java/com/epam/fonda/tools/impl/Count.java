@@ -75,6 +75,7 @@ public class Count implements Tool<BamResult> {
         private String bam;
         private String matrixInfo;
         private int numThreads;
+        private String targetPanel;
     }
 
     @Override
@@ -126,6 +127,7 @@ public class Count implements Tool<BamResult> {
         countFields.matrixInfo = format("%s/%s/filtered_feature_bc_matrix", samplePath,
                 CELLRANGER_OUTPUT_FOLDER);
         countFields.numThreads = configuration.getGlobalConfig().getQueueParameters().getNumThreads();
+        countFields.targetPanel = configuration.getGlobalConfig().getDatabaseConfig().getCellrangerCountTargetPanel();
         return countFields;
     }
 

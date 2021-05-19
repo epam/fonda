@@ -93,13 +93,14 @@ public class CountTest extends AbstractTest {
                 .libraryType("Antibody Capture")
                 .build();
         expectedSample.getLibrary().add(libraryCsv);
+        expectedConfiguration.getGlobalConfig().getDatabaseConfig().setCellrangerCountTargetPanel(
+                "/opt/cellranger-5.0.0/target_panels/immunology_v1.0_GRCh38-2020-A.target_panel.csv");
         final String expectedCmd = expectedTemplateEngine.process(COUNT_TEST_OUTPUT_DATA_PATH, context);
         final String actualCmd = count.generate(expectedConfiguration, expectedTemplateEngine).getCommand()
                 .getToolCommand();
         final String expectedLibraryCsv = expectedTemplateEngine.process(LIBRARY_TEST_OUTPUT_DATA_PATH, context);
         final String actualLibraryCsv = readFile(Paths.get(
                 format("%s/sampleName_library.txt", expectedConfiguration.getCommonOutdir().getShOutdir())));
-
         assertEquals(expectedCmd, actualCmd);
         assertEquals(expectedLibraryCsv, actualLibraryCsv);
     }

@@ -24,7 +24,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -Ei "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration|Vardict detection|SnpEff annotation|Run vardict|Contamination estimation|Run contEst|Strelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: SnpEff annotation))" $logFile;)
+	str=$(grep -Ei "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|GATK recalibration|Vardict detection|SnpEff annotation|Run vardict|Contamination estimation|Run contEst|Strelka2 detection|Run strelka2|Mutect2 detection|PileupSummaries|CalculateContamination|GatkSortSam|LearnReadOrientationModel|FilterMutectCalls|FilterAlignmentArtifacts|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: SnpEff annotation))" $logFile;)
 fi
 	echo Waiting for step: SnpEff annotation
 	sleep 60
@@ -44,7 +44,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -Ei "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration|Vardict detection|SnpEff annotation|Run vardict|Contamination estimation|Run contEst|Strelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: SnpEff annotation))" $logFile;)
+	str=$(grep -Ei "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|GATK recalibration|Vardict detection|SnpEff annotation|Run vardict|Contamination estimation|Run contEst|Strelka2 detection|Run strelka2|Mutect2 detection|PileupSummaries|CalculateContamination|GatkSortSam|LearnReadOrientationModel|FilterMutectCalls|FilterAlignmentArtifacts|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: SnpEff annotation))" $logFile;)
 fi
 	echo Waiting for step: SnpEff annotation
 	sleep 60
@@ -64,7 +64,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -Ei "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration|Vardict detection|SnpEff annotation|Run vardict|Contamination estimation|Run contEst|Strelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: SnpEff annotation))" $logFile;)
+	str=$(grep -Ei "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|GATK recalibration|Vardict detection|SnpEff annotation|Run vardict|Contamination estimation|Run contEst|Strelka2 detection|Run strelka2|Mutect2 detection|PileupSummaries|CalculateContamination|GatkSortSam|LearnReadOrientationModel|FilterMutectCalls|FilterAlignmentArtifacts|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: SnpEff annotation))" $logFile;)
 fi
 	echo Waiting for step: SnpEff annotation
 	sleep 60
@@ -84,7 +84,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -Ei "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration|Vardict detection|SnpEff annotation|Run vardict|Contamination estimation|Run contEst|Strelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: SnpEff annotation))" $logFile;)
+	str=$(grep -Ei "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|GATK recalibration|Vardict detection|SnpEff annotation|Run vardict|Contamination estimation|Run contEst|Strelka2 detection|Run strelka2|Mutect2 detection|PileupSummaries|CalculateContamination|GatkSortSam|LearnReadOrientationModel|FilterMutectCalls|FilterAlignmentArtifacts|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: SnpEff annotation))" $logFile;)
 fi
 	echo Waiting for step: SnpEff annotation
 	sleep 60
@@ -104,7 +104,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -Ei "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration|Vardict detection|SnpEff annotation|Run vardict|Contamination estimation|Run contEst|Strelka2 detection|Run strelka2|Mutect2 detection|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: SnpEff annotation))" $logFile;)
+	str=$(grep -Ei "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|GATK recalibration|Vardict detection|SnpEff annotation|Run vardict|Contamination estimation|Run contEst|Strelka2 detection|Run strelka2|Mutect2 detection|PileupSummaries|CalculateContamination|GatkSortSam|LearnReadOrientationModel|FilterMutectCalls|FilterAlignmentArtifacts|Run mutect2|Scalpel detection|Run scalpel|Lofreq detection|Run lofreq|bam pileup|Sequenza detection|Run sequenza|ExomeCNV detection|Run exomecnv))|(Successful Step: SnpEff annotation))" $logFile;)
 fi
 	echo Waiting for step: SnpEff annotation
 	sleep 60

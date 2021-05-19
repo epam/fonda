@@ -1,0 +1,13 @@
+echo `date` Begin Step: FilterAlignmentArtifacts...
+/opt/gatk/gatk FilterAlignmentArtifacts -R /ngs/test/data/hg19.decoy.fa -V [(${output})]/mutect2/sample1.filtered.vcf -I [(${output})]/mutect2/sample1.bam.sorted --bwa-mem-index-image hg19.fasta.img -O [(${output})]/mutect2/sample1.filtered.artifacts.vcf
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: FilterAlignmentArtifacts.
+	sleep 8
+else
+	echo `date` Error Step: FilterAlignmentArtifacts.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+

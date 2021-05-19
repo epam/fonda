@@ -1,0 +1,13 @@
+echo `date` Begin Step: FilterMutectCalls...
+/opt/gatk/gatk FilterMutectCalls -R /ngs/test/data/hg19.decoy.fa -V [(${output})]/mutect2/sample1.mutect2.somatic.variants.vcf --contamination-table [(${output})]/mutect2/sample1.contamination.table --tumor-segmentation [(${output})]/mutect2/sample1.segments.table --ob-priors [(${output})]/mutect2/sample1.artifacts-priors.tar.gz -stats [(${output})]/mutect2/sample1.vcf.stats --filtering-stats [(${output})]/mutect2/sample1.filtering.stats -O [(${output})]/mutect2/sample1.filtered.vcf
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: FilterMutectCalls.
+	sleep 8
+else
+	echo `date` Error Step: FilterMutectCalls.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+

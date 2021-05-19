@@ -94,37 +94,9 @@ else
 	exit 1;
 fi
 
-echo `date` Begin Step: ABRA realignment...
-/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx16g -jar /usr/bin/abra2 --threads 4 --tmpdir build/resources/integrationTest/output/GA5/tmp --ref /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa --in build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam --out build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.bam --targets /ngs/data/test_data_Padded.bed
-/opt/samtools/samtools-0.1.19/samtools index build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.bam
-if [ $? -eq 0 ]
-then
-	echo `date` Successful Step: ABRA realignment.
-	sleep 8
-else
-	echo `date` Error Step: ABRA realignment.
-
-	echo `date` The job was aborted due to ERRORS found.
-	exit 1;
-fi
-
-echo `date` Begin Step: GATK realignment...
-/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -Djava.io.tmpdir=build/resources/integrationTest/output/GA5/tmp -jar /usr/bin/gatk -T RealignerTargetCreator -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -I build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.bam -o build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.realign_interval.list -known 10 -known 100
-/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -Djava.io.tmpdir=build/resources/integrationTest/output/GA5/tmp -jar /usr/bin/gatk -T IndelRealigner -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -I build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.bam -targetIntervals build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.realign_interval.list -o build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.realign.bam --maxReadsForRealignment 100000 -known 10 -known 100
-if [ $? -eq 0 ]
-then
-	echo `date` Successful Step: GATK realignment.
-	sleep 8
-else
-	echo `date` Error Step: GATK realignment.
-
-	echo `date` The job was aborted due to ERRORS found.
-	exit 1;
-fi
-
 echo `date` Begin Step: GATK recalibration...
-/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -Djava.io.tmpdir=build/resources/integrationTest/output/GA5/tmp -jar /usr/bin/gatk BaseRecalibrator -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -I build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.realign.bam --use-original-qualities true -knownSites /ngs/data/db/mutect.dbsnp -knownSites 10 -knownSites 100 -o build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.realign.recal.table
-/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -Djava.io.tmpdir=build/resources/integrationTest/output/GA5/tmp -jar /usr/bin/gatk ApplyBQSR -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -I build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.realign.bam -bqsr build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.realign.recal.table -o build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.realign.recal.bam
+/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -Djava.io.tmpdir=build/resources/integrationTest/output/GA5/tmp -jar /usr/bin/gatk BaseRecalibrator -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -I build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam --use-original-qualities true -knownSites /ngs/data/db/mutect.dbsnp -knownSites 10 -knownSites 100 -o build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.recal.table
+/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -Djava.io.tmpdir=build/resources/integrationTest/output/GA5/tmp -jar /usr/bin/gatk ApplyBQSR -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -I build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam -bqsr build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.recal.table -o build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.recal.bam
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: GATK recalibration.
@@ -142,7 +114,7 @@ while [[('[')]][ $str = "" ]]
 do
 if [[('[')]][ -f $logFile  ]];
 then
-	str=$(grep -Ei "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|ABRA realignment|GATK realignment|GATK recalibration))|(Successful Step: Index mkdup bam))" $logFile;)
+	str=$(grep -Ei "((Error Step: (BWA alignment|Index bam|Merge DNA bams|Mark duplicates|Index mkdup bam|GATK recalibration))|(Successful Step: Index mkdup bam))" $logFile;)
 fi
 	echo Waiting for step: Index mkdup bam
 	sleep 60
@@ -177,6 +149,19 @@ then
 	sleep 8
 else
 	echo `date` Error Step: Run strelka2.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+
+echo `date` Begin Step: Run mutect2...
+qsub build/resources/integrationTest/output/sh_files/DnaAmpliconVar_Fastq_mutect2_for_GA5_analysis.sh
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: Run mutect2.
+	sleep 8
+else
+	echo `date` Error Step: Run mutect2.
 
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;

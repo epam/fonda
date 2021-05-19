@@ -1,0 +1,13 @@
+echo `date` Begin Step: PileupSummaries...
+/opt/gatk/gatk GetPileupSummaries -R /ngs/test/data/hg19.decoy.fa -I [(${output})]/file.bam -L [(${output})]/file.bed -V contamination.vcf --sequence-dictionary sequence.dict --interval-set-rule INTERSECTION -O [(${output})]/mutect2/sample1.tumor-pileups.table
+if [ $? -eq 0 ]
+then
+	echo `date` Successful Step: PileupSummaries.
+	sleep 8
+else
+	echo `date` Error Step: PileupSummaries.
+
+	echo `date` The job was aborted due to ERRORS found.
+	exit 1;
+fi
+

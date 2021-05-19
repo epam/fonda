@@ -22,8 +22,10 @@ from launcher import Launcher
 from model.study_config import StudyConfig
 
 WORKFLOW_NAME = "scRnaExpression_CellRanger_Fastq"
-GLOBAL_CONFIG_TOOL_TEMPLATE_NAME_HUMAN = "ScRnaExpression_CellRanger_Fastq_tool_human.json"
-GLOBAL_CONFIG_TOOL_TEMPLATE_NAME_MOUSE = "ScRnaExpression_CellRanger_Fastq_tool_mouse.json"
+GLOBAL_CONFIG_TOOL_TEMPLATE_NAME_HUMAN_TOOLCHAIN1 = "ScRnaExpression_CellRanger_Fastq_tool_human_toolchain1.json"
+GLOBAL_CONFIG_TOOL_TEMPLATE_NAME_HUMAN_TOOLCHAIN2 = "ScRnaExpression_CellRanger_Fastq_tool_human_toolchain2.json"
+GLOBAL_CONFIG_TOOL_TEMPLATE_NAME_MOUSE_TOOLCHAIN1 = "ScRnaExpression_CellRanger_Fastq_tool_mouse_toolchain1.json"
+GLOBAL_CONFIG_TOOL_TEMPLATE_NAME_MOUSE_TOOLCHAIN2 = "ScRnaExpression_CellRanger_Fastq_tool_mouse_toolchain2.json"
 TEMPLATE = "global_template_scRnaExpression_CellRanger_Fastq.txt"
 
 
@@ -59,6 +61,7 @@ def usage():
     print('--sync                           The flag (true/false) enables or disables "-sync" option '
           '("true" by default).\n')
     print('-i <sample_name_list>            The comma-delimited list of sample names.\n')
+    print('-z <toolchain> (required)        A user-defined toolchain.\n')
     print('--master_mode                    The flag enables "-master" option.\n')
     print('-v <verbose>                     The enable debug verbosity output.\n')
 
@@ -91,33 +94,35 @@ def parse_arguments(script_name, argv):
     master_mode = None
     verbose = None
     sample_name_list = None
+    toolchain = None
     try:
-        opts, args = getopt.getopt(argv, "hs:t:j:o:b:l:q:L:M:e:f:c:a:R:r:G:m:g:d:p:u:n:k:i:v", ["help", "species=",
-                                                                                                "read_type=",
-                                                                                                "job_name=",
-                                                                                                "dir_out=",
-                                                                                                "feature_reference=",
-                                                                                                "fastq_list=",
-                                                                                                "fastq_list_r2=",
-                                                                                                "library_type=",
-                                                                                                "master=",
-                                                                                                "expected_cells=",
-                                                                                                "forced_cells=",
-                                                                                                "chemistry=",
-                                                                                                "nosecondary=",
-                                                                                                "r1_length=",
-                                                                                                "r2_length=",
-                                                                                                "genome_build=",
-                                                                                                "transcriptome=",
-                                                                                                "vdj_genome=",
-                                                                                                "detect_doublet=",
-                                                                                                "project=", "run=",
-                                                                                                "toolset=",
-                                                                                                "cores_per_sample=",
-                                                                                                "sync=",
-                                                                                                "sample_name_list",
-                                                                                                "master_mode",
-                                                                                                "verbose"])
+        opts, args = getopt.getopt(argv, "hs:t:j:o:b:l:q:L:M:e:f:c:a:R:r:G:m:g:d:p:u:n:k:i:z:v", ["help", "species=",
+                                                                                                  "read_type=",
+                                                                                                  "job_name=",
+                                                                                                  "dir_out=",
+                                                                                                  "feature_reference=",
+                                                                                                  "fastq_list=",
+                                                                                                  "fastq_list_r2=",
+                                                                                                  "library_type=",
+                                                                                                  "master=",
+                                                                                                  "expected_cells=",
+                                                                                                  "forced_cells=",
+                                                                                                  "chemistry=",
+                                                                                                  "nosecondary=",
+                                                                                                  "r1_length=",
+                                                                                                  "r2_length=",
+                                                                                                  "genome_build=",
+                                                                                                  "transcriptome=",
+                                                                                                  "vdj_genome=",
+                                                                                                  "detect_doublet=",
+                                                                                                  "project=", "run=",
+                                                                                                  "toolset=",
+                                                                                                  "cores_per_sample=",
+                                                                                                  "sync=",
+                                                                                                  "sample_name_list",
+                                                                                                  "toolchain",
+                                                                                                  "master_mode",
+                                                                                                  "verbose"])
         for opt, arg in opts:
             if opt == '-h':
                 print(script_name + ' -s <species> -t <read_type> -j <job_name> -o <dir_out> -b <feature_reference> '
@@ -125,7 +130,7 @@ def parse_arguments(script_name, argv):
                                     '-e <expected_cells> -f <forced_cells> -c <chemistry> -a <nosecondary> '
                                     '-R <r1_length> -r <r2_length> -G <genome_build> -m <transcriptome> -g <vdj_genome>'
                                     ' -d <detect_doublet> -p <project> -u <run> -n <toolset> -k <cores_per_sample> '
-                                    '<sync> -i <sample_name_list> <master_mode> -v <verbose>')
+                                    '<sync> -i <sample_name_list> -z <toolchain> <master_mode> -v <verbose>')
                 sys.exit()
             elif opt in ("-s", "--species"):
                 species = arg
@@ -181,6 +186,8 @@ def parse_arguments(script_name, argv):
                 verbose = 'True'
             elif opt in ("-i", "--sample_name_list"):
                 sample_name_list = arg
+            elif opt in ("-z", "--toolchain"):
+                toolchain = arg
         if not species:
             print('Species (-s <species>) is required')
             usage()
@@ -220,7 +227,7 @@ def parse_arguments(script_name, argv):
         return species, read_type, job_name, dir_out, feature_reference, fastq_list, fastq_list_r2, library_type, \
             master, expected_cells, forced_cells, chemistry, nosecondary, r1_length, r2_length, genome_build, \
             transcriptome, vdj_genome, detect_doublet, project, run, toolset, cores_per_sample, verbose, sync, \
-            sample_name_list, master_mode
+            sample_name_list, master_mode, toolchain
     except getopt.GetoptError:
         usage()
         sys.exit(2)
@@ -230,7 +237,7 @@ def main(script_name, argv):
     species, read_type, job_name, dir_out, feature_reference, fastq_list, fastq_list_r2, libtype, master, \
         expected_cells, forced_cells, chemistry, nosecondary, r1_length, r2_length, genome_build, transcriptome, \
         vdj_genome, detect_doublet, project, run, toolset, cores_per_sample, verbose, sync, sample_name_list, \
-        master_mode = parse_arguments(script_name, argv)
+        master_mode, toolchain = parse_arguments(script_name, argv)
 
     library_type = "scRNASeq"
     if not read_type:
@@ -264,9 +271,11 @@ def main(script_name, argv):
         toolset += "+doubletdetection"
     global_config = GlobalConfig(species, read_type, TEMPLATE, WORKFLOW_NAME, toolset)
     if species == "human":
-        global_config_tool_template_name = GLOBAL_CONFIG_TOOL_TEMPLATE_NAME_HUMAN
+        global_config_tool_template_name = GLOBAL_CONFIG_TOOL_TEMPLATE_NAME_HUMAN_TOOLCHAIN2 \
+            if toolchain == "Cellranger_v6" else GLOBAL_CONFIG_TOOL_TEMPLATE_NAME_HUMAN_TOOLCHAIN1
     elif species == "mouse":
-        global_config_tool_template_name = GLOBAL_CONFIG_TOOL_TEMPLATE_NAME_MOUSE
+        global_config_tool_template_name = GLOBAL_CONFIG_TOOL_TEMPLATE_NAME_MOUSE_TOOLCHAIN2 \
+            if toolchain == "Cellranger_v6" else GLOBAL_CONFIG_TOOL_TEMPLATE_NAME_MOUSE_TOOLCHAIN1
     else:
         raise RuntimeError('Failed to determine "species" parameter. Available species: "human" and "mouse"')
 

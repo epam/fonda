@@ -19,8 +19,8 @@ cd build/resources/integrationTest/output
 echo `date` Begin the job execution...
 
 echo `date` Begin Step: bam pileup...
-/opt/samtools/samtools-0.1.19/samtools mpileup -q 10 -B -d 100000 -f /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -l /ngs/data/test.bed build/resources/integrationTest/output/N/bam/N.merged.sorted.rmdup.realign.realign.recal.bam | gzip > build/resources/integrationTest/output/GA5/pileup/N.pileup.gz
-/opt/samtools/samtools-0.1.19/samtools mpileup -q 10 -B -d 100000 -f /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -l /ngs/data/test.bed build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.realign.realign.recal.bam | gzip > build/resources/integrationTest/output/GA5/pileup/GA5.pileup.gz
+/opt/samtools/samtools-0.1.19/samtools mpileup -q 10 -B -d 100000 -f /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -l /ngs/data/test.bed build/resources/integrationTest/output/N/bam/N.merged.sorted.rmdup.recal.bam | gzip > build/resources/integrationTest/output/GA5/pileup/N.pileup.gz
+/opt/samtools/samtools-0.1.19/samtools mpileup -q 10 -B -d 100000 -f /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -l /ngs/data/test.bed build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.recal.bam | gzip > build/resources/integrationTest/output/GA5/pileup/GA5.pileup.gz
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: bam pileup.

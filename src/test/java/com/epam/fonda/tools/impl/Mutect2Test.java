@@ -34,7 +34,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class Mutect2Test extends AbstractTest {
 
     private static final String MUTECT2_TEMPLATE_TEST = "mutect2_template_test";
-    private static final String SAMPLE_NAME = "sample_name";
+    private static final String MUTECT2_WITHOUT_BED_TEMPLATE_TEST = "mutect2_without_bed_template_test";
+    private static final String MUTECT2_TUMOR_ONLY_TEMPLATE_TEST = "mutect2_tumor_only_template_test";
+    private static final String SAMPLE_NAME = "sample1";
+    private static final String CONTROL_SAMPLE_NAME = "sample2";
     private static final String BAM = "file.bam";
     private static final String CONTROL_BAM = "control.bam";
     private final Context context = new Context();
@@ -43,7 +46,7 @@ class Mutect2Test extends AbstractTest {
             .controlBam(CONTROL_BAM)
             .build();
     private final TemplateEngine expectedTemplateEngine = TemplateEngineUtils.init();
-    private final Mutect2 mutect2 = new Mutect2(SAMPLE_NAME, bamOutput, TEST_DIRECTORY);
+    private final Mutect2 mutect2 = new Mutect2(SAMPLE_NAME, bamOutput, TEST_DIRECTORY, CONTROL_SAMPLE_NAME, true);
 
     @BeforeEach
     void setup() {
@@ -57,7 +60,6 @@ class Mutect2Test extends AbstractTest {
     void shouldGeneratePairedMutect2() {
         final String expectedCmd = expectedTemplateEngine.process(MUTECT2_TEMPLATE_TEST, context);
         final String expectedOutput = String.format("%s/mutect2", TEST_DIRECTORY);
-        final String expectedTmpOutput = String.format("%s/mutect2/tmp", TEST_DIRECTORY);
         final String expectedVcf = String.format("%s/mutect2/%s.mutect2.somatic.variants.vcf",
                 TEST_DIRECTORY, SAMPLE_NAME);
 
@@ -67,15 +69,16 @@ class Mutect2Test extends AbstractTest {
         final AbstractCommand command = result.getAbstractCommand();
         assertEquals(expectedCmd, command.getToolCommand());
         assertEquals(result.getVariantsVcfOutput().getVariantsOutputDir(), expectedOutput);
-        assertEquals(result.getVariantsVcfOutput().getVariantsTmpOutputDir(), expectedTmpOutput);
         assertEquals(result.getVariantsVcfOutput().getVariantsVcf(), expectedVcf);
     }
 
     @Test
-    void shouldFailIfBedNotSpecified() {
+    void shouldGenerateWithoutBed() {
         final Configuration config = initConfiguration();
         config.getGlobalConfig().getDatabaseConfig().setBed(null);
-        assertThrows(NullPointerException.class, () -> mutect2.generate(config, expectedTemplateEngine));
+        final VariantsVcfResult result = mutect2.generate(config, expectedTemplateEngine);
+        final String expectedCmd = expectedTemplateEngine.process(MUTECT2_WITHOUT_BED_TEMPLATE_TEST, context);
+        assertEquals(expectedCmd, result.getAbstractCommand().getToolCommand());
     }
 
     @Test
@@ -93,24 +96,21 @@ class Mutect2Test extends AbstractTest {
     }
 
     @Test
-    void shouldFailIfMutectJavaToolNotSpecified() {
-        final Configuration config = initConfiguration();
-        config.getGlobalConfig().getToolConfig().setJava(null);
-        assertThrows(NullPointerException.class, () -> mutect2.generate(config, expectedTemplateEngine));
-    }
-
-    @Test
     void shouldFailIfBamNotSpecified() {
-        final Mutect2 mutect = new Mutect2(SAMPLE_NAME, BamOutput.builder().build(), TEST_DIRECTORY);
+        final Mutect2 mutect = new Mutect2(SAMPLE_NAME, BamOutput.builder().build(), TEST_DIRECTORY,
+                CONTROL_SAMPLE_NAME, true);
         final Configuration config = initConfiguration();
         assertThrows(NullPointerException.class, () -> mutect.generate(config, expectedTemplateEngine));
     }
 
     @Test
-    void shouldFailIfControlBamIsNotSpecified() {
-        final Mutect2 mutect = new Mutect2(SAMPLE_NAME, BamOutput.builder().bam(BAM).build(), TEST_DIRECTORY);
+    void shouldGenerateTumorOnly() {
+        final Mutect2 mutect = new Mutect2(SAMPLE_NAME, BamOutput.builder().bam(BAM).build(), TEST_DIRECTORY,
+                CONTROL_SAMPLE_NAME, false);
         final Configuration config = initConfiguration();
-        assertThrows(NullPointerException.class, () -> mutect.generate(config, expectedTemplateEngine));
+        final VariantsVcfResult result = mutect.generate(config, expectedTemplateEngine);
+        final String expectedCmd = expectedTemplateEngine.process(MUTECT2_TUMOR_ONLY_TEMPLATE_TEST, context);
+        assertEquals(expectedCmd, result.getAbstractCommand().getToolCommand());
     }
 
     private Configuration initConfiguration() {
