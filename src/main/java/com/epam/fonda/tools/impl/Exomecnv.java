@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,8 +31,6 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-
-import java.util.Arrays;
 
 import static com.epam.fonda.utils.ToolUtils.validate;
 
@@ -83,10 +81,8 @@ public class Exomecnv implements Tool<ExomecnvResult> {
                 .outDir(toolFields.getOutDir())
                 .build();
         output.createDirectory();
-        final BashCommand command = BashCommand.withTool(cmd);
-        command.setTempDirs(Arrays.asList(toolFields.getControlReadDepthSummary(), toolFields.getReadDepthSummary()));
         return ExomecnvResult.builder()
-                .command(command)
+                .command(BashCommand.withTool(cmd))
                 .toolName("exomecnv")
                 .output(output)
                 .build();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,9 +29,7 @@ import lombok.RequiredArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.epam.fonda.utils.ToolUtils.validate;
 import static com.epam.fonda.utils.ToolUtils.validateOldPicardVersion;
@@ -79,16 +77,9 @@ public class PicardMergeDnaBam implements Tool<BamResult> {
         String cmd = templateEngine.process(PICARD_MERGE_DNA_BAM_TOOL_TEMPLATE_NAME, context);
         TaskContainer.addTasks("Merge DNA bams", "Index bam");
         final BamOutput bamOutput = BamOutput.builder().bam(additionalFields.mergedBam).build();
-        final BashCommand command = BashCommand.withTool(cmd);
-        final List<String> filesToDelete = Arrays.asList(
-                String.join(" ", bamList),
-                bamList.stream().map(this::buildBamIndex).collect(Collectors.joining(" ")),
-                additionalFields.mergedBam,
-                buildBamIndex(additionalFields.mergedBam));
-        command.setTempDirs(filesToDelete);
         return BamResult.builder()
                 .bamOutput(bamOutput)
-                .command(command)
+                .command(BashCommand.withTool(cmd))
                 .build();
     }
 
@@ -122,9 +113,5 @@ public class PicardMergeDnaBam implements Tool<BamResult> {
         additionalFields.mergedBam = String.format("%s/%s.merged.sorted.bam", additionalFields.bamOutdir,
                 additionalFields.sampleName);
         return additionalFields;
-    }
-
-    private String buildBamIndex(final String bam) {
-        return bam + ".bai";
     }
 }

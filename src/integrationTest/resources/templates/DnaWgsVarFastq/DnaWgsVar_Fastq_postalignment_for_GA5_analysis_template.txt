@@ -213,36 +213,5 @@ else
 	exit 1;
 fi
 
-echo `date` Begin Step: Remove temporary directories...
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5_1.novoalign.sorted.bam
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5_1.novoalign.sorted.bam.bai
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam.bai
-rm -rf build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.mkdup.metrics
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.mkdup.bam
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.mkdup.bam.bai
-rm -rf build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.mkdup.align.metrics
-rm -rf build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.mkdup.hs.metrics
-rm -rf build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.mkdup.quality.metrics
-rm -rf build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.rmdup.pileup
-rm -rf build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.mkdup.insertsize.metrics
-rm -rf build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.mkdup.gcbias.metrics
-rm -rf build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.mkdup.gc.summary.metrics
-rm -rf build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.rmdup.hs.metrics
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.realign.bam
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.realign.bam.bai
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.realign.recal.table
-rm -rf build/resources/integrationTest/output/GA5/tmp
-
-if [ $? -eq 0 ]
-then
-	echo `date` Successful Step: Remove temporary directories.
-	sleep 8
-else
-	echo `date` Error Step: Remove temporary directories.
-
-	echo `date` The job was aborted due to ERRORS found.
-	exit 1;
-fi
 echo `date` Finish the job execution!
 

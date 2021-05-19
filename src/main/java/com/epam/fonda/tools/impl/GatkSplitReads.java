@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,8 +30,6 @@ import lombok.NonNull;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import java.util.Arrays;
-
 import static com.epam.fonda.utils.ToolUtils.validate;
 
 @Data
@@ -57,7 +55,6 @@ public class GatkSplitReads implements Tool<BamResult> {
         String tmpGatkSplitOutdir = String.format("%s/gatkSplit/tmp", sampleOutdir);
         PipelineUtils.createDir(tmpGatkSplitOutdir);
         String splitBam = bamResult.getBamOutput().getBam().replace(".bam", ".splitRead.bam");
-        String splitBamIndex = splitBam.replace(".bam", ".bam.bai");
         Context context = new Context();
         context.setVariable("toolFields", toolFields);
         context.setVariable("tmpGatkSplitOutdir", tmpGatkSplitOutdir);
@@ -67,7 +64,6 @@ public class GatkSplitReads implements Tool<BamResult> {
         TaskContainer.addTasks("GATK SplitNCigarReads");
         AbstractCommand resultCommand = bamResult.getCommand();
         resultCommand.setToolCommand(resultCommand.getToolCommand() + cmd);
-        resultCommand.getTempDirs().addAll(Arrays.asList(splitBam, splitBamIndex));
         bamResult.getBamOutput().setBam(splitBam);
         return bamResult;
     }

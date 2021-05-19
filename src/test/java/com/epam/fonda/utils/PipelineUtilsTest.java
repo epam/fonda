@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,9 @@ import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.entity.configuration.GlobalConfig;
 import com.epam.fonda.samples.fastq.FastqFileSample;
 import com.epam.fonda.tools.impl.AbstractTest;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.platform.commons.util.StringUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -146,8 +146,7 @@ class PipelineUtilsTest extends AbstractTest {
 
     @Test
     void cleanUpTmpDirEmptyFields() {
-        final String expectedCmd = expectedTemplateEngine.process(CLEAN_UP_TMPDIR_TEST_TEMPLATE_NAME, new Context());
-        assertEquals(expectedCmd, PipelineUtils.cleanUpTmpDir(null));
+        assertEquals(StringUtils.EMPTY, PipelineUtils.cleanUpTmpDir(null));
     }
 
     @Test

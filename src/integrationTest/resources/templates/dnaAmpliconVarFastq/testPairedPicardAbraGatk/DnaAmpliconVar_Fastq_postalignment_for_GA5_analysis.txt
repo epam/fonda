@@ -188,36 +188,4 @@ else
 	echo $(date) Confirm bam from GA5:
 fi
 
-echo `date` Begin Step: Remove temporary directories...
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5_1.bwa.sorted.bam
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5_1.bwa.sorted.bam.bai
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.bam.bai
-rm -rf build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.mkdup.metrics
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.mkdup.bam
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.mkdup.bam.bai
-rm -rf build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.align.metrics
-rm -rf build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.hs.metrics
-rm -rf build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.quality.metrics
-rm -rf build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.pileup
-rm -rf build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.insertsize.metrics
-rm -rf build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.gcbias.metrics
-rm -rf build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.gc.summary.metrics
-rm -rf build/resources/integrationTest/output/GA5/qc/GA5.merged.sorted.coverage.per.base.txt
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.realign_interval.list
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.realign.bam
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.realign.bam.bai
-rm -rf build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.realign.realign.recal.table
-rm -rf build/resources/integrationTest/output/GA5/tmp
-
-if [ $? -eq 0 ]
-then
-	echo `date` Successful Step: Remove temporary directories.
-	sleep 8
-else
-	echo `date` Error Step: Remove temporary directories.
-
-	echo `date` The job was aborted due to ERRORS found.
-	exit 1;
-fi
 echo `date` Finish the job execution!

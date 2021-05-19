@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,8 +30,6 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-
-import java.util.Collections;
 
 import static com.epam.fonda.utils.ToolUtils.validate;
 
@@ -81,10 +79,8 @@ public class Sequenza implements Tool<SequenzaResult> {
                 .outDir(toolFields.getOutDir())
                 .build();
         output.createDirectory();
-        final BashCommand command = BashCommand.withTool(cmd);
-        command.setTempDirs(Collections.singletonList(toolFields.getSequenzaSeqz()));
         return SequenzaResult.builder()
-                .command(command)
+                .command(BashCommand.withTool(cmd))
                 .toolName("sequenza")
                 .sequenzaOutput(output)
                 .build();

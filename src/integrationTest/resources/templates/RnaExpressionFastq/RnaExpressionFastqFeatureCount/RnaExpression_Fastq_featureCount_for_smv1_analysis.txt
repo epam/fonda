@@ -31,21 +31,5 @@ else
 	exit 1;
 fi
 
-echo `date` Begin Step: Remove temporary directories...
-rm -rf build/resources/integrationTest/output/smv1/bam/smv1.hisat2.sorted.bam
-rm -rf build/resources/integrationTest/output/smv1/bam/smv1.hisat2.sorted.bam.bai
-rm -rf build/resources/integrationTest/output/smv1/qc/smv1.hisat2.sorted.mkdup.metrics
-rm -rf build/resources/integrationTest/output/smv1/tmp
-
-if [ $? -eq 0 ]
-then
-	echo `date` Successful Step: Remove temporary directories.
-	sleep 8
-else
-	echo `date` Error Step: Remove temporary directories.
-
-	echo `date` The job was aborted due to ERRORS found.
-	exit 1;
-fi
 echo `date` Finish the job execution!
 

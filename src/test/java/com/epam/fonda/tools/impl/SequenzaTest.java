@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,8 +28,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-
-import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -70,7 +68,6 @@ class SequenzaTest extends AbstractTest {
 
         final AbstractCommand actualCommand = result.getCommand();
         assertEquals(expectedCmd, actualCommand.getToolCommand());
-        assertEquals(Collections.singleton(expectedSeqz), actualCommand.getTempDirs());
         final SequenzaOutput sequenzaOutput = result.getSequenzaOutput();
         assertEquals(expectedSeqz, sequenzaOutput.getSequenzaSeqzOutput());
         assertEquals(expectedSeqzReduce, sequenzaOutput.getSequenzaSeqzReduceOutput());

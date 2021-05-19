@@ -47,17 +47,4 @@ else
 	exit 1;
 fi
 
-echo `date` Begin Step: Remove temporary directories...
-rm -rf build/resources/integrationTest/output/GA5/tmp
-
-if [ $? -eq 0 ]
-then
-	echo `date` Successful Step: Remove temporary directories.
-	sleep 8
-else
-	echo `date` Error Step: Remove temporary directories.
-
-	echo `date` The job was aborted due to ERRORS found.
-	exit 1;
-fi
 echo `date` Finish the job execution!

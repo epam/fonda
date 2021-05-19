@@ -46,23 +46,27 @@ public class WorkflowFactory {
                 ? MasterScript.getInstance()
                 : null;
         switch (PipelineType.getByName(workflowName)) {
-            case RNA_EXPRESSION_FASTQ: return new RnaExpressionFastqWorkflow(flag, scriptManager);
-            case SC_RNA_EXPRESSION_FASTQ: return new RnaExpressionFastqWorkflow(flag, scriptManager);
+            case RNA_EXPRESSION_FASTQ:
+            case SC_RNA_EXPRESSION_FASTQ:
+            case RNA_CAPTURE_VAR_FASTQ:
+                return new RnaExpressionFastqWorkflow(flag, scriptManager);
             case SC_RNA_EXPRESSION_CELLRANGER_FASTQ:
                 return new SCRnaExpressionCellRangerFastqWorkflow(flag, scriptManager);
-            case RNA_EXPRESSION_BAM: return new RnaExpressionBamWorkflow(flag, scriptManager);
+            case RNA_EXPRESSION_BAM:
+            case SC_RNA_EXPRESSION_BAM:
+                return new RnaExpressionBamWorkflow(flag, scriptManager);
             case RNA_FUSION_FASTQ: return new RnaFusionFastqWorkflow(flag, scriptManager);
             case DNA_AMPLICON_VAR_FASTQ: return new DnaVarFastqWorkflow(flag, "Index mkdup bam", scriptManager);
-            case DNA_CAPTURE_VAR_FASTQ: return new DnaVarFastqWorkflow(flag, "Index rmdup bam", scriptManager);
-            case DNA_AMPLICON_VAR_BAM: return new DnaVarBamWorkflow(flag, scriptManager);
-            case DNA_CAPTURE_VAR_BAM: return new DnaVarBamWorkflow(flag, scriptManager);
-            case DNA_WGS_VAR_BAM: return new DnaVarBamWorkflow(flag, scriptManager);
-            case DNA_WGS_VAR_FASTQ: return new DnaVarFastqWorkflow(flag, "Index rmdup bam", scriptManager);
+            case DNA_CAPTURE_VAR_FASTQ:
+            case DNA_WGS_VAR_FASTQ:
+                return new DnaVarFastqWorkflow(flag, "Index rmdup bam", scriptManager);
+            case DNA_AMPLICON_VAR_BAM:
+            case DNA_CAPTURE_VAR_BAM:
+            case DNA_WGS_VAR_BAM:
+                return new DnaVarBamWorkflow(flag, scriptManager);
             case BAM_2_FASTQ: return new Bam2FastqWorkflow(flag, scriptManager);
             case TCR_REPERTOIRE_FASTQ: return new TcrRepertoireFastqWorkflow(flag, scriptManager);
             case HLA_TYPING_FASTQ: return new HlaTypingFastqWorkflow(flag, scriptManager);
-            case SC_RNA_EXPRESSION_BAM: return new RnaExpressionBamWorkflow(flag, scriptManager);
-            case RNA_CAPTURE_VAR_FASTQ: return new RnaExpressionFastqWorkflow(flag, scriptManager);
             default: throw new IllegalArgumentException(String.format("Requested workflow %s is not supported yet",
                     workflowName));
         }

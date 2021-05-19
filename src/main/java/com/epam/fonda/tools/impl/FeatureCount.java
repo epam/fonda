@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,6 @@ import org.thymeleaf.context.Context;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.epam.fonda.utils.PipelineUtils.cleanUpTmpDir;
 import static com.epam.fonda.utils.ToolUtils.validate;
 import static java.lang.String.format;
 
@@ -105,7 +104,7 @@ public class FeatureCount implements Tool<FeatureCountResult> {
         return FeatureCountResult.builder()
                 .featureCountOutput(featureCountOutput)
                 .bamResult(bamResult)
-                .command(BashCommand.withTool(cmd + cleanUpTmpDir(bamResult.getCommand().getTempDirs())))
+                .command(BashCommand.withTool(cmd))
                 .build();
     }
 

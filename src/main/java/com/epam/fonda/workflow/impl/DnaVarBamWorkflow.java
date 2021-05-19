@@ -99,11 +99,9 @@ public class DnaVarBamWorkflow implements BamWorkflow {
                 .bam(sample.getBam())
                 .controlBam(sample.getControlBam())
                 .build();
-        final BashCommand command = BashCommand.withTool("");
-        command.getTempDirs().add(sample.getTmpOutdir());
         return BamResult.builder()
                 .bamOutput(bamOutput)
-                .command(command)
+                .command(BashCommand.withTool(StringUtils.EMPTY))
                 .build();
     }
 }

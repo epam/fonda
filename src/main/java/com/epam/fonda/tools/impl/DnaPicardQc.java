@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,10 +30,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import static com.epam.fonda.utils.PipelineUtils.getExecutionPath;
 import static com.epam.fonda.utils.ToolUtils.matchesCaptureLibraryTypeCondition;
@@ -132,22 +128,16 @@ public class DnaPicardQc implements Tool<MetricsResult> {
         MetricsFields metricsFields = initializeMetricsFields();
         Context context = buildContext(configuration, additionalFields, metricsFields);
         AbstractCommand resultCommand = metricsResult.getCommand();
-        List<String> metricsResultsList = buildCommonMetricsResult(metricsFields);
 
         if (isWorkflowDnaAmplicon()) {
             cmd.append(templateEngine.process(DNA_AMPLICON_PICARD_QC_TOOL_TEMPLATE_NAME, context));
-            metricsResultsList.add(metricsFields.getBedCoverage());
         } else if (isCaptureWorkflowTargetType(libraryType)) {
             cmd.append(templateEngine.process(DNA_CAPTURE_PICARD_QC_TOOL_TEMPLATE_NAME, context));
-            metricsResultsList.addAll(new ArrayList<>(Arrays.asList(metricsFields.getBedCoverage(),
-                    metricsFields.getRmdupHsMetrics(), additionalFields.mkdupBam)));
         } else if (isWorkflowDnaCapture() && matchesExomeLibraryTypeCondition(libraryType) ||
                 isRnaWorkflow(configuration)) {
             cmd.append(templateEngine.process(DNA_PICARD_QC_TOOL_TEMPLATE_NAME, context));
-            metricsResultsList.add(metricsFields.getRmdupHsMetrics());
         } else if (isWorkflowDnaWgs()) {
             cmd.append(templateEngine.process(DNA_WGS_PICARD_QC_TOOL_TEMPLATE_NAME, context));
-            metricsResultsList.add(metricsFields.getRmdupHsMetrics());
         }
         if (isWorkflowRna()) {
             TaskContainer.addTasks("RNA QC metrics", "Merge RNA QC");
@@ -155,7 +145,6 @@ public class DnaPicardQc implements Tool<MetricsResult> {
             TaskContainer.addTasks("DNA QC metrics", "Merge DNA QC");
         }
         resultCommand.setToolCommand(resultCommand.getToolCommand() + cmd);
-        resultCommand.getTempDirs().addAll(metricsResultsList);
 
         return MetricsResult.builder()
                 .bamOutput(metricsResult.getBamOutput())
@@ -205,17 +194,6 @@ public class DnaPicardQc implements Tool<MetricsResult> {
         metricsOutput.setQualityMetrics(metricsFields.qualityMetrics);
         metricsOutput.setPileup(metricsFields.pileup);
         return metricsOutput;
-    }
-
-    private List<String> buildCommonMetricsResult(final MetricsFields metricsFields) {
-        return new ArrayList<>(Arrays.asList(
-                metricsFields.getAlignMetrics(),
-                metricsFields.getMkdupHsMetrics(),
-                metricsFields.getQualityMetrics(),
-                metricsFields.getPileup(),
-                metricsFields.getInsertMetrics(),
-                metricsFields.getGcbiasMetrics(),
-                metricsFields.getGcsumMetrics()));
     }
 
     /**

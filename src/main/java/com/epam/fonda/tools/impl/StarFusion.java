@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2020 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package com.epam.fonda.tools.impl;
 
-import com.epam.fonda.entity.command.AbstractCommand;
 import com.epam.fonda.entity.command.BashCommand;
 import com.epam.fonda.entity.configuration.Configuration;
 import com.epam.fonda.entity.configuration.GlobalConfigFormat;
@@ -30,8 +29,6 @@ import lombok.Data;
 import lombok.NonNull;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-
-import java.util.Arrays;
 
 import static com.epam.fonda.utils.ToolUtils.validate;
 import static com.epam.fonda.utils.ToolUtils.validateOldPicardVersion;
@@ -102,12 +99,8 @@ public class StarFusion implements Tool<StarFusionResult> {
                 .starFusionOutdir(additionalStarFusionFields.starFusionOutdir)
                 .build();
         starFusionOutput.createDirectory();
-        AbstractCommand command = BashCommand.withTool(cmd);
-        command.setTempDirs(Arrays.asList(additionalStarFusionFields.unSortedBam,
-                additionalStarFusionFields.unSortedBamIndex,
-                additionalStarFusionFields.bamIndex, star4fusionBam));
         return StarFusionResult.builder()
-                .command(command)
+                .command(BashCommand.withTool(cmd))
                 .starFusionOutput(starFusionOutput)
                 .build();
     }
