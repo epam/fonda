@@ -37,6 +37,7 @@ def usage():
     print('-o <dir_out> (required)          The output directory for the analysis.\n')
     print('-b <feature_reference>           A feature reference csv file that declares the set of Feature Barcode '
           'reagents in use in the experiment.\n')
+    print('-x <target_panel>                Target panel csv path.\n')
     print('-l <fastq_list> (required)       The path to the input manifest file or fastq folder '
           'or comma-delimited fastq file list for R1.\n')
     print('-q <fastq_list_r2>               The comma-delimited fastq file list for R2.\n')
@@ -95,12 +96,14 @@ def parse_arguments(script_name, argv):
     verbose = None
     sample_name_list = None
     toolchain = None
+    target_panel = None
     try:
-        opts, args = getopt.getopt(argv, "hs:t:j:o:b:l:q:L:M:e:f:c:a:R:r:G:m:g:d:p:u:n:k:i:z:v", ["help", "species=",
+        opts, args = getopt.getopt(argv, "hs:t:j:o:b:x:l:q:L:M:e:f:c:a:R:r:G:m:g:d:p:u:n:k:i:z:v", ["help", "species=",
                                                                                                   "read_type=",
                                                                                                   "job_name=",
                                                                                                   "dir_out=",
                                                                                                   "feature_reference=",
+                                                                                                  "target_panel=",
                                                                                                   "fastq_list=",
                                                                                                   "fastq_list_r2=",
                                                                                                   "library_type=",
@@ -126,8 +129,8 @@ def parse_arguments(script_name, argv):
         for opt, arg in opts:
             if opt == '-h':
                 print(script_name + ' -s <species> -t <read_type> -j <job_name> -o <dir_out> -b <feature_reference> '
-                                    '-l <fastq_list> -q <fastq_list_r2> -L <library_type> -M <master> '
-                                    '-e <expected_cells> -f <forced_cells> -c <chemistry> -a <nosecondary> '
+                                    '-x <target_panel> -l <fastq_list> -q <fastq_list_r2> -L <library_type> -M <master>'
+                                    ' -e <expected_cells> -f <forced_cells> -c <chemistry> -a <nosecondary> '
                                     '-R <r1_length> -r <r2_length> -G <genome_build> -m <transcriptome> -g <vdj_genome>'
                                     ' -d <detect_doublet> -p <project> -u <run> -n <toolset> -k <cores_per_sample> '
                                     '<sync> -i <sample_name_list> -z <toolchain> <master_mode> -v <verbose>')
@@ -142,6 +145,8 @@ def parse_arguments(script_name, argv):
                 dir_out = arg
             elif opt in ("-b", "--feature_reference"):
                 feature_reference = arg
+            elif opt in ("-x", "--target_panel"):
+                target_panel = arg
             elif opt in ("-l", "--fastq_list"):
                 fastq_list = arg
             elif opt in ("-q", "--fastq_list_r2"):
@@ -227,7 +232,7 @@ def parse_arguments(script_name, argv):
         return species, read_type, job_name, dir_out, feature_reference, fastq_list, fastq_list_r2, library_type, \
             master, expected_cells, forced_cells, chemistry, nosecondary, r1_length, r2_length, genome_build, \
             transcriptome, vdj_genome, detect_doublet, project, run, toolset, cores_per_sample, verbose, sync, \
-            sample_name_list, master_mode, toolchain
+            sample_name_list, master_mode, toolchain, target_panel
     except getopt.GetoptError:
         usage()
         sys.exit(2)
@@ -237,7 +242,7 @@ def main(script_name, argv):
     species, read_type, job_name, dir_out, feature_reference, fastq_list, fastq_list_r2, libtype, master, \
         expected_cells, forced_cells, chemistry, nosecondary, r1_length, r2_length, genome_build, transcriptome, \
         vdj_genome, detect_doublet, project, run, toolset, cores_per_sample, verbose, sync, sample_name_list, \
-        master_mode, toolchain = parse_arguments(script_name, argv)
+        master_mode, toolchain, target_panel = parse_arguments(script_name, argv)
 
     library_type = "scRNASeq"
     if not read_type:
@@ -254,6 +259,8 @@ def main(script_name, argv):
         nosecondary = "FALSE"
     if not cores_per_sample:
         cores_per_sample = "8"
+    if not target_panel:
+        target_panel = "NA"
     additional_options = {"feature_reference": feature_reference,
                           "genome_build": genome_build,
                           "genome": transcriptome,
@@ -264,7 +271,8 @@ def main(script_name, argv):
                           "chemistry": chemistry,
                           "nosecondary": nosecondary,
                           "r1_length": r1_length,
-                          "r2_length": r2_length}
+                          "r2_length": r2_length,
+                          "target_panel": target_panel}
     if not toolset:
         toolset = "count+vdj+qc"
     if detect_doublet and "doubletdetection" not in toolset:

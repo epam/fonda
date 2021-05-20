@@ -11,6 +11,7 @@ GENOME = {{genome}}
 VDJ_GENOME = {{vdj_genome}}
 TRANSCRIPTOME = {{transcriptome}}
 FEATURE_REFERENCE = {{feature_reference}}
+COUNT_TARGET_PANEL = {{target_panel}}
 
 [all_tools]
 cellranger = {{cellranger}}

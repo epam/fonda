@@ -127,7 +127,10 @@ public class Count implements Tool<BamResult> {
         countFields.matrixInfo = format("%s/%s/filtered_feature_bc_matrix", samplePath,
                 CELLRANGER_OUTPUT_FOLDER);
         countFields.numThreads = configuration.getGlobalConfig().getQueueParameters().getNumThreads();
-        countFields.targetPanel = configuration.getGlobalConfig().getDatabaseConfig().getCellrangerCountTargetPanel();
+        String countTargetPanel = configuration.getGlobalConfig().getDatabaseConfig().getCellrangerCountTargetPanel();
+        countFields.targetPanel = StringUtils.isBlank(countTargetPanel) || NA.equals(countTargetPanel)
+                ? null
+                : countTargetPanel;
         return countFields;
     }
 
