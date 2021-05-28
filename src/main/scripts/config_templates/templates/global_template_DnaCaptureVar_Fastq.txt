@@ -21,6 +21,12 @@ CANONICAL_TRANSCRIPT = {{canonical_transcript}}
 KNOWN_INDELS_MILLS = {{known_indels_mills}}
 KNOWN_INDELS_PHASE1 = {{known_indels_phase1}}
 MOUSEXENOMEINDEX = {{mousexenomeindex}}
+CONTAMINATION_VCF = {{contamination_vcf}}
+BWA_IMG = {{bwa_img}}
+ADAPTER_FWD = {{adapter_fwd}}
+ADAPTER_REV = {{adapter_rev}}
+GERMLINE_RESOURCE = {{germline_resource}}
+SEQUENCE_DICTIONARY = {{sequence_dictionary}}
 
 [all_tools]
 seqpurge = {{seqpurge}}
@@ -45,6 +51,8 @@ vardict = {{vardict}}
 lofreq = {{lofreq}}
 freebayes = {{freebayes}}
 strelka2 = {{strelka2}}
+novoalign_tune = {{novoalign_tune}}
+gatk_java_options = {{gatk_java_options}}
 
 [Pipeline_Info]
 workflow = DnaCaptureVar_Fastq
