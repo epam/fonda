@@ -40,7 +40,6 @@
   "bwa_img": "/ngs/test/data/hg19.fasta.img",
   "adapter_rev": "AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT",
   "adapter_fwd": "AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC",
-  "novoalign_tune": "NextSeq",
   "germline_resource": "/ngs/test/data/af-only-gnomad.raw.sites.hg19.vcf",
   "sequence_dictionary": "/ngs/test/data/hg19.fa.dict",
   "gatk_java_options": "-Xmx4g"
