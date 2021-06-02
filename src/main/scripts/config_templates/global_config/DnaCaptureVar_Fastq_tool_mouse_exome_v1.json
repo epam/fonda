@@ -34,5 +34,12 @@
   "snpsiftdb": "/opt/SnpEff/snpEff_v4.3p/snpEff/db",
   "canonical_transcript": "/ngs/test/data/prefer_transcripts_gencode.vM13.annotation.knowntrx.exon.level1-2.trxlevel1-3.txt",
   "known_indels_mills": "/ngs/test/data/Mills_and_1000G_gold_standard.indels.hg19_decoy.vcf",
-  "known_indels_phase1": "/ngs/test/data/1000G_phase1.indels.hg19_decoy.vcf"
+  "known_indels_phase1": "/ngs/test/data/1000G_phase1.indels.hg19_decoy.vcf",
+  "contamination_vcf": "/ngs/test/data/contamination.vcf.gz",
+  "bwa_img": "/ngs/test/data/mm9.fasta.img",
+  "adapter_rev": "AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGTAGATCTCGGTGGTCGCCGTATCATT",
+  "adapter_fwd": "AGATCGGAAGAGCACACGTCTGAACTCCAGTCAC",
+  "germline_resource": "/ngs/test/data/af-only-gnomad.raw.sites.hg19.vcf",
+  "sequence_dictionary": "/ngs/test/data/mm9.fa.dict",
+  "gatk_java_options": "-Xmx4g"
 }
