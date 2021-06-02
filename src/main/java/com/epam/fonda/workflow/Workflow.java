@@ -38,7 +38,7 @@ public interface Workflow<T extends Sample> {
         List<T> samples = provideSample(configuration);
         samples.forEach(sample -> unsafe(() -> this.run(configuration, sample)));
         this.postProcess(configuration, samples);
-        if (configuration.isMasterMode()) {
+        if (configuration.isMasterMode() && !configuration.isTestMode()) {
             MasterScript.getInstance().launchScript(configuration);
         }
     }
