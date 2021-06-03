@@ -13,6 +13,8 @@ Fonda is a framework that offers a scalable and automatic analysis of multiple *
 - [Available workflows in Fonda](#available-workflows-in-fonda)
 - [Before running Fonda…](#before-running-fonda)
 - [Run Fonda](#run-fonda-actual-example-for-rnaexpressionfastq-workflow)
+- [Contributors](#contributors)
+- [Publications](#publications)
 
 ## Fonda Prebuilt binaries
 
@@ -171,3 +173,28 @@ java -jar /path_to_data/fonda/<VERSION>/fonda-<VERSION>.jar -global_config /path
 
 For the **_local machine mode_**, the individual jobs will be run on the local machine, without being submitted to the cluster.  
 In this case, scripts will be the same as in the **_cluster mode_**. The only difference is the jobs are not submitted to the cluster. This is important for debugging purpose.
+
+# Contributors
+
+- Shu Yan <sup>1</sup>
+- Tenghui Chen <sup>1</sup>
+- Joon Sang Lee <sup>1</sup>  
+- Chandra Sekhar Pedamallu <sup>1</sup>  
+- Mark Magid <sup>1</sup>
+- Quan Wan <sup>1</sup>  
+- Ei-Wen Yang <sup>1</sup>
+- Donald Jackson <sup>1</sup>
+- Jack Pollard <sup>1</sup>
+- Aleksandr Sidoruk <sup>2</sup>
+- Mariia Zueva <sup>2</sup>
+- Mikhail Alperovich <sup>2</sup>
+- Yulia Kamyshova <sup>2</sup>
+
+<sup>1</sup> Sanofi, 270 Albany Street, Cambridge, MA, USA
+
+<sup>2</sup> EPAM Systems, Inc.
+
+# Publications
+
+Links to publications that contain Fonda references
+* [A Comprehensive Sample Tracking and Data Processing Workflow for Next Generation Sequencing](doc/publications/AACR2021_FONDA_Poster_Chandra_Pedamallu.pdf)
