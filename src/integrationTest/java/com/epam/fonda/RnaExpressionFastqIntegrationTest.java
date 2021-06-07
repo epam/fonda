@@ -15,233 +15,374 @@
  */
 package com.epam.fonda;
 
+import com.epam.fonda.entity.configuration.orchestrator.MasterScript;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.platform.commons.util.StringUtils;
+import org.thymeleaf.context.Context;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
+import static java.lang.String.format;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
 
     private static final String RNA_EXPRESSION_FASTQ_SUFFIX = "RnaExpressionFastq/";
     private static final String OUTPUT_SH_FILE =
             "output/sh_files/RnaExpression_Fastq_alignment_for_smv1_analysis.sh";
+    private static final String MASTER_TEMPLATE_TEST =
+            format("%smaster_template_test", RNA_EXPRESSION_FASTQ_SUFFIX);
+    private static final String OUTPUT_FILE_MASTER =
+            "output/sh_files/master.sh";
     private static final String S_CONFIG_PATH =
-            String.format("%ssRnaExpressionFastq.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
+            format("%ssRnaExpressionFastq.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_ALIGNMENT_FOR_SMV1_ANALYSIS_TEMPLATE_PATH =
-            String.format("%srnaExpression_Fastq_alignment_flag_Xenome_yes_template",
+            format("%srnaExpression_Fastq_alignment_flag_Xenome_yes_template",
                     RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_G_FLAG_XENOME_YES =
-            String.format("%sgFlagXenomeYes.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
+            format("%sgFlagXenomeYes.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_G_SEQPURGE_WITH_ADAPTERS =
-            String.format("%sgSeqpurgeWithAdapters.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
+            format("%sgSeqpurgeWithAdapters.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_G_SEQPURGE_WITHOUT_ADAPTERS =
-            String.format("%sgSeqpurgeWithoutAdapters.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
+            format("%sgSeqpurgeWithoutAdapters.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_G_TRIMMOMATIC_WITH_ADAPTER =
-            String.format("%sgTrimmomaticWithAdapter.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
+            format("%sgTrimmomaticWithAdapter.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_G_TRIMMOMATIC_WITHOUT_ADAPTER =
-            String.format("%sgTrimmomaticWithoutAdapter.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
+            format("%sgTrimmomaticWithoutAdapter.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_G_STAR_WITH_RSEM =
-            String.format("%sgStarWithRsem.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
+            format("%sgStarWithRsem.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_G_STAR_WITHOUT_RSEM =
-            String.format("%sgStarWithoutRsem.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
+            format("%sgStarWithoutRsem.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_G_HISAT2 =
-            String.format("%sgHisat2.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
+            format("%sgHisat2.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_G_SALMON =
-            String.format("%sgSalmon.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
+            format("%sgSalmon.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_G_FEATURE_COUNT =
-            String.format("%sgFeatureCount.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
+            format("%sgFeatureCount.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_G_CUFFLINKS =
-            String.format("%sgCufflinks.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
+            format("%sgCufflinks.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_G_STRINGTIE =
-            String.format("%sgStringtie.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
+            format("%sgStringtie.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_G_RSEM_WITHOUT_HISAT2 =
-            String.format("%sgRsemWithoutHisat2.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
+            format("%sgRsemWithoutHisat2.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_G_NON_FLAG_XENOME =
-            String.format("%sgNonFlagXenome.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
+            format("%sgNonFlagXenome.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_G_NON_SEQPURGE =
-            String.format("%sgNonSeqpurge.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
+            format("%sgNonSeqpurge.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_G_NON_TRIMMOMATIC =
-            String.format("%sgNonTrimmomatic.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
+            format("%sgNonTrimmomatic.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_G_NON_STAR =
-            String.format("%sgNonStar.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
+            format("%sgNonStar.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_G_NON_HISAT2 =
-            String.format("%sgNonHisat2.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
+            format("%sgNonHisat2.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_G_NON_SALMON =
-            String.format("%sgNonSalmon.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
+            format("%sgNonSalmon.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String OUTPUT_SH_FILES_SUFFIX = "output/sh_files/";
     private static final String RNA_EXPRESSION_FASTQ_SEQPURGE_WITH_ADAPTERS_TEMPLATE =
-            String.format("%srnaExpression_Fastq_Seqpurge_with_Adapters", RNA_EXPRESSION_FASTQ_SUFFIX);
+            format("%srnaExpression_Fastq_Seqpurge_with_Adapters", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_SEQPURGE_WITHOUT_ADAPTERS_TEMPLATE =
-            String.format("%srnaExpression_Fastq_Seqpurge_without_Adapters", RNA_EXPRESSION_FASTQ_SUFFIX);
+            format("%srnaExpression_Fastq_Seqpurge_without_Adapters", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_TRIMMOMATIC_WITH_ADAPTER_TEMPLATE =
-            String.format("%srnaExpression_Fastq_Trimmomatic_with_adapter", RNA_EXPRESSION_FASTQ_SUFFIX);
+            format("%srnaExpression_Fastq_Trimmomatic_with_adapter", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_TRIMMOMATIC_WITHOUT_ADAPTER_TEMPLATE =
-            String.format("%srnaExpression_Fastq_Trimmomatic_without_adapter", RNA_EXPRESSION_FASTQ_SUFFIX);
+            format("%srnaExpression_Fastq_Trimmomatic_without_adapter", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_CUFFLINKS_SUFFIX =
-            String.format("%sRnaExpressionFastqCufflinks/", RNA_EXPRESSION_FASTQ_SUFFIX);
+            format("%sRnaExpressionFastqCufflinks/", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_FEATURE_COUNT_SUFFIX =
-            String.format("%sRnaExpressionFastqFeatureCount/", RNA_EXPRESSION_FASTQ_SUFFIX);
+            format("%sRnaExpressionFastqFeatureCount/", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_STAR_WITH_RSEM_SUFFIX =
-            String.format("%sRnaExpressionFastqStarWithRsem/", RNA_EXPRESSION_FASTQ_SUFFIX);
+            format("%sRnaExpressionFastqStarWithRsem/", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_STRINGTIE_SUFFIX =
-            String.format("%sRnaExpressionFastqStringtie/", RNA_EXPRESSION_FASTQ_SUFFIX);
+            format("%sRnaExpressionFastqStringtie/", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_STAR_WITHOUT_RSEM_SUFFIX =
-            String.format("%sRnaExpressionFastqStarWithoutRsem/", RNA_EXPRESSION_FASTQ_SUFFIX);
+            format("%sRnaExpressionFastqStarWithoutRsem/", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_RSEM_WITHOUT_HISAT2_SUFFIX =
-            String.format("%sRnaExpressionFastqRsemWithoutHisat2/", RNA_EXPRESSION_FASTQ_SUFFIX);
+            format("%sRnaExpressionFastqRsemWithoutHisat2/", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_HISAT2_TEMPLATE =
-            String.format("%srnaExpression_Fastq_Hisat2", RNA_EXPRESSION_FASTQ_SUFFIX);
+            format("%srnaExpression_Fastq_Hisat2", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_SALMON_TEMPLATE =
-            String.format("%srnaExpression_Fastq_Salmon", RNA_EXPRESSION_FASTQ_SUFFIX);
+            format("%srnaExpression_Fastq_Salmon", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_NON_FLAG_XENOME_TEMPLATE =
-            String.format("%srnaExpression_Fastq_non_flag_Xenome", RNA_EXPRESSION_FASTQ_SUFFIX);
+            format("%srnaExpression_Fastq_non_flag_Xenome", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_NON_SEQPURGE_TEMPLATE =
-            String.format("%srnaExpression_Fastq_non_Seqpurge", RNA_EXPRESSION_FASTQ_SUFFIX);
+            format("%srnaExpression_Fastq_non_Seqpurge", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_NON_TRIMMOMATIC_TEMPLATE =
-            String.format("%srnaExpression_Fastq_non_Trimmomatic", RNA_EXPRESSION_FASTQ_SUFFIX);
+            format("%srnaExpression_Fastq_non_Trimmomatic", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_NON_STAR_TEMPLATE =
-            String.format("%srnaExpression_Fastq_non_Star", RNA_EXPRESSION_FASTQ_SUFFIX);
+            format("%srnaExpression_Fastq_non_Star", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_NON_HISAT2_TEMPLATE =
-            String.format("%srnaExpression_Fastq_non_Hisat2", RNA_EXPRESSION_FASTQ_SUFFIX);
+            format("%srnaExpression_Fastq_non_Hisat2", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_NON_SALMON_TEMPLATE =
-            String.format("%srnaExpression_Fastq_non_Salmon", RNA_EXPRESSION_FASTQ_SUFFIX);
+            format("%srnaExpression_Fastq_non_Salmon", RNA_EXPRESSION_FASTQ_SUFFIX);
+    private static final String OUTPUT_DIR_ROOT = "build/resources/integrationTest/";
+    private static final String SAMPLE_NAME = "smv1/";
+    private static final Integer NUMBER_OF_SCRIPTS = 6;
+
+    private static final Set<String> CONFIG_WITH_POST_PROCESS = new HashSet<>(Arrays.asList(
+            RNA_EXPRESSION_FASTQ_G_STAR_WITH_RSEM,
+            RNA_EXPRESSION_FASTQ_G_STAR_WITHOUT_RSEM,
+            RNA_EXPRESSION_FASTQ_G_RSEM_WITHOUT_HISAT2)
+    );
+    private static final String[] EXPECTED_SCRIPTS = new String[]{
+        "",
+        "build/resources/integrationTest/output/sh_files/RnaExpression_Fastq_alignment_for_smv%s_analysis.sh && \\",
+        "build/resources/integrationTest/output/sh_files/RnaExpression_Fastq_alignment_for_smv%s_analysis.sh &",
+        "build/resources/integrationTest/output/sh_files/RnaExpression_Fastq_rsem_for_smv%s_analysis.sh &",
+        "build/resources/integrationTest/output/sh_files/RnaExpression_Fastq_alignment_for_smv%s_analysis.sh &&",
+        "build/resources/integrationTest/output/sh_files/RnaExpression_Fastq_featureCount_for_smv%s_analysis.sh &",
+        "build/resources/integrationTest/output/sh_files/RnaExpression_Fastq_cufflinks_for_smv%s_analysis.sh &",
+        "build/resources/integrationTest/output/sh_files/RnaExpression_Fastq_stringtie_for_smv%s_analysis.sh &"
+    };
 
     @ParameterizedTest(name = "{2}-test")
     @MethodSource("initParameters")
     void testRnaExpressionFastq(final String gConfigPath, final String outputShFile, final String templatePath)
             throws IOException, URISyntaxException {
         startAppWithConfigs(gConfigPath, S_CONFIG_PATH);
-        final String expectedCmd01 = TEMPLATE_ENGINE.process(templatePath, context);
-        assertEquals(expectedCmd01.trim(), getCmd(outputShFile).trim());
-
-        startAppWithConfigs(gConfigPath, S_CONFIG_PATH, new String[]{"-master"});
-        final String expectedCmd02 = TEMPLATE_ENGINE.process(templatePath, context);
-        assertEquals(expectedCmd02.trim(), getCmd(outputShFile).trim());
+        final String expectedCmd = TEMPLATE_ENGINE.process(templatePath, context);
+        assertEquals(expectedCmd.trim(), getCmd(outputShFile).trim());
     }
 
-    @SuppressWarnings("PMD")
+    @ParameterizedTest(name = "{3}-test")
+    @MethodSource("initParameters")
+    void testRnaExpressionFastqMaster(final String gConfigPath, final String outputShFile,
+                                      final String templatePath, final String expectedBaseScript,
+                                      final String expectedSecondScript) throws IOException, URISyntaxException {
+        startAppWithConfigs(gConfigPath, S_CONFIG_PATH, new String[]{"-master"});
+        final String expectedCmd = TEMPLATE_ENGINE.process(templatePath, context);
+        assertEquals(expectedCmd.trim(), getCmd(outputShFile).trim());
+        final String expectedMasterScript = TEMPLATE_ENGINE.process(
+                MASTER_TEMPLATE_TEST,
+                getContextForMaster(gConfigPath, context, expectedBaseScript, expectedSecondScript)
+        );
+        assertEquals(expectedMasterScript.trim(), getCmd(OUTPUT_FILE_MASTER).trim());
+    }
+
+    private Context getContextForMaster(final String gConfigPath, final Context context,
+                                        final String expectedBaseScript, final String expectedSecondScript) {
+        context.setVariable("samplesProcessScripts", getScripts(expectedBaseScript, expectedSecondScript));
+        if (checkPostProcess(gConfigPath)) {
+            context.setVariable("hasPostProcess", true);
+        } else {
+            context.setVariable("hasPostProcess", false);
+        }
+        return context;
+    }
+
+    private List<MasterScript.SampleScripts> getScripts(final String expectedBaseScript,
+                                                        final String expectedSecondScript) {
+        List<MasterScript.SampleScripts> alignmentScripts = new LinkedList<>();
+        for (int i = 1; i <= NUMBER_OF_SCRIPTS; i++) {
+            List<String> baseScripts = new ArrayList<>();
+            baseScripts.add(format(expectedBaseScript, i));
+            List<String> secondaryScripts = new ArrayList<>();
+            if (StringUtils.isNotBlank(expectedSecondScript)) {
+                secondaryScripts.add(format(expectedSecondScript, i));
+            }
+            alignmentScripts.add(new MasterScript.SampleScripts(baseScripts, secondaryScripts));
+        }
+        return alignmentScripts;
+    }
+
+    private boolean checkPostProcess(final String gConfigPath) {
+        return CONFIG_WITH_POST_PROCESS.contains(gConfigPath);
+    }
+
+    @Test
+    public void testCreateRnaExpressionFastqSpecificDirExpressionFastqToolset() {
+        startAppWithConfigs(RNA_EXPRESSION_FASTQ_G_FLAG_XENOME_YES, S_CONFIG_PATH);
+        assertAll(
+            () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "sh_files").exists()),
+            () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "log_files").exists()),
+            () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "err_files").exists()),
+            () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + SAMPLE_NAME).exists()),
+            () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + SAMPLE_NAME + "bam").exists()),
+            () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + SAMPLE_NAME + "fastq").exists()),
+            () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + SAMPLE_NAME + "qc").exists()),
+            () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + SAMPLE_NAME + "tmp").exists())
+        );
+    }
+
+    @SuppressWarnings("all")
     private static Stream<Arguments> initParameters() {
         return Stream.of(
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_FLAG_XENOME_YES,
                         OUTPUT_SH_FILE,
-                        RNA_EXPRESSION_FASTQ_ALIGNMENT_FOR_SMV1_ANALYSIS_TEMPLATE_PATH),
+                        RNA_EXPRESSION_FASTQ_ALIGNMENT_FOR_SMV1_ANALYSIS_TEMPLATE_PATH,
+                        EXPECTED_SCRIPTS[2],
+                        EXPECTED_SCRIPTS[0]),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_SEQPURGE_WITH_ADAPTERS,
                         OUTPUT_SH_FILE,
-                        RNA_EXPRESSION_FASTQ_SEQPURGE_WITH_ADAPTERS_TEMPLATE),
+                        RNA_EXPRESSION_FASTQ_SEQPURGE_WITH_ADAPTERS_TEMPLATE,
+                        EXPECTED_SCRIPTS[2],
+                        EXPECTED_SCRIPTS[0]),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_SEQPURGE_WITHOUT_ADAPTERS,
                         OUTPUT_SH_FILE,
-                        RNA_EXPRESSION_FASTQ_SEQPURGE_WITHOUT_ADAPTERS_TEMPLATE),
+                        RNA_EXPRESSION_FASTQ_SEQPURGE_WITHOUT_ADAPTERS_TEMPLATE,
+                        EXPECTED_SCRIPTS[2],
+                        EXPECTED_SCRIPTS[0]),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_TRIMMOMATIC_WITH_ADAPTER,
                         OUTPUT_SH_FILE,
-                        RNA_EXPRESSION_FASTQ_TRIMMOMATIC_WITH_ADAPTER_TEMPLATE),
+                        RNA_EXPRESSION_FASTQ_TRIMMOMATIC_WITH_ADAPTER_TEMPLATE,
+                        EXPECTED_SCRIPTS[2],
+                        EXPECTED_SCRIPTS[0]),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_TRIMMOMATIC_WITHOUT_ADAPTER,
                         OUTPUT_SH_FILE,
-                        RNA_EXPRESSION_FASTQ_TRIMMOMATIC_WITHOUT_ADAPTER_TEMPLATE),
+                        RNA_EXPRESSION_FASTQ_TRIMMOMATIC_WITHOUT_ADAPTER_TEMPLATE,
+                        EXPECTED_SCRIPTS[2],
+                        EXPECTED_SCRIPTS[0]),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_STAR_WITH_RSEM,
                         OUTPUT_SH_FILE,
-                        String.format("%sRnaExpression_Fastq_alignment_for_smv1_analysis",
-                                RNA_EXPRESSION_FASTQ_STAR_WITH_RSEM_SUFFIX)),
+                        format("%sRnaExpression_Fastq_alignment_for_smv1_analysis",
+                                RNA_EXPRESSION_FASTQ_STAR_WITH_RSEM_SUFFIX),
+                        EXPECTED_SCRIPTS[1],
+                        EXPECTED_SCRIPTS[3]),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_STAR_WITH_RSEM,
-                        String.format("%sRnaExpression_Fastq_qcsummary_for_cohort_analysis.sh",
+                        format("%sRnaExpression_Fastq_qcsummary_for_cohort_analysis.sh",
                                 OUTPUT_SH_FILES_SUFFIX),
-                        String.format("%sRnaExpression_Fastq_qcsummary_for_cohort_analysis",
-                                RNA_EXPRESSION_FASTQ_STAR_WITH_RSEM_SUFFIX)),
+                        format("%sRnaExpression_Fastq_qcsummary_for_cohort_analysis",
+                                RNA_EXPRESSION_FASTQ_STAR_WITH_RSEM_SUFFIX),
+                        EXPECTED_SCRIPTS[1],
+                        EXPECTED_SCRIPTS[3]),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_STAR_WITH_RSEM,
-                        String.format("%sRnaExpression_Fastq_rsem_for_smv1_analysis.sh",
+                        format("%sRnaExpression_Fastq_rsem_for_smv1_analysis.sh",
                                 OUTPUT_SH_FILES_SUFFIX),
-                        String.format("%sRnaExpression_Fastq_rsem_for_smv1_analysis",
-                                RNA_EXPRESSION_FASTQ_STAR_WITH_RSEM_SUFFIX)),
+                        format("%sRnaExpression_Fastq_rsem_for_smv1_analysis",
+                                RNA_EXPRESSION_FASTQ_STAR_WITH_RSEM_SUFFIX),
+                        EXPECTED_SCRIPTS[1],
+                        EXPECTED_SCRIPTS[3]),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_STAR_WITHOUT_RSEM,
                         OUTPUT_SH_FILE,
-                        String.format("%sRnaExpression_Fastq_alignment_for_smv1_analysis",
-                                RNA_EXPRESSION_FASTQ_STAR_WITHOUT_RSEM_SUFFIX)),
+                        format("%sRnaExpression_Fastq_alignment_for_smv1_analysis",
+                                RNA_EXPRESSION_FASTQ_STAR_WITHOUT_RSEM_SUFFIX),
+                        EXPECTED_SCRIPTS[2],
+                        EXPECTED_SCRIPTS[0]),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_STAR_WITHOUT_RSEM,
-                        String.format("%sRnaExpression_Fastq_qcsummary_for_cohort_analysis.sh",
+                        format("%sRnaExpression_Fastq_qcsummary_for_cohort_analysis.sh",
                                 OUTPUT_SH_FILES_SUFFIX),
-                        String.format("%sRnaExpression_Fastq_qcsummary_for_cohort_analysis",
-                                RNA_EXPRESSION_FASTQ_STAR_WITHOUT_RSEM_SUFFIX)),
+                        format("%sRnaExpression_Fastq_qcsummary_for_cohort_analysis",
+                                RNA_EXPRESSION_FASTQ_STAR_WITHOUT_RSEM_SUFFIX),
+                        EXPECTED_SCRIPTS[2],
+                        EXPECTED_SCRIPTS[0]),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_HISAT2,
                         OUTPUT_SH_FILE,
-                        RNA_EXPRESSION_FASTQ_HISAT2_TEMPLATE),
+                        RNA_EXPRESSION_FASTQ_HISAT2_TEMPLATE,
+                        EXPECTED_SCRIPTS[2],
+                        EXPECTED_SCRIPTS[0]),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_SALMON,
                         OUTPUT_SH_FILE,
-                        RNA_EXPRESSION_FASTQ_SALMON_TEMPLATE),
+                        RNA_EXPRESSION_FASTQ_SALMON_TEMPLATE,
+                        EXPECTED_SCRIPTS[2],
+                        EXPECTED_SCRIPTS[0]),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_FEATURE_COUNT,
-                        String.format("%sRnaExpression_Fastq_featureCount_for_smv1_analysis.sh",
+                        format("%sRnaExpression_Fastq_featureCount_for_smv1_analysis.sh",
                                 OUTPUT_SH_FILES_SUFFIX),
-                        String.format("%sRnaExpression_Fastq_featureCount_for_smv1_analysis",
-                                RNA_EXPRESSION_FASTQ_FEATURE_COUNT_SUFFIX)),
+                        format("%sRnaExpression_Fastq_featureCount_for_smv1_analysis",
+                                RNA_EXPRESSION_FASTQ_FEATURE_COUNT_SUFFIX),
+                        EXPECTED_SCRIPTS[1],
+                        EXPECTED_SCRIPTS[5]),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_CUFFLINKS,
-                        String.format("%sRnaExpression_Fastq_cufflinks_for_smv1_analysis.sh",
+                        format("%sRnaExpression_Fastq_cufflinks_for_smv1_analysis.sh",
                                 OUTPUT_SH_FILES_SUFFIX),
                         RNA_EXPRESSION_FASTQ_CUFFLINKS_SUFFIX +
-                                "RnaExpression_Fastq_cufflinks_for_smv1_analysis"),
+                                "RnaExpression_Fastq_cufflinks_for_smv1_analysis",
+                        EXPECTED_SCRIPTS[1],
+                        EXPECTED_SCRIPTS[6]),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_STRINGTIE,
-                        String.format("%sRnaExpression_Fastq_stringtie_for_smv1_analysis.sh",
+                        format("%sRnaExpression_Fastq_stringtie_for_smv1_analysis.sh",
                                 OUTPUT_SH_FILES_SUFFIX),
-                        String.format("%sRnaExpression_Fastq_stringtie_for_smv1_analysis",
-                                RNA_EXPRESSION_FASTQ_STRINGTIE_SUFFIX)),
+                        format("%sRnaExpression_Fastq_stringtie_for_smv1_analysis",
+                                RNA_EXPRESSION_FASTQ_STRINGTIE_SUFFIX),
+                        EXPECTED_SCRIPTS[1],
+                        EXPECTED_SCRIPTS[7]),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_RSEM_WITHOUT_HISAT2,
-                        String.format("%sRnaExpression_Fastq_rsem_for_smv1_analysis.sh",
+                        format("%sRnaExpression_Fastq_rsem_for_smv1_analysis.sh",
                                 OUTPUT_SH_FILES_SUFFIX),
-                        String.format("%sRnaExpression_Fastq_rsem_for_smv1_analysis",
-                                RNA_EXPRESSION_FASTQ_RSEM_WITHOUT_HISAT2_SUFFIX)),
+                        format("%sRnaExpression_Fastq_rsem_for_smv1_analysis",
+                                RNA_EXPRESSION_FASTQ_RSEM_WITHOUT_HISAT2_SUFFIX),
+                        EXPECTED_SCRIPTS[1],
+                        EXPECTED_SCRIPTS[3]),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_RSEM_WITHOUT_HISAT2,
                         OUTPUT_SH_FILE,
-                        String.format("%sRnaExpression_Fastq_alignment_for_smv1_analysis",
-                                RNA_EXPRESSION_FASTQ_RSEM_WITHOUT_HISAT2_SUFFIX)),
+                        format("%sRnaExpression_Fastq_alignment_for_smv1_analysis",
+                                RNA_EXPRESSION_FASTQ_RSEM_WITHOUT_HISAT2_SUFFIX),
+                        EXPECTED_SCRIPTS[1],
+                        EXPECTED_SCRIPTS[3]),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_RSEM_WITHOUT_HISAT2,
-                        String.format("%sRnaExpression_Fastq_qcsummary_for_cohort_analysis.sh",
+                        format("%sRnaExpression_Fastq_qcsummary_for_cohort_analysis.sh",
                                 OUTPUT_SH_FILES_SUFFIX),
-                        String.format("%sRnaExpression_Fastq_qcsummary_for_cohort_analysis",
-                                RNA_EXPRESSION_FASTQ_RSEM_WITHOUT_HISAT2_SUFFIX)),
+                        format("%sRnaExpression_Fastq_qcsummary_for_cohort_analysis",
+                                RNA_EXPRESSION_FASTQ_RSEM_WITHOUT_HISAT2_SUFFIX),
+                        EXPECTED_SCRIPTS[1],
+                        EXPECTED_SCRIPTS[3]),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_NON_FLAG_XENOME,
                         OUTPUT_SH_FILE,
-                        RNA_EXPRESSION_FASTQ_NON_FLAG_XENOME_TEMPLATE),
+                        RNA_EXPRESSION_FASTQ_NON_FLAG_XENOME_TEMPLATE,
+                        EXPECTED_SCRIPTS[2],
+                        EXPECTED_SCRIPTS[0]),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_NON_SEQPURGE,
                         OUTPUT_SH_FILE,
-                        RNA_EXPRESSION_FASTQ_NON_SEQPURGE_TEMPLATE),
+                        RNA_EXPRESSION_FASTQ_NON_SEQPURGE_TEMPLATE,
+                        EXPECTED_SCRIPTS[2],
+                        EXPECTED_SCRIPTS[0]),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_NON_TRIMMOMATIC,
                         OUTPUT_SH_FILE,
-                        RNA_EXPRESSION_FASTQ_NON_TRIMMOMATIC_TEMPLATE),
+                        RNA_EXPRESSION_FASTQ_NON_TRIMMOMATIC_TEMPLATE,
+                        EXPECTED_SCRIPTS[2],
+                        EXPECTED_SCRIPTS[0]),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_NON_STAR,
                         OUTPUT_SH_FILE,
-                        RNA_EXPRESSION_FASTQ_NON_STAR_TEMPLATE),
+                        RNA_EXPRESSION_FASTQ_NON_STAR_TEMPLATE,
+                        EXPECTED_SCRIPTS[2],
+                        EXPECTED_SCRIPTS[0]),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_NON_HISAT2,
                         OUTPUT_SH_FILE,
-                        RNA_EXPRESSION_FASTQ_NON_HISAT2_TEMPLATE),
+                        RNA_EXPRESSION_FASTQ_NON_HISAT2_TEMPLATE,
+                        EXPECTED_SCRIPTS[2],
+                        EXPECTED_SCRIPTS[0]),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_NON_SALMON,
                         OUTPUT_SH_FILE,
-                        RNA_EXPRESSION_FASTQ_NON_SALMON_TEMPLATE)
+                        RNA_EXPRESSION_FASTQ_NON_SALMON_TEMPLATE,
+                        EXPECTED_SCRIPTS[2],
+                        EXPECTED_SCRIPTS[0])
         );
     }
 }

@@ -99,12 +99,13 @@ public abstract class AbstractIntegrationTest {
                                     final String studyConfigName, final String[] nonRequiredOptions) {
         try {
             final String globalConfig = Paths.get(
-                    this.getClass().getClassLoader().getResource(globalConfigName).toURI()
+                    Objects.requireNonNull(this.getClass().getClassLoader().getResource(globalConfigName)).toURI()
             ).toString();
             final String studyConfig = Paths.get(
-                    this.getClass().getClassLoader().getResource(studyConfigName).toURI()
+                    Objects.requireNonNull(this.getClass().getClassLoader().getResource(studyConfigName)).toURI()
             ).toString();
-            final EOLMarker lineSeparator = System.lineSeparator().equalsIgnoreCase(CRLF.getLineSeparator()) ? CRLF : LF;
+            final EOLMarker lineSeparator
+                    = System.lineSeparator().equalsIgnoreCase(CRLF.getLineSeparator()) ? CRLF : LF;
             final String source = new String(Files.readAllBytes(Paths.get(globalConfig))) +
                     String.format("%nline_ending = %s", lineSeparator.name());
             writeToFile(globalConfig, source, lineSeparator);
