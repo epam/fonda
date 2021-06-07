@@ -21,6 +21,7 @@ import com.epam.fonda.entity.configuration.GlobalConfig;
 import com.epam.fonda.entity.configuration.orchestrator.MasterScript;
 import com.epam.fonda.utils.TemplateEngineUtils;
 import com.epam.fonda.workflow.TaskContainer;
+import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.thymeleaf.TemplateEngine;
@@ -33,6 +34,7 @@ import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Objects;
 
@@ -90,20 +92,37 @@ public abstract class AbstractIntegrationTest {
      * @param studyConfigName  path to study config file located in integration test resources
      */
     public void startAppWithConfigs(String globalConfigName, String studyConfigName) {
-        String globalConfig;
-        String studyConfig;
+        startAppWithConfigs(globalConfigName, studyConfigName, null);
+    }
+
+    public void startAppWithConfigs(final String globalConfigName,
+                                    final String studyConfigName, final String[] nonRequiredOptions) {
         try {
-            globalConfig = Paths.get(this.getClass().getClassLoader().getResource(globalConfigName).toURI()).toString();
-            studyConfig = Paths.get(this.getClass().getClassLoader().getResource(studyConfigName).toURI()).toString();
-            EOLMarker lineSeparator = System.lineSeparator().equalsIgnoreCase(CRLF.getLineSeparator()) ? CRLF : LF;
+            final String globalConfig = Paths.get(
+                    this.getClass().getClassLoader().getResource(globalConfigName).toURI()
+            ).toString();
+            final String studyConfig = Paths.get(
+                    this.getClass().getClassLoader().getResource(studyConfigName).toURI()
+            ).toString();
+            final EOLMarker lineSeparator = System.lineSeparator().equalsIgnoreCase(CRLF.getLineSeparator()) ? CRLF : LF;
             final String source = new String(Files.readAllBytes(Paths.get(globalConfig))) +
                     String.format("%nline_ending = %s", lineSeparator.name());
             writeToFile(globalConfig, source, lineSeparator);
+
+            if (ArrayUtils.isNotEmpty(nonRequiredOptions) && Arrays.asList(nonRequiredOptions).contains("-master")) {
+                context.setVariable("master", true);
+            } else {
+                context.setVariable("master", false);
+            }
+
+            final String[] args = ArrayUtils.addAll(
+                    new String[]{"-test", "-global_config", globalConfig, "-study_config", studyConfig},
+                    nonRequiredOptions
+            );
+            Main.main(args);
         } catch (URISyntaxException | IOException e) {
             throw new IllegalArgumentException("Cannot parse globalConfig or StudyConfig " + e);
         }
-        String[] arg = new String[]{"-test", "-global_config", globalConfig, "-study_config", studyConfig};
-        Main.main(arg);
     }
 
     /**

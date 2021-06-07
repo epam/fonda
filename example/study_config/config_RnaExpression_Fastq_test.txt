@@ -1,7 +1,7 @@
 [Series_Info]
 job_name = pe_job
-dir_out = /ngs/data/demo/test/RNAexpression_Fastq_test
-fastq_list = /ngs/data/demo/test/example/RnaExpression_RNASeq_SampleFastqPaths.txt
+dir_out = RNAexpression_Fastq_test
+fastq_list = C:\Users\Aleksei_Zaichenkov\IdeaProjects\fonda\example\sample_manifest\RnaExpression_RNASeq_SampleFastqPaths.txt
 LibraryType = RNASeq_Paired
 DataGenerationSource = Internal
 Date = 20140318

@@ -84,7 +84,7 @@ else
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
 fi
-
+[# th:switch = "${master}"][# th:case = "false"]
 echo `date` Begin Step: Remove temporary directories...
 rm -rf build/resources/integrationTest/output/smv1/fastq/smv1.merged_R1.fastq.gz
 rm -rf build/resources/integrationTest/output/smv1/fastq/smv1.merged_R2.fastq.gz
@@ -98,5 +98,5 @@ else
 
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
-fi
+fi[/][/]
 echo `date` Finish the job execution!
