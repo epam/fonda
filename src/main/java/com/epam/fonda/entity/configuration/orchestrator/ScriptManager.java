@@ -30,6 +30,9 @@ public interface ScriptManager {
      */
     default void launchScript(final Configuration configuration) {
         final String script = buildScript(configuration);
+        if (configuration.isTestMode()) {
+            return;
+        }
         PipelineUtils.executeScript(configuration, script);
     }
 
