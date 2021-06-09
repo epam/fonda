@@ -46,7 +46,7 @@ else
 	exit 1;
 fi
 
-[# th:switch = "${master}"][# th:case = "false"]
+[# th:if = "${!master}"]
 echo `date` Begin Step: Run rsem...
 qsub build/resources/integrationTest/output/sh_files/RnaExpression_Fastq_rsem_for_smv1_analysis.sh
 if [ $? -eq 0 ]
@@ -73,5 +73,5 @@ else
 
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
-fi[/][/]
+fi[/]
 echo `date` Finish the job execution!

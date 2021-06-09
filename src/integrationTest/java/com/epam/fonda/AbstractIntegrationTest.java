@@ -104,8 +104,8 @@ public abstract class AbstractIntegrationTest {
             final String studyConfig = Paths.get(
                     Objects.requireNonNull(this.getClass().getClassLoader().getResource(studyConfigName)).toURI()
             ).toString();
-            final EOLMarker lineSeparator
-                    = System.lineSeparator().equalsIgnoreCase(CRLF.getLineSeparator()) ? CRLF : LF;
+            final EOLMarker lineSeparator =
+                    System.lineSeparator().equalsIgnoreCase(CRLF.getLineSeparator()) ? CRLF : LF;
             final String source = new String(Files.readAllBytes(Paths.get(globalConfig))) +
                     String.format("%nline_ending = %s", lineSeparator.name());
             writeToFile(globalConfig, source, lineSeparator);
@@ -117,8 +117,7 @@ public abstract class AbstractIntegrationTest {
             }
 
             final String[] args = ArrayUtils.addAll(
-                    new String[]{"-test", "-global_config", globalConfig, "-study_config", studyConfig},
-                    nonRequiredOptions
+                    nonRequiredOptions,"-test", "-global_config", globalConfig, "-study_config", studyConfig
             );
             Main.main(args);
         } catch (URISyntaxException | IOException e) {

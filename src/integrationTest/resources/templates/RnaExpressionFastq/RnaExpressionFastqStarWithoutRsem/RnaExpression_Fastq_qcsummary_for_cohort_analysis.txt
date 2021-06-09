@@ -17,7 +17,7 @@
 cd build/resources/integrationTest/output
 
 echo `date` Begin the job execution...
-[# th:switch = "${master}"][# th:case = "false"]
+[# th:if = "${!master}"]
 logFile=build/resources/integrationTest/output/log_files/RnaExpression_Fastq_alignment_for_smv1_analysis.log
 str=""
 while [[('[')]][ $str = "" ]]
@@ -137,7 +137,7 @@ then
 else
 	echo $(date) Confirm QC results from smv6
 fi
-[/][/]
+[/]
 echo `date` Begin Step: QC summary analysis...
 /usr/bin/Rscript [(${jarPath})]/src/R/QC_summary_analysis.R -i build/resources/integrationTest/fastq_list.tsv -d build/resources/integrationTest/output -w RnaExpression_Fastq
 if [ $? -eq 0 ]
