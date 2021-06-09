@@ -1,4 +1,4 @@
 fastqs,sample,library_type
-[(${path})]sampleName,sampleName,Gene Expression
-[(${path})]sampleName,sampleName,Antibody Capture
+/path/to/sampleName,sampleName,Gene Expression
+/path/to/sampleName,sampleName,Antibody Capture
 
