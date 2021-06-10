@@ -110,11 +110,7 @@ public abstract class AbstractIntegrationTest {
                     String.format("%nline_ending = %s", lineSeparator.name());
             writeToFile(globalConfig, source, lineSeparator);
 
-            if (ArrayUtils.isNotEmpty(nonRequiredOptions) && Arrays.asList(nonRequiredOptions).contains("-master")) {
-                context.setVariable("master", true);
-            } else {
-                context.setVariable("master", false);
-            }
+            context.setVariable("master", checkOption(nonRequiredOptions, "-master"));
 
             final String[] args = ArrayUtils.addAll(
                     nonRequiredOptions, "-test", "-global_config", globalConfig, "-study_config", studyConfig
@@ -123,6 +119,10 @@ public abstract class AbstractIntegrationTest {
         } catch (URISyntaxException | IOException e) {
             throw new IllegalArgumentException("Cannot parse globalConfig or StudyConfig " + e);
         }
+    }
+
+    private boolean checkOption(final String[] nonRequiredOptions, final String option) {
+        return ArrayUtils.isNotEmpty(nonRequiredOptions) && Arrays.asList(nonRequiredOptions).contains(option);
     }
 
     /**
