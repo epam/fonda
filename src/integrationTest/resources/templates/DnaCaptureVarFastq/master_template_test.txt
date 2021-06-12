@@ -1,0 +1,107 @@
+#!/bin/bash -x
+
+set -e
+
+# --- SGE options --- #
+
+#$ -V
+#$ -wd build/resources/integrationTest/output
+#$ -N master
+#$ -o build/resources/integrationTest/output/log_files/master.log
+#$ -e build/resources/integrationTest/output/err_files/master.err
+#$ -q main.q
+#$ -R y
+
+# --- The commands to be executed --- #
+
+cd build/resources/integrationTest/output
+
+function log_info() {
+    LOG_TEXT="$1"
+    LOG_TASK="Fonda"
+    if command -v pipe_log_info &> /dev/null
+    then
+        pipe_log_info "$LOG_TEXT" "$LOG_TASK"
+    else
+        echo `date` "$LOG_TEXT"
+    fi
+}
+
+log_info "Begin the jobs execution."
+
+R=$(echo $RANDOM)
+function qsub_script() {
+    local script="$1"
+    qsub $script &
+    sleep 5
+    base_script_name=$(basename $script)
+    script_pref=${base_script_name%.*}
+    job_id="$(qstat -j $script_pref | grep 'job_number' | grep -o '[0-9]*')"
+    if [ -z "$job_id" ]; then
+        log_info "[ERROR] Could not get job id from job $job. Exiting"
+        if [ ! -f build/resources/integrationTest/output/err_files/failure_$R.err ]; then
+            touch build/resources/integrationTest/output/err_files/failure_$R.err
+        fi
+        exit 1
+    else
+        log_info "Script $script with id $job_id has been submitted"
+    fi
+    FINISH_COUNTER=0
+    while [ "$(qacct -j "$job_id" | grep jobnumber | grep -o '[0-9]*')" != "$job_id" ]
+    do
+        if [ $(($FINISH_COUNTER % 300)) == 0 ]
+        then
+            job_qstat="$(qstat | awk '$1 ~ "'"$job_id"'"')"
+            qstat_out=$(sed -e 's/\:[^\:/]*$//' <<< $job_qstat)
+            log_info "$qstat_out"
+        fi
+        sleep 1
+        let FINISH_COUNTER++
+    done
+    status="$(qacct -j "$job_id" | grep exit_status | grep -o '[0-9]*')"
+    return $status
+}
+
+function launch_script() {
+    local script="$1"
+    log_info "Start script execution $script"
+    qsub_script $script
+
+    status=$?
+    if [ $status -eq 0 ]
+    then
+        log_info "Successful step: $script script execution is completed."
+    else
+        log_info "Error step: $script script execution is completed with $status status."
+        if [ ! -f build/resources/integrationTest/output/err_files/failure_$R.err ]; then
+            touch build/resources/integrationTest/output/err_files/failure_$R.err
+        fi
+        exit "$status"
+    fi
+}
+
+function check_current_status() {
+    if [ -f build/resources/integrationTest/output/err_files/failure_$R.err ]; then
+        log_info "Master job was aborted due to ERRORS found."
+        rm -f build/resources/integrationTest/output/err_files/failure_$R.err
+        exit 1
+    fi
+}
+
+function process_scripts_launch() {
+    [# th:each = "sampleScripts : ${samplesProcessScripts}"][# th:each = "s : ${sampleScripts.baseScripts}"]launch_script [(${s})]
+    [/][# th:if = "${#arrays.length(sampleScripts.secondaryScripts) > 1}"]( [# th:each = "s : ${sampleScripts.secondaryScripts}"]launch_script [(${s})] [/]wait ) &[/][# th:if = "${#arrays.length(sampleScripts.secondaryScripts) == 1}"][# th:each = "s : ${sampleScripts.secondaryScripts}"]launch_script [(${s})][/][/]
+    [/]wait
+    check_current_status
+}
+
+[# th:if = "${postProcessScript != null}"]function post_process_scripts_launch() {
+    launch_script [(${postProcessScript})]
+    wait
+    check_current_status
+}[/]
+
+process_scripts_launch[# th:if = "${postProcessScript != null}"] && \
+post_process_scripts_launch[/]
+
+log_info "All jobs have been completed."
