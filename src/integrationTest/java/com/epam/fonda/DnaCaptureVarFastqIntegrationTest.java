@@ -16,6 +16,7 @@
 package com.epam.fonda;
 
 import com.epam.fonda.entity.configuration.orchestrator.MasterScript;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -39,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
 
     private static final String DNA_CAPTURE_VAR_FASTQ_DIR = "DnaCaptureVarFastq";
-    private static final String MASTER_TEMPLATE_TEST = format("%s/master_template_test", DNA_CAPTURE_VAR_FASTQ_DIR);
+    private static final String MASTER_TEMPLATE_PATH = "master_template_test";
     private static final String OUTPUT_SH_FILES_DIR = "output/sh_files";
     private static final String OUTPUT_FILE_MASTER = format("%s/master.sh", OUTPUT_SH_FILES_DIR);
     private static final String STUDY_CONFIG_SINGLE = "sSingle.txt";
@@ -79,7 +80,7 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
     private static final String EXOMECNV = "_exomecnv";
     private static final String QCSUMMARY = "_qcsummary";
     private static final String MERGE_MUTATION = "_mergeMutation";
-    private static final String INDENT = "[ ]{4}";
+    private static final String INDENT = "[ ]{4,}";
 
     @ParameterizedTest(name = "{2}-test")
     @MethodSource({"initParametersSingle", "initParametersPaired", "initParameters"})
@@ -104,7 +105,7 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
         assertEquals(expectedCmd.trim(), getCmd(outputShFile).trim());
 
         final String expectedMasterScript = TEMPLATE_ENGINE.process(
-                MASTER_TEMPLATE_TEST,
+                MASTER_TEMPLATE_PATH,
                 getContextForMaster(context, expectedBaseScript, expectedSecondScript, postProcessScript)
         );
         assertEquals(trimNotImportant(expectedMasterScript), trimNotImportant(getCmd(OUTPUT_FILE_MASTER)));
@@ -124,6 +125,9 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                 "samplesProcessScripts", getScripts(expectedBaseScript, expectedSecondScript)
         );
         context.setVariable("postProcessScript", postProcessScript);
+        if (StringUtils.isBlank(postProcessScript)) {
+            context.setVariable("hasPostProcess", false);
+        }
         return context;
     }
 
@@ -144,9 +148,9 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                 format("%s%s%s", DNA_CAPTURE_VAR_FASTQ_DIR, "/", STUDY_CONFIG_SINGLE)
         );
         assertAll(
-            () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "sh_files").exists()), //
-            () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "log_files").exists()), //
-            () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "err_files").exists()), //
+            () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "sh_files").exists()),
+            () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "log_files").exists()),
+            () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + "err_files").exists()),
             () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + SAMPLE_NAME).exists()),
             () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + SAMPLE_NAME + "bam").exists()),
             () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + SAMPLE_NAME + "fastq").exists()),
