@@ -34,6 +34,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -91,7 +92,11 @@ public final class MasterScript implements ScriptManager {
                     .filter(StringUtils::isNotBlank)
                     .map(s -> s += AMPERSAND)
                     .collect(Collectors.toList());
-            alignmentScripts.add(new SampleScripts(replaceLast(sampleScripts, secondaryScripts), secondaryScripts));
+
+            List<String> baseScripts = replaceLast(sampleScripts, secondaryScripts);
+            if (baseScripts.size() != 0) {
+                alignmentScripts.add(new SampleScripts(baseScripts, secondaryScripts));
+            }
         });
         context.setVariable("samplesProcessScripts", alignmentScripts);
         context.setVariable("postProcessScripts", postProcessScripts);
@@ -111,7 +116,7 @@ public final class MasterScript implements ScriptManager {
         this.alignmentScripts = new LinkedList<>();
         this.postProcessScripts = new LinkedHashSet<>();
         this.cleanupTempFiles = new LinkedHashSet<>();
-        this.scriptsBySample = new HashMap<>();
+        this.scriptsBySample = new TreeMap<>();
     }
 
     @Override
