@@ -32,17 +32,24 @@ import org.junit.jupiter.api.Test;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static com.epam.fonda.utils.PipelineUtils.ESC_CHAR;
 import static com.epam.fonda.utils.PipelineUtils.NA;
+import static com.epam.fonda.utils.PipelineUtils.SLASH;
 import static com.epam.fonda.utils.PipelineUtils.getExecutionPath;
+import static com.epam.fonda.utils.TestTemplateUtils.trimNotImportant;
 import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@SuppressWarnings("PMD.TooManyStaticImports")
 public class CountTest extends AbstractTest {
     private static final String COUNT_TEST_OUTPUT_DATA_PATH = "count_template_output";
     private static final String COUNT_TEST_OUTPUT_EXP_CELLS_DATA_PATH =
@@ -53,13 +60,18 @@ public class CountTest extends AbstractTest {
     private String jarPath;
     private String fastqDirs;
     private FastqFileSample expectedSample;
-    private TemplateEngine expectedTemplateEngine = TemplateEngineUtils.init();
+    private final TemplateEngine expectedTemplateEngine = TemplateEngineUtils.init();
 
     @BeforeEach
-    void init() {
+    void init() throws URISyntaxException, UnsupportedEncodingException {
         constructConfiguration();
         expectedSample = new FastqFileSample();
-        expectedSample.setFastq1(Arrays.asList("/path/to/sampleName/fastq1", "/path/to/sampleName/fastq2"));
+        expectedSample.setFastq1(
+                Arrays.asList(
+                        "/path/to/sampleName/fastq1".replaceAll(SLASH, ESC_CHAR + File.separator),
+                        "/path/to/sampleName/fastq2".replaceAll(SLASH, ESC_CHAR + File.separator)
+                )
+        );
         expectedSample.setName("sampleName");
         expectedSample.createDirectory();
         fastqDirs = String.join(",", CellRangerUtils.extractFastqDir(expectedSample).getFastqDirs());
@@ -86,6 +98,7 @@ public class CountTest extends AbstractTest {
     void generate() throws IOException {
         Context context = new Context();
         context.setVariable("jarPath", jarPath);
+        context.setVariable("path", "/path/to/");
         context.setVariable("fastqDirs", fastqDirs);
         final LibraryCsv libraryCsv = LibraryCsv.builder()
                 .sampleName("sampleName")
@@ -93,16 +106,18 @@ public class CountTest extends AbstractTest {
                 .libraryType("Antibody Capture")
                 .build();
         expectedSample.getLibrary().add(libraryCsv);
+
         expectedConfiguration.getGlobalConfig().getDatabaseConfig().setCellrangerCountTargetPanel(
                 "/opt/cellranger-5.0.0/target_panels/immunology_v1.0_GRCh38-2020-A.target_panel.csv");
         final String expectedCmd = expectedTemplateEngine.process(COUNT_TEST_OUTPUT_DATA_PATH, context);
         final String actualCmd = count.generate(expectedConfiguration, expectedTemplateEngine).getCommand()
                 .getToolCommand();
-        final String expectedLibraryCsv = expectedTemplateEngine.process(LIBRARY_TEST_OUTPUT_DATA_PATH, context);
+        final String expectedLibraryCsv = expectedTemplateEngine.process(LIBRARY_TEST_OUTPUT_DATA_PATH, context)
+                .replaceAll(SLASH, ESC_CHAR + File.separator);
         final String actualLibraryCsv = readFile(Paths.get(
                 format("%s/sampleName_library.txt", expectedConfiguration.getCommonOutdir().getShOutdir())));
         assertEquals(expectedCmd, actualCmd);
-        assertEquals(expectedLibraryCsv, actualLibraryCsv);
+        assertEquals(trimNotImportant(expectedLibraryCsv), trimNotImportant(actualLibraryCsv));
     }
 
     @Test
@@ -152,6 +167,7 @@ public class CountTest extends AbstractTest {
         cellrangerConfig.setCellrangerNosecondary("nosecondary");
         cellrangerConfig.setCellrangerR1Length("r1Length");
         cellrangerConfig.setCellrangerR2Length("r2Length");
+
         GlobalConfig.QueueParameters queueParameters = expectedConfiguration.getGlobalConfig().getQueueParameters();
         queueParameters.setNumThreads(3);
         expectedConfiguration.getGlobalConfig().setCellrangerConfig(cellrangerConfig);
