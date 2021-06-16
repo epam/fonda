@@ -15,23 +15,19 @@
  */
 package com.epam.fonda;
 
-import com.epam.fonda.entity.configuration.orchestrator.MasterScript;
-import org.apache.commons.lang3.StringUtils;
+import com.epam.fonda.utils.TestTemplateUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.thymeleaf.context.Context;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.stream.Stream;
 
-
+import static com.epam.fonda.utils.TestTemplateUtils.getSamplesScripts;
+import static com.epam.fonda.utils.TestTemplateUtils.trimNotImportant;
 import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -80,13 +76,11 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
     private static final String EXOMECNV = "_exomecnv";
     private static final String QCSUMMARY = "_qcsummary";
     private static final String MERGE_MUTATION = "_mergeMutation";
-    private static final String INDENT = "[ ]{4,}";
 
     @ParameterizedTest(name = "{2}-test")
     @MethodSource({"initParametersSingle", "initParametersPaired", "initParameters"})
     void testDnaCaptureVarFastq(final String gConfigPath, final String sConfigPath, final String outputShFile,
-                                final String templatePath)
-            throws IOException, URISyntaxException {
+                                final String templatePath) throws IOException, URISyntaxException {
         startAppWithConfigs(gConfigPath, sConfigPath);
         final String expectedCmd = TEMPLATE_ENGINE.process(templatePath, context);
         assertEquals(expectedCmd.trim(), getCmd(outputShFile).trim());
@@ -95,10 +89,8 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
     @ParameterizedTest(name = "{3}-test")
     @MethodSource({"initParametersSingle", "initParametersPaired", "initParameters"})
     void testDnaCaptureVarFastqMaster(final String gConfigPath, final String sConfigPath, final String outputShFile,
-                                      final String templatePath,
-                                      final String[] expectedBaseScript,
-                                      final String[] expectedSecondScript,
-                                      final String postProcessScript)
+                                      final String templatePath, final String[] expectedBaseScript,
+                                      final String[] expectedSecondScript, final String postProcessScript)
             throws IOException, URISyntaxException {
         startAppWithConfigs(gConfigPath, sConfigPath, new String[] { "-master" });
         final String expectedCmd = TEMPLATE_ENGINE.process(templatePath, context);
@@ -106,39 +98,12 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
 
         final String expectedMasterScript = TEMPLATE_ENGINE.process(
                 MASTER_TEMPLATE_PATH,
-                getContextForMaster(context, expectedBaseScript, expectedSecondScript, postProcessScript)
+                TestTemplateUtils.getContextForMaster(
+                        context, getSamplesScripts(expectedBaseScript, expectedSecondScript), postProcessScript
+                )
         );
+
         assertEquals(trimNotImportant(expectedMasterScript), trimNotImportant(getCmd(OUTPUT_FILE_MASTER)));
-    }
-
-    private String trimNotImportant(final String str){
-        return str.trim()
-                .replaceAll(INDENT, "")
-                .replaceAll(" \\r", "")
-                .replaceAll("\\r", "");
-    }
-
-    private Context getContextForMaster(final Context context,
-                                        final String[] expectedBaseScript, final String[] expectedSecondScript,
-                                        final String postProcessScript) {
-        context.setVariable(
-                "samplesProcessScripts", getScripts(expectedBaseScript, expectedSecondScript)
-        );
-        context.setVariable("postProcessScript", postProcessScript);
-        if (StringUtils.isBlank(postProcessScript)) {
-            context.setVariable("hasPostProcess", false);
-        }
-        return context;
-    }
-
-    private List<MasterScript.SampleScripts> getScripts(final String[] expectedBaseScript,
-                                                        final String[] expectedSecondScript) {
-        List<MasterScript.SampleScripts> alignmentScripts = new LinkedList<>();
-        alignmentScripts.add(new MasterScript.SampleScripts(
-                Arrays.asList(expectedBaseScript),
-                Arrays.asList(expectedSecondScript)
-        ));
-        return alignmentScripts;
     }
 
     @Test
@@ -177,7 +142,7 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                         format("%s/DnaCaptureVar_Fastq_postalignment_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
                         format("%s/%s/dnaCaptureVar_Fastq_postalignment_for_GA5_analysis_template",
                                 DNA_CAPTURE_VAR_FASTQ_DIR, TRIMMOMATIC_NOVOALIGN_SINGLE_TEMPLATES),
-                        new String[] { format("%s%s%s && \\ ", EXPECTED_SCRIPT_START, ALIGNMENT, FOR_GA5_1) },
+                        new String[] { format("%s%s%s && \\", EXPECTED_SCRIPT_START, ALIGNMENT, FOR_GA5_1) },
                         new String[] { format("%s%s%s &\n     ", EXPECTED_SCRIPT_START, POSTALIGNMENT, FOR_GA5) },
                         null),
                 Arguments.of(
@@ -315,7 +280,7 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
         );
     }
 
-    @SuppressWarnings("PMD")
+    @SuppressWarnings("all")
     private static Stream<Arguments> initParametersPaired() {
         return Stream.of(
                 Arguments.of(

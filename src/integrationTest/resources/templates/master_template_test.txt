@@ -90,7 +90,7 @@ function check_current_status() {
 
 function process_scripts_launch() {
     [# th:each = "sampleScripts : ${samplesProcessScripts}"][# th:each = "s : ${sampleScripts.baseScripts}"]launch_script [(${s})]
-    [/][# th:if = "${#arrays.length(sampleScripts.secondaryScripts) > 1}"]( [# th:each = "s : ${sampleScripts.secondaryScripts}"]launch_script [(${s})] [/]wait ) &[/][# th:if = "${#arrays.length(sampleScripts.secondaryScripts) == 1}"][# th:each = "s : ${sampleScripts.secondaryScripts}"]launch_script [(${s})][/][/]
+    [/][# th:if = "${#arrays.length(sampleScripts.secondaryScripts) > 1}"]( [# th:each = "s : ${sampleScripts.secondaryScripts}"]launch_script [(${s})] [/]wait ) &[/] [# th:if = "${#arrays.length(sampleScripts.secondaryScripts) == 1}"][# th:each = "s : ${sampleScripts.secondaryScripts}"]launch_script [(${s})][/][/]
     [/]wait
     check_current_status
 }

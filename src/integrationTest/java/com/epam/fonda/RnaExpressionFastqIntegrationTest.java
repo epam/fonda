@@ -15,22 +15,21 @@
  */
 package com.epam.fonda;
 
-import com.epam.fonda.entity.configuration.orchestrator.MasterScript;
+import com.epam.fonda.utils.TestTemplateUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.platform.commons.util.StringUtils;
-import org.thymeleaf.context.Context;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static com.epam.fonda.utils.TestTemplateUtils.getSamplesScripts;
+import static com.epam.fonda.utils.TestTemplateUtils.trimNotImportant;
 import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -135,7 +134,6 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
     private static final String SEQ_TO_PURGE =
             format("%1$soutput/smv%2$s/fastq/smv%2$s.merged_R%3$s.fastq.gz", OUTPUT_DIR_ROOT, "%1$d", "%2$d");
     private static final Integer SEQ_TO_PURGE_NUMBER = 6;
-    private static final String INDENT = "[ ]{4,}";
 
     @ParameterizedTest(name = "{2}-test")
     @MethodSource("initParameters")
@@ -148,74 +146,18 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
 
     @ParameterizedTest(name = "{3}-test")
     @MethodSource("initParameters")
-    void testRnaExpressionFastqMaster(final String gConfigPath, final String outputShFile,
-                                      final String templatePath, final String expectedBaseScript,
-                                      final String expectedSecondScript, final Integer numberOfScripts,
-                                      final String postProcessScript)
+    void testRnaExpressionFastqMaster(final String gConfigPath, final String outputShFile, final String templatePath,
+                                      final String expectedBaseScript, final String expectedSecondScript,
+                                      final Integer numberOfScripts, final String postProcessScript)
             throws IOException, URISyntaxException {
         startAppWithConfigs(gConfigPath, S_CONFIG_PATH, new String[] { "-master" });
         final String expectedCmd = TEMPLATE_ENGINE.process(templatePath, context);
         assertEquals(expectedCmd.trim(), getCmd(outputShFile).trim());
 
-        final String expectedMasterScript = getExpectedMasterScript(gConfigPath, expectedBaseScript,
-                expectedSecondScript, numberOfScripts, postProcessScript);
+        final String expectedMasterScript =
+                getExpectedMasterScript(expectedBaseScript, expectedSecondScript, numberOfScripts, postProcessScript);
+
         assertEquals(trimNotImportant(expectedMasterScript), trimNotImportant(getCmd(OUTPUT_FILE_MASTER)));
-    }
-
-    private String getExpectedMasterScript(final String gConfigPath, final String expectedBaseScript,
-                                           final String expectedSecondScript, final Integer numberOfScripts,
-                                           final String postProcessScript) {
-        final String expectedMasterScript = TEMPLATE_ENGINE.process(
-                MASTER_TEMPLATE_TEST_PATH,
-                getContextForMaster(gConfigPath, context, expectedBaseScript, expectedSecondScript, numberOfScripts,
-                        postProcessScript)
-        );
-        final List<String> fieldsToPurge = getFieldsToPurge(SEQ_TO_PURGE, SEQ_TO_PURGE_NUMBER);
-        context.setVariable("fields", fieldsToPurge);
-        final String expectedCleanScript = TEMPLATE_ENGINE.process(CLEAN_TMP_TEMPLATE_PATH, context);
-
-        return expectedMasterScript + expectedCleanScript;
-    }
-
-    private List<String> getFieldsToPurge(final String seqToPurge, final int seqToPurgeNumber) {
-        final List<String> fieldsToPurge = new ArrayList<>();
-        for (int i = 1; i <= seqToPurgeNumber; i++) {
-            fieldsToPurge.add(format(seqToPurge, i, 1));
-            fieldsToPurge.add(format(seqToPurge, i, 2));
-        }
-        return fieldsToPurge;
-    }
-
-    private Context getContextForMaster(final String gConfigPath, final Context context,
-                                        final String expectedBaseScript, final String expectedSecondScript,
-                                        final Integer numberOfScripts, final String postProcessScript) {
-        context.setVariable(
-                "samplesProcessScripts", getScripts(expectedBaseScript, expectedSecondScript, numberOfScripts)
-        );
-        context.setVariable("postProcessScript", postProcessScript);
-        return context;
-    }
-
-    private String trimNotImportant(final String str){
-        return str.trim()
-                .replaceAll(INDENT, "")
-                .replaceAll(" \\r", "")
-                .replaceAll("\\r", "");
-    }
-    private List<MasterScript.SampleScripts> getScripts(final String expectedBaseScript,
-                                                        final String expectedSecondScript,
-                                                        final Integer numberOfScripts) {
-        List<MasterScript.SampleScripts> alignmentScripts = new LinkedList<>();
-        for (int i = 1; i <= numberOfScripts; i++) {
-            List<String> baseScripts = new ArrayList<>();
-            baseScripts.add(format(expectedBaseScript, i));
-            List<String> secondaryScripts = new ArrayList<>();
-            if (StringUtils.isNotBlank(expectedSecondScript)) {
-                secondaryScripts.add(format(expectedSecondScript, i));
-            }
-            alignmentScripts.add(new MasterScript.SampleScripts(baseScripts, secondaryScripts));
-        }
-        return alignmentScripts;
     }
 
     @Test
@@ -231,6 +173,31 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
             () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + SAMPLE_NAME + "qc").exists()),
             () -> assertTrue(new File(OUTPUT_DIR_ROOT + OUTPUT_DIR + SAMPLE_NAME + "tmp").exists())
         );
+    }
+
+    private String getExpectedMasterScript(final String expectedBaseScript, final String expectedSecondScript,
+                                           final Integer numberOfScripts, final String postProcessScript) {
+        final String expectedMasterScript = TEMPLATE_ENGINE.process(
+                MASTER_TEMPLATE_TEST_PATH,
+                TestTemplateUtils.getContextForMaster(
+                        context,
+                        getSamplesScripts(expectedBaseScript, expectedSecondScript, numberOfScripts),
+                        postProcessScript
+                )
+        );
+        final List<String> fieldsToPurge = getFieldsToPurge(SEQ_TO_PURGE, SEQ_TO_PURGE_NUMBER);
+        context.setVariable("fields", fieldsToPurge);
+        final String expectedCleanScript = TEMPLATE_ENGINE.process(CLEAN_TMP_TEMPLATE_PATH, context);
+        return expectedMasterScript + expectedCleanScript;
+    }
+
+    private List<String> getFieldsToPurge(final String seqToPurge, final int seqToPurgeNumber) {
+        final List<String> fieldsToPurge = new ArrayList<>();
+        for (int i = 1; i <= seqToPurgeNumber; i++) {
+            fieldsToPurge.add(format(seqToPurge, i, 1));
+            fieldsToPurge.add(format(seqToPurge, i, 2));
+        }
+        return fieldsToPurge;
     }
 
     @SuppressWarnings("all")
