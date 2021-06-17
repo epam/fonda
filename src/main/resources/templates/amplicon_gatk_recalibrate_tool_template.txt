@@ -1,6 +1,6 @@
 echo `date` Begin Step: GATK recalibration...
-[(${toolFields.java})] -Xmx10g -Djava.io.tmpdir=[(${tmpOutdir})] -jar [(${toolFields.gatk})] BaseRecalibrator -R [(${databaseFields.genome})] -I [(${additionalFields.bam})] --use-original-qualities true -knownSites [(${databaseFields.dbSnp})] -knownSites [(${databaseFields.knownIndelsMills})] -knownSites [(${databaseFields.knownIndelsPhase1})] -o [(${additionalFields.recalTable})]
-[(${toolFields.java})] -Xmx10g -Djava.io.tmpdir=[(${tmpOutdir})] -jar [(${toolFields.gatk})] ApplyBQSR -R [(${databaseFields.genome})] -I [(${additionalFields.bam})] -bqsr [(${additionalFields.recalTable})] -o [(${additionalFields.recalBam})]
+[(${toolFields.gatk})] BaseRecalibrator -R [(${databaseFields.genome})] -I [(${additionalFields.bam})] --use-original-qualities true --known-sites [(${databaseFields.dbSnp})] --known-sites [(${databaseFields.knownIndelsMills})] --known-sites [(${databaseFields.knownIndelsPhase1})] -O [(${additionalFields.recalTable})]
+[(${toolFields.gatk})] ApplyBQSR -R [(${databaseFields.genome})] -I [(${additionalFields.bam})] -bqsr [(${additionalFields.recalTable})] -O [(${additionalFields.recalBam})]
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: GATK recalibration.
