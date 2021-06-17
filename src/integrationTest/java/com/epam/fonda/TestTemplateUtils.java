@@ -1,4 +1,19 @@
-package com.epam.fonda.utils;
+/*
+ * Copyright 2017-2021 Sanofi and EPAM Systems, Inc. (https://www.epam.com/)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.epam.fonda;
 
 import com.epam.fonda.entity.configuration.orchestrator.MasterScript;
 import org.apache.commons.lang3.StringUtils;
@@ -25,16 +40,16 @@ public final class TestTemplateUtils {
     }
 
     public static Context getContextForMaster(final Context context,
-                                        final List<MasterScript.SampleScripts> samplesProcessScripts,
-                                        final String postProcessScript) {
+                                              final List<MasterScript.SampleScripts> samplesProcessScripts,
+                                              final String postProcessScript) {
         context.setVariable("samplesProcessScripts", samplesProcessScripts);
         context.setVariable("postProcessScript", postProcessScript);
         return context;
     }
 
     public static List<MasterScript.SampleScripts> getSamplesScripts(final String expectedBaseScript,
-                                                               final String expectedSecondScript,
-                                                               final Integer numberOfScripts) {
+                                                                     final String expectedSecondScript,
+                                                                     final Integer numberOfScripts) {
         List<MasterScript.SampleScripts> alignmentScripts = new LinkedList<>();
         for (int i = 1; i <= numberOfScripts; i++) {
             List<String> baseScripts = new ArrayList<>();
@@ -49,7 +64,7 @@ public final class TestTemplateUtils {
     }
 
     public static List<MasterScript.SampleScripts> getSamplesScripts(final String[] expectedBaseScript,
-                                                               final String[] expectedSecondScript) {
+                                                                     final String[] expectedSecondScript) {
         List<MasterScript.SampleScripts> alignmentScripts = new LinkedList<>();
         alignmentScripts.add(new MasterScript.SampleScripts(
                 Arrays.asList(expectedBaseScript),

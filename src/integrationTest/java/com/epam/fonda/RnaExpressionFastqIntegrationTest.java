@@ -15,7 +15,6 @@
  */
 package com.epam.fonda;
 
-import com.epam.fonda.utils.TestTemplateUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -28,8 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static com.epam.fonda.utils.TestTemplateUtils.getSamplesScripts;
-import static com.epam.fonda.utils.TestTemplateUtils.trimNotImportant;
+import static com.epam.fonda.TestTemplateUtils.getSamplesScripts;
+import static com.epam.fonda.TestTemplateUtils.trimNotImportant;
 import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;

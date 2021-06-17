@@ -15,7 +15,6 @@
  */
 package com.epam.fonda;
 
-import com.epam.fonda.utils.TestTemplateUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -26,8 +25,8 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.stream.Stream;
 
-import static com.epam.fonda.utils.TestTemplateUtils.getSamplesScripts;
-import static com.epam.fonda.utils.TestTemplateUtils.trimNotImportant;
+import static com.epam.fonda.TestTemplateUtils.getSamplesScripts;
+import static com.epam.fonda.TestTemplateUtils.trimNotImportant;
 import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -291,11 +290,11 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                         format("%s/%s/dnaCaptureVar_Fastq_alignment_for_smv1_1_analysis_template",
                                 DNA_CAPTURE_VAR_FASTQ_DIR,
                                 BWA_VARDICT_MUTECT1_STRELKA2_GATK_HAPOTYPECALLER_SCALPEL_LOFREQ_FREEBAYES_TEMPLATES),
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, ALIGNMENT, FOR_SMV1_1),
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, POSTALIGNMENT, FOR_SMV1)
                         },
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, VARDICT, FOR_SMV1),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, GATK_HAPLOTYPE_CALLER, FOR_SMV1),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, STRELKA2, FOR_SMV1),
@@ -314,10 +313,10 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                         format("%s/%s/dnaCaptureVar_Fastq_freebayes_for_smv1_analysis_template",
                                 DNA_CAPTURE_VAR_FASTQ_DIR,
                                 BWA_VARDICT_MUTECT1_STRELKA2_GATK_HAPOTYPECALLER_SCALPEL_LOFREQ_FREEBAYES_TEMPLATES),
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, ALIGNMENT, FOR_SMV1_1),
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, POSTALIGNMENT, FOR_SMV1) },
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, VARDICT, FOR_SMV1),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, GATK_HAPLOTYPE_CALLER, FOR_SMV1),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, STRELKA2, FOR_SMV1),
@@ -334,10 +333,10 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                         format("%s/%s/dnaCaptureVar_Fastq_gatkHaplotypeCaller_for_smv1_analysis_template",
                                 DNA_CAPTURE_VAR_FASTQ_DIR,
                                 BWA_VARDICT_MUTECT1_STRELKA2_GATK_HAPOTYPECALLER_SCALPEL_LOFREQ_FREEBAYES_TEMPLATES),
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, ALIGNMENT, FOR_SMV1_1),
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, POSTALIGNMENT, FOR_SMV1) },
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, VARDICT, FOR_SMV1),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, GATK_HAPLOTYPE_CALLER, FOR_SMV1),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, STRELKA2, FOR_SMV1),
@@ -353,10 +352,10 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                         format("%s/DnaCaptureVar_Fastq_lofreq_for_smv1_analysis.sh", OUTPUT_SH_FILES_DIR),
                         format("%s/%s/dnaCaptureVar_Fastq_lofreq_for_smv1_analysis_template", DNA_CAPTURE_VAR_FASTQ_DIR,
                                 BWA_VARDICT_MUTECT1_STRELKA2_GATK_HAPOTYPECALLER_SCALPEL_LOFREQ_FREEBAYES_TEMPLATES),
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, ALIGNMENT, FOR_SMV1_1),
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, POSTALIGNMENT, FOR_SMV1) },
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, VARDICT, FOR_SMV1),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, GATK_HAPLOTYPE_CALLER, FOR_SMV1),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, STRELKA2, FOR_SMV1),
@@ -373,10 +372,10 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                         format("%s/%s/dnaCaptureVar_Fastq_mergeMutation_for_cohort_analysis_template",
                                 DNA_CAPTURE_VAR_FASTQ_DIR,
                                 BWA_VARDICT_MUTECT1_STRELKA2_GATK_HAPOTYPECALLER_SCALPEL_LOFREQ_FREEBAYES_TEMPLATES),
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, ALIGNMENT, FOR_SMV1_1),
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, POSTALIGNMENT, FOR_SMV1) },
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, VARDICT, FOR_SMV1),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, GATK_HAPLOTYPE_CALLER, FOR_SMV1),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, STRELKA2, FOR_SMV1),
@@ -393,10 +392,10 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                         format("%s/%s/dnaCaptureVar_Fastq_mutect1_for_smv1_analysis_template",
                                 DNA_CAPTURE_VAR_FASTQ_DIR,
                                 BWA_VARDICT_MUTECT1_STRELKA2_GATK_HAPOTYPECALLER_SCALPEL_LOFREQ_FREEBAYES_TEMPLATES),
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, ALIGNMENT, FOR_SMV1_1),
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, POSTALIGNMENT, FOR_SMV1) },
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, VARDICT, FOR_SMV1),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, GATK_HAPLOTYPE_CALLER, FOR_SMV1),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, STRELKA2, FOR_SMV1),
@@ -413,10 +412,10 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                         format("%s/%s/dnaCaptureVar_Fastq_postalignment_for_smv1_analysis_template",
                                 DNA_CAPTURE_VAR_FASTQ_DIR,
                                 BWA_VARDICT_MUTECT1_STRELKA2_GATK_HAPOTYPECALLER_SCALPEL_LOFREQ_FREEBAYES_TEMPLATES),
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, ALIGNMENT, FOR_SMV1_1),
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, POSTALIGNMENT, FOR_SMV1) },
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, VARDICT, FOR_SMV1),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, GATK_HAPLOTYPE_CALLER, FOR_SMV1),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, STRELKA2, FOR_SMV1),
@@ -433,10 +432,10 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                         format("%s/%s/dnaCaptureVar_Fastq_scalpel_for_smv1_analysis_template",
                                 DNA_CAPTURE_VAR_FASTQ_DIR,
                                 BWA_VARDICT_MUTECT1_STRELKA2_GATK_HAPOTYPECALLER_SCALPEL_LOFREQ_FREEBAYES_TEMPLATES),
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, ALIGNMENT, FOR_SMV1_1),
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, POSTALIGNMENT, FOR_SMV1) },
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, VARDICT, FOR_SMV1),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, GATK_HAPLOTYPE_CALLER, FOR_SMV1),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, STRELKA2, FOR_SMV1),
@@ -453,10 +452,10 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                         format("%s/%s/dnaCaptureVar_Fastq_strelka2_for_smv1_analysis_template",
                                 DNA_CAPTURE_VAR_FASTQ_DIR,
                                 BWA_VARDICT_MUTECT1_STRELKA2_GATK_HAPOTYPECALLER_SCALPEL_LOFREQ_FREEBAYES_TEMPLATES),
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, ALIGNMENT, FOR_SMV1_1),
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, POSTALIGNMENT, FOR_SMV1) },
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, VARDICT, FOR_SMV1),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, GATK_HAPLOTYPE_CALLER, FOR_SMV1),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, STRELKA2, FOR_SMV1),
@@ -473,10 +472,10 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                         format("%s/%s/dnaCaptureVar_Fastq_vardict_for_smv1_analysis_template",
                                 DNA_CAPTURE_VAR_FASTQ_DIR,
                                 BWA_VARDICT_MUTECT1_STRELKA2_GATK_HAPOTYPECALLER_SCALPEL_LOFREQ_FREEBAYES_TEMPLATES),
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, ALIGNMENT, FOR_SMV1_1),
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, POSTALIGNMENT, FOR_SMV1) },
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, VARDICT, FOR_SMV1),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, GATK_HAPLOTYPE_CALLER, FOR_SMV1),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, STRELKA2, FOR_SMV1),
@@ -491,10 +490,10 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                         format("%s/DnaCaptureVar_Fastq_alignment_for_GA5_1_analysis.sh", OUTPUT_SH_FILES_DIR),
                         format("%s/%s/dnaCaptureVar_Fastq_alignment_for_GA5_1_analysis_template",
                                 DNA_CAPTURE_VAR_FASTQ_DIR, ALL_TASKS_PAIRED_TEMPLATES),
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, ALIGNMENT, FOR_GA5_1),
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, POSTALIGNMENT, FOR_GA5) },
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, VARDICT, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, CONT_EST, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, STRELKA2, FOR_GA5),
@@ -510,10 +509,10 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                         format("%s/DnaCaptureVar_Fastq_contEst_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
                         format("%s/%s/dnaCaptureVar_Fastq_contEst_for_GA5_analysis_template",
                                 DNA_CAPTURE_VAR_FASTQ_DIR, ALL_TASKS_PAIRED_TEMPLATES),
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, ALIGNMENT, FOR_GA5_1),
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, POSTALIGNMENT, FOR_GA5) },
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, VARDICT, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, CONT_EST, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, STRELKA2, FOR_GA5),
@@ -529,10 +528,10 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                         format("%s/DnaCaptureVar_Fastq_exomecnv_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
                         format("%s/%s/dnaCaptureVar_Fastq_exomecnv_for_GA5_analysis_template",
                                 DNA_CAPTURE_VAR_FASTQ_DIR, ALL_TASKS_PAIRED_TEMPLATES),
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, ALIGNMENT, FOR_GA5_1),
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, POSTALIGNMENT, FOR_GA5) },
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, VARDICT, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, CONT_EST, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, STRELKA2, FOR_GA5),
@@ -548,10 +547,10 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                         format("%s/DnaCaptureVar_Fastq_lofreq_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
                         format("%s/%s/dnaCaptureVar_Fastq_lofreq_for_GA5_analysis_template",
                                 DNA_CAPTURE_VAR_FASTQ_DIR, ALL_TASKS_PAIRED_TEMPLATES),
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, ALIGNMENT, FOR_GA5_1),
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, POSTALIGNMENT, FOR_GA5) },
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, VARDICT, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, CONT_EST, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, STRELKA2, FOR_GA5),
@@ -567,10 +566,10 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                         format("%s/DnaCaptureVar_Fastq_mergeMutation_for_cohort_analysis.sh", OUTPUT_SH_FILES_DIR),
                         format("%s/%s/dnaCaptureVar_Fastq_mergeMutation_for_cohort_analysis_template",
                                 DNA_CAPTURE_VAR_FASTQ_DIR, ALL_TASKS_PAIRED_TEMPLATES),
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, ALIGNMENT, FOR_GA5_1),
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, POSTALIGNMENT, FOR_GA5) },
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, VARDICT, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, CONT_EST, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, STRELKA2, FOR_GA5),
@@ -586,10 +585,10 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                         format("%s/DnaCaptureVar_Fastq_mutect2_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
                         format("%s/%s/dnaCaptureVar_Fastq_mutect2_for_GA5_analysis_template", DNA_CAPTURE_VAR_FASTQ_DIR,
                                 ALL_TASKS_PAIRED_TEMPLATES),
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, ALIGNMENT, FOR_GA5_1),
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, POSTALIGNMENT, FOR_GA5) },
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, VARDICT, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, CONT_EST, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, STRELKA2, FOR_GA5),
@@ -605,10 +604,10 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                         format("%s/DnaCaptureVar_Fastq_postalignment_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
                         format("%s/%s/dnaCaptureVar_Fastq_postalignment_for_GA5_analysis_template",
                                 DNA_CAPTURE_VAR_FASTQ_DIR, ALL_TASKS_PAIRED_TEMPLATES),
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, ALIGNMENT, FOR_GA5_1),
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, POSTALIGNMENT, FOR_GA5) },
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, VARDICT, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, CONT_EST, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, STRELKA2, FOR_GA5),
@@ -624,10 +623,10 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                         format("%s/DnaCaptureVar_Fastq_scalpel_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
                         format("%s/%s/dnaCaptureVar_Fastq_scalpel_for_GA5_analysis_template", DNA_CAPTURE_VAR_FASTQ_DIR,
                                 ALL_TASKS_PAIRED_TEMPLATES),
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, ALIGNMENT, FOR_GA5_1),
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, POSTALIGNMENT, FOR_GA5) },
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, VARDICT, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, CONT_EST, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, STRELKA2, FOR_GA5),
@@ -643,10 +642,10 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                         format("%s/DnaCaptureVar_Fastq_sequenza_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
                         format("%s/%s/dnaCaptureVar_Fastq_sequenza_for_GA5_analysis_template",
                                 DNA_CAPTURE_VAR_FASTQ_DIR, ALL_TASKS_PAIRED_TEMPLATES),
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, ALIGNMENT, FOR_GA5_1),
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, POSTALIGNMENT, FOR_GA5) },
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, VARDICT, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, CONT_EST, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, STRELKA2, FOR_GA5),
@@ -662,10 +661,10 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                         format("%s/DnaCaptureVar_Fastq_strelka2_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
                         format("%s/%s/dnaCaptureVar_Fastq_strelka2_for_GA5_analysis_template",
                                 DNA_CAPTURE_VAR_FASTQ_DIR, ALL_TASKS_PAIRED_TEMPLATES),
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, ALIGNMENT, FOR_GA5_1),
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, POSTALIGNMENT, FOR_GA5) },
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, VARDICT, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, CONT_EST, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, STRELKA2, FOR_GA5),
@@ -681,10 +680,10 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                         format("%s/DnaCaptureVar_Fastq_vardict_for_GA5_analysis.sh", OUTPUT_SH_FILES_DIR),
                         format("%s/%s/dnaCaptureVar_Fastq_vardict_for_GA5_analysis_template",
                                 DNA_CAPTURE_VAR_FASTQ_DIR, ALL_TASKS_PAIRED_TEMPLATES),
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, ALIGNMENT, FOR_GA5_1),
                                 format("%s%s%s && \\", EXPECTED_SCRIPT_START, POSTALIGNMENT, FOR_GA5) },
-                        new String[]{
+                        new String[] {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, VARDICT, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, CONT_EST, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, STRELKA2, FOR_GA5),
@@ -692,7 +691,7 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, SCALPEL, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, LOFREQ, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, SEQUENZA, FOR_GA5),
-                                format("%s%s%s &", EXPECTED_SCRIPT_START, EXOMECNV, FOR_GA5)},
+                                format("%s%s%s &", EXPECTED_SCRIPT_START, EXOMECNV, FOR_GA5) },
                         format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION, FOR_COHORT_ANALYSIS))
         );
     }
