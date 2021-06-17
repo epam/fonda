@@ -23,8 +23,10 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static com.epam.fonda.TestTemplateUtils.getSamplesScripts;
@@ -130,9 +132,9 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
 
     private static final String EXPECTED_SCRIPT_START =
             "build/resources/integrationTest/output/sh_files/RnaExpression_Fastq";
-    private static final String SEQ_TO_PURGE =
+    private static final String MERGED_FASTQ_PATH =
             format("%1$soutput/smv%2$s/fastq/smv%2$s.merged_R%3$s.fastq.gz", OUTPUT_DIR_ROOT, "%1$d", "%2$d");
-    private static final Integer SEQ_TO_PURGE_NUMBER = 6;
+    private static final Integer MERGED_FASTQ_NUMBER = 6;
 
     @ParameterizedTest(name = "{2}-test")
     @MethodSource("initParameters")
@@ -184,19 +186,17 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
                         postProcessScript
                 )
         );
-        final List<String> fieldsToPurge = getFieldsToPurge(SEQ_TO_PURGE, SEQ_TO_PURGE_NUMBER);
-        context.setVariable("fields", fieldsToPurge);
+        final List<String> fieldsToClean = getFieldsToClean(MERGED_FASTQ_PATH, MERGED_FASTQ_NUMBER);
+        context.setVariable("fields", fieldsToClean);
         final String expectedCleanScript = TEMPLATE_ENGINE.process(CLEAN_TMP_TEMPLATE_PATH, context);
         return expectedMasterScript + expectedCleanScript;
     }
 
-    private List<String> getFieldsToPurge(final String seqToPurge, final int seqToPurgeNumber) {
-        final List<String> fieldsToPurge = new ArrayList<>();
-        for (int i = 1; i <= seqToPurgeNumber; i++) {
-            fieldsToPurge.add(format(seqToPurge, i, 1));
-            fieldsToPurge.add(format(seqToPurge, i, 2));
-        }
-        return fieldsToPurge;
+    private List<String> getFieldsToClean(final String template, final int numberOfCopy) {
+        return IntStream.range(1, numberOfCopy + 1)
+                .mapToObj(s -> Arrays.asList(format(template, s, 1), format(template, s, 2)))
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
     }
 
     @SuppressWarnings("all")
