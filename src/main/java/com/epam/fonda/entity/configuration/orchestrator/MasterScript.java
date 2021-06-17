@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -115,7 +116,7 @@ public final class MasterScript implements ScriptManager {
     public void resetScript() {
         this.alignmentScripts = new LinkedList<>();
         this.postProcessScripts = new LinkedHashSet<>();
-        this.cleanupTempFiles = new LinkedHashSet<>();
+        this.cleanupTempFiles = new TreeSet<>();
         this.scriptsBySample = new TreeMap<>();
     }
 

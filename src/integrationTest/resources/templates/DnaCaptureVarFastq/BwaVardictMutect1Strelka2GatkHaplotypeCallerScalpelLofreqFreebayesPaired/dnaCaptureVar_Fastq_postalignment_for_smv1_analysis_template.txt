@@ -101,7 +101,7 @@ then
 else
 	echo $(date) Confirm bam from smv1:
 fi
-
+[# th:if = "${!master}"]
 echo `date` Begin Step: Run vardict...
 qsub build/resources/integrationTest/output/sh_files/DnaCaptureVar_Fastq_vardict_for_smv1_analysis.sh
 if [ $? -eq 0 ]
@@ -192,5 +192,5 @@ else
 	echo `date` The job was aborted due to ERRORS found.
 	exit 1;
 fi
-
+[/]
 echo `date` Finish the job execution!

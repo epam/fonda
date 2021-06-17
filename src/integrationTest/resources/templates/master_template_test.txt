@@ -95,37 +95,13 @@ function process_scripts_launch() {
     check_current_status
 }
 
-[# th:if = "${hasPostProcess}"]function post_process_scripts_launch() {
-    launch_script build/resources/integrationTest/output/sh_files/RnaExpression_Fastq_qcsummary_for_cohort_analysis.sh &
+[# th:if = "${postProcessScript != null}"]function post_process_scripts_launch() {
+    launch_script [(${postProcessScript})]
     wait
     check_current_status
 }[/]
 
-process_scripts_launch[# th:if = "${hasPostProcess}"] && \
+process_scripts_launch[# th:if = "${postProcessScript != null}"] && \
 post_process_scripts_launch[/]
 
 log_info "All jobs have been completed."
-echo `date` Begin Step: Remove temporary directories...
-rm -rf build/resources/integrationTest/output/smv1/fastq/smv1.merged_R1.fastq.gz
-rm -rf build/resources/integrationTest/output/smv1/fastq/smv1.merged_R2.fastq.gz
-rm -rf build/resources/integrationTest/output/smv3/fastq/smv3.merged_R1.fastq.gz
-rm -rf build/resources/integrationTest/output/smv3/fastq/smv3.merged_R2.fastq.gz
-rm -rf build/resources/integrationTest/output/smv2/fastq/smv2.merged_R1.fastq.gz
-rm -rf build/resources/integrationTest/output/smv2/fastq/smv2.merged_R2.fastq.gz
-rm -rf build/resources/integrationTest/output/smv5/fastq/smv5.merged_R1.fastq.gz
-rm -rf build/resources/integrationTest/output/smv5/fastq/smv5.merged_R2.fastq.gz
-rm -rf build/resources/integrationTest/output/smv4/fastq/smv4.merged_R1.fastq.gz
-rm -rf build/resources/integrationTest/output/smv4/fastq/smv4.merged_R2.fastq.gz
-rm -rf build/resources/integrationTest/output/smv6/fastq/smv6.merged_R1.fastq.gz
-rm -rf build/resources/integrationTest/output/smv6/fastq/smv6.merged_R2.fastq.gz
-
-if [ $? -eq 0 ]
-then
-	echo `date` Successful Step: Remove temporary directories.
-	sleep 8
-else
-	echo `date` Error Step: Remove temporary directories.
-
-	echo `date` The job was aborted due to ERRORS found.
-	exit 1;
-fi

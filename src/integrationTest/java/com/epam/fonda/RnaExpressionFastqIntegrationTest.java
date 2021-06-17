@@ -15,25 +15,22 @@
  */
 package com.epam.fonda;
 
-import com.epam.fonda.entity.configuration.orchestrator.MasterScript;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.platform.commons.util.StringUtils;
-import org.thymeleaf.context.Context;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import static com.epam.fonda.TestTemplateUtils.getSamplesScripts;
+import static com.epam.fonda.TestTemplateUtils.trimNotImportant;
 import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -44,10 +41,9 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
     private static final String RNA_EXPRESSION_FASTQ_SUFFIX = "RnaExpressionFastq/";
     private static final String OUTPUT_SH_FILE =
             "output/sh_files/RnaExpression_Fastq_alignment_for_smv1_analysis.sh";
-    private static final String MASTER_TEMPLATE_TEST =
-            format("%smaster_template_test", RNA_EXPRESSION_FASTQ_SUFFIX);
-    private static final String OUTPUT_FILE_MASTER =
-            "output/sh_files/master.sh";
+    private static final String CLEAN_TMP_TEMPLATE_PATH = "clean_up_tmpdir_test_output_data";
+    private static final String MASTER_TEMPLATE_TEST_PATH = "master_template_test";
+    private static final String OUTPUT_FILE_MASTER = "output/sh_files/master.sh";
     private static final String S_CONFIG_PATH =
             format("%ssRnaExpressionFastq.txt", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_ALIGNMENT_FOR_SMV1_ANALYSIS_TEMPLATE_PATH =
@@ -128,18 +124,17 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
             format("%srnaExpression_Fastq_non_Hisat2", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String RNA_EXPRESSION_FASTQ_NON_SALMON_TEMPLATE =
             format("%srnaExpression_Fastq_non_Salmon", RNA_EXPRESSION_FASTQ_SUFFIX);
+    private static final String POST_PROCESS_SCRIPT =
+            "build/resources/integrationTest/output/sh_files/RnaExpression_Fastq_qcsummary_for_cohort_analysis.sh &";
     private static final String OUTPUT_DIR_ROOT = "build/resources/integrationTest/";
     private static final String SAMPLE_NAME = "smv1/";
     private static final Integer NUMBER_OF_SCRIPTS = 6;
 
-    private static final Set<String> CONFIG_WITH_POST_PROCESS = new HashSet<>(Arrays.asList(
-            RNA_EXPRESSION_FASTQ_G_STAR_WITH_RSEM,
-            RNA_EXPRESSION_FASTQ_G_STAR_WITHOUT_RSEM,
-            RNA_EXPRESSION_FASTQ_G_RSEM_WITHOUT_HISAT2)
-    );
-
     private static final String EXPECTED_SCRIPT_START =
             "build/resources/integrationTest/output/sh_files/RnaExpression_Fastq";
+    private static final String MERGED_FASTQ_PATH =
+            format("%1$soutput/smv%2$s/fastq/smv%2$s.merged_R%3$s.fastq.gz", OUTPUT_DIR_ROOT, "%1$d", "%2$d");
+    private static final Integer MERGED_FASTQ_NUMBER = 6;
 
     @ParameterizedTest(name = "{2}-test")
     @MethodSource("initParameters")
@@ -152,48 +147,18 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
 
     @ParameterizedTest(name = "{3}-test")
     @MethodSource("initParameters")
-    void testRnaExpressionFastqMaster(final String gConfigPath, final String outputShFile,
-                                      final String templatePath, final String expectedBaseScript,
-                                      final String expectedSecondScript, final Integer numberOfScripts)
+    void testRnaExpressionFastqMaster(final String gConfigPath, final String outputShFile, final String templatePath,
+                                      final String expectedBaseScript, final String expectedSecondScript,
+                                      final Integer numberOfScripts, final String postProcessScript)
             throws IOException, URISyntaxException {
         startAppWithConfigs(gConfigPath, S_CONFIG_PATH, new String[] { "-master" });
         final String expectedCmd = TEMPLATE_ENGINE.process(templatePath, context);
         assertEquals(expectedCmd.trim(), getCmd(outputShFile).trim());
-        final String expectedMasterScript = TEMPLATE_ENGINE.process(
-                MASTER_TEMPLATE_TEST,
-                getContextForMaster(gConfigPath, context, expectedBaseScript, expectedSecondScript, numberOfScripts)
-        );
-        assertEquals(expectedMasterScript.trim(), getCmd(OUTPUT_FILE_MASTER).trim());
-    }
 
-    private Context getContextForMaster(final String gConfigPath, final Context context,
-                                        final String expectedBaseScript, final String expectedSecondScript,
-                                        final Integer numberOfScripts) {
-        context.setVariable(
-                "samplesProcessScripts", getScripts(expectedBaseScript, expectedSecondScript, numberOfScripts)
-        );
-        context.setVariable("hasPostProcess", checkPostProcess(gConfigPath));
-        return context;
-    }
+        final String expectedMasterScript =
+                getExpectedMasterScript(expectedBaseScript, expectedSecondScript, numberOfScripts, postProcessScript);
 
-    private List<MasterScript.SampleScripts> getScripts(final String expectedBaseScript,
-                                                        final String expectedSecondScript,
-                                                        final Integer numberOfScripts) {
-        List<MasterScript.SampleScripts> alignmentScripts = new LinkedList<>();
-        for (int i = 1; i <= numberOfScripts; i++) {
-            List<String> baseScripts = new ArrayList<>();
-            baseScripts.add(format(expectedBaseScript, i));
-            List<String> secondaryScripts = new ArrayList<>();
-            if (StringUtils.isNotBlank(expectedSecondScript)) {
-                secondaryScripts.add(format(expectedSecondScript, i));
-            }
-            alignmentScripts.add(new MasterScript.SampleScripts(baseScripts, secondaryScripts));
-        }
-        return alignmentScripts;
-    }
-
-    private boolean checkPostProcess(final String gConfigPath) {
-        return CONFIG_WITH_POST_PROCESS.contains(gConfigPath);
+        assertEquals(trimNotImportant(expectedMasterScript), trimNotImportant(getCmd(OUTPUT_FILE_MASTER)));
     }
 
     @Test
@@ -211,6 +176,29 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
         );
     }
 
+    private String getExpectedMasterScript(final String expectedBaseScript, final String expectedSecondScript,
+                                           final Integer numberOfScripts, final String postProcessScript) {
+        final String expectedMasterScript = TEMPLATE_ENGINE.process(
+                MASTER_TEMPLATE_TEST_PATH,
+                TestTemplateUtils.getContextForMaster(
+                        context,
+                        getSamplesScripts(expectedBaseScript, expectedSecondScript, numberOfScripts),
+                        postProcessScript
+                )
+        );
+        final List<String> fieldsToClean = getFieldsToClean(MERGED_FASTQ_PATH, MERGED_FASTQ_NUMBER);
+        context.setVariable("fields", fieldsToClean);
+        final String expectedCleanScript = TEMPLATE_ENGINE.process(CLEAN_TMP_TEMPLATE_PATH, context);
+        return expectedMasterScript + expectedCleanScript;
+    }
+
+    private List<String> getFieldsToClean(final String template, final int numberOfCopy) {
+        return IntStream.range(1, numberOfCopy + 1)
+                .mapToObj(s -> Arrays.asList(format(template, s, 1), format(template, s, 2)))
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
+    }
+
     @SuppressWarnings("all")
     private static Stream<Arguments> initParameters() {
         return Stream.of(
@@ -220,35 +208,40 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
                         RNA_EXPRESSION_FASTQ_ALIGNMENT_FOR_SMV1_ANALYSIS_TEMPLATE_PATH,
                         format("%1$s_alignment_for_smv%2$s_analysis.sh &", EXPECTED_SCRIPT_START, "%d"),
                         "",
-                        NUMBER_OF_SCRIPTS),
+                        NUMBER_OF_SCRIPTS,
+                        null),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_SEQPURGE_WITH_ADAPTERS,
                         OUTPUT_SH_FILE,
                         RNA_EXPRESSION_FASTQ_SEQPURGE_WITH_ADAPTERS_TEMPLATE,
                         format("%1$s_alignment_for_smv%2$s_analysis.sh &", EXPECTED_SCRIPT_START, "%d"),
                         "",
-                        NUMBER_OF_SCRIPTS),
+                        NUMBER_OF_SCRIPTS,
+                        null),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_SEQPURGE_WITHOUT_ADAPTERS,
                         OUTPUT_SH_FILE,
                         RNA_EXPRESSION_FASTQ_SEQPURGE_WITHOUT_ADAPTERS_TEMPLATE,
                         format("%1$s_alignment_for_smv%2$s_analysis.sh &", EXPECTED_SCRIPT_START, "%d"),
                         "",
-                        NUMBER_OF_SCRIPTS),
+                        NUMBER_OF_SCRIPTS,
+                        null),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_TRIMMOMATIC_WITH_ADAPTER,
                         OUTPUT_SH_FILE,
                         RNA_EXPRESSION_FASTQ_TRIMMOMATIC_WITH_ADAPTER_TEMPLATE,
                         format("%1$s_alignment_for_smv%2$s_analysis.sh &", EXPECTED_SCRIPT_START, "%d"),
                         "",
-                        NUMBER_OF_SCRIPTS),
+                        NUMBER_OF_SCRIPTS,
+                        null),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_TRIMMOMATIC_WITHOUT_ADAPTER,
                         OUTPUT_SH_FILE,
                         RNA_EXPRESSION_FASTQ_TRIMMOMATIC_WITHOUT_ADAPTER_TEMPLATE,
                         format("%1$s_alignment_for_smv%2$s_analysis.sh &", EXPECTED_SCRIPT_START, "%d"),
                         "",
-                        NUMBER_OF_SCRIPTS),
+                        NUMBER_OF_SCRIPTS,
+                        null),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_STAR_WITH_RSEM,
                         OUTPUT_SH_FILE,
@@ -256,7 +249,8 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
                                 RNA_EXPRESSION_FASTQ_STAR_WITH_RSEM_SUFFIX),
                         format("%1$s_alignment_for_smv%2$s_analysis.sh && \\", EXPECTED_SCRIPT_START, "%d"),
                         format("%1$s_rsem_for_smv%2$s_analysis.sh &", EXPECTED_SCRIPT_START, "%d"),
-                        NUMBER_OF_SCRIPTS),
+                        NUMBER_OF_SCRIPTS,
+                        POST_PROCESS_SCRIPT),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_STAR_WITH_RSEM,
                         format("%sRnaExpression_Fastq_qcsummary_for_cohort_analysis.sh",
@@ -265,7 +259,8 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
                                 RNA_EXPRESSION_FASTQ_STAR_WITH_RSEM_SUFFIX),
                         format("%1$s_alignment_for_smv%2$s_analysis.sh && \\", EXPECTED_SCRIPT_START, "%d"),
                         format("%1$s_rsem_for_smv%2$s_analysis.sh &", EXPECTED_SCRIPT_START, "%d"),
-                        NUMBER_OF_SCRIPTS),
+                        NUMBER_OF_SCRIPTS,
+                        POST_PROCESS_SCRIPT),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_STAR_WITH_RSEM,
                         format("%sRnaExpression_Fastq_rsem_for_smv1_analysis.sh",
@@ -274,7 +269,8 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
                                 RNA_EXPRESSION_FASTQ_STAR_WITH_RSEM_SUFFIX),
                         format("%1$s_alignment_for_smv%2$s_analysis.sh && \\", EXPECTED_SCRIPT_START, "%d"),
                         format("%1$s_rsem_for_smv%2$s_analysis.sh &", EXPECTED_SCRIPT_START, "%d"),
-                        NUMBER_OF_SCRIPTS),
+                        NUMBER_OF_SCRIPTS,
+                        POST_PROCESS_SCRIPT),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_STAR_WITHOUT_RSEM,
                         OUTPUT_SH_FILE,
@@ -282,7 +278,8 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
                                 RNA_EXPRESSION_FASTQ_STAR_WITHOUT_RSEM_SUFFIX),
                         format("%1$s_alignment_for_smv%2$s_analysis.sh &", EXPECTED_SCRIPT_START, "%d"),
                         "",
-                        NUMBER_OF_SCRIPTS),
+                        NUMBER_OF_SCRIPTS,
+                        POST_PROCESS_SCRIPT),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_STAR_WITHOUT_RSEM,
                         format("%sRnaExpression_Fastq_qcsummary_for_cohort_analysis.sh",
@@ -291,21 +288,24 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
                                 RNA_EXPRESSION_FASTQ_STAR_WITHOUT_RSEM_SUFFIX),
                         format("%1$s_alignment_for_smv%2$s_analysis.sh &", EXPECTED_SCRIPT_START, "%d"),
                         "",
-                        NUMBER_OF_SCRIPTS),
+                        NUMBER_OF_SCRIPTS,
+                        POST_PROCESS_SCRIPT),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_HISAT2,
                         OUTPUT_SH_FILE,
                         RNA_EXPRESSION_FASTQ_HISAT2_TEMPLATE,
                         format("%1$s_alignment_for_smv%2$s_analysis.sh &", EXPECTED_SCRIPT_START, "%d"),
                         "",
-                        NUMBER_OF_SCRIPTS),
+                        NUMBER_OF_SCRIPTS,
+                        null),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_SALMON,
                         OUTPUT_SH_FILE,
                         RNA_EXPRESSION_FASTQ_SALMON_TEMPLATE,
                         format("%1$s_alignment_for_smv%2$s_analysis.sh &", EXPECTED_SCRIPT_START, "%d"),
                         "",
-                        NUMBER_OF_SCRIPTS),
+                        NUMBER_OF_SCRIPTS,
+                        null),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_FEATURE_COUNT,
                         format("%sRnaExpression_Fastq_featureCount_for_smv1_analysis.sh",
@@ -314,7 +314,8 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
                                 RNA_EXPRESSION_FASTQ_FEATURE_COUNT_SUFFIX),
                         format("%1$s_alignment_for_smv%2$s_analysis.sh && \\", EXPECTED_SCRIPT_START, "%d"),
                         format("%1$s_featureCount_for_smv%2$s_analysis.sh &", EXPECTED_SCRIPT_START, "%d"),
-                        NUMBER_OF_SCRIPTS),
+                        NUMBER_OF_SCRIPTS,
+                        null),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_CUFFLINKS,
                         format("%sRnaExpression_Fastq_cufflinks_for_smv1_analysis.sh",
@@ -323,7 +324,8 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
                                 "RnaExpression_Fastq_cufflinks_for_smv1_analysis",
                         format("%1$s_alignment_for_smv%2$s_analysis.sh && \\", EXPECTED_SCRIPT_START, "%d"),
                         format("%1$s_cufflinks_for_smv%2$s_analysis.sh &", EXPECTED_SCRIPT_START, "%d"),
-                        NUMBER_OF_SCRIPTS),
+                        NUMBER_OF_SCRIPTS,
+                        null),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_STRINGTIE,
                         format("%sRnaExpression_Fastq_stringtie_for_smv1_analysis.sh",
@@ -332,7 +334,8 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
                                 RNA_EXPRESSION_FASTQ_STRINGTIE_SUFFIX),
                         format("%1$s_alignment_for_smv%2$s_analysis.sh && \\", EXPECTED_SCRIPT_START, "%d"),
                         format("%1$s_stringtie_for_smv%2$s_analysis.sh &", EXPECTED_SCRIPT_START, "%d"),
-                        NUMBER_OF_SCRIPTS),
+                        NUMBER_OF_SCRIPTS,
+                        null),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_RSEM_WITHOUT_HISAT2,
                         format("%sRnaExpression_Fastq_rsem_for_smv1_analysis.sh",
@@ -341,7 +344,8 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
                                 RNA_EXPRESSION_FASTQ_RSEM_WITHOUT_HISAT2_SUFFIX),
                         format("%1$s_alignment_for_smv%2$s_analysis.sh && \\", EXPECTED_SCRIPT_START, "%d"),
                         format("%1$s_rsem_for_smv%2$s_analysis.sh &", EXPECTED_SCRIPT_START, "%d"),
-                        NUMBER_OF_SCRIPTS),
+                        NUMBER_OF_SCRIPTS,
+                        POST_PROCESS_SCRIPT),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_RSEM_WITHOUT_HISAT2,
                         OUTPUT_SH_FILE,
@@ -349,7 +353,8 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
                                 RNA_EXPRESSION_FASTQ_RSEM_WITHOUT_HISAT2_SUFFIX),
                         format("%1$s_alignment_for_smv%2$s_analysis.sh && \\", EXPECTED_SCRIPT_START, "%d"),
                         format("%1$s_rsem_for_smv%2$s_analysis.sh &", EXPECTED_SCRIPT_START, "%d"),
-                        NUMBER_OF_SCRIPTS),
+                        NUMBER_OF_SCRIPTS,
+                        POST_PROCESS_SCRIPT),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_RSEM_WITHOUT_HISAT2,
                         format("%sRnaExpression_Fastq_qcsummary_for_cohort_analysis.sh",
@@ -358,49 +363,56 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
                                 RNA_EXPRESSION_FASTQ_RSEM_WITHOUT_HISAT2_SUFFIX),
                         format("%1$s_alignment_for_smv%2$s_analysis.sh && \\", EXPECTED_SCRIPT_START, "%d"),
                         format("%1$s_rsem_for_smv%2$s_analysis.sh &", EXPECTED_SCRIPT_START, "%d"),
-                        NUMBER_OF_SCRIPTS),
+                        NUMBER_OF_SCRIPTS,
+                        POST_PROCESS_SCRIPT),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_NON_FLAG_XENOME,
                         OUTPUT_SH_FILE,
                         RNA_EXPRESSION_FASTQ_NON_FLAG_XENOME_TEMPLATE,
                         format("%1$s_alignment_for_smv%2$s_analysis.sh &", EXPECTED_SCRIPT_START, "%d"),
                         "",
-                        NUMBER_OF_SCRIPTS),
+                        NUMBER_OF_SCRIPTS,
+                        null),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_NON_SEQPURGE,
                         OUTPUT_SH_FILE,
                         RNA_EXPRESSION_FASTQ_NON_SEQPURGE_TEMPLATE,
                         format("%1$s_alignment_for_smv%2$s_analysis.sh &", EXPECTED_SCRIPT_START, "%d"),
                         "",
-                        NUMBER_OF_SCRIPTS),
+                        NUMBER_OF_SCRIPTS,
+                        null),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_NON_TRIMMOMATIC,
                         OUTPUT_SH_FILE,
                         RNA_EXPRESSION_FASTQ_NON_TRIMMOMATIC_TEMPLATE,
                         format("%1$s_alignment_for_smv%2$s_analysis.sh &", EXPECTED_SCRIPT_START, "%d"),
                         "",
-                        NUMBER_OF_SCRIPTS),
+                        NUMBER_OF_SCRIPTS,
+                        null),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_NON_STAR,
                         OUTPUT_SH_FILE,
                         RNA_EXPRESSION_FASTQ_NON_STAR_TEMPLATE,
                         format("%1$s_alignment_for_smv%2$s_analysis.sh &", EXPECTED_SCRIPT_START, "%d"),
                         "",
-                        NUMBER_OF_SCRIPTS),
+                        NUMBER_OF_SCRIPTS,
+                        null),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_NON_HISAT2,
                         OUTPUT_SH_FILE,
                         RNA_EXPRESSION_FASTQ_NON_HISAT2_TEMPLATE,
                         format("%1$s_alignment_for_smv%2$s_analysis.sh &", EXPECTED_SCRIPT_START, "%d"),
                         "",
-                        NUMBER_OF_SCRIPTS),
+                        NUMBER_OF_SCRIPTS,
+                        null),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_NON_SALMON,
                         OUTPUT_SH_FILE,
                         RNA_EXPRESSION_FASTQ_NON_SALMON_TEMPLATE,
                         format("%1$s_alignment_for_smv%2$s_analysis.sh &", EXPECTED_SCRIPT_START, "%d"),
                         "",
-                        NUMBER_OF_SCRIPTS)
+                        NUMBER_OF_SCRIPTS,
+                        null)
         );
     }
 }
