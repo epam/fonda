@@ -54,6 +54,8 @@ public final class PipelineUtils {
     public static final String NA = "NA";
     public static final String CASE = "case";
     public static final String TUMOR = "tumor";
+    public static final String SLASH = "/";
+    public static final String ESC_CHAR = "\\";
 
     private static final String FASTQS_1_NAME = "fastqs1";
     private static final String FASTQS_2_NAME = "fastqs2";
@@ -61,7 +63,6 @@ public final class PipelineUtils {
     private static final String MERGED_FASTQ_2_NAME = "mergedFastq2";
     private static final String JOB_FINISH = "echo `date` Finish the job execution!\n";
     private static final String VARIABLES_MAP = "variablesMap";
-    private static final String SLASH = "/";
 
     private PipelineUtils() {
     }
