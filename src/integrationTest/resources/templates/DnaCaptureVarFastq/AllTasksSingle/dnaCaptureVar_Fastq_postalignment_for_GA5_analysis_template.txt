@@ -149,8 +149,8 @@ else
 fi
 
 echo `date` Begin Step: GATK recalibration...
-/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -Djava.io.tmpdir=build/resources/integrationTest/output/GA5/tmp -jar /usr/bin/gatk BaseRecalibrator -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -I build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.realign.realign.bam --use-original-qualities true -knownSites /ngs/data/db/mutect.dbsnp -knownSites 10 -knownSites 100 -o build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.realign.realign.recal.table
-/usr/lib/jvm/java-8-openjdk-amd64/bin/java -Xmx10g -Djava.io.tmpdir=build/resources/integrationTest/output/GA5/tmp -jar /usr/bin/gatk ApplyBQSR -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -I build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.realign.realign.bam -bqsr build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.realign.realign.recal.table -o build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.realign.realign.recal.bam
+/usr/bin/gatk BaseRecalibrator -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -I build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.realign.realign.bam --use-original-qualities true --known-sites /ngs/data/db/mutect.dbsnp --known-sites 10 --known-sites 100 -O build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.realign.realign.recal.table
+/usr/bin/gatk ApplyBQSR -R /ngs/data/reference_genome/hg19/hg19_decoy/hg19.decoy.fa -I build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.realign.realign.bam -bqsr build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.realign.realign.recal.table -O build/resources/integrationTest/output/GA5/bam/GA5.merged.sorted.rmdup.realign.realign.recal.bam
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: GATK recalibration.
