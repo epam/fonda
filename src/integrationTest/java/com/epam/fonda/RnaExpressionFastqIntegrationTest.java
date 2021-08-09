@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -126,6 +127,8 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
             format("%srnaExpression_Fastq_non_Salmon", RNA_EXPRESSION_FASTQ_SUFFIX);
     private static final String POST_PROCESS_SCRIPT =
             "build/resources/integrationTest/output/sh_files/RnaExpression_Fastq_qcsummary_for_cohort_analysis.sh &";
+    private static final String POST_PROCESS_SCRIPT_RSEM =
+            "build/resources/integrationTest/output/sh_files/RnaExpression_Fastq_rsem_for_cohort_analysis.sh &";
     private static final String OUTPUT_DIR_ROOT = "build/resources/integrationTest/";
     private static final String SAMPLE_NAME = "smv1/";
     private static final Integer NUMBER_OF_SCRIPTS = 6;
@@ -149,14 +152,14 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
     @MethodSource("initParameters")
     void testRnaExpressionFastqMaster(final String gConfigPath, final String outputShFile, final String templatePath,
                                       final String expectedBaseScript, final String expectedSecondScript,
-                                      final Integer numberOfScripts, final String postProcessScript)
+                                      final Integer numberOfScripts, final List<String> postProcessScripts)
             throws IOException, URISyntaxException {
         startAppWithConfigs(gConfigPath, S_CONFIG_PATH, new String[] { "-master" });
         final String expectedCmd = TEMPLATE_ENGINE.process(templatePath, context);
         assertEquals(expectedCmd.trim(), getCmd(outputShFile).trim());
 
         final String expectedMasterScript =
-                getExpectedMasterScript(expectedBaseScript, expectedSecondScript, numberOfScripts, postProcessScript);
+                getExpectedMasterScript(expectedBaseScript, expectedSecondScript, numberOfScripts, postProcessScripts);
 
         assertEquals(trimNotImportant(expectedMasterScript), trimNotImportant(getCmd(OUTPUT_FILE_MASTER)));
     }
@@ -177,13 +180,13 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
     }
 
     private String getExpectedMasterScript(final String expectedBaseScript, final String expectedSecondScript,
-                                           final Integer numberOfScripts, final String postProcessScript) {
+                                           final Integer numberOfScripts, final List<String> postProcessScripts) {
         final String expectedMasterScript = TEMPLATE_ENGINE.process(
                 MASTER_TEMPLATE_TEST_PATH,
                 TestTemplateUtils.getContextForMaster(
                         context,
                         getSamplesScripts(expectedBaseScript, expectedSecondScript, numberOfScripts),
-                        postProcessScript
+                        postProcessScripts
                 )
         );
         final List<String> fieldsToClean = getFieldsToClean(MERGED_FASTQ_PATH, MERGED_FASTQ_NUMBER);
@@ -250,7 +253,7 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
                         format("%1$s_alignment_for_smv%2$s_analysis.sh && \\", EXPECTED_SCRIPT_START, "%d"),
                         format("%1$s_rsem_for_smv%2$s_analysis.sh &", EXPECTED_SCRIPT_START, "%d"),
                         NUMBER_OF_SCRIPTS,
-                        POST_PROCESS_SCRIPT),
+                        Arrays.asList(POST_PROCESS_SCRIPT, POST_PROCESS_SCRIPT_RSEM)),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_STAR_WITH_RSEM,
                         format("%sRnaExpression_Fastq_qcsummary_for_cohort_analysis.sh",
@@ -260,7 +263,7 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
                         format("%1$s_alignment_for_smv%2$s_analysis.sh && \\", EXPECTED_SCRIPT_START, "%d"),
                         format("%1$s_rsem_for_smv%2$s_analysis.sh &", EXPECTED_SCRIPT_START, "%d"),
                         NUMBER_OF_SCRIPTS,
-                        POST_PROCESS_SCRIPT),
+                        Arrays.asList(POST_PROCESS_SCRIPT, POST_PROCESS_SCRIPT_RSEM)),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_STAR_WITH_RSEM,
                         format("%sRnaExpression_Fastq_rsem_for_smv1_analysis.sh",
@@ -270,7 +273,7 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
                         format("%1$s_alignment_for_smv%2$s_analysis.sh && \\", EXPECTED_SCRIPT_START, "%d"),
                         format("%1$s_rsem_for_smv%2$s_analysis.sh &", EXPECTED_SCRIPT_START, "%d"),
                         NUMBER_OF_SCRIPTS,
-                        POST_PROCESS_SCRIPT),
+                        Arrays.asList(POST_PROCESS_SCRIPT, POST_PROCESS_SCRIPT_RSEM)),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_STAR_WITHOUT_RSEM,
                         OUTPUT_SH_FILE,
@@ -279,7 +282,7 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
                         format("%1$s_alignment_for_smv%2$s_analysis.sh &", EXPECTED_SCRIPT_START, "%d"),
                         "",
                         NUMBER_OF_SCRIPTS,
-                        POST_PROCESS_SCRIPT),
+                        Collections.singletonList(POST_PROCESS_SCRIPT)),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_STAR_WITHOUT_RSEM,
                         format("%sRnaExpression_Fastq_qcsummary_for_cohort_analysis.sh",
@@ -289,7 +292,7 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
                         format("%1$s_alignment_for_smv%2$s_analysis.sh &", EXPECTED_SCRIPT_START, "%d"),
                         "",
                         NUMBER_OF_SCRIPTS,
-                        POST_PROCESS_SCRIPT),
+                        Collections.singletonList(POST_PROCESS_SCRIPT)),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_HISAT2,
                         OUTPUT_SH_FILE,
@@ -345,7 +348,7 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
                         format("%1$s_alignment_for_smv%2$s_analysis.sh && \\", EXPECTED_SCRIPT_START, "%d"),
                         format("%1$s_rsem_for_smv%2$s_analysis.sh &", EXPECTED_SCRIPT_START, "%d"),
                         NUMBER_OF_SCRIPTS,
-                        POST_PROCESS_SCRIPT),
+                        Collections.singletonList(POST_PROCESS_SCRIPT)),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_RSEM_WITHOUT_HISAT2,
                         OUTPUT_SH_FILE,
@@ -354,7 +357,7 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
                         format("%1$s_alignment_for_smv%2$s_analysis.sh && \\", EXPECTED_SCRIPT_START, "%d"),
                         format("%1$s_rsem_for_smv%2$s_analysis.sh &", EXPECTED_SCRIPT_START, "%d"),
                         NUMBER_OF_SCRIPTS,
-                        POST_PROCESS_SCRIPT),
+                        Collections.singletonList(POST_PROCESS_SCRIPT)),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_RSEM_WITHOUT_HISAT2,
                         format("%sRnaExpression_Fastq_qcsummary_for_cohort_analysis.sh",
@@ -364,7 +367,7 @@ public class RnaExpressionFastqIntegrationTest extends AbstractIntegrationTest {
                         format("%1$s_alignment_for_smv%2$s_analysis.sh && \\", EXPECTED_SCRIPT_START, "%d"),
                         format("%1$s_rsem_for_smv%2$s_analysis.sh &", EXPECTED_SCRIPT_START, "%d"),
                         NUMBER_OF_SCRIPTS,
-                        POST_PROCESS_SCRIPT),
+                        Collections.singletonList(POST_PROCESS_SCRIPT)),
                 Arguments.of(
                         RNA_EXPRESSION_FASTQ_G_NON_FLAG_XENOME,
                         OUTPUT_SH_FILE,
