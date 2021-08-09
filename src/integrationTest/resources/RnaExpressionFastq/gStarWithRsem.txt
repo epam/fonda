@@ -32,7 +32,7 @@ rsem = path/to/rsem
 
 [Pipeline_Info]
 workflow = RnaExpression_Fastq
-toolset = star+rsem+qc
+toolset = star+rsem+qc+conversion
 read_type = paired
 flag_xenome = no
 trimmomatic = trimmomatic

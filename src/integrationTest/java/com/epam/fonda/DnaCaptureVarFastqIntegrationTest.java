@@ -23,6 +23,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static com.epam.fonda.TestTemplateUtils.getSamplesScripts;
@@ -89,7 +91,7 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
     @MethodSource({"initParametersSingle", "initParametersPaired", "initParameters"})
     void testDnaCaptureVarFastqMaster(final String gConfigPath, final String sConfigPath, final String outputShFile,
                                       final String templatePath, final String[] expectedBaseScript,
-                                      final String[] expectedSecondScript, final String postProcessScript)
+                                      final String[] expectedSecondScript, final List<String> postProcessScripts)
             throws IOException, URISyntaxException {
         startAppWithConfigs(gConfigPath, sConfigPath, new String[] { "-master" });
         final String expectedCmd = TEMPLATE_ENGINE.process(templatePath, context);
@@ -98,7 +100,7 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
         final String expectedMasterScript = TEMPLATE_ENGINE.process(
                 MASTER_TEMPLATE_PATH,
                 TestTemplateUtils.getContextForMaster(
-                        context, getSamplesScripts(expectedBaseScript, expectedSecondScript), postProcessScript
+                        context, getSamplesScripts(expectedBaseScript, expectedSecondScript), postProcessScripts
                 )
         );
 
@@ -152,7 +154,8 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                                 DNA_CAPTURE_VAR_FASTQ_DIR, BWA_PICARD_QC_ABRA_GATK_SINGLE_TEMPLATES),
                         new String[] { format("%s%s%s && \\", EXPECTED_SCRIPT_START, ALIGNMENT, FOR_GA5_1) },
                         new String[] { format("%s%s%s &\n     ", EXPECTED_SCRIPT_START, POSTALIGNMENT, FOR_GA5) },
-                        format("%s%s%s &", EXPECTED_SCRIPT_START, QCSUMMARY, FOR_COHORT_ANALYSIS)),
+                        Collections.singletonList(format("%s%s%s &", EXPECTED_SCRIPT_START, QCSUMMARY,
+                                FOR_COHORT_ANALYSIS))),
                 Arguments.of(
                         format("%s/gBwaPicardQcAbraGatkSingle.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/%s", DNA_CAPTURE_VAR_FASTQ_DIR, STUDY_CONFIG_SINGLE),
@@ -161,7 +164,8 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                                 DNA_CAPTURE_VAR_FASTQ_DIR, BWA_PICARD_QC_ABRA_GATK_SINGLE_TEMPLATES),
                         new String[] { format("%s%s%s && \\", EXPECTED_SCRIPT_START, ALIGNMENT, FOR_GA5_1) },
                         new String[] { format("%s%s%s &\n     ", EXPECTED_SCRIPT_START, POSTALIGNMENT, FOR_GA5) },
-                        format("%s%s%s &", EXPECTED_SCRIPT_START, QCSUMMARY, FOR_COHORT_ANALYSIS)),
+                        Collections.singletonList(format("%s%s%s &", EXPECTED_SCRIPT_START, QCSUMMARY,
+                                FOR_COHORT_ANALYSIS))),
                 Arguments.of(
                         format("%s/gBwaPicardQcAbraGatkSingle.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/%s", DNA_CAPTURE_VAR_FASTQ_DIR, STUDY_CONFIG_SINGLE),
@@ -170,7 +174,8 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                                 DNA_CAPTURE_VAR_FASTQ_DIR, BWA_PICARD_QC_ABRA_GATK_SINGLE_TEMPLATES),
                         new String[] { format("%s%s%s && \\", EXPECTED_SCRIPT_START, ALIGNMENT, FOR_GA5_1) },
                         new String[] { format("%s%s%s &\n     ", EXPECTED_SCRIPT_START, POSTALIGNMENT, FOR_GA5) },
-                        format("%s%s%s &", EXPECTED_SCRIPT_START, QCSUMMARY, FOR_COHORT_ANALYSIS)),
+                        Collections.singletonList(format("%s%s%s &", EXPECTED_SCRIPT_START, QCSUMMARY,
+                                FOR_COHORT_ANALYSIS))),
                 Arguments.of(
                         format("%s/gSingleAllTasks.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/sSingleNotTumorOrCase.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
@@ -179,7 +184,8 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                                 DNA_CAPTURE_VAR_FASTQ_DIR, ALL_TASKS_SINGLE_TEMPLATES),
                         new String[] { format("%s%s%s && \\", EXPECTED_SCRIPT_START, ALIGNMENT, FOR_GA5_1) },
                         new String[] { format("%s%s%s &\n     ", EXPECTED_SCRIPT_START, POSTALIGNMENT, FOR_GA5) },
-                        format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION, FOR_COHORT_ANALYSIS)),
+                        Collections.singletonList(format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION,
+                                FOR_COHORT_ANALYSIS))),
                 Arguments.of(
                         format("%s/gSingleAllTasks.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/sSingleNotTumorOrCase.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
@@ -188,7 +194,8 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                                 DNA_CAPTURE_VAR_FASTQ_DIR, ALL_TASKS_SINGLE_TEMPLATES),
                         new String[] { format("%s%s%s && \\", EXPECTED_SCRIPT_START, ALIGNMENT, FOR_GA5_1) },
                         new String[] { format("%s%s%s &\n     ", EXPECTED_SCRIPT_START, POSTALIGNMENT, FOR_GA5) },
-                        format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION, FOR_COHORT_ANALYSIS)),
+                        Collections.singletonList(format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION,
+                                FOR_COHORT_ANALYSIS))),
                 Arguments.of(
                         format("%s/gSingleAllTasks.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/sSingleNotTumorOrCase.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
@@ -197,7 +204,8 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                                 DNA_CAPTURE_VAR_FASTQ_DIR, ALL_TASKS_SINGLE_TEMPLATES),
                         new String[] { format("%s%s%s && \\", EXPECTED_SCRIPT_START, ALIGNMENT, FOR_GA5_1) },
                         new String[] { format("%s%s%s &\n     ", EXPECTED_SCRIPT_START, POSTALIGNMENT, FOR_GA5) },
-                        format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION, FOR_COHORT_ANALYSIS)),
+                        Collections.singletonList(format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION,
+                                FOR_COHORT_ANALYSIS))),
                 Arguments.of(
                         format("%s/gBwaPicardQcTargetSingle.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/sSingleTarget.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
@@ -206,7 +214,8 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                                 DNA_CAPTURE_VAR_FASTQ_DIR, BWA_PICARD_QC_TARGET_SINGLE),
                         new String[] { format("%s%s%s && \\", EXPECTED_SCRIPT_START, ALIGNMENT, FOR_GA5_1) },
                         new String[] { format("%s%s%s &\n     ", EXPECTED_SCRIPT_START, POSTALIGNMENT, FOR_GA5) },
-                        format("%s%s%s &", EXPECTED_SCRIPT_START, QCSUMMARY, FOR_COHORT_ANALYSIS)),
+                        Collections.singletonList(format("%s%s%s &", EXPECTED_SCRIPT_START, QCSUMMARY,
+                                FOR_COHORT_ANALYSIS))),
                 Arguments.of(
                         format("%s/gBwaPicardQcTargetSingle.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/sSingleTarget.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
@@ -215,7 +224,8 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                                 DNA_CAPTURE_VAR_FASTQ_DIR, BWA_PICARD_QC_TARGET_SINGLE),
                         new String[] { format("%s%s%s && \\", EXPECTED_SCRIPT_START, ALIGNMENT, FOR_GA5_1) },
                         new String[] { format("%s%s%s &\n     ", EXPECTED_SCRIPT_START, POSTALIGNMENT, FOR_GA5) },
-                        format("%s%s%s &", EXPECTED_SCRIPT_START, QCSUMMARY, FOR_COHORT_ANALYSIS)),
+                        Collections.singletonList(format("%s%s%s &", EXPECTED_SCRIPT_START, QCSUMMARY,
+                                FOR_COHORT_ANALYSIS))),
                 Arguments.of(
                         format("%s/gBwaPicardQcTargetSingle.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/sSingleTarget.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
@@ -224,7 +234,8 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                                 DNA_CAPTURE_VAR_FASTQ_DIR, BWA_PICARD_QC_TARGET_SINGLE),
                         new String[] { format("%s%s%s && \\", EXPECTED_SCRIPT_START, ALIGNMENT, FOR_GA5_1) },
                         new String[] { format("%s%s%s &\n     ", EXPECTED_SCRIPT_START, POSTALIGNMENT, FOR_GA5) },
-                        format("%s%s%s &", EXPECTED_SCRIPT_START, QCSUMMARY, FOR_COHORT_ANALYSIS))
+                        Collections.singletonList(format("%s%s%s &", EXPECTED_SCRIPT_START, QCSUMMARY,
+                                FOR_COHORT_ANALYSIS)))
         );
     }
 
@@ -257,7 +268,8 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                                 DNA_CAPTURE_VAR_FASTQ_DIR, BWA_PICARD_QC_ABRA_GATK_PAIRED_TEMPLATES),
                         new String[] { format("%s%s%s && \\", EXPECTED_SCRIPT_START, ALIGNMENT, FOR_GA5_1) },
                         new String[] { format("%s%s%s &\n     ", EXPECTED_SCRIPT_START, POSTALIGNMENT, FOR_GA5) },
-                        format("%s%s%s &", EXPECTED_SCRIPT_START, QCSUMMARY, FOR_COHORT_ANALYSIS)),
+                        Collections.singletonList(format("%s%s%s &", EXPECTED_SCRIPT_START, QCSUMMARY,
+                                FOR_COHORT_ANALYSIS))),
                 Arguments.of(
                         format("%s/gBwaPicardQcAbraGatkPaired.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/%s", DNA_CAPTURE_VAR_FASTQ_DIR, STUDY_CONFIG_PAIRED),
@@ -266,7 +278,8 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                                 DNA_CAPTURE_VAR_FASTQ_DIR, BWA_PICARD_QC_ABRA_GATK_PAIRED_TEMPLATES),
                         new String[] { format("%s%s%s && \\", EXPECTED_SCRIPT_START, ALIGNMENT, FOR_GA5_1) },
                         new String[] { format("%s%s%s &\n     ", EXPECTED_SCRIPT_START, POSTALIGNMENT, FOR_GA5) },
-                        format("%s%s%s &", EXPECTED_SCRIPT_START, QCSUMMARY, FOR_COHORT_ANALYSIS)),
+                        Collections.singletonList(format("%s%s%s &", EXPECTED_SCRIPT_START, QCSUMMARY,
+                                FOR_COHORT_ANALYSIS))),
                 Arguments.of(
                         format("%s/gBwaPicardQcAbraGatkPaired.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/%s", DNA_CAPTURE_VAR_FASTQ_DIR, STUDY_CONFIG_PAIRED),
@@ -275,7 +288,8 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                                 DNA_CAPTURE_VAR_FASTQ_DIR, BWA_PICARD_QC_ABRA_GATK_PAIRED_TEMPLATES),
                         new String[] { format("%s%s%s && \\", EXPECTED_SCRIPT_START, ALIGNMENT, FOR_GA5_1) },
                         new String[] { format("%s%s%s &\n     ", EXPECTED_SCRIPT_START, POSTALIGNMENT, FOR_GA5) },
-                        format("%s%s%s &", EXPECTED_SCRIPT_START, QCSUMMARY, FOR_COHORT_ANALYSIS))
+                        Collections.singletonList(format("%s%s%s &", EXPECTED_SCRIPT_START, QCSUMMARY,
+                                FOR_COHORT_ANALYSIS)))
         );
     }
 
@@ -303,7 +317,8 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, LOFREQ, FOR_SMV1),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, FREEBAYES, FOR_SMV1)
                         },
-                        format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION, FOR_COHORT_ANALYSIS)),
+                        Collections.singletonList(format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION,
+                                FOR_COHORT_ANALYSIS))),
                 Arguments.of(
                         format("%s/gBwaVardictMutect1Strelka2GatkHaplotypeCallerScalpelLofreqFreebayesPaired.txt",
                                 DNA_CAPTURE_VAR_FASTQ_DIR),
@@ -324,7 +339,8 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, SCALPEL, FOR_SMV1),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, LOFREQ, FOR_SMV1),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, FREEBAYES, FOR_SMV1) },
-                        format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION, FOR_COHORT_ANALYSIS)),
+                        Collections.singletonList(format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION,
+                                FOR_COHORT_ANALYSIS))),
                 Arguments.of(
                         format("%s/gBwaVardictMutect1Strelka2GatkHaplotypeCallerScalpelLofreqFreebayesPaired.txt",
                                 DNA_CAPTURE_VAR_FASTQ_DIR),
@@ -344,7 +360,8 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, SCALPEL, FOR_SMV1),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, LOFREQ, FOR_SMV1),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, FREEBAYES, FOR_SMV1) },
-                        format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION, FOR_COHORT_ANALYSIS)),
+                        Collections.singletonList(format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION,
+                                FOR_COHORT_ANALYSIS))),
                 Arguments.of(
                         format("%s/gBwaVardictMutect1Strelka2GatkHaplotypeCallerScalpelLofreqFreebayesPaired.txt",
                                 DNA_CAPTURE_VAR_FASTQ_DIR),
@@ -363,7 +380,8 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, SCALPEL, FOR_SMV1),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, LOFREQ, FOR_SMV1),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, FREEBAYES, FOR_SMV1) },
-                        format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION, FOR_COHORT_ANALYSIS)),
+                        Collections.singletonList(format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION,
+                                FOR_COHORT_ANALYSIS))),
                 Arguments.of(
                         format("%s/gBwaVardictMutect1Strelka2GatkHaplotypeCallerScalpelLofreqFreebayesPaired.txt",
                                 DNA_CAPTURE_VAR_FASTQ_DIR),
@@ -383,7 +401,8 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, SCALPEL, FOR_SMV1),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, LOFREQ, FOR_SMV1),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, FREEBAYES, FOR_SMV1) },
-                        format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION, FOR_COHORT_ANALYSIS)),
+                        Collections.singletonList(format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION,
+                                FOR_COHORT_ANALYSIS))),
                 Arguments.of(
                         format("%s/gBwaVardictMutect1Strelka2GatkHaplotypeCallerScalpelLofreqFreebayesPaired.txt",
                                 DNA_CAPTURE_VAR_FASTQ_DIR),
@@ -403,7 +422,8 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, SCALPEL, FOR_SMV1),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, LOFREQ, FOR_SMV1),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, FREEBAYES, FOR_SMV1) },
-                        format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION, FOR_COHORT_ANALYSIS)),
+                        Collections.singletonList(format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION,
+                                FOR_COHORT_ANALYSIS))),
                 Arguments.of(
                         format("%s/gBwaVardictMutect1Strelka2GatkHaplotypeCallerScalpelLofreqFreebayesPaired.txt",
                                 DNA_CAPTURE_VAR_FASTQ_DIR),
@@ -423,7 +443,8 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, SCALPEL, FOR_SMV1),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, LOFREQ, FOR_SMV1),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, FREEBAYES, FOR_SMV1) },
-                        format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION, FOR_COHORT_ANALYSIS)),
+                        Collections.singletonList(format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION,
+                                FOR_COHORT_ANALYSIS))),
                 Arguments.of(
                         format("%s/gBwaVardictMutect1Strelka2GatkHaplotypeCallerScalpelLofreqFreebayesPaired.txt",
                                 DNA_CAPTURE_VAR_FASTQ_DIR),
@@ -443,7 +464,8 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, SCALPEL, FOR_SMV1),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, LOFREQ, FOR_SMV1),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, FREEBAYES, FOR_SMV1) },
-                        format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION, FOR_COHORT_ANALYSIS)),
+                        Collections.singletonList(format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION,
+                                FOR_COHORT_ANALYSIS))),
                 Arguments.of(
                         format("%s/gBwaVardictMutect1Strelka2GatkHaplotypeCallerScalpelLofreqFreebayesPaired.txt",
                                 DNA_CAPTURE_VAR_FASTQ_DIR),
@@ -463,7 +485,8 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, SCALPEL, FOR_SMV1),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, LOFREQ, FOR_SMV1),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, FREEBAYES, FOR_SMV1) },
-                        format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION, FOR_COHORT_ANALYSIS)),
+                        Collections.singletonList(format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION,
+                                FOR_COHORT_ANALYSIS))),
                 Arguments.of(
                         format("%s/gBwaVardictMutect1Strelka2GatkHaplotypeCallerScalpelLofreqFreebayesPaired.txt",
                                 DNA_CAPTURE_VAR_FASTQ_DIR),
@@ -483,7 +506,8 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, SCALPEL, FOR_SMV1),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, LOFREQ, FOR_SMV1),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, FREEBAYES, FOR_SMV1) },
-                        format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION, FOR_COHORT_ANALYSIS)),
+                        Collections.singletonList(format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION,
+                                FOR_COHORT_ANALYSIS))),
                 Arguments.of(
                         format("%s/gPairedAllTasks.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/sPairedControlSampleNotNA.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
@@ -502,7 +526,8 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, LOFREQ, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, SEQUENZA, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, EXOMECNV, FOR_GA5) },
-                        format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION, FOR_COHORT_ANALYSIS)),
+                        Collections.singletonList(format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION,
+                                FOR_COHORT_ANALYSIS))),
                 Arguments.of(
                         format("%s/gPairedAllTasks.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/sPairedControlSampleNotNA.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
@@ -521,7 +546,8 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, LOFREQ, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, SEQUENZA, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, EXOMECNV, FOR_GA5) },
-                        format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION, FOR_COHORT_ANALYSIS)),
+                        Collections.singletonList(format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION,
+                                FOR_COHORT_ANALYSIS))),
                 Arguments.of(
                         format("%s/gPairedAllTasks.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/sPairedControlSampleNotNA.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
@@ -540,7 +566,8 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, LOFREQ, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, SEQUENZA, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, EXOMECNV, FOR_GA5) },
-                        format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION, FOR_COHORT_ANALYSIS)),
+                        Collections.singletonList(format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION,
+                                FOR_COHORT_ANALYSIS))),
                 Arguments.of(
                         format("%s/gPairedAllTasks.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/sPairedControlSampleNotNA.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
@@ -559,7 +586,8 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, LOFREQ, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, SEQUENZA, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, EXOMECNV, FOR_GA5) },
-                        format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION, FOR_COHORT_ANALYSIS)),
+                        Collections.singletonList(format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION,
+                                FOR_COHORT_ANALYSIS))),
                 Arguments.of(
                         format("%s/gPairedAllTasks.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/sPairedControlSampleNotNA.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
@@ -578,7 +606,8 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, LOFREQ, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, SEQUENZA, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, EXOMECNV, FOR_GA5) },
-                        format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION, FOR_COHORT_ANALYSIS)),
+                        Collections.singletonList(format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION,
+                                FOR_COHORT_ANALYSIS))),
                 Arguments.of(
                         format("%s/gPairedAllTasks.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/sPairedControlSampleNotNA.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
@@ -597,7 +626,8 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, LOFREQ, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, SEQUENZA, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, EXOMECNV, FOR_GA5) },
-                        format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION, FOR_COHORT_ANALYSIS)),
+                        Collections.singletonList(format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION,
+                                FOR_COHORT_ANALYSIS))),
                 Arguments.of(
                         format("%s/gPairedAllTasks.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/sPairedControlSampleNotNA.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
@@ -616,7 +646,8 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, LOFREQ, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, SEQUENZA, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, EXOMECNV, FOR_GA5) },
-                        format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION, FOR_COHORT_ANALYSIS)),
+                        Collections.singletonList(format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION,
+                                FOR_COHORT_ANALYSIS))),
                 Arguments.of(
                         format("%s/gPairedAllTasks.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/sPairedControlSampleNotNA.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
@@ -635,7 +666,8 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, LOFREQ, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, SEQUENZA, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, EXOMECNV, FOR_GA5) },
-                        format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION, FOR_COHORT_ANALYSIS)),
+                        Collections.singletonList(format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION,
+                                FOR_COHORT_ANALYSIS))),
                 Arguments.of(
                         format("%s/gPairedAllTasks.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/sPairedControlSampleNotNA.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
@@ -654,7 +686,8 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, LOFREQ, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, SEQUENZA, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, EXOMECNV, FOR_GA5) },
-                        format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION, FOR_COHORT_ANALYSIS)),
+                        Collections.singletonList(format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION,
+                                FOR_COHORT_ANALYSIS))),
                 Arguments.of(
                         format("%s/gPairedAllTasks.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/sPairedControlSampleNotNA.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
@@ -673,7 +706,8 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, LOFREQ, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, SEQUENZA, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, EXOMECNV, FOR_GA5) },
-                        format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION, FOR_COHORT_ANALYSIS)),
+                        Collections.singletonList(format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION,
+                                FOR_COHORT_ANALYSIS))),
                 Arguments.of(
                         format("%s/gPairedAllTasks.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
                         format("%s/sPairedControlSampleNotNA.txt", DNA_CAPTURE_VAR_FASTQ_DIR),
@@ -692,7 +726,8 @@ public class DnaCaptureVarFastqIntegrationTest extends AbstractIntegrationTest {
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, LOFREQ, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, SEQUENZA, FOR_GA5),
                                 format("%s%s%s &", EXPECTED_SCRIPT_START, EXOMECNV, FOR_GA5) },
-                        format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION, FOR_COHORT_ANALYSIS))
+                        Collections.singletonList(format("%s%s%s &", EXPECTED_SCRIPT_START, MERGE_MUTATION,
+                                FOR_COHORT_ANALYSIS)))
         );
     }
 }

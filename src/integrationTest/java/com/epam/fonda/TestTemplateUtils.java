@@ -41,9 +41,9 @@ public final class TestTemplateUtils {
 
     public static Context getContextForMaster(final Context context,
                                               final List<MasterScript.SampleScripts> samplesProcessScripts,
-                                              final String postProcessScript) {
+                                              final List<String> postProcessScripts) {
         context.setVariable("samplesProcessScripts", samplesProcessScripts);
-        context.setVariable("postProcessScript", postProcessScript);
+        context.setVariable("postProcessScripts", postProcessScripts);
         return context;
     }
 
