@@ -32,7 +32,9 @@ import org.junit.jupiter.api.Test;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,6 +42,7 @@ import java.util.Arrays;
 import static com.epam.fonda.utils.PipelineUtils.NA;
 import static com.epam.fonda.utils.PipelineUtils.getExecutionPath;
 import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.join;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -48,6 +51,8 @@ public class CountTest extends AbstractTest {
     private static final String COUNT_TEST_OUTPUT_EXP_CELLS_DATA_PATH =
             "count_template_exp_cells_test_output";
     private static final String LIBRARY_TEST_OUTPUT_DATA_PATH = "library_csv_template_output.txt";
+    private static final String SPACE_REGEX = "\\s+";
+    private static final String SAMPLE_NAME = "sampleName";
     private Configuration expectedConfiguration;
     private Count count;
     private String jarPath;
@@ -56,15 +61,17 @@ public class CountTest extends AbstractTest {
     private TemplateEngine expectedTemplateEngine = TemplateEngineUtils.init();
 
     @BeforeEach
-    void init() {
+    void init() throws IOException {
         constructConfiguration();
         expectedSample = new FastqFileSample();
-        expectedSample.setFastq1(Arrays.asList("/path/to/sampleName/fastq1", "/path/to/sampleName/fastq2"));
-        expectedSample.setName("sampleName");
+        final String fastq1 = getFastq("fastq1");
+        final String fastq2 = getFastq("fastq2");
+        expectedSample.setFastq1(Arrays.asList(fastq1, fastq2));
+        expectedSample.setName(SAMPLE_NAME);
         expectedSample.createDirectory();
         fastqDirs = String.join(",", CellRangerUtils.extractFastqDir(expectedSample).getFastqDirs());
         final LibraryCsv libraryCsv = LibraryCsv.builder()
-                .sampleName("sampleName")
+                .sampleName(SAMPLE_NAME)
                 .fastqDir(fastqDirs)
                 .libraryType("Gene Expression")
                 .build();
@@ -83,12 +90,13 @@ public class CountTest extends AbstractTest {
     }
 
     @Test
-    void generate() throws IOException {
+    void generate() throws IOException, URISyntaxException {
         Context context = new Context();
         context.setVariable("jarPath", jarPath);
         context.setVariable("fastqDirs", fastqDirs);
+        context.setVariable("samplePath", getFastq(""));
         final LibraryCsv libraryCsv = LibraryCsv.builder()
-                .sampleName("sampleName")
+                .sampleName(SAMPLE_NAME)
                 .fastqDir(fastqDirs)
                 .libraryType("Antibody Capture")
                 .build();
@@ -102,7 +110,9 @@ public class CountTest extends AbstractTest {
         final String actualLibraryCsv = readFile(Paths.get(
                 format("%s/sampleName_library.txt", expectedConfiguration.getCommonOutdir().getShOutdir())));
         assertEquals(expectedCmd, actualCmd);
-        assertEquals(expectedLibraryCsv, actualLibraryCsv);
+        assertEquals(expectedLibraryCsv.replaceAll(SPACE_REGEX, " "),
+                actualLibraryCsv.replaceAll(SPACE_REGEX, " "));
+
     }
 
     @Test
@@ -155,5 +165,10 @@ public class CountTest extends AbstractTest {
         GlobalConfig.QueueParameters queueParameters = expectedConfiguration.getGlobalConfig().getQueueParameters();
         queueParameters.setNumThreads(3);
         expectedConfiguration.getGlobalConfig().setCellrangerConfig(cellrangerConfig);
+    }
+
+    private String getFastq(final String fastq1) throws IOException {
+        return new File(join(Arrays.asList("path", "to", SAMPLE_NAME, fastq1), File.separator)).getCanonicalFile()
+                .toString();
     }
 }
