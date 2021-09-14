@@ -76,6 +76,7 @@ public class Count implements Tool<BamResult> {
         private String matrixInfo;
         private int numThreads;
         private String targetPanel;
+        private String maxMemInGb;
     }
 
     @Override
@@ -131,6 +132,10 @@ public class Count implements Tool<BamResult> {
         countFields.targetPanel = StringUtils.isBlank(countTargetPanel) || NA.equals(countTargetPanel)
                 ? null
                 : countTargetPanel;
+        String maxMem = configuration.getGlobalConfig().getQueueParameters().getMaxMem();
+        countFields.maxMemInGb = StringUtils.isBlank(maxMem)
+                ? null
+                : maxMem.replaceAll("\\D+", StringUtils.EMPTY);
         return countFields;
     }
 

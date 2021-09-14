@@ -63,6 +63,7 @@ def usage():
           '("true" by default).\n')
     print('-i <sample_name_list>            The comma-delimited list of sample names.\n')
     print('-z <toolchain> (required)        A user-defined toolchain.\n')
+    print('-F <mem_free>                    Restricts cellranger to use specified amount of memory (in GB).\n')
     print('--master_mode                    The flag enables "-master" option.\n')
     print('-v <verbose>                     The enable debug verbosity output.\n')
 
@@ -97,35 +98,15 @@ def parse_arguments(script_name, argv):
     sample_name_list = None
     toolchain = None
     target_panel = None
+    mem_free = None
     try:
-        opts, args = getopt.getopt(argv, "hs:t:j:o:b:x:l:q:L:M:e:f:c:a:R:r:G:m:g:d:p:u:n:k:i:z:v", ["help", "species=",
-                                                                                                  "read_type=",
-                                                                                                  "job_name=",
-                                                                                                  "dir_out=",
-                                                                                                  "feature_reference=",
-                                                                                                  "target_panel=",
-                                                                                                  "fastq_list=",
-                                                                                                  "fastq_list_r2=",
-                                                                                                  "library_type=",
-                                                                                                  "master=",
-                                                                                                  "expected_cells=",
-                                                                                                  "forced_cells=",
-                                                                                                  "chemistry=",
-                                                                                                  "nosecondary=",
-                                                                                                  "r1_length=",
-                                                                                                  "r2_length=",
-                                                                                                  "genome_build=",
-                                                                                                  "transcriptome=",
-                                                                                                  "vdj_genome=",
-                                                                                                  "detect_doublet=",
-                                                                                                  "project=", "run=",
-                                                                                                  "toolset=",
-                                                                                                  "cores_per_sample=",
-                                                                                                  "sync=",
-                                                                                                  "sample_name_list",
-                                                                                                  "toolchain",
-                                                                                                  "master_mode",
-                                                                                                  "verbose"])
+        opts, args = getopt.getopt(argv, "hs:t:j:o:b:x:l:q:L:M:e:f:c:a:R:r:G:m:g:d:p:u:n:k:i:z:F:v",
+                                   ["help", "species=", "read_type=", "job_name=", "dir_out=", "feature_reference=",
+                                    "target_panel=", "fastq_list=", "fastq_list_r2=", "library_type=", "master=",
+                                    "expected_cells=", "forced_cells=", "chemistry=", "nosecondary=", "r1_length=",
+                                    "r2_length=", "genome_build=", "transcriptome=", "vdj_genome=", "detect_doublet=",
+                                    "project=", "run=", "toolset=", "cores_per_sample=", "sync=", "sample_name_list=",
+                                    "toolchain=", "mem_free=", "master_mode", "verbose"])
         for opt, arg in opts:
             if opt == '-h':
                 print(script_name + ' -s <species> -t <read_type> -j <job_name> -o <dir_out> -b <feature_reference> '
@@ -133,7 +114,8 @@ def parse_arguments(script_name, argv):
                                     ' -e <expected_cells> -f <forced_cells> -c <chemistry> -a <nosecondary> '
                                     '-R <r1_length> -r <r2_length> -G <genome_build> -m <transcriptome> -g <vdj_genome>'
                                     ' -d <detect_doublet> -p <project> -u <run> -n <toolset> -k <cores_per_sample> '
-                                    '<sync> -i <sample_name_list> -z <toolchain> <master_mode> -v <verbose>')
+                                    '<sync> -i <sample_name_list> -z <toolchain> -F <mem_free> <master_mode> '
+                                    '-v <verbose>')
                 sys.exit()
             elif opt in ("-s", "--species"):
                 species = arg
@@ -193,6 +175,8 @@ def parse_arguments(script_name, argv):
                 sample_name_list = arg
             elif opt in ("-z", "--toolchain"):
                 toolchain = arg
+            elif opt in ("-F", "--mem_free"):
+                mem_free = arg
         if not species:
             print('Species (-s <species>) is required')
             usage()
@@ -232,7 +216,7 @@ def parse_arguments(script_name, argv):
         return species, read_type, job_name, dir_out, feature_reference, fastq_list, fastq_list_r2, library_type, \
             master, expected_cells, forced_cells, chemistry, nosecondary, r1_length, r2_length, genome_build, \
             transcriptome, vdj_genome, detect_doublet, project, run, toolset, cores_per_sample, verbose, sync, \
-            sample_name_list, master_mode, toolchain, target_panel
+            sample_name_list, master_mode, toolchain, target_panel, mem_free
     except getopt.GetoptError:
         usage()
         sys.exit(2)
@@ -242,7 +226,7 @@ def main(script_name, argv):
     species, read_type, job_name, dir_out, feature_reference, fastq_list, fastq_list_r2, libtype, master, \
         expected_cells, forced_cells, chemistry, nosecondary, r1_length, r2_length, genome_build, transcriptome, \
         vdj_genome, detect_doublet, project, run, toolset, cores_per_sample, verbose, sync, sample_name_list, \
-        master_mode, toolchain, target_panel = parse_arguments(script_name, argv)
+        master_mode, toolchain, target_panel, mem_free = parse_arguments(script_name, argv)
 
     library_type = "scRNASeq"
     if not read_type:
@@ -272,7 +256,8 @@ def main(script_name, argv):
                           "nosecondary": nosecondary,
                           "r1_length": r1_length,
                           "r2_length": r2_length,
-                          "target_panel": target_panel}
+                          "target_panel": target_panel,
+                          "maxmem": mem_free}
     if not toolset:
         toolset = "count+vdj+qc"
     if detect_doublet and "doubletdetection" not in toolset:

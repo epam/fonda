@@ -20,7 +20,7 @@ echo `date` Begin the job execution...
 
 echo `date` Begin Step: Cellranger count...
 cd build/resources/integrationTest/output/count
-path/to/cellranger count --localcores=4 --id=TestNode01 --transcriptome=/common/reference_genome/GRCh38/Sequence/GRCh38.gencode.v26.pc_transcripts.fa --libraries=build/resources/integrationTest/output/sh_files/TestNode01_library.txt --feature-ref=/common/reference_genome/feature-ref-combined.csv --chemistry=auto --expect-cells=5000
+path/to/cellranger count --localcores=4 --id=TestNode01 --transcriptome=/common/reference_genome/GRCh38/Sequence/GRCh38.gencode.v26.pc_transcripts.fa --libraries=build/resources/integrationTest/output/sh_files/TestNode01_library.txt --feature-ref=/common/reference_genome/feature-ref-combined.csv --chemistry=auto --expect-cells=5000 --localmem=8
 if [ $? -eq 0 ]
 then
 	echo `date` Successful Step: Cellranger count.
