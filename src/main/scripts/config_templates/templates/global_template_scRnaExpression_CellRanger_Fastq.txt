@@ -1,6 +1,6 @@
 [Queue_Parameters]
 NUMTHREADS = {{numthreads}}
-MAXMEM = 50g
+MAXMEM = {{maxmem}}
 QUEUE = all.q
 PE = -pe threaded
 
