@@ -1,4 +1,4 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/4m3y9tyb08n4xllw?svg=true)](https://ci.appveyor.com/project/epam/fonda)
+[![Build status](https://github.com/epam/fonda/workflows/build/badge.svg?branch=develop)](https://github.com/madmongoose/fonda/actions)
 [![codecov](https://codecov.io/gh/epam/fonda/branch/develop/graph/badge.svg?token=XJCQIlChRJ)](https://codecov.io/gh/epam/fonda)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/2d4993e3a192484cbb3e95c6839e64ae)](https://www.codacy.com?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=epam/fonda&amp;utm_campaign=Badge_Grade)
 

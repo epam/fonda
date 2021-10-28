@@ -1,0 +1,72 @@
+#---------------------------------------------------------------------
+# GitHub Action Workflow for Fonda
+# Version 1.0
+# 2021
+#---------------------------------------------------------------------
+
+name: build
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the develop branch
+  push:
+    branches: [ develop ]
+    paths-ignore:
+      - "docs/**"
+      - ".github/workflows/**"
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup Java JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: "temurin" # See 'Supported distributions' for available options
+          java-version: "8"
+          java-package: jdk # optional (jdk or jre) - defaults to jdk
+          cache: "gradle"
+
+      - name: Gradle Build Action
+        uses: gradle/gradle-build-action@v2.0-rc.1
+        with:
+          gradle-executable: ./gradlew -PbuildNumber=ga.${{ github.run_number }}.${{ github.sha }} build zip --no-daemon
+          #cache-disabled: true
+
+      - name: Gradle Test Action
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-executable: ./gradlew jacocoTestReport
+          #cache-disabled: true
+
+      - name: Upload a Build Artifact on the GitHub Actions Job page
+        uses: actions/upload-artifact@v2.2.4
+        with:
+          # Artifact name
+          name: fonda-2.0.0.ga.${{ github.run_number }}.${{ github.sha }}.zip
+          # Destination path
+          path: build/distributions/fonda*.zip
+          #retention-days: 5 # By default, GitHub stores build logs and artifacts for 90 days
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+
+      - name: Copy a Build Artifact to AWS
+        run: aws s3 mv build/distributions/fonda*.zip s3://fonda-oss-builds/builds/${GITHUB_REF##*/}/
+        shell: bash
