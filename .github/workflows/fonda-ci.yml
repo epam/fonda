@@ -11,8 +11,11 @@ on:
   push:
     branches: [ develop ]
     paths-ignore:
-      - "docs/**"
+      - "doc/**"
       - ".github/workflows/**"
+      - ".example/**"
+      - ".README.md"
+      
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
@@ -31,18 +34,14 @@ jobs:
         with:
           distribution: "temurin" # See 'Supported distributions' for available options
           java-version: "8"
-          java-package: jdk # optional (jdk or jre) - defaults to jdk
-          cache: "gradle"
       - name: Gradle Build Action
         uses: gradle/gradle-build-action@v2.0-rc.1
         with:
           gradle-executable: ./gradlew -PbuildNumber=ga.${{ github.run_number }}.${{ github.sha }} build zip --no-daemon
-          #cache-disabled: true
       - name: Gradle Test Action
         uses: gradle/gradle-build-action@v2
         with:
           gradle-executable: ./gradlew jacocoTestReport
-          #cache-disabled: true
       - name: Upload a Build Artifact on the GitHub Actions Job page
         uses: actions/upload-artifact@v2.2.4
         with:
