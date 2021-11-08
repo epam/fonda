@@ -1,4 +1,4 @@
-[![Build status](https://github.com/epam/fonda/workflows/build/badge.svg?branch=develop)](https://github.com/madmongoose/fonda/actions)
+[![Build status](https://github.com/epam/fonda/workflows/build/badge.svg?branch=develop)](https://github.com/epam/fonda/actions)
 [![codecov](https://codecov.io/gh/epam/fonda/branch/develop/graph/badge.svg?token=XJCQIlChRJ)](https://codecov.io/gh/epam/fonda)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/2d4993e3a192484cbb3e95c6839e64ae)](https://www.codacy.com?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=epam/fonda&amp;utm_campaign=Badge_Grade)
 
