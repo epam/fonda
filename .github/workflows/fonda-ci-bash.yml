@@ -1,11 +1,11 @@
 #---------------------------------------------------------------------
-# GitHub Action Workflow for Fonda (Bash variant)
+# GitHub Action Workflow for Fonda (Bash version)
 # Version 1.0
 # 2021
 #---------------------------------------------------------------------
 
 name: fonda-ci-bash
-on:
+#on:
   push:
     branches: [ develop ]
     paths-ignore:
@@ -21,8 +21,9 @@ jobs:
           java-version: "8"
       - run: ./gradlew -PbuildNumber=test.${{ github.run_number }}.${{ github.sha }} build zip --no-daemon
       - run: ./gradlew jacocoTestReport
-      - run: aws s3 mv build/distributions/fonda*.zip s3://fonda-oss-builds/builds/${GITHUB_REF##*/}/
-        env:
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+      - run: aws s3 mv build/distributions/fonda*.zip s3://fonda-oss-builds/builds/${GITHUB_REF##*/}/
