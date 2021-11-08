@@ -6,10 +6,10 @@
 
 name: fonda-ci-bash
 #on:
-  push:
-    branches: [ develop ]
-    paths-ignore:
-      - ".github/workflows/**"
+  #push:
+    #branches: [ develop ]
+    #paths-ignore:
+      #- ".github/workflows/**"
   workflow_dispatch:
 jobs:
   build:
