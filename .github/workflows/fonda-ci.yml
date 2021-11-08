@@ -54,7 +54,6 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           artifacts: "build/distributions/fonda*.zip"
-          #bodyFile: "body.md"
           tag: ${{ github.run_number }}
           name: Release v2.0.0.${{ github.run_number }}
           token: ${{ secrets.GITHUB_TOKEN }}
