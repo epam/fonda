@@ -18,7 +18,7 @@ Fonda is a framework that offers a scalable and automatic analysis of multiple *
 
 ## Fonda Prebuilt binaries
 
-All the binaries, built by the CI process (described in [CONTRIBUTING.md](CONTRIBUTING.md#ci-process-description)) are available via the [Download page](https://fonda-oss-builds.s3.amazonaws.com/web/index.html)
+All the binaries, built by the CI process (described in [CONTRIBUTING.md](CONTRIBUTING.md#ci-process-description)) are available via the [Download page](https://fonda-oss-builds.s3.amazonaws.com/web/index.html) and the [GitHub Release page](https://github.com/epam/fonda/releases)
 
 ## Required environment setup
 
