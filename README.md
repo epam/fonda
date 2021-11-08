@@ -1,4 +1,4 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/4m3y9tyb08n4xllw?svg=true)](https://ci.appveyor.com/project/epam/fonda)
+[![Build status](https://github.com/epam/fonda/workflows/build/badge.svg?branch=develop)](https://github.com/epam/fonda/actions)
 [![codecov](https://codecov.io/gh/epam/fonda/branch/develop/graph/badge.svg?token=XJCQIlChRJ)](https://codecov.io/gh/epam/fonda)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/2d4993e3a192484cbb3e95c6839e64ae)](https://www.codacy.com?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=epam/fonda&amp;utm_campaign=Badge_Grade)
 
@@ -18,7 +18,7 @@ Fonda is a framework that offers a scalable and automatic analysis of multiple *
 
 ## Fonda Prebuilt binaries
 
-All the binaries, built by the CI process (described in [CONTRIBUTING.md](CONTRIBUTING.md#ci-process-description)) are available via the [Download page](https://fonda-oss-builds.s3.amazonaws.com/web/index.html)
+All the binaries, built by the CI process (described in [CONTRIBUTING.md](CONTRIBUTING.md#ci-process-description)) are available via the [Download page](https://fonda-oss-builds.s3.amazonaws.com/web/index.html) and the [GitHub Release page](https://github.com/epam/fonda/releases)
 
 ## Required environment setup
 
