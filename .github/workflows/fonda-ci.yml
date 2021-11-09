@@ -15,6 +15,7 @@ on:
       - ".github/workflows/**"
       - ".example/**"
       - ".README.md"
+      - ".gitignore"
       
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -45,11 +46,8 @@ jobs:
       - name: Upload a Build Artifact on the GitHub Actions Job page
         uses: actions/upload-artifact@v2.2.4
         with:
-          # Artifact name
           name: fonda-2.0.0.ga.${{ github.run_number }}.${{ github.sha }}.zip
-          # Destination path
           path: build/distributions/fonda*.zip
-          #retention-days: 5 # By default, GitHub stores build logs and artifacts for 90 days
       - name: Create GitHub release
         uses: ncipollo/release-action@v1
         with:
@@ -66,3 +64,5 @@ jobs:
       - name: Copy a Build Artifact to AWS
         run: aws s3 mv build/distributions/fonda*.zip s3://fonda-oss-builds/builds/${GITHUB_REF##*/}/
         shell: bash
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
