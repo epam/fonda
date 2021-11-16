@@ -5,11 +5,24 @@
 #---------------------------------------------------------------------
 
 name: build
+env:
+  VERSION: "2.0.0"
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the develop branch
   push:
-    branches: [ develop ]
+    branches:
+      - develop
+    paths-ignore:
+      - "doc/**"
+      - ".github/workflows/**"
+      - ".example/**"
+      - ".README.md"
+      - ".gitignore"
+      
+  pull_request:
+    branches: 
+      - "**"
     paths-ignore:
       - "doc/**"
       - ".github/workflows/**"
@@ -30,39 +43,54 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout repository
         uses: actions/checkout@v2
+      
+      - name: Correcting a Build Number
+        run: echo "BUILD_NUMBER=$(echo $((${{ github.run_number }}+653)))" >> $GITHUB_ENV
+      
       - name: Setup Java JDK
         uses: actions/setup-java@v2
         with:
           distribution: "temurin" # See 'Supported distributions' for available options
           java-version: "8"
+      
       - name: Gradle Build Action
-        uses: gradle/gradle-build-action@v2.0-rc.1
+        uses: gradle/gradle-build-action@v2
         with:
-          gradle-executable: ./gradlew -PbuildNumber=ga.${{ github.run_number }}.${{ github.sha }} build zip --no-daemon
-      - name: Gradle Test Action
+          gradle-executable: ./gradlew -PbuildNumber=ga.${{ env.BUILD_NUMBER }}.${{ github.sha }} build zip --no-daemon
+          
+      - name: Gradle Coverage Action
         uses: gradle/gradle-build-action@v2
         with:
           gradle-executable: ./gradlew jacocoTestReport
+          
       - name: Upload a Build Artifact on the GitHub Actions Job page
         uses: actions/upload-artifact@v2.2.4
         with:
-          name: fonda-2.0.0.ga.${{ github.run_number }}.${{ github.sha }}.zip
+          name: fonda-${{ env.VERSION }}.ga.${{ env.BUILD_NUMBER }}.${{ github.sha }}
           path: build/distributions/fonda*.zip
-      - name: Create GitHub release
-        uses: ncipollo/release-action@v1
-        with:
-          artifacts: "build/distributions/fonda*.zip"
-          tag: ${{ github.run_number }}
-          name: Release v2.0.0.${{ github.run_number }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Upload Coverage to Codecov
+        if: ${{ github.event_name == 'push' && github.ref_name == 'develop' }}
+        uses: codecov/codecov-action@v2
+          
       - name: Configure AWS Credentials
+        if: ${{ github.event_name == 'push' && github.ref_name == 'develop' }}
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+          
       - name: Copy a Build Artifact to AWS
-        run: aws s3 mv build/distributions/fonda*.zip s3://fonda-oss-builds/builds/${GITHUB_REF##*/}/
+        if: ${{ github.event_name == 'push' && github.ref_name == 'develop' }}
+        run: aws s3 cp build/distributions/fonda*.zip s3://fonda-oss-builds/builds/$GITHUB_REF_NAME/
         shell: bash
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2
+        
+      - name: Create GitHub release
+        if: ${{ github.event_name == 'push' && github.ref_name == 'develop' }}
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "build/distributions/fonda*.zip"
+          tag: ${{ env.VERSION }}.${{ env.BUILD_NUMBER }}
+          name: Release ${{ env.VERSION }}.${{ env.BUILD_NUMBER }}
+          token: ${{ secrets.GITHUB_TOKEN }}
