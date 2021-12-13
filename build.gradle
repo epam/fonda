@@ -11,7 +11,14 @@ plugins {
 group 'com.epam'
 
 def buildNumber = hasProperty("buildNumber") ? buildNumber : ""
-version = new Version(major: 2, minor: 0, patch: 0, build: buildNumber)
+allprojects {
+    version = new Version(major: 2, minor: 0, patch: 0, build: buildNumber)
+    task printVersion {
+        doFirst {
+            println "Project version is $version"
+        }
+    }
+}
 
 class Version {
     int major, minor, patch
