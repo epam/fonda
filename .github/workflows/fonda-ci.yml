@@ -1,12 +1,10 @@
 #---------------------------------------------------------------------
 # GitHub Action Workflow for Fonda
-# Version 1.0
-# 2021
+# Version 1.1
+# 2022
 #---------------------------------------------------------------------
 
 name: build
-env:
-  VERSION: "2.0.0"
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the develop branch
@@ -46,6 +44,9 @@ jobs:
       
       - name: Correcting a Build Number
         run: echo "BUILD_NUMBER=$(echo $((${{ github.run_number }}+653)))" >> $GITHUB_ENV
+         
+      - name: Get Current Version
+        run: echo "FONDA_VERSION=$(./gradlew :printVersion -PbuildNumber=$BUILD_NUMBER |  grep "Project version is " | sed 's/^.*is //')" >> $GITHUB_ENV
       
       - name: Setup Java JDK
         uses: actions/setup-java@v2
@@ -56,17 +57,17 @@ jobs:
       - name: Gradle Build Action
         uses: gradle/gradle-build-action@v2
         with:
-          gradle-executable: ./gradlew -PbuildNumber=ga.${{ env.BUILD_NUMBER }}.${{ github.sha }} build zip --no-daemon
+          arguments: -PbuildNumber=${{ env.FONDA_VERSION }}.gha.${{ github.sha }} build zip --no-daemon
           
       - name: Gradle Coverage Action
         uses: gradle/gradle-build-action@v2
         with:
-          gradle-executable: ./gradlew jacocoTestReport
+          arguments: jacocoTestReport
           
       - name: Upload a Build Artifact on the GitHub Actions Job page
         uses: actions/upload-artifact@v2.2.4
         with:
-          name: fonda-${{ env.VERSION }}.ga.${{ env.BUILD_NUMBER }}.${{ github.sha }}
+          name: fonda-${{ env.FONDA_VERSION }}.gha.${{ github.sha }}
           path: build/distributions/fonda*.zip
           
       - name: Upload Coverage to Codecov
@@ -83,7 +84,7 @@ jobs:
           
       - name: Copy a Build Artifact to AWS
         if: ${{ github.event_name == 'push' && github.ref_name == 'develop' }}
-        run: aws s3 cp build/distributions/fonda*.zip s3://fonda-oss-builds/builds/$GITHUB_REF_NAME/
+        run: aws s3 cp build/distributions/fonda*.zip s3://fonda-oss-builds/builds/$GITHUB_REF_NAME/${{ env.FONDA_VERSION }}.gha.${{ github.sha }}/
         shell: bash
         
       - name: Create GitHub release
@@ -91,6 +92,6 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           artifacts: "build/distributions/fonda*.zip"
-          tag: ${{ env.VERSION }}.${{ env.BUILD_NUMBER }}
-          name: Release ${{ env.VERSION }}.${{ env.BUILD_NUMBER }}
+          tag: ${{ env.FONDA_VERSION }}
+          name: Release ${{ env.FONDA_VERSION }}
           token: ${{ secrets.GITHUB_TOKEN }}
