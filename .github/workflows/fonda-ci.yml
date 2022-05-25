@@ -57,7 +57,7 @@ jobs:
       - name: Gradle Build Action
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: -PbuildNumber=${{ env.FONDA_VERSION }}.gha.${{ github.sha }} build zip --no-daemon
+          arguments: -PbuildNumber=${{ env.FONDA_VERSION }}.ga.${{ github.sha }} build zip --no-daemon
           
       - name: Gradle Coverage Action
         uses: gradle/gradle-build-action@v2
@@ -67,7 +67,7 @@ jobs:
       - name: Upload a Build Artifact on the GitHub Actions Job page
         uses: actions/upload-artifact@v2.2.4
         with:
-          name: fonda-${{ env.FONDA_VERSION }}.gha.${{ github.sha }}
+          name: fonda-${{ env.FONDA_VERSION }}.ga.${{ github.sha }}
           path: build/distributions/fonda*.zip
           
       - name: Upload Coverage to Codecov
@@ -84,7 +84,7 @@ jobs:
           
       - name: Copy a Build Artifact to AWS
         if: ${{ github.event_name == 'push' && github.ref_name == 'develop' }}
-        run: aws s3 cp build/distributions/fonda*.zip s3://fonda-oss-builds/builds/$GITHUB_REF_NAME/${{ env.FONDA_VERSION }}.gha.${{ github.sha }}/
+        run: aws s3 cp build/distributions/fonda*.zip s3://fonda-oss-builds/builds/$GITHUB_REF_NAME/
         shell: bash
         
       - name: Create GitHub release
